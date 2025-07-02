@@ -6,6 +6,12 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('client/home/home');
 })->name('home');
+Route::get('/events', function () {
+    return Inertia::render('events/events');
+})->name('events');
+Route::get('/event/{event}', function () {
+    return Inertia::render('EventDetails/eventdetail');
+})->name('event');
 
 Route::get('/about', function () {
     return Inertia::render('client/about/about');
