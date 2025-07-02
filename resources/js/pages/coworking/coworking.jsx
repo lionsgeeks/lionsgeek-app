@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import  { useEffect, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWifi, faCamera, faPodcast, faGamepad, faUsers, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 import coworkvideo from "../../../assets/videos/videoplayback.mp4";
@@ -22,7 +22,7 @@ const Coworking = () => {
         };
     }, []);
 
-    
+
   const leftside = useRef(null);
   const rightside = useRef(null);
 
@@ -39,7 +39,7 @@ const Coworking = () => {
     );
   }, []);
 
-  
+
     const services = [
         {
             icon: faWifi,
