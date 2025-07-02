@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
-import { useAppContext } from "../../utils/contextProvider";
+// import { useAppContext } from "../../utils/contextProvider";
 import axios from "axios";
-import Modal from "../../components/Modal";
-import LoadingPage from "../Loading";
-import TransText from "../../components/TransText.tsx";
-import { NavLink, useNavigate } from "react-router-dom";
+import Modal from "../../../components/Modal";
+// import LoadingPage from "../Loading";
+import {TransText} from "../../../components/TransText";
 import AppLayout from '@/layouts/app-layout';
 
 const Privatesession = () => {
-  const { selectedLanguage, URL, sessions, privatesession , darkMode , fetchInfosession } = useAppContext();
+  // const { selectedLanguage, URL, sessions, privatesession , darkMode , fetchInfosession } = useAppContext();
+  const privatesession = true;
+  const selectedLanguage = 'en';
+  const darkMode = false;
+  const URL = 0;
+  const sessions = [];
   const [chosenSession, setChosenSession] = useState("");
-  const [sending, setSending] = useState(false);
+  const [sending, setSending] = useState(true);
   const [validate, setValidate] = useState(false);
   const [confirmation, setConfirmation] = useState(false);
   const [gender, setGender] = useState("");
@@ -19,16 +23,16 @@ const Privatesession = () => {
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dateLanguage = {
     en: "US",
     fr: "FR",
     ar: "AR",
   };
 
-      useEffect(() => {
-          fetchInfosession()
-      }, [])
+      // useEffect(() => {
+      //     fetchInfosession()
+      // }, [])
 
   const [motivation, setMotivation] = useState("");
   const [source, setSource] = useState("");
@@ -266,9 +270,9 @@ const Privatesession = () => {
                   </div>
 
                   <div className="flex flex-wrap gap-1">
-                    {formFields.map((field) => (
+                    {formFields.map((field, index) => (
                       <div
-                        key={field.name}
+                        key={index}
                         className="flex flex-col space-y-2 w-full sm:w-[49.7%]"
                       >
                         <label
@@ -501,7 +505,6 @@ const Privatesession = () => {
               </>
             ) : (
               <>
-                <>
                   <div
                     className={`flex justify-center items-center text-center w-full h-[16rem] text-[30px] font-bold  ${darkMode ? "text-white" : "text-black"
                       }`}
@@ -512,7 +515,6 @@ const Privatesession = () => {
                       en="No Sessions Available"
                     />
                   </div>
-                </>
               </>
             )
           ) : (
@@ -554,7 +556,9 @@ const Privatesession = () => {
           )}
         </>
       ) : (
-        <LoadingPage load={true} />
+        <>
+      {/* <LoadingPage load={true} /> */}
+        </>
       )}
       {!sending && confirmation && (
         <Modal

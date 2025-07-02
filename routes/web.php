@@ -28,6 +28,9 @@ Route::get('/contact', function () {
 Route::get('/postuler', function () {
     return Inertia::render('client/infoSession/infoSession');
 })->name('postuler');
+Route::get('/private-session', function () {
+    return Inertia::render('client/infoSession/privatesession');
+})->name('privateSession');
 
 Route::get('/about', function () {
     return Inertia::render('client/about/about');
@@ -40,7 +43,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
-    
 });
 Route::get('/coworking', [CoworkingController::class, 'index']);
 
