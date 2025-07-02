@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { TransText } from "@/components/TransText";
-import SubstringText from "@/components/SubstringText";
+import { TransText } from "../../../../components/TransText";
+import SubstringText from "../../../../components/SubStringText";
 import "./gallerySection.css"
 import { Image } from "lucide-react";
 
