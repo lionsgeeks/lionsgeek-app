@@ -1,6 +1,7 @@
 import "./skeleton.css";
-import { TransText } from "../../../components/TransText";
+import { TransText } from "../../../../components/TransText";
 import { router } from '@inertiajs/react';
+import musicFestivalImage from "../../../../../assets/images/events.jpg";
 
 // import { MdLocationPin, MdOutlineDateRange } from "react-icons/md";
 
@@ -18,11 +19,11 @@ export default function CardsSection({ events = [], IMAGEURL = "" }) {
     }
 
     return (
-        <div className="flex justify-center items-center md:px-20 px-6 py-14 bg-white">
+        <div className="flex justify-center items-center md:px-20 px-6 py-14 bg-[#0f0f0f]">
             <div className="flex flex-wrap w-full lg:gap-x-[calc(10%/2)] lg:gap-y-14 md:gap-x-[calc(4%/1)] gap-10">
                 <div id="cards" className="w-full text-center lg:pt-5 lg:px-0 px-6">
-                    <h1 className="text-xl text-black">Our Upcoming Events</h1>
-                    <h1 className="text-5xl font-bold text-black">Discover What's Next</h1>
+                    <h1 className="text-xl text-white">Our Upcoming Events</h1>
+                    <h1 className="text-5xl font-bold text-white">Discover What's Next</h1>
                 </div>
 
                 {events.length > 0 ? (
@@ -37,7 +38,8 @@ export default function CardsSection({ events = [], IMAGEURL = "" }) {
                             <div className="w-full h-[13rem]">
                                 <img
                                     loading="lazy"
-                                    src={`${IMAGEURL}/events/${element.cover}`}
+                                    // src={`${IMAGEURL}/events/${element.cover}`}
+                                    src= {musicFestivalImage}
                                     className="w-full h-full object-cover rounded-t-xl"
                                     alt="event"
                                 />

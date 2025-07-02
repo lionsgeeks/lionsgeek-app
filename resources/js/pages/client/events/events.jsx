@@ -1,6 +1,7 @@
 // import { FirstSectionEvent } from "./components/firstSection";
 import CardsSection from './components/cardsSection.jsx';
 import FirstSectionEvent from "./components/firstSection.jsx";
+import AppLayout from "@/layouts/app-layout";
 
 export default function EventPage() {
 
@@ -29,8 +30,12 @@ export default function EventPage() {
     ];
     return (
         <>
-            <FirstSectionEvent />
-            <CardsSection events={mockEvents} />
+
+            <AppLayout>
+
+                <FirstSectionEvent />
+                <CardsSection events={mockEvents} />
+            </AppLayout>
         </>
     );
 };

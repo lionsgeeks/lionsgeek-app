@@ -7,11 +7,11 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('client/home/home');
 })->name('home');
-Route::get('/events', function () {
-    return Inertia::render('events/events');
-})->name('events');
+Route::get('/event', function () {
+    return Inertia::render('client/events/events');
+})->name('event');
 Route::get('/event/{event}', function () {
-    return Inertia::render('EventDetails/eventdetail');
+    return Inertia::render('client/EventDetails/eventdetail');
 })->name('event');
 Route::get('/coding', function () {
     return Inertia::render('client/coding/coding');

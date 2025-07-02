@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import BookingModal from "./bookingmodal";
-import musicFestivalImage from "../../../../assets/images/events.jpg";
+import musicFestivalImage from "../../../../../assets/images/events.jpg";
 
 const selectedLanguage = "en";
 const darkMode = false;
