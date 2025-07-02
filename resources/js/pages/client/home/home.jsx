@@ -1,4 +1,5 @@
-// import { Partners } from "../About/components/partners";
+import { Partners } from "../about/partials/partners";
+import AppLayout from "@/layouts/app-layout";
 import {
     EventSection,
     GallerySection,
@@ -12,14 +13,14 @@ export default function Home() {
 
 
     return (
-        <>
+        <AppLayout>
             <HeroSection />
             <WhoSection />
             <ServicesSection />
-            {/* <Partners /> */}
+            <Partners />
             {/* {upcomingEvent && <EventSection />} */}
             <TrainingSection />
             <GallerySection />
-        </>
+        </AppLayout>
     );
 };

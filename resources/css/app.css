@@ -11,6 +11,15 @@
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
+    --color-beta: #212529;
+    --color-error: #ff7376;
+    --color-alpha: #fee819;
+    --color-good: #51b04f;
+    --color-light_gray: #f2f2f2;
+    --color-skeleton1: #cacaca;
+    --color-skeleton2: #a3a3a3;
+
+
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
@@ -68,6 +77,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
     *,
     ::after,
     ::before,
@@ -156,4 +166,19 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+
+.bg-image {
+    background-image: url("../assets/images/gallery/image.png");
+    /* background-position: center; */
+}
+
+.bg-image-coding {
+    background-image: url("../assets/images/gallery/coding.jpg");
+    background-position: bottom;
+}
+
+.bg-image-media {
+    background-image: url("../assets/images/gallery/media.jpg");
 }

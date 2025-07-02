@@ -7,6 +7,13 @@ Route::get('/', function () {
     return Inertia::render('client/home/home');
 })->name('home');
 
+Route::get('/about', function () {
+    return Inertia::render('client/about/about');
+});
+Route::get('/whatislionsgeek', function () {
+    return Inertia::render('client/about/partials/whatis');
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');

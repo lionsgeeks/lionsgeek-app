@@ -16,11 +16,11 @@ import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
 const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
+        {
+            title: 'About',
+            href: '/about',
+            // add icon
+        }
 ];
 
 const rightNavItems: NavItem[] = [
@@ -49,7 +49,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     return (
         <>
             <div className="border-b border-sidebar-border/80">
-                <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
+                <div className="mx-auto flex h-16 items-center md:max-w-7xl">
                     {/* Mobile Menu */}
                     <div className="lg:hidden">
                         <Sheet>
@@ -94,7 +94,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </Sheet>
                     </div>
 
-                    <Link href="/dashboard" prefetch className="flex items-center space-x-2">
+                    <Link href="/" prefetch className="flex items-center space-x-2">
                         <AppLogo />
                     </Link>
 
@@ -124,7 +124,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </NavigationMenu>
                     </div>
 
-                    <div className="ml-auto flex items-center space-x-2">
+                    {/* <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
                             <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer">
                                 <Search className="!size-5 opacity-80 group-hover:opacity-100" />
@@ -167,7 +167,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 <UserMenuContent user={auth.user} />
                             </DropdownMenuContent>
                         </DropdownMenu>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             {breadcrumbs.length > 1 && (
