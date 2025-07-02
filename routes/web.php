@@ -13,6 +13,21 @@ Route::get('/events', function () {
 Route::get('/event/{event}', function () {
     return Inertia::render('EventDetails/eventdetail');
 })->name('event');
+Route::get('/coding', function () {
+    return Inertia::render('client/coding/coding');
+})->name('coding');
+Route::get('/media', function () {
+    return Inertia::render('client/media/media');
+})->name('media');
+Route::get('/pro', function () {
+    return Inertia::render('client/Pro/Pro');
+})->name('pro');
+Route::get('/contact', function () {
+    return Inertia::render('client/ContactUs/contactUs');
+})->name('contact');
+Route::get('/postuler', function () {
+    return Inertia::render('client/infoSession/infoSession');
+})->name('postuler');
 
 Route::get('/about', function () {
     return Inertia::render('client/about/about');
