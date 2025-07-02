@@ -1,5 +1,5 @@
-import { TransText } from "@/components/TransText";
-import SubstringText from "@/components/SubstringText";
+import { TransText } from "../../../../components/TransText";
+import SubstringText from "../../../../components/SubStringText";
 
 const EventSection = () => {
     const selectedLanguage = "en";
