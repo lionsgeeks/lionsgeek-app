@@ -1,14 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 // import { useAppContext } from "../../utils/contextProvider";
-import axios from 'axios';
 import Modal from '../../../components/Modal';
 // import LoadingPage from "../Loading";
 import { TransText } from '../../../components/TransText';
-// import { useNavigate } from "react-router-dom";
 import AppLayout from '@/layouts/app-layout';
+import { router, useForm } from '@inertiajs/react';
 
 const InfoSession = () => {
     // const { selectedLanguage, URL, sessions, darkMode , fetchInfosession } = useAppContext();
+    const { data, setData, post, processing, errors } = useForm({
+        full_name: '',
+        email: '',
+        birthday: '',
+        phone: '',
+        city: '',
+        prefecture: '',
+        info_session_id: '',
+        gender: '',
+        motivation: '',
+        source: '',
+    });
     const selectedLanguage = 'en';
     const darkMode = false;
     const sessions = [1, 2];
@@ -18,10 +29,6 @@ const InfoSession = () => {
     const [sending, setSending] = useState(false);
     const [validate, setValidate] = useState(false);
     const [confirmation, setConfirmation] = useState(false);
-    const [gender, setGender] = useState('');
-    const [city, setCity] = useState('');
-    const [pref, setPref] = useState('');
-    const [error, setError] = useState('');
     const [emailError, setEmailError] = useState(false);
     const [refresh, setRefresh] = useState(false);
     // const navigate = useNavigate();
@@ -35,8 +42,6 @@ const InfoSession = () => {
     //     fetchInfosession()
     // }, [])
 
-    const [motivation, setMotivation] = useState('');
-    const [source, setSource] = useState('');
     const formFields = [
         {
             name: 'full_name',
@@ -65,101 +70,53 @@ const InfoSession = () => {
         return acc;
     }, {});
 
-    const [formData, setFormData] = useState(initialState);
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === 'email') {
             setEmailError(false);
         }
-        setFormData({ ...formData, [name]: value });
+        setData({ ...data, [name]: value });
     };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (motivation && motivation.length < 150) {
-            // alert("Please Write 150 Characters in Your Motivation");
-        } else {
-            window.scrollTo(0, 0);
-            setSending(true);
-            const allData = {
-                ...formData,
-                info_session_id: chosenSession,
-                motivation: motivation,
-                source: source,
-                gender: gender,
-                city: city,
-                prefecture: pref,
-            };
-
-            const newForm = new FormData();
-            Object.keys(allData).forEach((key) => {
-                newForm.append(key, allData[key]);
-            });
-
-            axios
-                .post(URL + 'participate', newForm)
-                .then((res) => {
-                    console.log(res);
-                    setSending(false);
-                    if (res.data.status === 69) {
-                        setEmailError(true);
-                        return;
-                    } else if (res.data.status === 96) {
-                        setRefresh(true);
-                    }
-                    setFormData(initialState);
-                    setMotivation('');
-                    setConfirmation(true);
-                    if (res.status === 200) {
-                        setValidate(true);
-                        fetchInfosession();
-                    } else {
-                        setValidate(false);
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                    setError(err);
-                });
-        }
+        router.post('admin/participants', data)
     };
 
-    useEffect(() => {
-        if (error) {
-            setFormData(initialState);
-            setValidate(false);
-            setSending(false);
-            setConfirmation(true);
-        }
+    // useEffect(() => {
+    //     if (error) {
+    //         setValidate(false);
+    //         setSending(false);
+    //         setConfirmation(true);
+    //     }
 
-        return () => {
-            setError('');
-        };
-    }, [error, sessions]);
+    //     return () => {
+    //         setError('');
+    //     };
+    // }, [error, sessions]);
 
     const Required = () => {
         return <span className="text-lg font-bold text-red-500">*</span>;
     };
 
-    function formatDate(dateString) {
-        const date = new Date(dateString);
+    // function formatDate(dateString) {
+    //     const date = new Date(dateString);
 
-        // Get formatted date: Monday 20 novembre 2024
-        const formattedDate = date.toLocaleDateString(`${selectedLanguage}-${dateLanguage[selectedLanguage]}`, {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-        });
+    //     // Get formatted date: Monday 20 novembre 2024
+    //     const formattedDate = date.toLocaleDateString(`${selectedLanguage}-${dateLanguage[selectedLanguage]}`, {
+    //         weekday: 'long',
+    //         day: 'numeric',
+    //         month: 'long',
+    //         year: 'numeric',
+    //     });
 
-        // Get formatted time: 16:49
-        const formattedTime = date.toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+    //     // Get formatted time: 16:49
+    //     const formattedTime = date.toLocaleTimeString('fr-FR', {
+    //         hour: '2-digit',
+    //         minute: '2-digit',
+    //     });
 
-        return `${formattedDate} ${formattedTime}`;
-    }
+    //     return `${formattedDate} ${formattedTime}`;
+    // }
 
     // prevent l user mn anah idir copy past hehehe  nihahahahaha
     const handlePaste = (event) => {
@@ -207,10 +164,7 @@ const InfoSession = () => {
                                                     className="w-full appearance-none rounded border border-gray-300 px-4 py-2"
                                                     name="formation"
                                                     required
-                                                    onChange={(e) => {
-                                                        setFormation(e.target.value);
-                                                        setChosenSession('');
-                                                    }}
+                                                    onChange={handleChange}
                                                 >
                                                     <option disabled selected value="">
                                                         <TransText en="Choose Formation" fr="Choisir la formation" ar="اختر التكوين" />
@@ -222,7 +176,7 @@ const InfoSession = () => {
                                                         <TransText en="Digital" fr="Média" ar="صانع محتوى" />
                                                     </option>
                                                 </select>
-                                                <label htmlFor="sessions" className={` ${darkMode ? 'text-white' : 'text-gray-700'} lg:hidden`}>
+                                                <label htmlFor="info_session_id" className={` ${darkMode ? 'text-white' : 'text-gray-700'} lg:hidden`}>
                                                     <TransText
                                                         en="Choose a Session Date"
                                                         fr="Choisissez une date de session"
@@ -231,17 +185,18 @@ const InfoSession = () => {
                                                     : <Required />
                                                 </label>
                                                 <select
-                                                    name="sessions"
-                                                    id="sessions"
-                                                    value={chosenSession}
-                                                    onChange={(e) => {
-                                                        setChosenSession(e.target.value);
-                                                    }}
+                                                    name="info_session_id"
+                                                    id="info_session_id"
+                                                    value={data.info_session_id}
+                                                    onChange={handleChange}
                                                     className="w-full appearance-none rounded border border-gray-300 px-4 py-2"
                                                     required
                                                 >
                                                     <option disabled selected value="">
                                                         <TransText en="Choose a Session" fr="Choisir une session" ar="اختر جلسة" />
+                                                    </option>
+                                                    <option value="1">
+                                                        <TransText en="hadi" fr="Choisir une session" ar="اختر جلسة" />
                                                     </option>
                                                     {sessions
                                                         .filter(
@@ -275,7 +230,7 @@ const InfoSession = () => {
                                                         min={minDateString}
                                                         max={maxDateString}
                                                         placeholder={field.label[selectedLanguage]}
-                                                        value={formData[field.name]}
+                                                        value={data[field.name]}
                                                         onChange={handleChange}
                                                         className={`rounded-md border px-4 py-2 focus:ring-2 focus:ring-beta focus:outline-none ${
                                                             emailError && field.name === 'email'
@@ -298,10 +253,8 @@ const InfoSession = () => {
                                                 <select
                                                     name="city"
                                                     id="city"
-                                                    onChange={(e) => {
-                                                        setCity(e.target.value);
-                                                    }}
-                                                    value={city}
+                                                    onChange={handleChange}
+                                                    value={data.city}
                                                     className="w-full appearance-none rounded border border-gray-300 px-4 py-[11px]"
                                                     required
                                                 >
@@ -327,11 +280,9 @@ const InfoSession = () => {
                                                 </label>
                                                 <select
                                                     name="prefecture"
-                                                    value={pref}
+                                                    value={data.prefecture}
                                                     id="prefecture"
-                                                    onChange={(e) => {
-                                                        setPref(e.target.value);
-                                                    }}
+                                                    onChange={handleChange}
                                                     className="w-full appearance-none rounded border border-gray-300 px-4 py-[11px]"
                                                     required
                                                 >
@@ -366,9 +317,7 @@ const InfoSession = () => {
                                                 <select
                                                     name="gender"
                                                     id="gender"
-                                                    onChange={(e) => {
-                                                        setGender(e.target.value);
-                                                    }}
+                                                    onChange={handleChange}
                                                     className="w-full appearance-none rounded border border-gray-300 px-4 py-[11px]"
                                                     required
                                                 >
@@ -395,13 +344,11 @@ const InfoSession = () => {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    value={source}
+                                                    value={data.source}
                                                     name="source"
                                                     id="source"
                                                     placeholder={selectedLanguage == 'en' ? 'Source' : selectedLanguage == 'fr' ? 'Source' : 'مصدر'}
-                                                    onChange={(e) => {
-                                                        setSource(e.target.value);
-                                                    }}
+                                                    onChange={handleChange}
                                                     className="rounded-md border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-beta focus:outline-none"
                                                     required
                                                 />
@@ -412,9 +359,9 @@ const InfoSession = () => {
                                                     <TransText en="Motivation" fr="Motivation" ar="الدافع" />
                                                     :
                                                     <Required />
-                                                    <span className={`text-sm ${motivation.length < 150 ? 'text-red-600' : 'text-green-500'} `}>
+                                                    <span className={`text-sm ${data.motivation.length < 150 ? 'text-red-600' : 'text-green-500'} `}>
                                                         {' '}
-                                                        {motivation.length}/150
+                                                        {data.motivation.length}/150
                                                     </span>
                                                 </label>
                                                 <textarea
@@ -423,11 +370,11 @@ const InfoSession = () => {
                                                     // bach mankhalich l user idir copy past  l l motivation
                                                     onPaste={handlePaste}
                                                     className="rounded border border-gray-400 p-[6px]"
-                                                    onChange={(e) => setMotivation(e.target.value)}
+                                                    onChange={handleChange}
                                                     placeholder={
                                                         selectedLanguage == 'en' ? 'Motivation' : selectedLanguage == 'fr' ? 'Motivation' : 'دافع'
                                                     }
-                                                    value={motivation}
+                                                    value={data.motivation}
                                                     required
                                                 ></textarea>
                                             </div>
@@ -435,7 +382,7 @@ const InfoSession = () => {
                                         <div className="mt-4">
                                             <button
                                                 type="submit"
-                                                disabled={sending}
+                                                disabled={processing}
                                                 className={`w-full rounded-md bg-alpha px-4 py-2 font-semibold ${
                                                     darkMode ? 'hover:bg-[#2d343a]' : 'hover:bg-[#212529]'
                                                 } hover:text-alpha focus:outline-none`}

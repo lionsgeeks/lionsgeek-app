@@ -166,6 +166,12 @@
     }
 }
 
+/* To Reset Tailwind Classes in a div and it's children */
+.reset-tw,
+.reset-tw * {
+  all: revert;
+}
+
 
 .bg-image {
     background-image: url("../assets/images/gallery/image.png");
@@ -180,4 +186,3 @@
 .bg-image-media {
     background-image: url("../assets/images/gallery/media.jpg");
 }
-
