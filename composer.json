@@ -10,15 +10,15 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "inertiajs/inertia-laravel": "^2.0",
-        "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1",
-        "tightenco/ziggy": "^2.4",
-        "yoeunes/toastr": "^3.1",
         "barryvdh/laravel-dompdf": "^3.0",
         "giauphan/laravel-qr-code": "^1.0",
+        "inertiajs/inertia-laravel": "^2.0",
         "intervention/image": "^3.10",
-        "maatwebsite/excel": "*"
+        "laravel/framework": "^12.0",
+        "laravel/tinker": "^2.10.1",
+        "maatwebsite/excel": "*",
+        "php-flasher/flasher-laravel": "^2.1",
+        "tightenco/ziggy": "^2.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
