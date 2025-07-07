@@ -9,7 +9,7 @@ class CoworkingController extends Controller
 {
    public function index(){
 
-     return Inertia::render('coworking/coworking', [
+     return Inertia::render('client/coworking/coworking', [
     ]);
    }
 }

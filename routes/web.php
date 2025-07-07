@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CoworkingController;
+use App\Http\Controllers\PressController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -43,6 +44,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+    Route::get('/press', [PressController::class, 'index']);
+    Route::post('/press', [PressController::class, 'store'])->name('press.store');
+    Route::get('/admin/presses/{press}', [PressController::class, 'show'])->name('press.show');
+    Route::put('/presses/{press}', [PressController::class, 'update'])->name('press.update');
+    Route::delete('/presses/{press}', [PressController::class, 'destroy'])->name('press.destroy');
 });
 Route::get('/coworking', [CoworkingController::class, 'index']);
 

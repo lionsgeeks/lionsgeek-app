@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import coworkvideo from "../../../assets/videos/videoplayback.mp4";
-import ilyass from "../../../assets/images/testimonial/unknown.jpg";
+import coworkvideo from "../../../../assets/videos/videoplayback.mp4";
+import ilyass from "../../../../assets/images/testimonial/unknown.jpg";
 import { RiDoubleQuotesR } from "react-icons/ri";
 import gsap from "gsap";
 import AppLayout from "@/layouts/app-layout";

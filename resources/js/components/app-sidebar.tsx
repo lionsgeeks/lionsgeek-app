@@ -21,7 +21,12 @@ const mainNavItems: NavItem[] = [
         title: 'Blogs',
         href: '/admin/blogs',
         icon: BookOpen
-    }
+    },
+        {
+        title: 'Press',
+        href: '/press',
+        icon: LayoutGrid,
+    },
 ];
 
 
