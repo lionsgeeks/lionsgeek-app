@@ -11,3 +11,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     // destroy image
     Route::delete("images/{image}", [ImageController::class, 'destroy'])->name('images.destroy');
 });
+
+Route::get('/gallery', [GalleryController::class, 'clientIndex']);
+Route::get('/album/{gallery}', [GalleryController::class, 'clientShow']);

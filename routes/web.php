@@ -2,12 +2,17 @@
 
 use App\Http\Controllers\CoworkingController;
 use App\Http\Controllers\PressController;
+use App\Models\Gallery;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('client/home/home');
+    $galleries = Gallery::with('images')->get();
+    return Inertia::render('client/home/home', [
+        'galleries' => $galleries
+    ]);
 })->name('home');
+
 Route::get('/event', function () {
     return Inertia::render('client/events/events');
 })->name('event');

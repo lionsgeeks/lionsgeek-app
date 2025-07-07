@@ -169,7 +169,7 @@
 /* To Reset Tailwind Classes in a div and it's children */
 .reset-tw,
 .reset-tw * {
-  all: revert;
+    all: revert;
 }
 
 
@@ -185,4 +185,40 @@
 
 .bg-image-media {
     background-image: url("../assets/images/gallery/media.jpg");
+}
+
+
+/* Skeleton container */
+.skeleton {
+    background: #ddd;
+    /* Base gray background */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Skeleton animation */
+.skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    /* Start off-screen */
+    width: 150%;
+    /* Larger than the container to sweep across */
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    animation: loading 1.5s infinite;
+    /* Use the animation keyframes */
+}
+
+@keyframes loading {
+    0% {
+        left: -150%;
+        /* Start position */
+    }
+
+    100% {
+        left: 100%;
+        /* End position */
+    }
 }

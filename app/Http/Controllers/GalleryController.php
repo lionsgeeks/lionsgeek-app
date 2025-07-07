@@ -18,6 +18,23 @@ class GalleryController extends Controller
         ]);
     }
 
+    public function clientIndex()
+    {
+        $galleries = Gallery::with('images')->get();
+        return Inertia::render('client/gallery/index', [
+            'galleries' => $galleries
+        ]);
+    }
+
+
+    public function clientShow(Gallery $gallery)
+    {
+
+        $gal = Gallery::find($gallery->id)->with('images')->first();
+        return Inertia::render('client/gallery/[id]', [
+            'gallery' => $gal
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -40,6 +57,7 @@ class GalleryController extends Controller
 
         // for more information about this function, look at Controller.php
         $fileName = $this->uploadFile($request->file('couverture'), "/gallery/");
+
         $title = json_encode([
             'en' => $request->title_en,
             'fr' => $request->title_fr,

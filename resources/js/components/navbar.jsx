@@ -409,7 +409,7 @@ const Navbar = () => {
                                             </a>
                                             <a
                                                 id="mediaLink"
-                                                href={"/blog"}
+                                                href={"/blogs"}
                                                 onClick={() => closeMore_Open()}
                                                 className={`group cursor-pointer hover:border-s-[2px] hover:border-alpha hover:bg-alpha/10 flex ${selectedLanguage == "ar" ? "flex-row-reverse" : ""
                                                     } items-center gap-3 px-3 py-1 transition duration-300 `}
@@ -425,7 +425,7 @@ const Navbar = () => {
                                             </a>
                                             <a
                                                 id="mediaLink"
-                                                href={"/galerie"}
+                                                href={"/gallery"}
                                                 onClick={() => closeMore_Open()}
                                                 className={`group cursor-pointer hover:border-s-[2px] hover:border-alpha hover:bg-alpha/10 flex ${selectedLanguage == "ar" ? "flex-row-reverse" : ""
                                                     } items-center gap-3 px-3 py-1 transition duration-300 `}
@@ -485,7 +485,7 @@ const Navbar = () => {
                                             {LANGS.map(({ code, label, flag }, index) => (
                                                 <div
                                                     key={index}
-                                                    onClick={() => {setSelectedLanguage(code)}}
+                                                    onClick={() => { setSelectedLanguage(code) }}
                                                     className={`flex justify-start gap-2 px-3 py-1  cursor-pointer  ${darkMode
                                                         ? "hover:bg-gray-600"
                                                         : "hover:bg-gray-200"

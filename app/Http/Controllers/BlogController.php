@@ -18,6 +18,23 @@ class BlogController extends Controller
         ]);
     }
 
+    public function clientIndex()
+    {
+        $blogs = Blog::all();
+        return Inertia::render('client/blogs/index', [
+            'blogs' => $blogs,
+        ]);
+    }
+
+    public function clientShow(Blog $blog)
+    {
+        $blogs = Blog::all();
+        return Inertia::render('client/blogs/partials/[id]', [
+            'blogs' => $blogs,
+            'blog' => $blog
+        ]);
+    }
+
     public function create()
     {
         return Inertia::render('admin/blogs/partials/blogCreate', [

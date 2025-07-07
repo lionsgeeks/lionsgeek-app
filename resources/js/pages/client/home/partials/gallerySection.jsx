@@ -3,6 +3,7 @@ import { TransText } from "../../../../components/TransText";
 import SubstringText from "../../../../components/SubStringText";
 import "./gallerySection.css"
 import { Image } from "lucide-react";
+import { usePage } from "@inertiajs/react";
 
 export default function GallerySection() {
     const [count, setCount] = useState(0);
@@ -10,9 +11,9 @@ export default function GallerySection() {
     const [onScroll, setOnScroll] = useState(false);
 
     const darkMode = true;
-    const galleries = [];
+
+    const { galleries } = usePage().props
     const selectedLanguage = "en";
-    const IMAGEURL = '';
 
 
 
@@ -84,15 +85,16 @@ export default function GallerySection() {
                                             <img
                                                 loading="lazy"
                                                 className="size-full object-cover"
-                                                src={`${IMAGEURL + "/gallery/"}${element.couverture}`}
+                                                src={`${"/storage/images/gallery/"}${element.couverture}`}
                                                 alt="gallery"
                                             />
+
                                             <div className="w-full absolute z-10 duration-700 transition-all flex flex-col translate-y-[150%] group-hover:translate-y-0 pl-6 pr-4 pb-4">
                                                 <h1 className="font-medium text-xl duration-700 truncate transition-all text-white">
-                                                    <TransText {...element.title} />
+                                                    <TransText {...JSON.parse(element.title)} />
                                                 </h1>
                                                 <p className="text-white">
-                                                    <SubstringText text={element.description[selectedLanguage]} length={120} />
+                                                    <SubstringText text={JSON.parse(element.description)[selectedLanguage]} length={120} />
                                                 </p>
                                             </div>
                                         </div>
