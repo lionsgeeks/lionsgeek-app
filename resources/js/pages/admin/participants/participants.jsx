@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
 import { Image, Search } from 'lucide-react';
+import ParticipantCard from './partials/ParticipantCard';
 // import Image from 'next/image';
 
 export default function Participants() {
@@ -70,41 +71,9 @@ export default function Participants() {
                 </div>
 
                 {/* Participants Grid */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {participants.map((participant, index) => (
-                        <Card key={index} className="overflow-hidden">
-                            <div className="relative">
-                                <Image
-                                    src={participant.image || '/placeholder.svg'}
-                                    alt={participant.full_name}
-                                    width={300}
-                                    height={200}
-                                    className="h-48 w-full object-cover"
-                                />
-                                <div className="absolute top-2 left-2 flex gap-2">
-                                    <Badge variant="secondary" className="bg-black text-white">
-                                        {participant.current_step.replaceAll('_', ' ')}
-                                    </Badge>
-                                    <Badge
-                                        variant={participant.confirmation ? 'default' : 'destructive'}
-                                        className={participant.confirmation ? 'bg-green-500' : 'bg-red-500'}
-                                    >
-                                        {participant.confirmation ? 'Confirmed' : 'Not Confirmed'}
-                                    </Badge>
-                                </div>
-                            </div>
-                            <CardContent className="p-4 flex flex-col gap-3 ">
-                                <div>
-                                    <h3 className="mb-1 text-lg font-semibold">{participant.full_name}</h3>
-                                    <p className="mb-1 text-sm text-gray-600 capitalize">{participant.city}</p>
-                                    <p className="text-sm text-gray-600 capitalize">{participant.prefecture.replaceAll('_', ' ')}</p>
-                                </div>
-                                <div className='flex flexcol gap-2'>
-                                    <Button variant='default'>Next Step</Button>
-                                    <Button variant='destructive'>Deny</Button>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <ParticipantCard key={index} participant={participant}/>
                     ))}
                 </div>
             </div>

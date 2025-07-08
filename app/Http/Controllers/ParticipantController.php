@@ -12,9 +12,11 @@ use Illuminate\Support\Facades\Mail;
 use LaravelQRCode\Facades\QRCode;
 use App\Mail\CodeMail;
 use App\Models\FrequentQuestion;
+use App\Models\Note;
 use App\Models\Satisfaction;
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Support\Facades\Auth;
 
 class ParticipantController extends Controller
 {
@@ -134,9 +136,18 @@ class ParticipantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Participant $participant)
     {
-        //
+        // dd($participant);
+        return Inertia::render('admin/participants/[id]', [
+            'participant' => $participant->load([
+                'infoSession',
+                'notes',
+                'questions',
+                'satisfaction',
+                'confirmation'
+            ])
+        ]);
     }
 
     /**
@@ -161,5 +172,76 @@ class ParticipantController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    // Change participant current step 
+    public function step(Request $request, Participant $participant)
+    {
+        $request->validate([
+            'action' => 'required'
+        ]);
+        // the action value of the submit buttons in the form
+        $action = $request->input("action");
+        // this is for determining either coding/media
+        $formation = strtolower($participant->infoSession->formation);
+        $school = $formation . "_school";
+        // dd($school);
+
+        if ($action == "daz") {
+            $participant->update([
+                'current_step' => 'interview_pending'
+            ]);
+            return back()->with('success', 'Participant in Pending Interview');
+        }
+
+        if ($participant->current_step == "interview" || $participant->current_step == "interview_pending") {
+            $participant->update([
+                "current_step" => $action == "next" ? "jungle" : "interview_failed",
+            ]);
+            return back()->with('success', $action == "next" ? "Move To Jungle" : "Participant Has Failed");
+        } elseif ($participant->current_step == "jungle") {
+            $participant->update([
+                "current_step" => $action == "next" ? $school : "jungle" . "_failed",
+            ]);
+            return back()->with('success', $action == "next" ? "Move To School" : "Participant Has Failed");
+        }
+    }
+    public function frequentQuestions(Request $request, Participant $participant)
+    {
+
+        $frequents = $participant->questions;
+        foreach ($request->all() as $field => $value) {
+            if ($field != "_token") {
+                $frequents->update([
+                    $field => $value ?? $frequents->$field,
+                ]);
+            }
+        }
+
+        return redirect()->back()->with("success", "Form submitted successfully!");
+    }
+
+
+
+    public function updateSatisfaction(Request $request, Participant $participant)
+    {
+        foreach ($request->all() as $key => $column) {
+            $participant->satisfaction->{$key} = $request->$key;
+        }
+        $participant->satisfaction->save();
+        return back()->with("success", "Satisfaction data saved successfully!");
+    }
+    public function notes(Request $request, Participant $participant)
+    {
+        // dd($request);
+        $request->validate([
+            'note' => 'required|string',
+        ]);
+        $user = Auth::user();
+        Note::create([
+            'note' => $request->note,
+            'participant_id' => $participant->id,
+            'author' => $user->name,
+        ]);
+        return back()->with("success", "Note Has Been Added successfully!");
     }
 }
