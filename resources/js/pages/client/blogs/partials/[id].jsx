@@ -45,7 +45,7 @@ export default function BlogDetails() {
                                                 {JSON.parse(blg.title)[selectedLanguage]}
                                             </p>
 
-                                            <div style={{ color: "#ffffff", fontSize: "9px", color: darkMode ? "#ffffff" : "#0f0f0f" }}
+                                            <div style={{ fontSize: "9px", color: darkMode ? "#ffffff" : "#0f0f0f" }}
                                                 dangerouslySetInnerHTML={{
                                                     __html: JSON.parse(blg.description)[selectedLanguage].length > 70 ?
                                                         JSON.parse(blg.description)[selectedLanguage].slice(0, 70) + '...' :
