@@ -8,7 +8,7 @@ import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 export const Footer = () => {
     const selectedLanguage = "en";
     const URL = '';
-    const darkMode = true;
+    const darkMode = false;
     const date = new Date();
     const currentYear = date.getFullYear();
     const [subscriber, setSubscriber] = useState("");

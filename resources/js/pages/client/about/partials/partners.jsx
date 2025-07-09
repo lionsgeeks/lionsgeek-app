@@ -8,7 +8,7 @@ import part6 from "../../../../../assets/images/partners/partner-6.png"
 import part7 from "../../../../../assets/images/partners/partner-7.png"
 
 export const Partners = () => {
-    const darkMode = true;
+    const darkMode = false;
     return (
         <div className={`${darkMode && "bg-[#0f0f0f]"} px-16 py-20`}>
             <div className="overflow-hidden flex flex-col gap-6 items-center justify-between">

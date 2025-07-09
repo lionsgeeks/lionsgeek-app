@@ -8,17 +8,27 @@ import {
     TrainingSection,
     WhoSection,
 } from "./partials";
+import { Head } from "@inertiajs/react";
+
+
+const breadcrumbs = [
+    {
+        title: 'Homepage',
+        href: '/',
+    },
+];
 
 export default function Home() {
-
+    const upcomingEvent = false;
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Homepage" />
             <HeroSection />
             <WhoSection />
             <ServicesSection />
             <Partners />
-            {/* {upcomingEvent && <EventSection />} */}
+            {upcomingEvent && <EventSection />}
             <TrainingSection />
             <GallerySection />
         </AppLayout>

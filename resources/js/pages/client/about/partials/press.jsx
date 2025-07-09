@@ -2,7 +2,7 @@ import { usePage } from '@inertiajs/react';
 
 export const Press = () => {
     const selectedLanguage = "en";
-    const darkMode = true;
+    const darkMode = false;
     const { presses } = usePage().props;
     console.log("hhhhh:", presses);
 

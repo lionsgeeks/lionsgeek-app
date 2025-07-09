@@ -7,7 +7,7 @@ export const BlogContentsSection = () => {
     const { blogs } = usePage().props;
 
     const selectedLanguage = 'en'
-    const darkMode = true;
+    const darkMode = false;
 
     const formatDate = (date) => {
         return new Date(date).toLocaleDateString("en-US", {

@@ -4,7 +4,7 @@ import { TransText } from "../../../../components/TransText";
 
 export const Pillers = () => {
     const selectedLanguage = "en";
-    const darkMode = true;
+    const darkMode = false;
 
     return (
         <div

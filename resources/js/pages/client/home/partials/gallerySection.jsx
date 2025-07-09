@@ -10,7 +10,7 @@ export default function GallerySection() {
     const [onLoop, setOnLoop] = useState(true);
     const [onScroll, setOnScroll] = useState(false);
 
-    const darkMode = true;
+    const darkMode = false;
 
     const { galleries } = usePage().props
     const selectedLanguage = "en";

@@ -7,7 +7,7 @@ use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
+Route::get('/   ', function () {
     $galleries = Gallery::with('images')->get();
     return Inertia::render('client/home/home', [
         'galleries' => $galleries

@@ -1,6 +1,6 @@
 import { TransText } from "@/components/TransText";
 
-const darkMode = true;
+const darkMode = false;
 const selectedLanguage = "en";
 
 const ServiceSvg = ({ children, className, ...rest }) => {

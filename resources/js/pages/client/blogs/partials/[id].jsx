@@ -5,7 +5,7 @@ export default function BlogDetails() {
     const { blogs, blog } = usePage().props;
 
     const selectedLanguage = "en";
-    const darkMode = true;
+    const darkMode = false;
 
     return (
         <AppLayout>

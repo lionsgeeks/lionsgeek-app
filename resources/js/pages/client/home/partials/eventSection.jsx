@@ -3,9 +3,9 @@ import SubstringText from "../../../../components/SubStringText";
 
 const EventSection = () => {
     const selectedLanguage = "en";
-    const upcomingEvent = "idk"
+    const upcomingEvent = [];
     const IMAGEURL = '';
-    const darkMode = true;
+    const darkMode = false;
 
     const checkDate = () => {
         const currentDate = new Date();
@@ -19,7 +19,7 @@ const EventSection = () => {
     };
     return (
         <div
-            style={{ backgroundColor: darkMode ? "#0f0f0f" : "" }}
+            style={{ backgroundColor: darkMode ? "#0f0f0f" : "#ffffff" }}
             className={`flex md:mb-0 mb-10 flex-col lg:gap-16 px-7 md:px-16 py-2 md:py-12 relative before:absolute ${darkMode ? "before:bg-[#252529]" : "before:bg-beta"} before:h-[87.5%] md:before:h-2/3 before:inset-0 md:before:top-1/2 before:top-2/3  before:-translate-y-1/2 before:-z-10 ${selectedLanguage === "ar" ? "md:flex-row-reverse" : "md:flex-row"
                 }`}
         >

@@ -22,11 +22,11 @@ export default function CardsSection({ events = [], IMAGEURL = "http://127.0.0.1
     }
 
     return (
-        <div className="flex justify-center items-center md:px-20 px-6 py-14 bg-[#0f0f0f]">
+        <div className="flex justify-center items-center md:px-20 px-6 py-14">
             <div className="flex flex-wrap w-full lg:gap-x-[calc(10%/2)] lg:gap-y-14 md:gap-x-[calc(4%/1)] gap-10">
                 <div id="cards" className="w-full text-center lg:pt-5 lg:px-0 px-6">
-                    <h1 className="text-xl text-white">Our Upcoming Events</h1>
-                    <h1 className="text-5xl font-bold text-white">Discover What's Next</h1>
+                    <h1 className="text-xl ">Our Upcoming Events</h1>
+                    <h1 className="text-5xl font-bold ">Discover What's Next</h1>
                 </div>
 
                 {events.length > 0 ? (

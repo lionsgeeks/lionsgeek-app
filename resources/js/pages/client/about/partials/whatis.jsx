@@ -1,6 +1,6 @@
 import AppLayout  from "@/layouts/app-layout";
 const WhatIsLionsGeek = () => {
-    const darkMode = true;
+    const darkMode = false;
 
     return (
         <AppLayout>

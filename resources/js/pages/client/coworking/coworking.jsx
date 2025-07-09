@@ -113,7 +113,7 @@ const Coworking = () => {
         <>
             <AppLayout>
 
-                <div className="min-h-screen bg-[#0f0f0f] text-white">
+                <div className="min-h-screen ">
 
                     <div className="grid lg:grid-cols-2 mx-10 mt-20 gap-20 items-center">
 
@@ -140,30 +140,29 @@ const Coworking = () => {
                         </div>
                     </div>
                 </div>
-                <div className="bg-[#0f0f0f] pb-14 px-4 sm:px-6 lg:px-8">
+                <div className=" pb-14 px-4 sm:px-6 lg:px-8">
                     <div className="max-w-7xl mx-auto">
 
                         <div className="text-center mb-16">
-                            <h1 className="text-lg text-white mb-2">
+                            <h1 className="text-lg  mb-2">
                                 Services
                             </h1>
-                            <h2 className="text-5xl font-bold text-white">
+                            <h2 className="text-5xl font-bold ">
                                 Nos Services Inclus
                             </h2>
                         </div>
 
                         <div className="grid grid-cols-3 gap-x-20 gap-y-8">
                             {services.map((service, index) => (
-                                <div key={index} className="bg-[#212529] rounded-2xl shadow-xl overflow-hidden">
+                                <div key={index} className=" rounded-2xl shadow-xl overflow-hidden">
                                     <div className="px-5 py-8 flex flex-col items-center justify-center gap-2">
 
-                                        {/* <FontAwesomeIcon icon={service.icon} className="text-alpha font-bold text-6xl mb-4" /> */}
                                         {service.icon}
-                                        <h3 className="text-xl font-bold text-white ml-4">
+                                        <h3 className="text-xl font-bold  ml-4">
                                             {service.title}
                                         </h3>
 
-                                        <p className="text-white text-sm text-center px-5">
+                                        <p className=" text-sm text-center px-5">
                                             {service.description}
                                         </p>
                                     </div>
@@ -174,12 +173,12 @@ const Coworking = () => {
                     </div>
                 </div>
 
-                <div className="bg-[#0f0f0f] flex flex-col gap-12 text-center">
+                <div className=" flex flex-col gap-12 text-center">
                     <div>
-                        <h1 className="text-lg text-white mb-2 mt-24">
+                        <h1 className="text-lg  mb-2 mt-24">
                             Espace de Travail
                         </h1>
-                        <h2 className="text-5xl font-extrabold text-white">
+                        <h2 className="text-5xl font-extrabold ">
                             Explorez Notre Espace
                         </h2>
                     </div>
@@ -197,12 +196,12 @@ const Coworking = () => {
                     </div>
                 </div>
 
-                <div className="bg-[#0f0f0f] flex flex-col gap-12 text-center pb-16">
+                <div className=" flex flex-col gap-12 text-center pb-16">
                     <div>
-                        <h1 className="text-lg text-white mb-2 mt-32">
+                        <h1 className="text-lg  mb-2 mt-32">
                             Témoignages
                         </h1>
-                        <h2 className="text-5xl font-extrabold text-white">
+                        <h2 className="text-5xl font-extrabold ">
                             Les Gens Qui Nous Aiment Déjà
                         </h2>
                     </div>
@@ -210,7 +209,7 @@ const Coworking = () => {
                         {testimoniels.map((element, index) => (
                             <div
                                 key={index}
-                                className="w-full md:w-[45%] lg:w-[30%] flex flex-col gap-2 relative overflow-hidden bg-[#212529] p-5 lg:p-8 rounded-lg"
+                                className="w-full md:w-[45%] lg:w-[30%] flex flex-col gap-2 relative overflow-hidden shadow-md p-5 lg:p-8 rounded-lg"
                             >
                                 <div className="flex gap-3 items-center">
                                     <img
@@ -220,7 +219,7 @@ const Coworking = () => {
                                         alt=""
                                     />
                                     <p
-                                        className="text-white text-base font-bold"
+                                        className=" text-base font-bold"
                                     >
                                         {element.name}
                                     </p>
@@ -228,7 +227,7 @@ const Coworking = () => {
                                 <div className="absolute -top-4 -right-4 bg-alpha/70 p-5 object-cover rounded-full opacity-80">
                                     <RiDoubleQuotesR className="text-5xl" />
                                 </div>
-                                <p className="text-white text-md lg:text-base text-start">
+                                <p className=" text-md lg:text-base text-start">
                                     {element.description}
                                 </p>
                             </div>

@@ -56,7 +56,7 @@
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
 
-    --color-sidebar: #0a0a0a;
+    --color-sidebar: #121212;
     --color-sidebar-foreground: #ffffff;
     --color-sidebar-primary: var(--sidebar-primary);
     --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
@@ -120,6 +120,7 @@
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.87 0 0);
 }
+
 /*
 .dark {
     --background: oklch(0.145 0 0);
@@ -221,4 +222,16 @@
         left: 100%;
         /* End position */
     }
+}
+
+.no-scrollbar {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* Internet Explorer 10+ */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+    /* Safari and Chrome */
 }

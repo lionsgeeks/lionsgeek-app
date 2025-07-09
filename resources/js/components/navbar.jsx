@@ -41,7 +41,7 @@ const Navbar = () => {
     const [aboutMenu, setAboutMenu] = useState(false);
     const [languageIsOpen, setLanguageIsOpen] = useState(false);
 
-    const [darkMode, setDarkMode] = useState(true);
+    const [darkMode, setDarkMode] = useState(false);
     const toggleDarkMode = () => {
         // tempo code
         setDarkMode(!darkMode);

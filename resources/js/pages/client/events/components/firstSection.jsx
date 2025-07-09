@@ -23,16 +23,16 @@ export default function FirstSectionEvent() {
 
     return (
 
-            <div className="flex lg:flex-row flex-col-reverse overflow-x-hidden bg-[#0f0f0f] justify-between w-full lg:px-5 lg:pt-[3.5em] pt-[3rem] pb-[5em]">
+            <div className="flex lg:flex-row flex-col-reverse overflow-x-hidden  justify-between w-full lg:px-5 lg:pt-[3.5em] pt-[3rem] pb-[5em]">
                 <div ref={leftside} className="flex justify-center items-center lg:w-[50%] w-full">
                     <div className="lg:px-16 px-3 flex flex-col gap-6 w-full">
-                        <h1 className=" font-bold lg:text-[60px] text-[45px] text-start text-white">
+                        <h1 className=" font-bold lg:text-[60px] text-[45px] text-starts">
                             Inovation & Inspiration
                         </h1>
-                        <p className="text-lg text-white">
+                        <p className="text-lgs">
                             Join our tech innovation events and ignite your creativity. Be inspired by visionary ideas and transform your perspective. Discover new possibilities and expand your horizons.
                         </p>
-                        <p className="font-light flex gap-2 text-lg text-white">
+                        <p className="font-light flex gap-2 text-lgs">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"

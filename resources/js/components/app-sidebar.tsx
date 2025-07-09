@@ -3,10 +3,11 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, BriefcaseBusiness, Calendar, GalleryHorizontalEnd, LayoutGrid, MicVocal, Mic, Users } from 'lucide-react';
+import { BookOpen, BriefcaseBusiness, Calendar, Camera, CircleArrowDown, CircleArrowUp, Code, FolderKanban, GalleryHorizontal, GalleryHorizontalEnd, HeartHandshake, Home, LayoutGrid, MessageCircleQuestion, Mic, MicVocal, UserPen, Users } from 'lucide-react';
 import AppLogo from './app-logo';
+import { useState } from 'react';
 
-const mainNavItems: NavItem[] = [
+const adminNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/dashboard',
@@ -49,8 +50,62 @@ const mainNavItems: NavItem[] = [
     }
 ];
 
+const userNavItems: NavItem[] = [
+    {
+        title: 'Home',
+        href: '/home',
+        icon: Home,
+    },
+    {
+        title: 'Coding',
+        href: '/coding',
+        icon: Code,
+    },
+    {
+        title: 'Media',
+        href: '/media',
+        icon: Camera,
+    },
+    {
+        title: 'Coworking',
+        href: '/coworking',
+        icon: HeartHandshake,
+    },
+    {
+        title: 'Events',
+        href: '/events',
+        icon: Calendar,
+    },
+    {
+        title: 'LionsGeek Pro',
+        href: '/pro',
+        icon: FolderKanban,
+    },
+    {
+        title: 'About',
+        href: '/about',
+        icon: MessageCircleQuestion,
+    },
+    {
+        title: 'Blog',
+        href: '/blog',
+        icon: BookOpen,
+    },
+    {
+        title: 'Gallery',
+        href: '/gallery',
+        icon: GalleryHorizontal,
+    },
+    {
+        title: 'Contact',
+        href: '/contact',
+        icon: UserPen,
+    },
+]
+
 
 export function AppSidebar() {
+    const [showUserItems, setShowUserItems] = useState(false);
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -65,8 +120,27 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
-                <NavMain items={mainNavItems} />
+            <SidebarContent className="overflow-auto no-scrollbar">
+                <NavMain items={adminNavItems} title='' />
+
+                <div className='flex items-center justify-center gap-2 cursor-pointer mt-2'
+                    onClick={() => { setShowUserItems(!showUserItems) }}
+                >
+                    <p className='underline text-center'>
+                        {showUserItems ? 'Hide' : 'Show'} {userNavItems.length} Front Pages
+                    </p>
+                    {
+                        showUserItems ?
+                            <CircleArrowUp size={16} />
+                            :
+
+                            <CircleArrowDown size={16} />
+                    }
+                </div>
+                {
+                    showUserItems &&
+                    <NavMain items={userNavItems} />
+                }
             </SidebarContent>
 
             <SidebarFooter>

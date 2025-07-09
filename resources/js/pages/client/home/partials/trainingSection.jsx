@@ -2,7 +2,7 @@ import { TransText } from "@/components/TransText";
 import { Link } from "@inertiajs/react";
 
 const TrainingSection = () => {
-    const darkMode = true;
+    const darkMode = false;
     const selectedLanguage = "en";
 
     return (

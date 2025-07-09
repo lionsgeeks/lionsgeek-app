@@ -3,7 +3,7 @@ import { TransText } from "../../../../components/TransText";
 
 export const Stats = () => {
     const selectedLanguage = "en";
-    const darkMode = true;
+    const darkMode = false;
     const stats = [
         {
             icon: (

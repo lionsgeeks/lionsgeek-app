@@ -11,7 +11,7 @@ const breadcrumbs = [
 ];
 export default function AlbumPage() {
     const { gallery } = usePage().props;
-    const darkMode = true;
+    const darkMode = false;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

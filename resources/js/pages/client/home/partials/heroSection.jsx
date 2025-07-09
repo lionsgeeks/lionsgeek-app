@@ -2,7 +2,7 @@ import { TransText } from "@/components/TransText";
 import {Button} from "@/components/Button";
 
 export default function HeroSection() {
-    const darkMode = true;
+    const darkMode = false;
     const selectedLanguage = "en";
 
     const pillars = [
@@ -223,7 +223,7 @@ c-88 329 -98 355 -139 355 -26 0 -60 -30 -60 -53 0 -34 187 -727 201 -743 10
     ];
 
     return (
-        <div className="px-7 md:px-16 text- text-balance pt-6 py-12 flex flex-col justify-between gap-6 md:gap-12" style={{ backgroundColor: darkMode ? "#0f0f0f" : "#ffffff" }}>
+        <div className="px-7 md:px-16 text- text-balance pt-6 py-12 mt-12 flex flex-col justify-between gap-6 md:gap-12" style={{ backgroundColor: darkMode ? "#0f0f0f" : "#ffffff" }}>
             <div className="bg-image h-[70vh] bg-no-repeat bg-center bg-cover md:h-[calc(calc(100vh-67.11px)*2/3)] rounded-lg overflow-hidden p-12 relative after:absolute after:size-full after:inset-0 after:bg-beta/50">
                 <div
                     className={`flex flex-col  gap-4 absolute z-10 top-1/2 -translate-y-1/2 lg:w-[calc(calc(100%-6rem)*0.5)] ${selectedLanguage === "ar" ? "items-end right-12" : "items-start left-12"
