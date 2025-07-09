@@ -1,11 +1,9 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
-import { Image, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import ParticipantCard from './partials/ParticipantCard';
 // import Image from 'next/image';
 
@@ -26,10 +24,14 @@ export default function Participants() {
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Participants</h1>
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                            Export Questions
-                        </Button>
-                        <Button size="sm">Export Students</Button>
+                        <a href="/admin/questions/export">
+                            <Button variant="outline" size="sm">
+                                Export Questions
+                            </Button>
+                        </a>
+                        <a href={'/admin/participant/export'}>
+                            <Button size="sm">Export Students</Button>
+                        </a>
                     </div>
                 </div>
 
@@ -73,7 +75,7 @@ export default function Participants() {
                 {/* Participants Grid */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {participants.map((participant, index) => (
-                        <ParticipantCard key={index} participant={participant}/>
+                        <ParticipantCard key={index} participant={participant} />
                     ))}
                 </div>
             </div>

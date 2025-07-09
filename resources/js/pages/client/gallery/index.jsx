@@ -12,6 +12,13 @@ import { GrFormPreviousLink, GrFormNextLink } from "react-icons/gr";
 import { TransText } from "../../../components/TransText";
 import SubstringText from "../../../components/SubstringText";
 
+const breadcrumbs = [
+    {
+        title: 'Gallery',
+        href: '/gallery',
+    },
+];
+
 export default function GalleryPage() {
 
     const slider = useRef(null);
@@ -26,7 +33,6 @@ export default function GalleryPage() {
 
 
     const { galleries } = usePage().props;
-    const IMAGEURL = '';
     const selectedLanguage = 'en';
 
     //* to update length of description text based on screen width
@@ -54,7 +60,7 @@ export default function GalleryPage() {
 
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gallery" />
 
             <div className="md:h-screen h-[80vh] w-full overflow-hidden grid place-items-center pt-14">

@@ -87,6 +87,8 @@ class GalleryController extends Controller
                 ]);
             }
         }
+
+        return back()->with('success', 'Gallery Has Been Created Successfully!');
     }
 
 
@@ -138,6 +140,8 @@ class GalleryController extends Controller
                 ]);
             }
         }
+
+        return back()->with('success', 'Gallery Has Been Updated Successfully!');
     }
 
 
@@ -153,9 +157,11 @@ class GalleryController extends Controller
                 $image->erase();
             }
             $gallery->delete();
+            return back()->with('success', 'Gallery Has Been Deleted Successfully!');
         }
+
         if (!$gallery) {
-            return back();
+            return back()->with('error', 'Gallery Does Not Exist or Has Been Deleted!');
         }
     }
 }

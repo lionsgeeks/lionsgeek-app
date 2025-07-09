@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ParticipantExport;
+use App\Exports\QuestionsExport;
 use App\Models\InfoSession;
 use App\Models\Participant;
 use Illuminate\Http\Request;
@@ -17,6 +19,7 @@ use App\Models\Satisfaction;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ParticipantController extends Controller
 {
@@ -244,4 +247,18 @@ class ParticipantController extends Controller
         ]);
         return back()->with("success", "Note Has Been Added successfully!");
     }
+
+    // export participants
+    public function export()
+    {
+        // dd();
+        $date = (new DateTime())->format('F_d_Y');
+        return (new ParticipantExport())->download($date . '_participants.xlsx');
+    }
+    public function questionsExport()
+    {
+        $date = (new DateTime())->format('F_d_Y');
+        return Excel::download(new QuestionsExport, $date . '_questions.xlsx');
+    }
+
 }

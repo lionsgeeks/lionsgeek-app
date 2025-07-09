@@ -1,9 +1,9 @@
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import { Pen } from 'lucide-react';
+import { Pen, PenLine, PlusIcon } from 'lucide-react';
 
 export default function GalleryStore({ gallery }) {
     const { data, setData, post, put } = useForm({
@@ -69,9 +69,17 @@ export default function GalleryStore({ gallery }) {
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <Button className="hover:bg-alpha hover:text-black transition-all duration-150">
-                        {gallery ? <Pen /> : 'Create Gallery'}
-                    </Button>
+                    <div className='cursor-pointer'>
+                        {
+                            gallery ? <PenLine /> :
+                                <div className='flex items-center justify-center h-full group w-full border-dashed border-1 border-black rounded-lg'>
+                                    <div className='flex flex-col gap-2 items-center group-hover:scale-110 transition-all duration-150'>
+                                        <PlusIcon size={40} />
+                                        <p className='text-lg'>Create Gallery</p>
+                                    </div>
+                                </div>
+                        }
+                    </div>
                 </DialogTrigger>
                 <DialogContent className="min-w-[40vw]">
                     <DialogTitle>Add a Gallery</DialogTitle>
