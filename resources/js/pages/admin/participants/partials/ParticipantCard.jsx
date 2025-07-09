@@ -48,6 +48,7 @@ const ParticipantCard = ({ participant }) => {
             <CardContent className="flex flex-col gap-3 p-4">
                 <div>
                     <h3 className="mb-1 text-lg font-semibold">{participant.full_name}</h3>
+                    <h3 className="mb-1">{participant.email}</h3>
                     <p className="mb-1 text-sm text-gray-600 capitalize">{participant.city}</p>
                     <p className="text-sm text-gray-600 capitalize">{participant.prefecture.replaceAll('_', ' ')}</p>
                 </div>

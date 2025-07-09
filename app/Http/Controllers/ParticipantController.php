@@ -29,8 +29,10 @@ class ParticipantController extends Controller
     public function index()
     {
         $participants = Participant::with(['infoSession', 'confirmation'])->get();
+        $infosessions = InfoSession::all();
         return Inertia::render('admin/participants/participants', [
             'participants' => $participants,
+            'infosessions' => $infosessions,
         ]);
     }
 
