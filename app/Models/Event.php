@@ -8,17 +8,15 @@ class Event extends Model
 {
     protected $fillable = [
         "name",
-        "location",
         "description",
         "date",
-        "price",
+        "capacity",
         "cover"
     ] ;
 
     protected $casts = [
-        'name' => 'object',
-        'description' => 'object',
-        'location' => 'object',
+        'name' => 'array',
+        'description' => 'array',
     ];
     public function attendances()
     {

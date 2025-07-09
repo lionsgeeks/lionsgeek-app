@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { usePage } from "@inertiajs/react";
 import BookingModal from "./bookingmodal";
 import musicFestivalImage from "../../../../../assets/images/events.jpg";
 
@@ -9,50 +10,13 @@ const darkMode = false;
 
 const t = (translations) => translations[selectedLanguage] || translations.en;
 
-const events = [
-  {
-    id: "1",
-    name: {
-      en: "Music Festival",
-      fr: "Festival de Musique",
-      ar: "مهرجان الموسيقى"
-    },
-    location: {
-      en: "Rabat",
-      fr: "Rabat",
-      ar: "الرباط"
-    },
-    description: {
-      en: "Enjoy a night of unforgettable performances.",
-      fr: "Profitez d'une nuit de performances inoubliables.",
-      ar: "استمتع بليلة من العروض التي لا تُنسى."
-    },
-    date: "2025-07-15T20:00:00",
-    price: "150",
-    cover: "music-festival.jpg"
-  },
-  {
-    id: "2",
-    name: {
-      en: "bojo",
-      fr: "Festival de Musique",
-      ar: "مهرجان الموسيقى"
-    },
-    location: {
-      en: "Rabat",
-      fr: "Rabat",
-      ar: "الرباط"
-    },
-    description: {
-      en: "Enjoy a night of unforgettable performances.",
-      fr: "Profitez d'une nuit de performances inoubliables.",
-      ar: "استمتع بليلة من العروض التي لا تُنسى."
-    },
-    date: "2025-07-15T20:00:00",
-    price: "150",
-    cover: "music-festival.jpg"
-}
-];
+const getMultilingualText = (textObj, language = selectedLanguage) => {
+    if (typeof textObj === 'string') return textObj;
+    if (typeof textObj === 'object' && textObj !== null) {
+        return textObj[language] || textObj.en || textObj.fr || textObj.ar || '';
+    }
+    return '';
+};
 
 
 
@@ -125,21 +89,19 @@ const BookingSection = ({ event }) => {
   );
 };
 
-export default function FirstSectionEventDetail() {
-  const [event, setEvent] = useState();
+export default function FirstSectionEventDetail({ event: eventProp }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { props } = usePage();
+  const appUrl = props.ziggy?.url || window.location.origin;
 
-  const id = "2";
+  // Use eventProp instead of undefined event variable
+  const event = eventProp;
 
   useEffect(() => {
-    const found = events.filter((element) => element.id === id);
-    setEvent(found);
-  }, [id]);
-
-  useEffect(() => {
-    if (event && event[0]?.date) {
+    if (event?.date) {
       const timer = setInterval(() => {
-        const updatedTimeLeft = calculateTimeLeft(event[0].date);
+        const updatedTimeLeft = calculateTimeLeft(event.date);
         setTimeLeft(updatedTimeLeft);
         if (Object.values(updatedTimeLeft).every(value => value === 0)) clearInterval(timer);
       }, 1000);
@@ -166,23 +128,24 @@ export default function FirstSectionEventDetail() {
   }, [event]);
 
   return (
+
     <>
       {event ? (
         <div id="eventDet" className={`h-fit lg:p-16 p-7 lg:pt-24 md:pt-40 pt-28 ${darkMode ? "bg-[#0f0f0f]" : "bg-white"}`}>
           <div className="first w-full gap-5 rounded-l-lg flex">
             <div className="lg:flex lg:flex-col">
               <div className="bg-alpha rounded-t-lg px-2 h-[40%] flex items-center justify-center font-bold text-white text-lg">
-                {new Date(event[0].date).toLocaleDateString(selectedLanguage === "ar" ? 'ar-EG' : selectedLanguage === "fr" ? 'fr-FR' : 'en-US', { month: 'short' })}
+                {new Date(event.date).toLocaleDateString(selectedLanguage === "ar" ? 'ar-EG' : selectedLanguage === "fr" ? 'fr-FR' : 'en-US', { month: 'short' })}
               </div>
               <div className="bg-beta h-[60%] rounded-b-lg px-2 flex items-center justify-center font-semibold text-white text-2xl">
-                {new Date(event[0].date).getDate()}
+                {new Date(event.date).getDate()}
               </div>
             </div>
 
             <div className="flex flex-col gap-3">
               <div className="lg:flex gap-2 lg:text-3xl text-xl px-2">
                 <h1 className={`${darkMode ? "text-white" : "text-[#0f0f0f]"}`}>
-                  {event[0].name[selectedLanguage]}
+                  {event.name[selectedLanguage]}
                 </h1>
               </div>
               <div className="flex gap-3 text-gray-400">
@@ -191,7 +154,7 @@ export default function FirstSectionEventDetail() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                 </svg>
                 <p className={`${darkMode ? "text-white" : "text-[#0f0f0f]"}`}>
-                  {event[0].location[selectedLanguage]}
+                  {event.capacity} capacity
                 </p>
               </div>
             </div>
@@ -202,9 +165,8 @@ export default function FirstSectionEventDetail() {
               <img
                 loading="lazy"
                 className="lg:h-[25rem] md:h-[25rem] w-[100%] rounded-lg object-cover"
-                // src={`${IMAGEURL}/events/${event[0].cover}`}
-                src={musicFestivalImage}
-                alt=""
+                src={event?.cover ? `${appUrl}/storage/${event.cover}` : musicFestivalImage}
+                alt={event?.name ? getMultilingualText(event.name) : "Event"}
               />
               <div className="shadow-sm px-4 border rounded-lg flex flex-col py-4">
                 <div className={`${darkMode ? "border-b-2 border-white" : "border-b-2 border-black"} py-3`}>
@@ -214,7 +176,7 @@ export default function FirstSectionEventDetail() {
                 </div>
                 <div className="py-4">
                   <p className={`${darkMode ? "text-white" : "text-[#0f0f0f]"}`}>
-                    {event[0].description[selectedLanguage]}
+                    {event.description[selectedLanguage]}
                   </p>
                 </div>
               </div>
@@ -230,11 +192,11 @@ export default function FirstSectionEventDetail() {
                 <TimeBlock value={timeLeft.minutes} label={t({ ar: "دقائق", fr: "Minutes", en: "Minutes" })} />
                 <TimeBlock value={timeLeft.seconds} label={t({ ar: "ثواني", fr: "Secondes", en: "Seconds" })} />
               </div>
-              <BookingSection event={event[0]} />
+              <BookingSection event={event} />
             </div>
           </div>
 
-          <BookingModal isOpen={switcher} onClose={() => switching(false)} event={event[0]} />
+          <BookingModal isOpen={switcher} onClose={() => switching(false)} event={event} />
         </div>
       ) : (
         <div className="w-full lg:pt-28 md:pt-40 pt-28 md:px-14 px-3">

@@ -3,6 +3,7 @@
 use App\Http\Controllers\CoworkingController;
 use App\Http\Controllers\PressController;
 use App\Models\Gallery;
+use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -19,6 +20,8 @@ Route::get('/event', function () {
 Route::get('/event/{event}', function () {
     return Inertia::render('client/EventDetails/eventdetail');
 })->name('event');
+
+
 Route::get('/coding', function () {
     return Inertia::render('client/coding/coding');
 })->name('coding');
@@ -63,3 +66,4 @@ require __DIR__ . '/infosession.php';
 require __DIR__ . '/gallery.php';
 require __DIR__ . '/blogs.php';
 require __DIR__ . '/participants.php';
+require __DIR__ . '/event.php';
