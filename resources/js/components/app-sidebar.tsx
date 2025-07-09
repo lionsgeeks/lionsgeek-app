@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, GalleryHorizontalEnd, LayoutGrid } from 'lucide-react';
+import { BookOpen, BriefcaseBusiness, Calendar, GalleryHorizontalEnd, LayoutGrid, MicVocal } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -18,15 +18,25 @@ const mainNavItems: NavItem[] = [
         icon: GalleryHorizontalEnd
     },
     {
+        title: 'Events',
+        href: '/admin/events',
+        icon: Calendar
+    },
+    {
         title: 'Blogs',
         href: '/admin/blogs',
         icon: BookOpen
     },
-        {
+    {
         title: 'Press',
         href: '/press',
-        icon: LayoutGrid,
+        icon: MicVocal,
     },
+    {
+        title: 'Projects',
+        href: '/admin/projects',
+        icon: BriefcaseBusiness
+    }
 ];
 
 

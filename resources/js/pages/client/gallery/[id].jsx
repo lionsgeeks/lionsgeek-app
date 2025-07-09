@@ -1,13 +1,21 @@
 import { TransText } from '../../../components/TransText';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import AppLayout from "@/layouts/app-layout"
 
+
+const breadcrumbs = [
+    {
+        title: 'Album',
+        href: '/album',
+    },
+];
 export default function AlbumPage() {
     const { gallery } = usePage().props;
     const darkMode = true;
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
+        <Head title='Album' />
             <div className='w-full p-10 lg:px-1 py-26 pt-32 ' style={{ backgroundColor: darkMode ? "#0f0f0f" : "#ffffff" }}>
                 <h1 className='text-center text-5xl font-bold pb-6' style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
                 >

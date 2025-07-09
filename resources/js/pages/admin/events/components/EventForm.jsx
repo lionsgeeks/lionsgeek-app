@@ -95,7 +95,7 @@ export default function EventForm({ event = null, onClose, onSuccess }) {
     };
 
     return (
-        <Card className="w-full max-w-4xl mx-auto">
+        <Card className="w-full max-w-4xl mx-auto p-0 shadow-none border-none">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Calendar className="h-5 w-5" />

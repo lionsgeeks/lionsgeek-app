@@ -67,3 +67,4 @@ require __DIR__ . '/gallery.php';
 require __DIR__ . '/blogs.php';
 require __DIR__ . '/participants.php';
 require __DIR__ . '/event.php';
+require __DIR__ . '/projects.php';
