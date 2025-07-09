@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->json("name");
-            $table->json("location");
             $table->json("description");
             $table->dateTime("date");
-            $table->integer("price");
+            $table->integer("capacity");
             $table->string("cover");
             $table->timestamps();
         });

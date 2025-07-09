@@ -1,13 +1,10 @@
-// import { FirstSectionEvent } from "./components/firstSection";
 import FirstSectionEventDetail from "./components/firstSection";
 import AppLayout from "@/layouts/app-layout";
 
-export default function EventDetailPage() {
+export default function EventDetailPage({ event }) {
     return (
-        <>
-            <AppLayout>
-            <FirstSectionEventDetail />
-            </AppLayout>
-        </>
+        <AppLayout>
+            <FirstSectionEventDetail event={event} />
+        </AppLayout>
     );
 }

@@ -1,12 +1,15 @@
 import "./skeleton.css";
 import { TransText } from "../../../../components/TransText";
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import musicFestivalImage from "../../../../../assets/images/events.jpg";
 
 // import { MdLocationPin, MdOutlineDateRange } from "react-icons/md";
 
-export default function CardsSection({ events = [], IMAGEURL = "" }) {
+export default function CardsSection({ events = [], IMAGEURL = "http://127.0.0.1:8000" }) {
     //   const navigate = useNavigate();
+      const { props } = usePage();
+
+  const appUrl = props.ziggy?.url || window.location.origin;
 
     // Format date to dd/mm/yyyy
     function DateComponent(backdate) {
@@ -32,14 +35,14 @@ export default function CardsSection({ events = [], IMAGEURL = "" }) {
                             key={index}
                             id="eventCard"
                             className="shadow-lg h-fit overflow-hidden flex flex-col justify-between lg:w-[30%] md:w-[48%] w-full rounded-xl cursor-pointer"
-                            onClick={() => router.visit(`/event/1`)}
+                            onClick={() => router.visit(`/events/${element.id}`)}
                             dir="ltr"
                         >
                             <div className="w-full h-[13rem]">
                                 <img
                                     loading="lazy"
-                                    // src={`${IMAGEURL}/events/${element.cover}`}
-                                    src= {musicFestivalImage}
+                                    src={`${appUrl}/storage/${element.cover}`}
+                                    // src= {musicFestivalImage}
                                     className="w-full h-full object-cover rounded-t-xl"
                                     alt="event"
                                 />
@@ -56,7 +59,7 @@ export default function CardsSection({ events = [], IMAGEURL = "" }) {
                                         </p>
                                         <p className="text-[15px] flex items-center gap-1 truncate">
                                             {/* <MdLocationPin className="fill-[#8b96af]" /> */}
-                                            Location: <TransText {...element.location} />
+                                            capacity: {element.capacity}
                                         </p>
                                     </div>
                                 </div>
