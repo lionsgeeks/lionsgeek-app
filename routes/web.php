@@ -52,11 +52,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
-    Route::get('/press', [PressController::class, 'index']);
-    Route::post('/press', [PressController::class, 'store'])->name('press.store');
-    Route::get('/admin/presses/{press}', [PressController::class, 'show'])->name('press.show');
-    Route::put('/presses/{press}', [PressController::class, 'update'])->name('press.update');
-    Route::delete('/presses/{press}', [PressController::class, 'destroy'])->name('press.destroy');
 });
 Route::get('/coworking', [CoworkingController::class, 'index']);
 
@@ -68,3 +63,4 @@ require __DIR__ . '/blogs.php';
 require __DIR__ . '/participants.php';
 require __DIR__ . '/event.php';
 require __DIR__ . '/projects.php';
+require __DIR__ . '/press.php';

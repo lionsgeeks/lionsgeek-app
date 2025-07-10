@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
+import { X } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+
+
+const breadcrumbs = [
+    {
+        title: 'Press',
+        href: '/admin/press',
+    },
+];
 
 export default function Press() {
     const { presses } = usePage().props;
@@ -78,19 +88,19 @@ export default function Press() {
         });
     };
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Press" />
 
             <div className="min-h-screen bg-gray-100 p-6">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-2xl font-bold text-gray-900"></h1>
-                        <button
+                        <Button
                             onClick={() => setShowModal(true)}
-                            className="bg-alpha font-semibold px-4 py-2 rounded-lg"
+                            className="hover:bg-alpha hover:text-black font-semibold px-4 py-2 rounded-lg"
                         >
-                            Ajouter une Press
-                        </button>
+                            Add Press
+                        </Button>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -136,7 +146,7 @@ export default function Press() {
                                         onClick={() => setShowModal(false)}
                                         className="text-xl font-bold text-gray-500 hover:text-gray-700"
                                     >
-                                        X
+                                        <X />
                                     </button>
                                 </div>
                                 <div className="flex border-b">
@@ -178,19 +188,21 @@ export default function Press() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1"> {translations[activeTab].cover}</label>
-                                        {coverPreview && (
-                                            <img src={coverPreview} alt="Cover preview" className=" object-contain h-16 mb-2 rounded-lg" />
-                                        )}
                                         <div className="flex items-center justify-center w-full">
-                                            <label className="flex flex-col items-center justify-center w-full h-20 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                    <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                                    </svg>
-                                                    <p className="mb-2 text-sm text-gray-500">
-                                                        {translations[activeTab].uploadText}
-                                                    </p>
-                                                </div>
+                                            <label className="flex flex-col items-center justify-center w-full  border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                                                {coverPreview ? (
+                                                    <img src={coverPreview} alt="Cover preview" className=" w-[250px] rounded-lg" />
+                                                )
+                                                    :
+                                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                        <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                                        </svg>
+                                                        <p className="mb-2 text-sm text-gray-500">
+                                                            Upload Cover
+                                                        </p>
+                                                    </div>
+                                                }
                                                 <input
                                                     type="file"
                                                     onChange={handleFileChange('cover')}
@@ -206,19 +218,23 @@ export default function Press() {
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             {translations[activeTab].logo}
-                                        </label>                            {logoPreview && (
-                                            <img src={logoPreview} alt="Logo preview" className="h-16  object-contain mb-2 mx-auto" />
-                                        )}
+                                        </label>
                                         <div className="flex items-center justify-center w-full">
-                                            <label className="flex flex-col items-center justify-center w-full h-20 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                    <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                                    </svg>
-                                                    <p className="mb-2 text-sm text-gray-500">
-                                                        {translations[activeTab].uploadText}
-                                                    </p>
-                                                </div>
+                                            <label className="flex flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                                                {logoPreview ? (
+                                                    <img src={logoPreview} alt="Logo preview" className="w-[250px] rounded-lg" />
+                                                )
+                                                    :
+                                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                        <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                                        </svg>
+                                                        <p className="mb-2 text-sm text-gray-500">
+                                                            Upload Logo
+                                                        </p>
+                                                    </div>
+                                                }
+
                                                 <input
                                                     type="file"
                                                     onChange={handleFileChange('logo')}
@@ -234,7 +250,8 @@ export default function Press() {
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             {translations[activeTab].link}
-                                        </label>                            <input
+                                        </label>
+                                        <input
                                             type="url"
                                             value={data.link}
                                             onChange={(e) => setData('link', e.target.value)}
@@ -247,10 +264,10 @@ export default function Press() {
                                     </div>
 
                                     <div className="pt-2">
-                                        <button
+                                        <Button
                                             type="submit"
                                             disabled={processing}
-                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+                                            className="w-full hover:bg-alpha hover:text-black"
                                         >
                                             {processing ? (
                                                 <span className="flex items-center justify-center">
@@ -260,8 +277,11 @@ export default function Press() {
                                                     </svg>
                                                     Processing...
                                                 </span>
-                                            ) : translations[activeTab].submit}
-                                        </button>
+                                            )
+                                                :
+                                                'Submit'
+                                            }
+                                        </Button>
                                     </div>
                                 </form>
                             </div>

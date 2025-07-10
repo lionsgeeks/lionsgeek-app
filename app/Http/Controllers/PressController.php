@@ -88,6 +88,6 @@ class PressController extends Controller
     public function destroy(Press $press)
     {
         $press->delete();
-        return redirect("admin/press/press");
+        return to_route('press.index');
     }
 }

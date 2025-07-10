@@ -30,8 +30,13 @@ const adminNavItems: NavItem[] = [
     },
     {
         title: 'Press',
-        href: '/press',
+        href: '/admin/press',
         icon: MicVocal,
+    },
+    {
+        title: 'Projects',
+        href: '/admin/projects',
+        icon: BriefcaseBusiness
     },
     {
         title: 'Infosessions',
@@ -42,11 +47,6 @@ const adminNavItems: NavItem[] = [
         title: 'Participants',
         href: '/admin/participants',
         icon: Users,
-    },
-    {
-        title: 'Projects',
-        href: '/admin/projects',
-        icon: BriefcaseBusiness
     }
 ];
 
@@ -127,7 +127,7 @@ export function AppSidebar() {
                     onClick={() => { setShowUserItems(!showUserItems) }}
                 >
                     <p className='underline text-center'>
-                        {showUserItems ? 'Hide' : 'Show'} {userNavItems.length} Front Pages
+                        {showUserItems ? 'Hide' : 'Show'} Front Pages
                     </p>
                     {
                         showUserItems ?
