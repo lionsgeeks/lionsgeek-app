@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link, router } from '@inertiajs/react';
 import { Eye, Image } from 'lucide-react';
-
+import logo from '../../../../../assets/images/lionsgeek_logo_2.png'
 const ParticipantCard = ({ participant }) => {
     const changeStep = (action) => {
         router.patch(`/admin/participant/current-step/${participant.id}`, {
@@ -19,13 +19,14 @@ const ParticipantCard = ({ participant }) => {
     return (
         <Card className="overflow-hidden">
             <div className="relative">
-                <Image
+                {/* <Image
                     src={participant.image || '/placeholder.svg'}
                     alt={participant.full_name}
                     width={300}
                     height={200}
                     className="h-48 w-full object-cover"
-                />
+                /> */}
+                <img src={'/storage/' + participant.image} className="h-72 w-full object-cover" alt={participant.full_name} />
                 <div className="absolute top-2 left-2 flex justify-between w-full pr-6 gap-2">
                     <div>
                         <Badge variant="secondary" className="bg-black text-white mr-3">

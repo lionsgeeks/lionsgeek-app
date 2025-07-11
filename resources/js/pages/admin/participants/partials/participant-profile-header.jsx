@@ -30,16 +30,11 @@ export function ParticipantProfileHeader({ participant }) {
         <div className="flex items-start gap-6">
           {/* Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-24 h-24 bg-black rounded-lg flex items-center justify-center">
+            <div className="w-32 aspect-square bg-black rounded-lg flex items-center justify-center">
               {participant?.image ? (
-                // <Image
-                //   src={participant.avatar || "/placeholder.svg"}
-                //   alt={participant.full_name}
-                //   width={96}
-                //   height={96}
-                //   className="rounded-lg object-cover"
-                // />
-                <></>
+                 <img src={'/storage/' + participant.image}   alt={participant.full_name}
+                    className="rounded-lg w-[100%] aspect-square object-cover" />
+                 
               ) : (
                 <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
                   <Users className="w-8 h-8 text-black" />
