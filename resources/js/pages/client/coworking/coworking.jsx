@@ -5,6 +5,7 @@ import { RiDoubleQuotesR } from "react-icons/ri";
 import gsap from "gsap";
 import AppLayout from "@/layouts/app-layout";
 import { Camera, Gamepad, Podcast, Shield, Users, Wifi } from "lucide-react";
+import { Link } from "@inertiajs/react";
 
 const Coworking = () => {
 
@@ -128,9 +129,12 @@ const Coworking = () => {
                                 offre l'environnement idéal pour se concentrer et collaborer. Rejoignez-nous et découvrez une communauté
                                 solidaire où l'innovation et le réseautage prospèrent.
                             </p>
-                            <button className="bg-alpha text-black px-10 py-3 rounded-lg transition-colors">
-                                Rejoignez-nous
-                            </button>
+                            <Link href={'/coworking/form'} className="cursor-pointer">
+                                <button
+                                    className="bg-alpha text-black px-10 py-3 rounded-lg transition-colors cursor-pointer">
+                                    Rejoignez-nous
+                                </button>
+                            </Link>
                         </div>
 
 

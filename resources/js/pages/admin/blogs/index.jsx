@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
+
 const breadcrumbs = [
     {
         title: 'Blogs',
@@ -104,7 +105,7 @@ export default function BlogAdmin() {
                                 <button>cancel</button>
                                 <button
                                     onClick={onDelete}
-                                >delete</button>
+                                >Delete</button>
                             </div>
 
                         </DialogContent>

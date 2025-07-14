@@ -1,5 +1,8 @@
 import AppLayout from "@/layouts/app-layout"
-import { Head, usePage } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { useState } from "react";
+import { Button } from '@/components/ui/button';
 
 const breadcrumbs = [
     {
@@ -10,7 +13,28 @@ const breadcrumbs = [
 
 export default function CoworkingAdmin() {
     const { coworkings } = usePage().props;
+    const [isOpen, setIsOpen] = useState(false);
+    const [cowID, setCowID] = useState('');
+    const { data, setData, put } = useForm({
+        status: ''
+    });
 
+    const onActionForm = () => {
+        put(route('coworking.update', cowID), {
+            onSuccess: () => {
+                setIsOpen(false);
+                setData({
+                    status: '',
+                });
+            }
+        })
+    }
+
+    const onActionClick = (status, coworkID) => {
+        setData('status', status);
+        setCowID(coworkID);
+        setIsOpen(true);
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -52,13 +76,11 @@ export default function CoworkingAdmin() {
                                 <td>
                                     <div className="flex justify-center">
                                         {!cow.status && (
-                                            <form
+                                            <div
                                                 className="flex items-center justify-center gap-x-2 mt-2"
                                             >
                                                 <button
-                                                    type="submit"
-                                                    name="action"
-                                                    value="reject"
+                                                    onClick={() => { onActionClick('reject', cow.id) }}
                                                     className="border p-1 rounded-md"
                                                 >
                                                     {/* X Icon */}
@@ -68,9 +90,7 @@ export default function CoworkingAdmin() {
                                                     </svg>
                                                 </button>
                                                 <button
-                                                    type="submit"
-                                                    name="action"
-                                                    value="approve"
+                                                    onClick={() => { onActionClick('approve', cow.id) }}
                                                     className="bg-[#356966] text-white lg:px-2 p-1 rounded-md"
                                                 >
                                                     <span className="lg:block hidden">Approve</span>
@@ -80,7 +100,7 @@ export default function CoworkingAdmin() {
                                                         <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05" />
                                                     </svg>
                                                 </button>
-                                            </form>
+                                            </div>
                                         )}
                                         {cow.status === 1 && (
                                             <button className="bg-[#f3f8f0] cursor-none text-black lg:rounded-full flex items-center gap-x-2 lg:px-2 lg:py-0.5 lg:border border-green-900">
@@ -109,6 +129,25 @@ export default function CoworkingAdmin() {
                     </tbody>
                 </table>
             </div>
+
+
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogContent>
+                    <DialogTitle>Please Confirm Your Action for This Coworker?</DialogTitle>
+
+                    <div className="flex justify-end gap-2">
+                        <Button variant="outline"
+                            onClick={() => { setIsOpen(false) }}
+                        >Cancel</Button>
+                        <Button
+                            onClick={() => { onActionForm() }}
+                            variant={data.status == "approve" ? 'default' : 'destructive'}
+                            className="capitalize"
+                        >{data.status}</Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
         </AppLayout>
     )
 }

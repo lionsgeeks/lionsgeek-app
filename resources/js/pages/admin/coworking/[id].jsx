@@ -48,16 +48,16 @@ export default function CoworkingShow() {
             const url = `/storage/${value}`;
 
             return (
-                <div className="flex gap-2 border items-center justify-center bg-black text-alpha p-2 rounded">
-                    <a className="font-semibold" href={url} download={filename}>
+                <a className="font-semibold" href={url} download={filename}>
+                    <div className="flex gap-2 border items-center justify-center bg-black text-alpha p-2 rounded">
                         {filename}
-                    </a>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" strokeWidth="2.5" stroke="#ffc801" className="size-5">
-                        <path strokeLinecap="round" strokeLinejoin="round"
-                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" strokeWidth="2.5" stroke="#ffc801" className="size-5">
+                            <path strokeLinecap="round" strokeLinejoin="round"
+                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                    </div>
+                </a>
             );
         }
 
@@ -76,7 +76,7 @@ export default function CoworkingShow() {
     };
 
     const onConfirmDelete = () => {
-        destroy(route("coworking.delete", coworking.id))
+        destroy(route("coworking.destroy", coworking.id))
     }
 
 
@@ -117,10 +117,10 @@ export default function CoworkingShow() {
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogContent>
                     <DialogTitle>Are you sure you want to delete this Coworking Request?</DialogTitle>
-                        <p>This Actions is irreversible and all associated data will be permanently deleted</p>
+                    <p>This Actions is irreversible and all associated data will be permanently deleted</p>
                     <div className="flex items-center justify-end gap-2">
                         <Button
-                        onClick={() => {setIsOpen(false)}}
+                            onClick={() => { setIsOpen(false) }}
                         >Cancel</Button>
                         <Button
                             variant="destructive"

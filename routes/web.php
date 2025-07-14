@@ -63,3 +63,4 @@ require __DIR__ . '/participants.php';
 require __DIR__ . '/event.php';
 require __DIR__ . '/projects.php';
 require __DIR__ . '/press.php';
+require __DIR__ . '/coworking.php';

@@ -59,7 +59,7 @@ const adminNavItems: NavItem[] = [
 const userNavItems: NavItem[] = [
     {
         title: 'Home',
-        href: '/home',
+        href: '/',
         icon: Home,
     },
     {
