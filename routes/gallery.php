@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CoworkingController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\ImageController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
     // destroy image
     Route::delete("images/{image}", [ImageController::class, 'destroy'])->name('images.destroy');
+
+    Route::get('/coworking', [CoworkingController::class, 'index'])->name('coworking.index');
+    Route::get("/coworking/{coworking}", [CoworkingController::class,"show"]);
+    Route::delete("/coworking/{coworking}", [CoworkingController::class,"destroy"])->name("coworking.delete");
 });
 
 Route::get('/gallery', [GalleryController::class, 'clientIndex']);

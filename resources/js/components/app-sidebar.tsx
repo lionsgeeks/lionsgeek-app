@@ -14,11 +14,6 @@ const adminNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Gallery',
-        href: '/admin/gallery',
-        icon: GalleryHorizontalEnd
-    },
-    {
         title: 'Events',
         href: '/admin/events',
         icon: Calendar
@@ -34,6 +29,16 @@ const adminNavItems: NavItem[] = [
         icon: MicVocal,
     },
     {
+        title: 'Coworking',
+        href: '/admin/coworking',
+        icon: HeartHandshake,
+    },
+    {
+        title: 'Gallery',
+        href: '/admin/gallery',
+        icon: GalleryHorizontalEnd
+    },
+    {
         title: 'Projects',
         href: '/admin/projects',
         icon: BriefcaseBusiness
@@ -47,7 +52,8 @@ const adminNavItems: NavItem[] = [
         title: 'Participants',
         href: '/admin/participants',
         icon: Users,
-    }
+    },
+
 ];
 
 const userNavItems: NavItem[] = [
