@@ -58,7 +58,9 @@ class InfosessionController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return Inertia::render('admin/infoSessions/[id]', [
+            'infosession' => InfoSession::where('id', $id)->with('participants')->first()
+        ]);
     }
 
     /**

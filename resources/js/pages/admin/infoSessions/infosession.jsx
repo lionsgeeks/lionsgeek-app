@@ -62,7 +62,7 @@ export default function InfoSessions() {
                 </div>
                 <div className="flex flex-wrap gap-6">
                     {infosessions.map((session, index) => (
-                        <Card key={index} className="h-fit w-[32%]">
+                        <Card key={index} onClick={() => router.visit(`/admin/infosessions/${session.id}`)} className="cursor-pointer h-fit w-[32%]">
                             <CardHeader className="pb-3">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">{session.name}</CardTitle>
