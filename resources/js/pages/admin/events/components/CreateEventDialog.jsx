@@ -24,7 +24,7 @@ export default function CreateEventDialog({ onSuccess }) {
                 </Card>
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogTitle className="sr-only">Create New Event</DialogTitle>
+                <DialogTitle className="sr-only">Create New </DialogTitle>
                 <EventForm
                     onClose={() => setIsOpen(false)}
                     onSuccess={handleSuccess}

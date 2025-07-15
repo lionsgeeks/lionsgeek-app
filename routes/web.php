@@ -3,7 +3,6 @@
 use App\Http\Controllers\CoworkingController;
 use App\Http\Controllers\PressController;
 use App\Models\Gallery;
-use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -14,12 +13,7 @@ Route::get('/   ', function () {
     ]);
 })->name('home');
 
-Route::get('/event', function () {
-    return Inertia::render('client/events/events');
-})->name('event');
-Route::get('/event/{event}', function () {
-    return Inertia::render('client/EventDetails/eventdetail');
-})->name('event');
+// Event routes moved to routes/event.php
 
 
 Route::get('/coding', function () {

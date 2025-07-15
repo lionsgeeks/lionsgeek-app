@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string("name");
             $table->string("email");
+            $table->string('phone')->nullable();
+            $table->string('gender')->nullable();
             $table->foreignId("event_id")->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
