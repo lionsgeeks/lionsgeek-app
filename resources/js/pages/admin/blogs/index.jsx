@@ -66,7 +66,7 @@ export default function BlogAdmin() {
                                             alt=""
                                         />
                                     </td>
-                                    <td>{JSON.parse(blog.title).en}</td>
+                                    <td>{blog.title?.en}</td>
                                     <td>{new Date(blog.created_at).toLocaleString()}</td>
                                     <td>
                                         <a href={`blogs/${blog.id}`}>

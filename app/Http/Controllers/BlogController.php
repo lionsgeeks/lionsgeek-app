@@ -69,16 +69,16 @@ class BlogController extends Controller
         if ($image) {
             $imageName = $this->uploadFile($request->file('image'), "/blog/");
 
-            $title = json_encode([
+            $title = [
                 'en' => $request->title_en,
                 'fr' => $request->title_fr,
                 'ar' => $request->title_ar,
-            ]);
-            $description = json_encode([
+            ];
+            $description = [
                 'en' => $request->description_en,
                 'fr' => $request->description_fr,
                 'ar' => $request->description_ar,
-            ]);
+            ];
 
             Blog::create([
                 'title' => $title,
@@ -109,16 +109,16 @@ class BlogController extends Controller
             $imageName = $this->uploadFile($request->file('image'), "/blog/");
         }
 
-        $title = json_encode([
+        $title = [
             'en' => $request->title_en,
             'fr' => $request->title_fr,
             'ar' => $request->title_ar,
-        ]);
-        $description = json_encode([
+        ];
+        $description = [
             'en' => $request->description_en,
             'fr' => $request->description_fr,
             'ar' => $request->description_ar,
-        ]);
+        ];
 
         $blog->update([
             'title' => $title,

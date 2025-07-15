@@ -18,4 +18,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 });
 
-
+Route::get('/event', function () {
+    return Inertia::render('client/events/events');
+})->name('event');
+Route::get('/event/{event}', function () {
+    return Inertia::render('client/EventDetails/eventdetail');
+})->name('event');

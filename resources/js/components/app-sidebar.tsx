@@ -93,8 +93,8 @@ const userNavItems: NavItem[] = [
         icon: MessageCircleQuestion,
     },
     {
-        title: 'Blog',
-        href: '/blog',
+        title: 'Blogs',
+        href: '/blogs',
         icon: BookOpen,
     },
     {

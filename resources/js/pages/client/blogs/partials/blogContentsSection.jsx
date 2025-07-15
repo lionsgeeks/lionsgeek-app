@@ -24,7 +24,7 @@ export const BlogContentsSection = () => {
                 {blogs?.length > 1 && <h1 className={`text-center py-10 font-extrabold text-4xl ${darkMode ? "text-white" : "text-black"}`}>Our Blogs</h1>}
                 <div className="flex items-center justify-center gap-3 flex-wrap ">
                     {
-                        blogs?.length > 1 ? blogs.map((blog, index) => (
+                        blogs?.length > 0 ? blogs.map((blog, index) => (
                             <div className={`${blogs[0].id == blog.id ? "hidden" : "flex"} `} key={index}>
                                 <Link
                                     href={`/blogs/${blog.id}`}
@@ -38,8 +38,8 @@ export const BlogContentsSection = () => {
                                     <div className="w-full h-1/4 bottom-0 bg-gradient-to-t from-black transparent absolute "></div>
                                     <div className="flex  flex-col justify-between  w-full  md:px-8 px-4 py-5 z-20 absolute">
                                         <p className="text-white/90 text-end ">{formatDate(blog.created_at)}</p>
-                                        <h1 className={`font-medium text-light_gray md:text-lg text-end  `} title={JSON.parse(blog.title)[selectedLanguage]}>
-                                            {JSON.parse(blog.title)[selectedLanguage]}
+                                        <h1 className={`font-medium text-light_gray md:text-lg text-end  `} title={blog.title[selectedLanguage]}>
+                                            {blog.title[selectedLanguage]}
                                         </h1>
 
                                     </div>

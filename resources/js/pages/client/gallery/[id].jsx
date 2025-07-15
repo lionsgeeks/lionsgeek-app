@@ -19,7 +19,7 @@ export default function AlbumPage() {
             <div className='w-full p-10 lg:px-1 py-26 pt-32 ' style={{ backgroundColor: darkMode ? "#0f0f0f" : "#ffffff" }}>
                 <h1 className='text-center text-5xl font-bold pb-6' style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
                 >
-                    <TransText {...JSON.parse(gallery?.title)} />
+                    <TransText {...gallery?.title} />
                 </h1>
                 <div className='w-full flex flex-wrap gap-4 justify-center py-10' >
                     {

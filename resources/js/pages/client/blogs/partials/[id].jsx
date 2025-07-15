@@ -18,7 +18,7 @@ export default function BlogDetails() {
                     </div>
 
                     <h1 className="font-extrabold text-3xl py-16" style={{ color: darkMode ? "#ffffff" : "#0f0f0f", }}>
-                        {JSON.parse(blog.title)[selectedLanguage]}
+                        {blog.title[selectedLanguage]}
                     </h1>
                     <div className="flex flex-col lg:flex-row  ">
                         <div className="p-0 lg:pe-14 w-full lg:w-3/4">
@@ -26,7 +26,7 @@ export default function BlogDetails() {
                             <div className='view ql-editor reset-tw'>
                                 <div dangerouslySetInnerHTML={{
                                     __html:
-                                        JSON.parse(blog.description)[selectedLanguage]
+                                        blog.description[selectedLanguage]
                                 }} style={{ color: darkMode ? "#ffffff" : "#0f0f0f", }} />
                             </div>
                         </div>
@@ -42,14 +42,14 @@ export default function BlogDetails() {
                                         src={"/storage/images/blog/" + blg.image} alt="" />
                                         <div className="flex flex-col gap-3 overflow-hidden reset-tw">
                                             <p className="font-extrabold text-sm" style={{ color: darkMode ? "#ffffff" : "#0f0f0f", fontWeight: "bold", fontSize: "0.875rem" }}>
-                                                {JSON.parse(blg.title)[selectedLanguage]}
+                                                {blg.title[selectedLanguage]}
                                             </p>
 
                                             <div style={{ fontSize: "9px", color: darkMode ? "#ffffff" : "#0f0f0f" }}
                                                 dangerouslySetInnerHTML={{
-                                                    __html: JSON.parse(blg.description)[selectedLanguage].length > 70 ?
-                                                        JSON.parse(blg.description)[selectedLanguage].slice(0, 70) + '...' :
-                                                        JSON.parse(blg.description)[selectedLanguage]
+                                                    __html: blg.description[selectedLanguage].length > 70 ?
+                                                        blg.description[selectedLanguage].slice(0, 70) + '...' :
+                                                        blg.description[selectedLanguage]
                                                 }} />
                                         </div>
                                     </Link>
