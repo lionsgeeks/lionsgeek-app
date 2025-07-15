@@ -1,12 +1,12 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
-import { usePage } from '@inertiajs/react';
-import Navbar from './navbar';
+// import { usePage } from '@inertiajs/react';
+// import Navbar from './navbar';
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
-    const page = usePage();
-    const isAdminPage = page.url.startsWith('/admin');
+    // const page = usePage();
+    // const isAdminPage = page.url.startsWith('/admin');
 
     return (
         // isAdminPage &&

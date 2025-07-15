@@ -325,10 +325,10 @@ const Navbar = () => {
                                 <TransText en="Coworking" fr="Coworking" ar="العمل المشترك" />
                             </a>
                             <a
-                                href={"/event"}
+                                href={"/events"}
                                 onClick={() => setIsOpen(false)}
                                 className={`${darkMode ? "text-white" : "#0f0f0f"
-                                    }  px-2 py-2 text-sm relative lg:after:absolute after:border-b-[2px]  after:bottom-[-13px] after:left-0 after:w-0 hover:after:w-[100%] after:transition-all after:duration-[0.35s]  ${location.pathname == "/event"
+                                    }  px-2 py-2 text-sm relative lg:after:absolute after:border-b-[2px]  after:bottom-[-13px] after:left-0 after:w-0 hover:after:w-[100%] after:transition-all after:duration-[0.35s]  ${location.pathname == "/events"
                                         ? "font-medium  after:border-alpha after:w-[100%]"
                                         : "after:border-gray-300"
                                     }`}
