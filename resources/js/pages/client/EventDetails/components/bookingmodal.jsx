@@ -208,7 +208,7 @@ export default function BookingModal({ isOpen, onClose, event }) {
         </div>
       </div>
 
-      <NotificationModal
+      <NotificationModal 
         isOpen={showNotification}
         onClose={handleNotificationClose}
         type={notificationType}
