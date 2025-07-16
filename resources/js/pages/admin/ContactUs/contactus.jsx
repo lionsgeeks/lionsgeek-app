@@ -21,6 +21,19 @@ export default function Index() {
 
     });
 
+    const handleReply = () => {
+        setIsComposing(true);
+        setActiveId(null);
+        setEmailData({
+            sender: '',
+            receiver: selectedMessage.email,
+            cc: '',
+            bcc: '',
+            subject: `Re: ${selectedMessage.subject || ''}`,
+            content: '',
+        });
+    };
+
     const handleSelect = (id) => {
         setActiveId(id);
         setIsComposing(false);
@@ -64,11 +77,11 @@ export default function Index() {
         }
     };
 
- const filteredMessages = messages.filter((message) => {
-    if (filter === 'sended') return message.sender; 
-    if (filter === 'received') return !message.sender;
-    return true;
-});
+    const filteredMessages = messages.filter((message) => {
+        if (filter === 'sended') return message.sender;
+        if (filter === 'received') return !message.sender;
+        return true;
+    });
 
     return (
         <AppLayout>
@@ -113,8 +126,16 @@ export default function Index() {
                                     ${activeId === message.id ? 'bg-white' : ''}
                                     hover:bg-gray-100
                                 `}>
-                                <div className="font-bold">{message.full_name}</div>
-                                <div className="text-gray-600 truncate">{message.message}</div>
+                                <div className='flex gap-3 items-center pb-3'>
+                                    <div className="font-bold w-32 truncate">{message.full_name}</div>
+                                    <div className="text-sm text-gray-500">{message.email}</div>
+                                </div>
+                                <div className='flex justify-between'>
+                                    <div className="text-gray-600 text-sm truncate w-64 ">{message.message}</div>
+                                    <p className="text-[#999b9c] text-sm">
+                                        {new Date(message.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                    </p>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -239,12 +260,13 @@ export default function Index() {
                                             {new Date(selectedMessage.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}
                                         </div>                                    </div>
                                     <div className="rounded">{selectedMessage.message}</div>
-                                    <a
-                                        href={`mailto:${selectedMessage.email}`}
+                                    <button
+                                        onClick={handleReply}
                                         className="bg-black text-white px-4 py-2 rounded mt-auto self-start"
                                     >
                                         Reply via email
-                                    </a>
+                                    </button>
+
                                 </div>
                             </>
                         ) : (
