@@ -2,12 +2,13 @@ import { useState } from 'react';
 // import { useAppContext } from "../../utils/contextProvider";
 import Modal from '../../../components/Modal';
 // import LoadingPage from "../Loading";
-import { TransText } from '../../../components/TransText';
 import AppLayout from '@/layouts/app-layout';
-import { router, useForm } from '@inertiajs/react';
+import { router, useForm, usePage } from '@inertiajs/react';
+import { TransText } from '../../../components/TransText';
 
 const InfoSession = () => {
     // const { selectedLanguage, URL, sessions, darkMode , fetchInfosession } = useAppContext();
+    const { sessions } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         full_name: '',
         email: '',
@@ -22,7 +23,7 @@ const InfoSession = () => {
     });
     const selectedLanguage = 'en';
     const darkMode = false;
-    const sessions = [1, 2];
+    // const sessions = [1, 2];
     const URL = 0;
 
     const [chosenSession, setChosenSession] = useState('');
@@ -79,7 +80,7 @@ const InfoSession = () => {
     };
     const handleSubmit = (e) => {
         e.preventDefault();
-        router.post('admin/participants', data)
+        router.post('admin/participants', data);
     };
 
     // useEffect(() => {
@@ -98,25 +99,25 @@ const InfoSession = () => {
         return <span className="text-lg font-bold text-red-500">*</span>;
     };
 
-    // function formatDate(dateString) {
-    //     const date = new Date(dateString);
+    function formatDate(dateString) {
+        const date = new Date(dateString);
 
-    //     // Get formatted date: Monday 20 novembre 2024
-    //     const formattedDate = date.toLocaleDateString(`${selectedLanguage}-${dateLanguage[selectedLanguage]}`, {
-    //         weekday: 'long',
-    //         day: 'numeric',
-    //         month: 'long',
-    //         year: 'numeric',
-    //     });
+        // Get formatted date: Monday 20 novembre 2024
+        const formattedDate = date.toLocaleDateString(`en-${dateLanguage['en']}`, {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
 
-    //     // Get formatted time: 16:49
-    //     const formattedTime = date.toLocaleTimeString('fr-FR', {
-    //         hour: '2-digit',
-    //         minute: '2-digit',
-    //     });
+        // Get formatted time: 16:49
+        const formattedTime = date.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+        });
 
-    //     return `${formattedDate} ${formattedTime}`;
-    // }
+        return `${formattedDate} ${formattedTime}`;
+    }
 
     // prevent l user mn anah idir copy past hehehe  nihahahahaha
     const handlePaste = (event) => {
@@ -164,7 +165,10 @@ const InfoSession = () => {
                                                     className="w-full appearance-none rounded border border-gray-300 px-4 py-2"
                                                     name="formation"
                                                     required
-                                                    onChange={handleChange}
+                                                    onChange={(e) => {
+                                                        setFormation(e.target.value);
+                                                        setChosenSession('');
+                                                    }}
                                                 >
                                                     <option disabled selected value="">
                                                         <TransText en="Choose Formation" fr="Choisir la formation" ar="اختر التكوين" />
@@ -176,7 +180,10 @@ const InfoSession = () => {
                                                         <TransText en="Digital" fr="Média" ar="صانع محتوى" />
                                                     </option>
                                                 </select>
-                                                <label htmlFor="info_session_id" className={` ${darkMode ? 'text-white' : 'text-gray-700'} lg:hidden`}>
+                                                <label
+                                                    htmlFor="info_session_id"
+                                                    className={` ${darkMode ? 'text-white' : 'text-gray-700'} lg:hidden`}
+                                                >
                                                     <TransText
                                                         en="Choose a Session Date"
                                                         fr="Choisissez une date de session"
@@ -195,15 +202,11 @@ const InfoSession = () => {
                                                     <option disabled selected value="">
                                                         <TransText en="Choose a Session" fr="Choisir une session" ar="اختر جلسة" />
                                                     </option>
-                                                    <option value="1">
-                                                        <TransText en="hadi" fr="Choisir une session" ar="اختر جلسة" />
-                                                    </option>
                                                     {sessions
                                                         .filter(
                                                             (ses) =>
                                                                 (ses.formation ==
-                                                                    formation.charAt(0).toUpperCase() + formation.slice(1).toLowerCase()) &
-                                                                (ses.isFull == false),
+                                                                    formation.charAt(0).toUpperCase() + formation.slice(1).toLowerCase()),
                                                         )
                                                         .map(
                                                             (opt, ind) =>

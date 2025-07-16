@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, usePage } from '@inertiajs/react';
-import { Ban, Calendar, CheckCircle, LucidePencil, Plus, Users } from 'lucide-react';
+import { Ban, Calendar, CheckCircle, Eye, LucidePencil, Plus, Users } from 'lucide-react';
 import { useState } from 'react';
 import { CreateSessionModal } from './partials/create-session-modal';
 import { EditSessionModal } from './partials/edit-session-modal';
@@ -62,11 +62,12 @@ export default function InfoSessions() {
                 </div>
                 <div className="flex flex-wrap gap-6">
                     {infosessions.map((session, index) => (
-                        <Card key={index} onClick={() => router.visit(`/admin/infosessions/${session.id}`)} className="cursor-pointer h-fit w-[32%]">
+                        <Card key={index} className=" h-fit w-[32%]">
                             <CardHeader className="pb-3">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">{session.name}</CardTitle>
-                                    <div className="">
+                                    <div className="flex gap-2 items-center">
+                                        <Eye className='cursor-pointer' onClick={() => router.visit(`/admin/infosessions/${session.id}`)}/>
                                         <LucidePencil
                                             onClick={() => {
                                                 setSelectedSession(session);

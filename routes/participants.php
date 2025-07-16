@@ -10,8 +10,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/participant/notes/{participant}', [ParticipantController::class, 'notes'])->name('participant.notes');
     Route::get('/participant/export', [ParticipantController::class, 'export'])->name('participant.export');
     Route::get('/questions/export', [ParticipantController::class, 'questionsExport'])->name('questions.export');
-    Route::get('/invite/interview', action: [ParticipantController::class, 'toInterview'])->name('invite.interview');
-    Route::get('/invite/jungle', action: [ParticipantController::class, 'toJungle'])->name('invite.jungle');
-    Route::get('/invite/school', action: [ParticipantController::class, 'toSchool'])->name('invite.school');
+    Route::post('/invite/interview', action: [ParticipantController::class, 'toInterview'])->name('invite.interview');
+    Route::post('/invite/jungle', action: [ParticipantController::class, 'toJungle'])->name('invite.jungle');
+    Route::post('/invite/school', action: [ParticipantController::class, 'toSchool'])->name('invite.school');
     Route::resource('participants', ParticipantController::class);
 });;

@@ -24,37 +24,16 @@ class CodeMail extends Mailable
         $this->data = $data;
         $this->image = $image;
     }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
+    public function build()
     {
-        return new Envelope(
-            subject: 'Invitation to Our Info Session -' . $this->data['infosession'],
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'maizzleMails.emails.infoSessionInvi',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [
-            Attachment::fromData(fn () => $this->data['pdf']->output(), 'Qrcode.pdf')
-                ->withMime('application/pdf'),
-        ];
+        return $this->subject('Invitation to Our Info Session -' . $this->data['infosession'])
+            ->view('maizzlMails.infoSessionInvi')
+            ->attachData($this->data['pdf']->output(), 'Qrcode.pdf', [
+                'mime' => 'application/pdf',
+            ])
+            ->with([
+                'data' => $this->data,
+                'image' => $this->image,
+            ]);
     }
 }

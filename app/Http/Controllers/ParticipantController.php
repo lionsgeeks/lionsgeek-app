@@ -64,25 +64,21 @@ class ParticipantController extends Controller
             'motivation' => 'required|string',
             'source' => 'required|string',
         ]);
-
         $parts = Participant::where('info_session_id', $request->info_session_id)->count();
         $infosession = InfoSession::where('id', $request->info_session_id)->first();
         if ($parts + 1 > $infosession->places) {
             return back()->with('error', 'Sorry places are full');
         }
-
         $checkUser = Participant::where('info_session_id', $request->info_session_id)
             ->where('email', $request->email)->first();
         if ($checkUser) {
             return back()->with('error', 'This email already exist');
         }
-
         $time = Carbon::now();
         $code = $request->full_name . $time->format('h:i:s');
         $birthObj = new DateTime($request->birthday);
         $currentDay = new DateTime();
         $age = $birthObj->diff($currentDay)->y;
-
         // create the participant
         $participant = Participant::create([
             'info_session_id' => $request->info_session_id,
@@ -98,7 +94,6 @@ class ParticipantController extends Controller
             'motivation' => $request->motivation,
             'code' => $code
         ]);
-
         // one to one relationships
         $questions = FrequentQuestion::create([
             'participant_id' => $participant->id,
@@ -106,7 +101,6 @@ class ParticipantController extends Controller
         $satisfaction = Satisfaction::create([
             'participant_id' => $participant->id,
         ]);
-
         $data['full_name'] = $participant->full_name;
         $data['email'] = $participant->email;
         $data['code'] = $participant->code;
@@ -114,24 +108,20 @@ class ParticipantController extends Controller
         $data['formation'] = $participant->infoSession->formation;
         $data['time'] = $participant->infoSession->start_date;
         $data['created_at'] = $participant->created_at;
-
         $jsonData = json_encode([
             'email' => $data['email'],
             'code' => $data['code']
         ]);
-
         ob_start();
         QRCode::text($jsonData)
             ->setErrorCorrectionLevel('H')
             ->png();
-
         $qrImage = ob_get_clean();
         $image = base64_encode($qrImage);
-        $pdf = Pdf::loadView('mail.partials.code', compact(['image', 'data']));
+        $pdf = Pdf::loadView('pdf.code', compact(['image', 'data']));
         $data['pdf'] = $pdf;
         //!!!!!! add mail 
         Mail::to($participant->email)->send(new CodeMail($data, $image));
-
         if ($parts + 1 == $infosession->places) {
             $infosession->update([
                 'isFull' => true
@@ -265,41 +255,48 @@ class ParticipantController extends Controller
         $date = (new DateTime())->format('F_d_Y');
         return Excel::download(new QuestionsExport, $date . '_questions.xlsx');
     }
-     public function toInterview(Request $request)
+    public function toInterview(Request $request)
     {
-        $candidats = Participant::where('info_session_id', $request->infosession_id)->where('current_step', 'interview')->get();
-        $info = InfoSession::where('id', $request->infosession_id)->first();
-        $formationType = $info->formation;
-        if ($formationType == 'Media') {
-            $emailRecipient = 'Media';
-        } elseif ($formationType == 'Coding') {
-            $emailRecipient = 'Coding';
-        }
-        $divided = ceil($candidats->count() / count($request->dates));
-        foreach ($request->dates as $time) {
-            // dd($time);
-            $group = $candidats->splice(0, $divided);
-            foreach ($group as $candidat) {
-                $full_name = $candidat->full_name;
-                $day = $request->date;
-                $timeSlot = $time;
-                $course = $emailRecipient;
-                Mail::mailer($emailRecipient)->to($candidat->email)->send(new InterviewMail($full_name, $day, $timeSlot, $course));
+        $request->validate([
+            'dates' => 'required|array',
+            'infosession_id' => 'required',
+        ]);
+        // try {
+            $candidats = Participant::where('info_session_id', $request->infosession_id)->where('current_step', 'interview')->get();
+            $info = InfoSession::where('id', $request->infosession_id)->first();
+            $formationType = $info->formation;
+            if ($formationType == 'Media') {
+                $emailRecipient = 'Media';
+            } elseif ($formationType == 'Coding') {
+                $emailRecipient = 'Coding';
             }
-        }
-        return back()->with('success', 'The Invitation Has Been Sent Successfully!');
+            $divided = ceil($candidats->count() / count($request->dates));
+            foreach ($request->dates as $time) {
+                $group = $candidats->splice(0, $divided);
+                foreach ($group as $candidat) {
+                    $full_name = $candidat->full_name;
+                    $day = $request->date;
+                    $timeSlot = $time;
+                    $course = $emailRecipient;
+                    Mail::mailer($emailRecipient)->to($candidat->email)->send(new InterviewMail($full_name, $day, $timeSlot, $course));
+                }
+            }
+            return back()->with('success', 'The Invitation Has Been Sent Successfully!');
+        // } catch (\Throwable $th) {
+        //     //throw $th;
+        //     return back()->with('error', 'An Error Has Occurred!');
+        // }
     }
     public function toJungle(Request $request)
     {
-        $sessionId = $request->sessionId;
-        $traning = InfoSession::where('id', $sessionId)->first()->formation;
+        $traning = InfoSession::where('id', $request->query('infosession_id'))->first()->formation;
         if ($traning == 'Media') {
             $emailRecipient = 'Media';
         } elseif ($traning == 'Coding') {
             $emailRecipient = 'Coding';
         }
-        $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->infosession_id)->get();
-        $day = $request->date;
+        $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->query('infosession_id'))->get();
+        $day = $request->query('date');
         foreach ($candidats as $candidat) {
             Mail::mailer($emailRecipient)->to($candidat->email)->send(new JungleMail($candidat->full_name, $candidat->id, $day, $traning));
         }
@@ -307,25 +304,12 @@ class ParticipantController extends Controller
     }
     public function toSchool(Request $request)
     {
-        $candidats = Participant::where('info_session_id', $request->infosession_id)->where('current_step', 'coding_school')->orWhere('current_step', 'media_school')->get();
-         // If "Send" button is clicked, validate that a date is provided
-        if ($request->has('submit_with_date')) {
-            $request->validate([
-                'date' => 'required|date'
-            ]);
-        }
-   	    // If "Send Without Date" button is clicked, set date to null
-        $day = $request->has('submit_without_date') ? null : $request->date;
-        $info = InfoSession::where('id', $request->infosession_id)->first();
-        $formationType = $info->formation;
+        $candidats = Participant::where('info_session_id', $request->query('infosession_id'))->where('current_step', 'coding_school')->orWhere('current_step', 'media_school')->get();
+        // If "Send" button is clicked, validate that a date is provided
+        // If "Send Without Date" button is clicked, set date to null
+        $day = $request->query('submit_without_date') ? null : $request->query('date');
         foreach ($candidats as $key => $candidat) {
-            if ($formationType == 'Media' && $candidat->current_step == "media_school") {
-                $emailRecipient = 'Media';
-            } elseif ($formationType == 'Coding' && $candidat->current_step == "coding_school") {
-                $emailRecipient = 'Coding';
-            }
             $school = $candidat->current_step == "coding_school" ? "Coding" : "Media";
-            // Mail::mailer($emailRecipient)->to($candidat->email)->send(new SchoolMail($candidat->full_name, $day, $candidat->current_step));
             Mail::to($candidat->email)->send(new SchoolMail($candidat->full_name, $candidat->id, $day, $school));
         }
         return back()->with('success', 'The Invitation Has Been Sent Successfully!');

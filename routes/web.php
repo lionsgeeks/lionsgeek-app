@@ -4,6 +4,7 @@ use App\Http\Controllers\CoworkingController;
 use App\Http\Controllers\PressController;
 use App\Models\Gallery;
 use App\Http\Controllers\EventController;
+use App\Models\InfoSession;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -35,7 +36,9 @@ Route::get('/contact', function () {
     return Inertia::render('client/ContactUs/contactUs');
 })->name('contact');
 Route::get('/postuler', function () {
-    return Inertia::render('client/infoSession/infoSession');
+    return Inertia::render('client/infoSession/infoSession', [
+        'sessions' => InfoSession::where('isAvailable', true)->where('isFinish', false)->where('isFUll', false)->get()
+    ]);
 })->name('postuler');
 Route::get('/private-session', function () {
     return Inertia::render('client/infoSession/privatesession');

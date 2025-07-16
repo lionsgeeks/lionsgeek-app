@@ -24,46 +24,26 @@ class InterviewMail extends Mailable implements ShouldQueue
     /**
      * Create a new message instance.
      */
-    public function __construct($full_name, $day, $timeSlot , $course)
+    public function __construct($full_name, $day, $timeSlot, $course)
     {
         $this->full_name = $full_name;
         $this->day = $day;
         $this->timeSlot = $timeSlot;
-        
         $carbonInstance = Carbon::parse($timeSlot);
         $this->date = $carbonInstance->toDateString(); // e.g., 2025-01-24
         $this->exactTime = $carbonInstance->format('H:i'); // e.g., 16:44
-
         $this->course = $course;
     }
 
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
+    public function build()
     {
-        return new Envelope(
-            subject: 'Invitation to Your Interview at Lionsgeek!',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'maizzleMails.emails.interviewmail',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
+        return $this->subject('Invitation to Your Interview at Lionsgeek!')
+            ->view('maizzlMails.interviewmail')
+            ->with([
+                'full_name' => $this->full_name,
+                'date' => $this->date,
+                'exactTime' => $this->exactTime,
+                'course' => $this->course,
+            ]);
     }
 }

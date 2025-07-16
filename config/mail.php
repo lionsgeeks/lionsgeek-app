@@ -48,6 +48,25 @@ return [
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
+        'Coding' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL2_HOST', 'smtp.gmail.com'),
+            'port' => env('MAIL2_PORT', 587),
+            'encryption' => env('MAIL2_ENCRYPTION', 'tls'),
+            'username' => env('MAIL2_USERNAME'),
+            'password' => env('MAIL2_PASSWORD'),
+            'timeout' => null,
+        ],
+
+        'Media' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL3_HOST', 'smtp.gmail.com'),
+            'port' => env('MAIL3_PORT', 587),
+            'encryption' => env('MAIL3_ENCRYPTION', 'tls'),
+            'username' => env('MAIL3_USERNAME'),
+            'password' => env('MAIL3_PASSWORD'),
+            'timeout' => null,
+        ],
 
         'ses' => [
             'transport' => 'ses',

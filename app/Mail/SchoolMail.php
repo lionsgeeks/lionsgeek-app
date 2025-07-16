@@ -16,44 +16,25 @@ class SchoolMail extends Mailable implements ShouldQueue
     /**
      * Create a new message instance.
      */
-    public function __construct(public $full_name, public $id, public $day , public $school)
+    public function __construct(public $full_name, public $id, public $day, public $school)
     {
         $this->full_name = $full_name;
         $this->day = $day;
         $this->school = $school;
         $this->id = $id;
     }
-
-    /**
-     * Get the message envelope.
+     /**
+     *! add schoolMail2 email
      */
-    public function envelope(): Envelope
+    public function build()
     {
-        return new Envelope(
-            subject: 'LionsGeek School Invitation',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-       
-        $view = $this->day ? 'maizzleMails.emails.schoolMail' : 'maizzleMails.emails.schoolMail2';
-
-        return new Content(
-            view: $view
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
+        return $this->subject('LionsGeek School Invitation')
+            ->view($this->day ? 'maizzlMails.schoolMail' : 'maizzlMails.schoolMail2 ')
+            ->with([
+                'full_name' => $this->full_name,
+                'day' => $this->day,
+                'school' => $this->school,
+                'id' => $this->id,
+            ]);
     }
 }

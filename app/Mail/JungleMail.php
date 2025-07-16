@@ -16,41 +16,27 @@ class JungleMail extends Mailable implements ShouldQueue
     /**
      * Create a new message instance.
      */
-    public function __construct(public $full_name,public $id, public $day , public $traning)
+    public $full_name;
+    public $day;
+    public $traning;
+    public $id;
+    public function __construct($full_name, $id, $day, $traning)
     {
         $this->full_name = $full_name;
         $this->day = $day;
         $this->traning = $traning;
         $this->id = $id;
     }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
+    
+    public function build()
     {
-        return new Envelope(
-            subject: 'Invitation to Jungle',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'maizzleMails.emails.jungleMail',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
+        return $this->subject('Invitation to Jungle')
+            ->view('maizzlMails.jungleMail')
+            ->with([
+                'full_name' => $this->full_name,
+                'day' => $this->day,
+                'traning' => $this->traning,
+                'id' => $this->id,
+            ]);
     }
 }
