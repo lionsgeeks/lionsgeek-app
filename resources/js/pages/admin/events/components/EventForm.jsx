@@ -9,8 +9,8 @@ import { Calendar, Upload, X } from "lucide-react";
 
 export default function EventForm({ event = null, onClose, onSuccess }) {
     const isEditing = !!event;
- const { props } = usePage();
-     const appUrl = props.ziggy?.url || window.location.origin;
+    const { props } = usePage();
+    const appUrl = props.ziggy?.url || window.location.origin;
     const { data, setData, post, processing, errors, reset } = useForm({
         name: {
             en: event?.name?.en || "",
@@ -126,23 +126,25 @@ export default function EventForm({ event = null, onClose, onSuccess }) {
                                     </Button>
                                 </div>
                             ) : (
-                                <div className="text-center">
-                                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                                    <div className="mt-4">
-                                        <Label htmlFor="cover-upload" className="cursor-pointer">
+                                <label htmlFor="cover-upload" className="cursor-pointer block text-center">
+                                    <div className="text-center">
+                                        <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                                        <div className="mt-4">
                                             <span className="mt-2 block text-sm font-medium text-gray-900">
                                                 Click to upload cover image
                                             </span>
-                                        </Label>
-                                        <input
-                                            id="cover-upload"
-                                            type="file"
-                                            className="hidden"
-                                            accept="image/*"
-                                            onChange={handleImageChange}
-                                        />
+                                        </div>
                                     </div>
-                                </div>
+
+                                    <input
+                                        id="cover-upload"
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                    />
+                                </label>
+
                             )}
                         </div>
                         {errors.cover && (
