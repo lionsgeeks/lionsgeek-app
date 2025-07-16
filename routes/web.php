@@ -10,8 +10,14 @@ use App\Models\InfoSession;
 use App\Models\Project;
 use App\Models\Subscriber;
 use Carbon\Carbon;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CoworkingController;
+use App\Http\Controllers\PressController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\MessagesExport;
+use App\Http\Controllers\CustomEmailController;
 
 Route::get('/', function () {
     $galleries = Gallery::with('images')->get();
@@ -51,6 +57,9 @@ Route::get('/about', function () {
 Route::get('/whatislionsgeek', function () {
     return Inertia::render('client/about/partials/whatis');
 });
+Route::get('/export-messages', function () {
+    return Excel::download(new MessagesExport, 'messages.xlsx');
+})->name('messages.export');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
@@ -83,6 +92,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'unreadMessages' => $unreadMessages
         ]);
     })->name('dashboard');
+    Route::get('/press', [PressController::class, 'index']);
+    Route::post('/press', [PressController::class, 'store'])->name('press.store');
+    Route::get('/admin/presses/{press}', [PressController::class, 'show'])->name('press.show');
+    Route::put('/presses/{press}', [PressController::class, 'update'])->name('press.update');
+    Route::delete('/presses/{press}', [PressController::class, 'destroy'])->name('press.destroy');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+    Route::get('/contactus', [ContactController::class, 'show'])->name('admin.contacts.show');
+    Route::put('/email/markread/{message}', [ContactController::class, 'toggleRead'])->name('email.markread');
+    Route::delete('/contactus/{contact}', [ContactController::class, 'destroy'])->name('contact.destroy');
+    Route::post('/messages/send', [CustomEmailController::class, 'store'])->name('messages.send');
+
 });
 
 require __DIR__ . '/settings.php';

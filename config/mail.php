@@ -36,17 +36,31 @@ return [
     */
 
     'mailers' => [
-
-        'smtp' => [
+        'info' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
-            'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
-            'port' => env('MAIL_PORT', 2525),
+            'host' => env('MAIL_HOST'),
+            'port' => env('MAIL_PORT'),
+            'encryption' => env('MAIL_ENCRYPTION'),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
+        'coding' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL2_HOST'),
+            'port' => env('MAIL2_PORT'),
+            'encryption' => env('MAIL2_ENCRYPTION'),
+            'username' => env('MAIL2_USERNAME'),
+            'password' => env('MAIL2_PASSWORD'),
+        ],
+
+        'media' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL3_HOST'),
+            'port' => env('MAIL3_PORT'),
+            'encryption' => env('MAIL3_ENCRYPTION'),
+            'username' => env('MAIL3_USERNAME'),
+            'password' => env('MAIL3_PASSWORD'),
         ],
 
         'ses' => [
