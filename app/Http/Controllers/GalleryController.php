@@ -30,7 +30,7 @@ class GalleryController extends Controller
     public function clientShow(Gallery $gallery)
     {
 
-        $gal = Gallery::find($gallery->id)->with('images')->first();
+        $gal = Gallery::where('id', $gallery->id)->with('images')->first();
         return Inertia::render('client/gallery/[id]', [
             'gallery' => $gal
         ]);
@@ -58,16 +58,16 @@ class GalleryController extends Controller
         // for more information about this function, look at Controller.php
         $fileName = $this->uploadFile($request->file('couverture'), "/gallery/");
 
-        $title = json_encode([
+        $title = [
             'en' => $request->title_en,
             'fr' => $request->title_fr,
             'ar' => $request->title_ar,
-        ]);
-        $description = json_encode([
+        ];
+        $description = [
             'en' => $request->description_en,
             'fr' => $request->description_fr,
             'ar' => $request->description_ar,
-        ]);
+        ];
 
 
         $gallery =  Gallery::create([
@@ -112,16 +112,16 @@ class GalleryController extends Controller
 
 
 
-        $title = json_encode([
+        $title = [
             'en' => $request->title_en,
             'fr' => $request->title_fr,
             'ar' => $request->title_ar,
-        ]);
-        $description = json_encode([
+        ];
+        $description = [
             'en' => $request->description_en,
             'fr' => $request->description_fr,
             'ar' => $request->description_ar,
-        ]);
+        ];
 
         $gallery->update([
             "title" => $title,

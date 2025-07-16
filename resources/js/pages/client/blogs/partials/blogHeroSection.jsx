@@ -33,17 +33,17 @@ export const BlogHeroSection = () => {
                         <div className="flex flex-col lg:w-[40%] gap-8 py-4 lg:px-8 ">
                             <p className="text-beta/50 " style={{ color: darkMode ? "#ffffff" : "#0f0f0f", }}>{formatDate(blogs[0]?.created_at)}</p>
                             <h1 className="font-bold lg:text-3xl md:text-2xl text-xl leading-normal" style={{ color: darkMode ? "#ffffff" : "#0f0f0f", }}>
-                                {JSON.parse(blogs[0]?.title)[selectedLanguage]}
+                                {blogs[0]?.title[selectedLanguage]}
                             </h1>
                             <div className='reset-tw'
                                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f", fontSize: "12px" }}>
                                 <div
                                     dangerouslySetInnerHTML={{
                                         __html:
-                                            JSON.parse(blogs[0]?.description)[selectedLanguage].length > 150
-                                                ? JSON.parse(blogs[0]?.description)[selectedLanguage].slice(0, 150) +
+                                            blogs[0]?.description[selectedLanguage].length > 150
+                                                ? blogs[0]?.description[selectedLanguage].slice(0, 150) +
                                                 "..."
-                                                : JSON.parse(blogs[0]?.description)[selectedLanguage],
+                                                : blogs[0]?.description[selectedLanguage],
                                     }}
 
                                 />

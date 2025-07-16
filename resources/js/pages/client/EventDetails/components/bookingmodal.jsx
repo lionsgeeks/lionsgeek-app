@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
-import axios from "axios";
+import axios from 'axios';
+import NotificationModal from "@/components/NotificationModal";
 
 export default function BookingModal({ isOpen, onClose, event }) {
-  const [nameInput, setNameInput] = useState("");
-  const [emailInput, setEmailInput] = useState("");
-  const [genderInput, setGenderInput] = useState("");
-  const [phoneInput, setPhoneInput] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationType, setNotificationType] = useState('success');
+  const [notificationMessage, setNotificationMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(null);
 
   const selectedLanguage = "en";
-  const URL = null;
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    gender: '',
+    event_id: event?.id || ''
+  });
+
+  // Update event_id when event changes
+  React.useEffect(() => {
+    if (event?.id) {
+      setFormData(prev => ({ ...prev, event_id: event.id }));
+    }
+  }, [event?.id]);
 
   if (!isOpen) return null;
 
@@ -30,49 +43,64 @@ export default function BookingModal({ isOpen, onClose, event }) {
     return placeholders[field][selectedLanguage] || placeholders[field].en;
   };
 
-  const submit = async () => {
-    if (!nameInput || !emailInput || !genderInput || !phoneInput) {
+  const submit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.gender || !formData.phone) {
       const message = {
         en: "Please fill out all fields.",
         fr: "Veuillez remplir tous les champs.",
         ar: "يرجى ملء جميع الحقول."
       }[selectedLanguage] || "Please fill out all fields.";
 
-      setSuccessMessage(message);
+      setNotificationMessage(message);
+      setNotificationType('error');
+      setShowNotification(true);
       return;
     }
 
-    const formdata = new FormData();
-    formdata.append("email", emailInput);
-    formdata.append("name", nameInput);
-    formdata.append("event_id", event.id);
-    formdata.append("gender", genderInput);
-    formdata.append("phone", phoneInput);
     setLoading(true);
 
     try {
-      const response = await axios.post(URL + "booking/store", formdata);
-      setSuccessMessage(response.data.message);
-    } catch (error) {
-      const errorMessage = {
-        en: "Error submitting the booking.",
-        fr: "Erreur lors de la soumission de la réservation.",
-        ar: "خطأ في تقديم الحجز."
-      }[selectedLanguage] || "Error submitting the booking.";
+      const response = await axios.post(route('booking.store'), formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+        }
+      });
 
-      setSuccessMessage(errorMessage);
-      console.error("Booking error:", error);
+      setNotificationMessage(response.data.message);
+      setNotificationType('success');
+      setShowNotification(true);
+
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        gender: '',
+        event_id: event?.id || ''
+      });
+    } catch (error) {
+      const message = error.response?.data?.message || "Error submitting the booking.";
+      setNotificationMessage(message);
+      setNotificationType('error');
+      setShowNotification(true);
     } finally {
       setLoading(false);
     }
   };
 
-  const closeSuccessModal = () => {
-    setSuccessMessage(null);
-    setNameInput("");
-    setEmailInput("");
-    onClose();
+  const handleNotificationClose = () => {
+    setShowNotification(false);
+    if (notificationType === 'success') {
+      onClose();
+      // Redirect to events page after successful booking
+      window.location.href = '/events';
+    }
   };
+
+
 
   const inputClassName = `border p-2 w-full border-black rounded-lg ${
     selectedLanguage === "ar" ? "text-right" : "text-left"
@@ -85,7 +113,7 @@ export default function BookingModal({ isOpen, onClose, event }) {
   return (
     <>
       <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 transition-opacity"></div>
+        <div className="fixed inset-0 bg-black opacity-10 transition-opacity"></div>
         <div className="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
           <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg" onClick={(e) => e.stopPropagation()}>
             <div className="absolute right-0 top-0 p-2">
@@ -111,8 +139,8 @@ export default function BookingModal({ isOpen, onClose, event }) {
                     className={inputClassName}
                     type="text"
                     placeholder={getPlaceholder("name")}
-                    value={nameInput}
-                    onChange={(e) => setNameInput(e.target.value)}
+                    value={formData.name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                     dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
                   />
                 </div>
@@ -123,8 +151,8 @@ export default function BookingModal({ isOpen, onClose, event }) {
                     className={inputClassName}
                     type="email"
                     placeholder={getPlaceholder("email")}
-                    value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
+                    value={formData.email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                     dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
                   />
                 </div>
@@ -135,8 +163,8 @@ export default function BookingModal({ isOpen, onClose, event }) {
                 <select
                   id="gender"
                   className={inputClassName}
-                  value={genderInput}
-                  onChange={(e) => setGenderInput(e.target.value)}
+                  value={formData.gender}
+                  onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
                   dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
                 >
                   <option value="">{selectedLanguage === "ar" ? "اختر الجنس" : selectedLanguage === "fr" ? "Sélectionner le genre" : "Select gender"}</option>
@@ -158,8 +186,8 @@ export default function BookingModal({ isOpen, onClose, event }) {
                       ? "Entrez le numéro de téléphone"
                       : "Enter phone number"
                   }
-                  value={phoneInput}
-                  onChange={(e) => setPhoneInput(e.target.value)}
+                  value={formData.phone}
+                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
                 />
               </div>
@@ -172,7 +200,7 @@ export default function BookingModal({ isOpen, onClose, event }) {
                     loading ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
-                  {loading ? "Loading..." : "Yes, I confirm"}
+                  {loading ? "Booking..." : "Book Event"}
                 </button>
               </div>
             </div>
@@ -180,20 +208,13 @@ export default function BookingModal({ isOpen, onClose, event }) {
         </div>
       </div>
 
-      {successMessage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-60">
-          <div className="md:w-full w-[91%] max-w-md p-6 rounded-lg bg-white text-center shadow-lg">
-            <h2 className="text-lg font-semibold mb-4 text-gray-900">Booking Status</h2>
-            <p className="text-gray-700">{successMessage}</p>
-            <button
-              onClick={closeSuccessModal}
-              className="mt-4 px-4 py-2 bg-alpha text-black rounded-lg"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      <NotificationModal 
+        isOpen={showNotification}
+        onClose={handleNotificationClose}
+        type={notificationType}
+        title={notificationType === 'success' ? 'Booking Confirmed!' : 'Booking Error'}
+        message={notificationMessage}
+      />
     </>
   );
 };

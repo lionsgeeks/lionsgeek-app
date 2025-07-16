@@ -150,8 +150,5 @@ class EventController extends Controller
 
         return redirect()->route('admin.events.index')->with('success', 'Event deleted successfully!');
     }
-    public function Booking(Event $event)
-    {
-       
-    }
+
 }

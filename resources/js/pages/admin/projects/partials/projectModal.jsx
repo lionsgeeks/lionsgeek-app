@@ -11,9 +11,9 @@ export default function ProjectModal({ project }) {
     const [isOpen, setIsOpen] = useState(false);
     const { data, setData, post } = useForm({
         name: project ? project.name : '',
-        description_en: project ? JSON.parse(project.description).en : '',
-        description_fr: project ? JSON.parse(project.description).fr : '',
-        description_ar: project ? JSON.parse(project.description).ar : '',
+        description_en: project ? project.description.en : '',
+        description_fr: project ? project.description.fr : '',
+        description_ar: project ? project.description.ar : '',
         logo: project ? project.logo : '',
         preview: project ? project.preview : '',
     })

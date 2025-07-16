@@ -7,12 +7,12 @@ import { Pen, PenLine, PlusIcon } from 'lucide-react';
 
 export default function GalleryStore({ gallery }) {
     const { data, setData, post, put } = useForm({
-        title_en: gallery ? JSON.parse(gallery.title)?.en : '',
-        title_fr: gallery ? JSON.parse(gallery.title)?.fr : '',
-        title_ar: gallery ? JSON.parse(gallery.title)?.ar : '',
-        description_en: gallery ? JSON.parse(gallery.title)?.en : '',
-        description_fr: gallery ? JSON.parse(gallery.title)?.fr : '',
-        description_ar: gallery ? JSON.parse(gallery.title)?.ar : '',
+        title_en: gallery ? gallery.title?.en : '',
+        title_fr: gallery ? gallery.title?.fr : '',
+        title_ar: gallery ? gallery.title?.ar : '',
+        description_en: gallery ? gallery.description?.en : '',
+        description_fr: gallery ? gallery.description?.fr : '',
+        description_ar: gallery ? gallery.description?.ar : '',
         couverture: gallery ? gallery.couverture : '',
         images: gallery ? gallery?.images : [],
     });

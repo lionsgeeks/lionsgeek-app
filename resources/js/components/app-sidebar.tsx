@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, BriefcaseBusiness, Calendar, Camera, CircleArrowDown, CircleArrowUp, Code, FolderKanban, GalleryHorizontal, GalleryHorizontalEnd, HeartHandshake, Home, LayoutGrid, MessageCircleQuestion, Mic, MicVocal, UserPen, Users } from 'lucide-react';
+import { BookOpen, BriefcaseBusiness, Calendar, Camera, CircleArrowDown, CircleArrowUp, Code, Contact, FolderKanban, GalleryHorizontal, GalleryHorizontalEnd, HeartHandshake, Home, LayoutGrid, MessageCircleQuestion, Mic, MicVocal, UserPen, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 import { useState } from 'react';
 
@@ -12,11 +12,6 @@ const adminNavItems: NavItem[] = [
         title: 'Dashboard',
         href: '/dashboard',
         icon: LayoutGrid,
-    },
-    {
-        title: 'Gallery',
-        href: '/admin/gallery',
-        icon: GalleryHorizontalEnd
     },
     {
         title: 'Events',
@@ -30,30 +25,51 @@ const adminNavItems: NavItem[] = [
     },
     {
         title: 'Press',
-        href: '/press',
+        href: '/admin/press',
         icon: MicVocal,
+    },
+    {
+        title: 'Coworking',
+        href: '/admin/coworking',
+        icon: HeartHandshake,
+    },
+    {
+        title: 'Gallery',
+        href: '/admin/gallery',
+        icon: GalleryHorizontalEnd
+    },
+    {
+        title: 'Projects',
+        href: '/admin/projects',
+        icon: BriefcaseBusiness
     },
     {
         title: 'Infosessions',
         href: '/admin/infosessions',
         icon: Mic
+       },
+        {
+        title: 'Press',
+        href: '/press',
+        icon: Mic,
+    },
+         {
+        title: 'ContactUs',
+        href: 'contactus',
+        icon: Contact,
     },
     {
         title: 'Participants',
         href: '/admin/participants',
         icon: Users,
     },
-    {
-        title: 'Projects',
-        href: '/admin/projects',
-        icon: BriefcaseBusiness
-    }
+
 ];
 
 const userNavItems: NavItem[] = [
     {
         title: 'Home',
-        href: '/home',
+        href: '/',
         icon: Home,
     },
     {
@@ -87,8 +103,8 @@ const userNavItems: NavItem[] = [
         icon: MessageCircleQuestion,
     },
     {
-        title: 'Blog',
-        href: '/blog',
+        title: 'Blogs',
+        href: '/blogs',
         icon: BookOpen,
     },
     {
@@ -127,7 +143,7 @@ export function AppSidebar() {
                     onClick={() => { setShowUserItems(!showUserItems) }}
                 >
                     <p className='underline text-center'>
-                        {showUserItems ? 'Hide' : 'Show'} {userNavItems.length} Front Pages
+                        {showUserItems ? 'Hide' : 'Show'} Front Pages
                     </p>
                     {
                         showUserItems ?

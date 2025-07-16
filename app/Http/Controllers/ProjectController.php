@@ -38,11 +38,11 @@ class ProjectController extends Controller
             $previewName = $this->uploadFile($request->file('preview'), "/projects/");
         }
 
-        $description = json_encode([
+        $description = [
             'en' => $request->description_en,
             'fr' => $request->description_fr,
             'ar' => $request->description_ar,
-        ]);
+        ];
 
         Project::create([
             "name" => $request->name,
@@ -73,11 +73,11 @@ class ProjectController extends Controller
             $previewName = $this->uploadFile($request->file('preview'), "/projects/");
         }
 
-        $description = json_encode([
+        $description = [
             'en' => $request->description_en,
             'fr' => $request->description_fr,
             'ar' => $request->description_ar,
-        ]);
+        ];
 
         $project->update([
             "name" => $request->name,

@@ -1,4 +1,4 @@
-import {Button} from "../../../components/Button";
+import { Button } from "../../../components/Button";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useEffect, useRef, useState } from "react";
@@ -12,7 +12,7 @@ const ContactUs = () => {
   const womenRef = useRef(null);
   const URL = 0;
   const selectedLanguage = 'en';
-  const darkMode = false;
+  const darkMode = true;
 
   useEffect(() => {
     gsap.fromTo(
@@ -62,86 +62,84 @@ const ContactUs = () => {
   );
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const onFormSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const formData = new FormData();
-    Object.keys(formInfo).forEach((key) => {
-      formData.append(key, formInfo[key]);
-    });
-    axios
-      .post(URL + "contact", formInfo)
-      .then(() => {
-        setFormInfo({
-          first: "",
-          last: "",
-          phone: "",
-          email: "",
-          message: "",
-        });
-        setShowModal(true);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
 
+const onFormSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  
+  try {
+    const response = await axios.post('/contact', {
+      first: formInfo.first,
+      last: formInfo.last,
+      phone: formInfo.phone,
+      email: formInfo.email,
+      message: formInfo.message
+    });
+
+    if (response.status === 200) {
+      setFormInfo({
+        first: "",
+        last: "",
+        phone: "",
+        email: "",
+        message: "",
+      });
+      setShowModal(true);
+    }
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    // You might want to show an error message to the user here
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   return (
     <AppLayout>
       <div
-        className={`py-[12vh] flex flex-col justify-center lg:px-16 px-5 mt-16 overflow-x-hidden ${
-          darkMode ? "bg-[#0f0f0f]" : "bg-white"
-        }`}
+        className={`py-[12vh] flex flex-col justify-center lg:px-16 px-5 mt-16 overflow-x-hidden ${darkMode ? "bg-[#0f0f0f]" : "bg-white"
+          }`}
       >
         <div
-          className={`flex lg:flex-row flex-col justify-between  gap-8 ${
-            selectedLanguage === "ar" ? "lg:flex-row-reverse" : ""
-          }`}
+          className={`flex lg:flex-row flex-col justify-between  gap-8 ${selectedLanguage === "ar" ? "lg:flex-row-reverse" : ""
+            }`}
         >
           <div className="lg:w-[50%] flex flex-col gap-6  px-3">
             <div className="tessst opacity-0 translate-y-12 [clip-path: polygon((0 100%, 100% 100%, 100% 100%, 0% 100%)]">
               <h1
-                className={`font-bold text-[2.1rem] ${
-                  darkMode ? "text-white" : "text-black"
-                } ${selectedLanguage === "ar" ? "text-end" : ""}`}
+                className={`font-bold text-[2.1rem] ${darkMode ? "text-white" : "text-black"
+                  } ${selectedLanguage === "ar" ? "text-end" : ""}`}
               >
-Ready to start?
+                Ready to start?
               </h1>
               <h1
-                className={`font-bold text-[2.1rem] ${
-                  darkMode ? "text-white" : "text-black"
-                } ${selectedLanguage === "ar" ? "text-end" : ""}`}
+                className={`font-bold text-[2.1rem] ${darkMode ? "text-white" : "text-black"
+                  } ${selectedLanguage === "ar" ? "text-end" : ""}`}
               >
                 We've got you covered
               </h1>
             </div>
             <div className="flex flex-col gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon((0 100%, 100% 100%, 100% 100%, 0% 100%)]">
               <p
-                className={`${darkMode ? "text-white" : "text-black"} ${
-                  selectedLanguage === "ar" ? "text-end" : ""
-                }`}
+                className={`${darkMode ? "text-white" : "text-black"} ${selectedLanguage === "ar" ? "text-end" : ""
+                  }`}
               >
                 Have a question?
               </p>
               <p
-                className={`${darkMode ? "text-white" : "text-black"} ${
-                  selectedLanguage === "ar" ? "text-end" : "w-4/5"
-                } `}
+                className={`${darkMode ? "text-white" : "text-black"} ${selectedLanguage === "ar" ? "text-end" : "w-4/5"
+                  } `}
               >
                 An idea you're bursting to share? We're all ears! Drop us a line and let's get this conversation started.
               </p>
             </div>
             <div
-              className={`flex flex-col gap-1 text-gray-500 font-thin text-[0.9rem] ${
-                selectedLanguage === "ar" ? "items-end" : ""
-              }`}
+              className={`flex flex-col gap-1 text-gray-500 font-thin text-[0.9rem] ${selectedLanguage === "ar" ? "items-end" : ""
+                }`}
             >
               <div
-                className={`flex items-center ${
-                  selectedLanguage === "ar" ? "flex-row-reverse" : ""
-                } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
+                className={`flex items-center ${selectedLanguage === "ar" ? "flex-row-reverse" : ""
+                  } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -168,9 +166,8 @@ Ready to start?
                 </p>
               </div>
               <div
-                className={`flex items-center ${
-                  selectedLanguage === "ar" ? "flex-row-reverse" : ""
-                } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
+                className={`flex items-center ${selectedLanguage === "ar" ? "flex-row-reverse" : ""
+                  } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -192,9 +189,8 @@ Ready to start?
                 </p>
               </div>
               <div
-                className={`flex items-center ${
-                  selectedLanguage === "ar" ? "flex-row-reverse" : ""
-                } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
+                className={`flex items-center ${selectedLanguage === "ar" ? "flex-row-reverse" : ""
+                  } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -220,21 +216,18 @@ Ready to start?
 
           <form
             onSubmit={onFormSubmit}
-            className={`lg:w-[40%] relative py-6 px-7 shadow-md  border border-white/55 rounded-lg flex  ${
-              selectedLanguage === "ar" ? "items-end" : "items-start"
-            } flex-col gap-6 bg-200/75`}
+            className={`lg:w-[40%] relative py-6 px-7 shadow-md  border border-white/55 rounded-lg flex  ${selectedLanguage === "ar" ? "items-end" : "items-start"
+              } flex-col gap-6 bg-200/75`}
           >
             <div
               ref={womenRef}
-              className={`absolute w-[17rem] lg:flex hidden  z-10  top-0 ${
-                selectedLanguage === "ar" ? "left-full " : "right-full"
-              }`}
+              className={`absolute w-[17rem] lg:flex hidden  z-10  top-0 ${selectedLanguage === "ar" ? "left-full " : "right-full"
+                }`}
             >
               <img
                 loading="lazy"
-                className={`  object-cover   ${
-                  selectedLanguage == "ar" && "transform scale-x-[-1]"
-                } `}
+                className={`  object-cover   ${selectedLanguage == "ar" && "transform scale-x-[-1]"
+                  } `}
                 src={women}
                 alt=""
               />
@@ -246,18 +239,15 @@ Ready to start?
                 type="text"
                 name="first"
                 id="first"
-                className={`${
-                  selectedLanguage === "ar" ? "text-end" : ""
-                } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 `}
+                className={`${selectedLanguage === "ar" ? "text-end" : ""
+                  } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 `}
                 placeholder=" "
                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
               />
               <label
-                className={`pt-1 pointer-events-none absolute ${
-                  selectedLanguage === "ar" ? "right-0" : "left-0"
-                }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${
-                  darkMode ? "text-white/50" : "text-gray-500"
-                }`}
+                className={`pt-1 pointer-events-none absolute ${selectedLanguage === "ar" ? "right-0" : "left-0"
+                  }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${darkMode ? "text-white/50" : "text-gray-500"
+                  }`}
               >
                 first name
               </label>
@@ -269,18 +259,15 @@ Ready to start?
                 type="text"
                 name="last"
                 id="last"
-                className={` ${
-                  selectedLanguage === "ar" ? "text-end" : ""
-                } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
+                className={` ${selectedLanguage === "ar" ? "text-end" : ""
+                  } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
                 placeholder=" "
                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
               />
               <label
-                className={`pt-1 pointer-events-none absolute ${
-                  selectedLanguage === "ar" ? "right-0" : "left-0"
-                }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${
-                  darkMode ? "text-white/50" : "text-gray-500"
-                }`}
+                className={`pt-1 pointer-events-none absolute ${selectedLanguage === "ar" ? "right-0" : "left-0"
+                  }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${darkMode ? "text-white/50" : "text-gray-500"
+                  }`}
               >
                 last name
               </label>
@@ -292,18 +279,15 @@ Ready to start?
                 type="tel"
                 name="phone"
                 id="phone"
-                className={` ${
-                  selectedLanguage === "ar" ? "text-end" : ""
-                } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
+                className={` ${selectedLanguage === "ar" ? "text-end" : ""
+                  } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
                 placeholder=" "
                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
               />
               <label
-                className={`pt-1 pointer-events-none absolute ${
-                  selectedLanguage === "ar" ? "right-0" : "left-0"
-                }  -top-1.5 transition-all after:content[' ']  peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${
-                  darkMode ? "text-white/50" : "text-gray-500"
-                }`}
+                className={`pt-1 pointer-events-none absolute ${selectedLanguage === "ar" ? "right-0" : "left-0"
+                  }  -top-1.5 transition-all after:content[' ']  peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${darkMode ? "text-white/50" : "text-gray-500"
+                  }`}
               >
                 phone number
               </label>
@@ -315,18 +299,15 @@ Ready to start?
                 type="email"
                 name="email"
                 id="email"
-                className={`${
-                  selectedLanguage === "ar" ? "text-end" : ""
-                } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
+                className={`${selectedLanguage === "ar" ? "text-end" : ""
+                  } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
                 placeholder=" "
                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
               />
               <label
-                className={`pt-1 pointer-events-none absolute ${
-                  selectedLanguage === "ar" ? "right-0" : "left-0"
-                }  -top-1.5 transition-all after:content[' ']  peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${
-                  darkMode ? "text-white/50" : "text-gray-500"
-                }`}
+                className={`pt-1 pointer-events-none absolute ${selectedLanguage === "ar" ? "right-0" : "left-0"
+                  }  -top-1.5 transition-all after:content[' ']  peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${darkMode ? "text-white/50" : "text-gray-500"
+                  }`}
               >
                 email
               </label>
@@ -341,18 +322,15 @@ Ready to start?
                 id="message"
                 onChange={handleInputChange}
                 value={formInfo.message}
-                className={`${
-                  selectedLanguage === "ar" ? "text-end" : ""
-                } resize-none  peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
+                className={`${selectedLanguage === "ar" ? "text-end" : ""
+                  } resize-none  peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
                 placeholder=" "
                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
               />
               <label
-                className={`pt-1 pointer-events-none absolute ${
-                  selectedLanguage === "ar" ? "right-0" : "left-0"
-                }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${
-                  darkMode ? "text-white/50" : "text-gray-500"
-                }`}
+                className={`pt-1 pointer-events-none absolute ${selectedLanguage === "ar" ? "right-0" : "left-0"
+                  }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${darkMode ? "text-white/50" : "text-gray-500"
+                  }`}
               >
                 message
               </label>

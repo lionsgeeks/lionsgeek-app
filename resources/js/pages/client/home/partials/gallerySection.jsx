@@ -91,10 +91,10 @@ export default function GallerySection() {
 
                                             <div className="w-full absolute z-10 duration-700 transition-all flex flex-col translate-y-[150%] group-hover:translate-y-0 pl-6 pr-4 pb-4">
                                                 <h1 className="font-medium text-xl duration-700 truncate transition-all text-white">
-                                                    <TransText {...JSON.parse(element.title)} />
+                                                    <TransText {...element.title} />
                                                 </h1>
                                                 <p className="text-white">
-                                                    <SubstringText text={JSON.parse(element.description)[selectedLanguage]} length={120} />
+                                                    <SubstringText text={element.description[selectedLanguage]} length={120} />
                                                 </p>
                                             </div>
                                         </div>

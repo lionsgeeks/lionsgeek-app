@@ -57,17 +57,41 @@ const switching = (lightSwitch) => (switcher = lightSwitch);
 
 const BookingSection = ({ event }) => {
   if (!hasEventPassed(event?.date)) {
+    // Check if event is fully booked
+    if (event.capacity <= 0) {
+      return (
+        <div className="p-4">
+          <h1 className={`font-bold text-2xl py-3 ${darkMode ? "text-white" : "text-black"}`}>
+            {t({ fr: "Événement complet", en: "Event Full", ar: "الحدث مكتمل" })}
+          </h1>
+          <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            {t({ fr: "Cet événement est complet", en: "This event is fully booked", ar: "هذا الحدث مكتمل" })}
+          </p>
+          <div className="p-4">
+            <button
+              className="bg-gray-400 text-gray-700 rounded-md px-4 py-2 w-full cursor-not-allowed"
+              disabled
+            >
+              {t({ fr: "Complet", en: "Fully Booked", ar: "مكتمل" })}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <>
         <div className="p-4">
           <h1 className={`font-bold text-2xl py-3 ${darkMode ? "text-white" : "text-black"}`}>
-            {t({ fr: "Total à payer", en: "Total to pay", ar: "المبلغ الإجمالي للدفع" })}: {event.price}{" "}
-            {t({ en: "MAD", fr: "Dirham", ar: "درهم" })}
+            {t({ fr: "Événement gratuit", en: "Free Event", ar: "حدث مجاني" })}
           </h1>
+          <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            {t({ fr: "Places restantes", en: "Spots remaining", ar: "الأماكن المتبقية" })}: {event.capacity} {t({ fr: "places", en: "spots", ar: "مكان" })}
+          </p>
         </div>
         <div className="p-4">
           <button
-            className="bg-alpha text-black rounded-md px-4 py-2 transition w-full"
+            className="bg-alpha text-black rounded-md px-4 py-2 transition w-full hover:bg-yellow-400"
             onClick={() => switching(true)}
           >
             {t({ fr: "Réserver maintenant", en: "Book now", ar: "احجز الآن" })}

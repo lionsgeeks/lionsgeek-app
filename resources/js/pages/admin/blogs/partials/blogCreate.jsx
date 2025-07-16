@@ -14,12 +14,12 @@ export default function BlogCreate() {
     const { blog } = usePage().props;
 
     const { data, setData, post } = useForm({
-        title_en: blog ? JSON.parse(blog.title).en : '',
-        title_fr: blog ? JSON.parse(blog.title).fr : '',
-        title_ar: blog ? JSON.parse(blog.title).ar : '',
-        description_en: blog ? JSON.parse(blog.description).en : '',
-        description_fr: blog ? JSON.parse(blog.description).fr : '',
-        description_ar: blog ? JSON.parse(blog.description).ar : '',
+        title_en: blog ? blog.title?.en : '',
+        title_fr: blog ? blog.title?.fr : '',
+        title_ar: blog ? blog.title?.ar : '',
+        description_en: blog ? blog.description?.en : '',
+        description_fr: blog ? blog.description?.fr : '',
+        description_ar: blog ? blog.description?.ar : '',
         image: blog ? blog.image : '',
     })
 

@@ -34,8 +34,10 @@ export default function CardsSection({ events = [], IMAGEURL = "http://127.0.0.1
                         <div
                             key={index}
                             id="eventCard"
-                            className="shadow-lg h-fit overflow-hidden flex flex-col justify-between lg:w-[30%] md:w-[48%] w-full rounded-xl cursor-pointer"
-                            onClick={() => router.visit(`/events/${element.id}`)}
+                            className={`shadow-lg h-fit overflow-hidden flex flex-col justify-between lg:w-[30%] md:w-[48%] w-full rounded-xl ${
+                                element.capacity > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-75"
+                            }`}
+                            onClick={() => element.capacity > 0 && router.visit(`/events/${element.id}`)}
                             dir="ltr"
                         >
                             <div className="w-full h-[13rem]">
@@ -59,12 +61,23 @@ export default function CardsSection({ events = [], IMAGEURL = "http://127.0.0.1
                                         </p>
                                         <p className="text-[15px] flex items-center gap-1 truncate">
                                             {/* <MdLocationPin className="fill-[#8b96af]" /> */}
-                                            capacity: {element.capacity}
+                                            {element.capacity > 0 ? `${element.capacity} spots left` : 'Fully booked'}
                                         </p>
                                     </div>
                                 </div>
-                                <button className="bg-[#fee819] transition duration-150 text-black w-full py-2 font-semibold">
-                                    <TransText fr="Voir tout" ar="شاهد الكل" en="See all" />
+                                <button
+                                    className={`transition duration-150 w-full py-2 font-semibold ${
+                                        element.capacity > 0
+                                            ? "bg-[#fee819] text-black hover:bg-yellow-400"
+                                            : "bg-gray-400 text-gray-700 cursor-not-allowed"
+                                    }`}
+                                    disabled={element.capacity <= 0}
+                                >
+                                    {element.capacity > 0 ? (
+                                        <TransText fr="Voir tout" ar="شاهد الكل" en="See all" />
+                                    ) : (
+                                        <TransText fr="Complet" ar="مكتمل" en="Fully Booked" />
+                                    )}
                                 </button>
                             </div>
                         </div>

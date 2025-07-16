@@ -21,12 +21,12 @@ export default function GalleryAdmin() {
 
 
     const filteredGallery = galleries.filter((gal) =>
-        JSON.parse(gal.title)?.en?.toLowerCase().includes(search?.toLowerCase())
-        || JSON.parse(gal.title)?.fr?.toLowerCase().includes(search?.toLowerCase())
-        || JSON.parse(gal.title)?.ar?.toLowerCase().includes(search?.toLowerCase())
-        || JSON.parse(gal.description)?.en?.toLowerCase().includes(search?.toLowerCase())
-        || JSON.parse(gal.description)?.fr?.toLowerCase().includes(search?.toLowerCase())
-        || JSON.parse(gal.description)?.ar?.toLowerCase().includes(search?.toLowerCase())
+        gal.title?.en?.toLowerCase().includes(search?.toLowerCase())
+        || gal.title?.fr?.toLowerCase().includes(search?.toLowerCase())
+        || gal.title?.ar?.toLowerCase().includes(search?.toLowerCase())
+        || gal.description?.en?.toLowerCase().includes(search?.toLowerCase())
+        || gal.description?.fr?.toLowerCase().includes(search?.toLowerCase())
+        || gal.description?.ar?.toLowerCase().includes(search?.toLowerCase())
     );
     const onDeleteGallery = (galleryID) => {
         destroy(route('gallery.destroy', galleryID))
@@ -47,9 +47,9 @@ export default function GalleryAdmin() {
                     <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 </div>
 
-                <div className="pt-12 px-4 lg:px-10">
+                <div className="pt-12 lg:px-10">
                     <div
-                        className={`grid grid-cols-3 gap-2 w-full rounded-lg min-h-[40vh]`}
+                        className={`grid grid-cols-1 lg:grid-cols-3 gap-2 w-full rounded-lg min-h-[40vh]`}
                     >
                         <GalleryStore />
                         {galleries.length === 0 && (
@@ -77,13 +77,13 @@ export default function GalleryAdmin() {
                                 />
                                 <div className="w-full flex flex-row items-center justify-between">
                                     <h4 className="lg:text-[20px] text-black text-[15px] font-semibold">
-                                        {JSON.parse(gallery.title)?.en?.length > 25
-                                            ? `${JSON.parse(gallery.title)?.en.slice(0, 15)}...`
-                                            : JSON.parse(gallery.title)?.en}
+                                        {gallery.title?.en?.length > 25
+                                            ? `${gallery.title?.en.slice(0, 15)}...`
+                                            : gallery.title?.en}
                                     </h4>
 
                                 </div>
-                                <div className="flex justify-end gap-3 items-center">
+                                <div className="flex justify-around lg:justify-end gap-3 items-center">
                                     <GalleryShow gallery={gallery} />
                                     <GalleryStore gallery={gallery} />
                                     <button

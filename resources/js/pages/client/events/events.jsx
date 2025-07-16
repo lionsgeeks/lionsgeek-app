@@ -5,6 +5,8 @@ import { usePage } from '@inertiajs/react';
 
 export default function EventPage() {
     const { events } = usePage().props;
+    console.log(events);
+
     return (
         <>
 

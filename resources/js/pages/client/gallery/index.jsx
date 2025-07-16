@@ -10,7 +10,6 @@ import {
 import "./firstSection.css";
 import { GrFormPreviousLink, GrFormNextLink } from "react-icons/gr";
 import { TransText } from "../../../components/TransText";
-import SubstringText from "../../../components/SubstringText";
 
 const breadcrumbs = [
     {
@@ -63,7 +62,7 @@ export default function GalleryPage() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gallery" />
 
-            <div className="md:h-screen h-[80vh] w-full overflow-hidden grid place-items-center pt-14">
+            <div className="md:h-screen h-[80vh] w-full overflow-hidden grid place-items-center">
                 <main>
                     <ul className="slider" ref={slider}>
                         {galleries?.map((gallery, index) => (
@@ -78,17 +77,14 @@ export default function GalleryPage() {
                                 <div className="content">
                                     <h2 className=" text-white  md:text-[25px]  text-[15px]   font-bold ">
                                         <TransText
-                                            fr={`${JSON.parse(gallery.title).fr}`}
-                                            ar={`${JSON.parse(gallery.title).ar}`}
-                                            en={`${JSON.parse(gallery.title).en}`}
+                                            fr={`${gallery.title?.fr}`}
+                                            ar={`${gallery.title?.ar}`}
+                                            en={`${gallery.title?.en}`}
                                         />
                                     </h2>
                                     <p className="font-semibold  text-white py-4 lg:text-[17px] text-sm">
-                                        <SubstringText
-                                            text={JSON.parse(gallery.description)[selectedLanguage]}
-                                            length={length}
-                                        />
-                                        {/* <TransText fr={gallery.description.fr} ar={gallery.description.ar} en={gallery.description.en} /> {} */}
+
+                                        <TransText fr={gallery.description?.fr} ar={gallery.description?.ar} en={gallery.description?.en} /> {}
                                     </p>
                                     <Link href={`/album/${gallery.id}`}>
                                         <button>Read More</button>

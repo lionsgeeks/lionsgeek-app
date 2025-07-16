@@ -1,26 +1,33 @@
 <?php
 
+use App\Models\Gallery;
+use App\Models\Blog;
+use App\Models\Contact;
+use App\Models\Coworking;
+use App\Models\Event;
+use App\Models\General;
+use App\Models\InfoSession;
+use App\Models\Project;
+use App\Models\Subscriber;
+use Carbon\Carbon;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CoworkingController;
 use App\Http\Controllers\PressController;
-use App\Models\Gallery;
 use App\Http\Controllers\EventController;
-use App\Models\InfoSession;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\MessagesExport;
+use App\Http\Controllers\CustomEmailController;
 
-Route::get('/   ', function () {
+Route::get('/', function () {
     $galleries = Gallery::with('images')->get();
     return Inertia::render('client/home/home', [
         'galleries' => $galleries
     ]);
 })->name('home');
 
-Route::get('/event', function () {
-    return Inertia::render('client/events/events');
-})->name('event');
-Route::get('/event/{event}', function () {
-    return Inertia::render('client/EventDetails/eventdetail');
-})->name('event');
+// Event routes moved to routes/event.php
 
 
 Route::get('/coding', function () {
@@ -30,7 +37,10 @@ Route::get('/media', function () {
     return Inertia::render('client/media/media');
 })->name('media');
 Route::get('/pro', function () {
-    return Inertia::render('client/Pro/Pro');
+    $projects = Project::all();
+    return Inertia::render('client/Pro/Pro', [
+        'projects' => $projects,
+    ]);
 })->name('pro');
 Route::get('/contact', function () {
     return Inertia::render('client/ContactUs/contactUs');
@@ -50,18 +60,53 @@ Route::get('/about', function () {
 Route::get('/whatislionsgeek', function () {
     return Inertia::render('client/about/partials/whatis');
 });
+Route::get('/export-messages', function () {
+    return Excel::download(new MessagesExport, 'messages.xlsx');
+})->name('messages.export');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+
+        $totalContacts = Contact::all()->count();
+        $members = Subscriber::all()->count();
+
+        //* order sessions by the nearest date between now and one month from now
+        $sessions = InfoSession::where('isAvailable', 1)
+            ->whereBetween('start_date', [Carbon::now(), Carbon::now()->addMonth()])
+            ->orderByRaw('ABS(julianday(start_date) - julianday(?))', [Carbon::now()])
+            ->get();
+        $upcomingEvents = Event::whereBetween('date', [Carbon::now(), Carbon::now()->addMonth()])
+            ->orderByRaw('ABS(julianday(date) - julianday(?))', [Carbon::now()])
+            ->take(4)
+            ->get();
+        $pendingCoworkings = Coworking::where('status', 0)->take(4)->get();
+        $blogs = Blog::latest()->with('user')->take(4)->get();
+        $views = General::where('id', 1)->first();
+        $unreadMessages = Contact::where('mark_as_read', '0')->orderby("created_at", "desc")->take(4)->get();
+
+        return Inertia::render('dashboard', [
+            'totalContacts' => $totalContacts,
+            'members' => $members,
+            'sessions' => $sessions,
+            'upcomingEvents' => $upcomingEvents,
+            'pendingCoworkings' => $pendingCoworkings,
+            'blogs' => $blogs,
+            'views' => $views,
+            'unreadMessages' => $unreadMessages
+        ]);
     })->name('dashboard');
     Route::get('/press', [PressController::class, 'index']);
     Route::post('/press', [PressController::class, 'store'])->name('press.store');
     Route::get('/admin/presses/{press}', [PressController::class, 'show'])->name('press.show');
     Route::put('/presses/{press}', [PressController::class, 'update'])->name('press.update');
     Route::delete('/presses/{press}', [PressController::class, 'destroy'])->name('press.destroy');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+    Route::get('/contactus', [ContactController::class, 'show'])->name('admin.contacts.show');
+    Route::put('/email/markread/{message}', [ContactController::class, 'toggleRead'])->name('email.markread');
+    Route::delete('/contactus/{contact}', [ContactController::class, 'destroy'])->name('contact.destroy');
+    Route::post('/messages/send', [CustomEmailController::class, 'store'])->name('messages.send');
+
 });
-Route::get('/coworking', [CoworkingController::class, 'index']);
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
@@ -71,3 +116,5 @@ require __DIR__ . '/blogs.php';
 require __DIR__ . '/participants.php';
 require __DIR__ . '/event.php';
 require __DIR__ . '/projects.php';
+require __DIR__ . '/press.php';
+require __DIR__ . '/coworking.php';
