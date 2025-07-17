@@ -2,13 +2,11 @@ import { Button } from "../../../components/Button";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useEffect, useRef, useState } from "react";
-import women from "../../../../assets/images/women_pointing.png"
-// import { useAppContext } from "../../utils/contextProvider";
-import axios from "axios";
+import women from "../../../../assets/images/women_pointing.png";
+import { useForm } from "@inertiajs/react"; 
 import AppLayout from '@/layouts/app-layout';
 
 const ContactUs = () => {
-  // const { selectedLanguage, URL, darkMode } = useAppContext();
   const womenRef = useRef(null);
   const URL = 0;
   const selectedLanguage = 'en';
@@ -23,7 +21,7 @@ const ContactUs = () => {
   }, []);
 
   useGSAP(() => {
-    let tl = gsap.timeline({ defaults: { ease: "pwer4inOut" } });
+    let tl = gsap.timeline({ defaults: { ease: "power4.inOut" } });
     tl.to(".tessst", {
       opacity: 1,
       y: 0,
@@ -42,104 +40,89 @@ const ContactUs = () => {
     );
   });
 
-  const [formInfo, setFormInfo] = useState({
+  const { data, setData, post, processing, reset } = useForm({
     first: "",
     last: "",
     phone: "",
     email: "",
     message: "",
   });
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setData(name, value);
   };
 
-  const formFilled = Object.values(formInfo).every(
+  const formFilled = Object.values(data).every(
     (value) => value.trim() !== ""
   );
-  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-const onFormSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  
-  try {
-    const response = await axios.post('/contact', {
-      first: formInfo.first,
-      last: formInfo.last,
-      phone: formInfo.phone,
-      email: formInfo.email,
-      message: formInfo.message
+  const onFormSubmit = (e) => {
+    e.preventDefault();
+    post('/contact', {
+      preserveScroll: true,
+      onSuccess: () => {
+        reset();
+        setShowModal(true);
+      },
     });
-
-    if (response.status === 200) {
-      setFormInfo({
-        first: "",
-        last: "",
-        phone: "",
-        email: "",
-        message: "",
-      });
-      setShowModal(true);
-    }
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    // You might want to show an error message to the user here
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <AppLayout>
       <div
-        className={`py-[12vh] flex flex-col justify-center lg:px-16 px-5 mt-16 overflow-x-hidden ${darkMode ? "bg-[#0f0f0f]" : "bg-white"
-          }`}
+        className={`py-[12vh] flex flex-col justify-center lg:px-16 px-5 mt-16 overflow-x-hidden ${
+          darkMode ? "bg-[#0f0f0f]" : "bg-white"
+        }`}
       >
         <div
-          className={`flex lg:flex-row flex-col justify-between  gap-8 ${selectedLanguage === "ar" ? "lg:flex-row-reverse" : ""
-            }`}
+          className={`flex lg:flex-row flex-col justify-between gap-8 ${
+            selectedLanguage === "ar" ? "lg:flex-row-reverse" : ""
+          }`}
         >
-          <div className="lg:w-[50%] flex flex-col gap-6  px-3">
+          <div className="lg:w-[50%] flex flex-col gap-6 px-3">
             <div className="tessst opacity-0 translate-y-12 [clip-path: polygon((0 100%, 100% 100%, 100% 100%, 0% 100%)]">
               <h1
-                className={`font-bold text-[2.1rem] ${darkMode ? "text-white" : "text-black"
-                  } ${selectedLanguage === "ar" ? "text-end" : ""}`}
+                className={`font-bold text-[2.1rem] ${
+                  darkMode ? "text-white" : "text-black"
+                } ${selectedLanguage === "ar" ? "text-end" : ""}`}
               >
                 Ready to start?
               </h1>
               <h1
-                className={`font-bold text-[2.1rem] ${darkMode ? "text-white" : "text-black"
-                  } ${selectedLanguage === "ar" ? "text-end" : ""}`}
+                className={`font-bold text-[2.1rem] ${
+                  darkMode ? "text-white" : "text-black"
+                } ${selectedLanguage === "ar" ? "text-end" : ""}`}
               >
                 We've got you covered
               </h1>
             </div>
             <div className="flex flex-col gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon((0 100%, 100% 100%, 100% 100%, 0% 100%)]">
               <p
-                className={`${darkMode ? "text-white" : "text-black"} ${selectedLanguage === "ar" ? "text-end" : ""
-                  }`}
+                className={`${darkMode ? "text-white" : "text-black"} ${
+                  selectedLanguage === "ar" ? "text-end" : ""
+                }`}
               >
                 Have a question?
               </p>
               <p
-                className={`${darkMode ? "text-white" : "text-black"} ${selectedLanguage === "ar" ? "text-end" : "w-4/5"
-                  } `}
+                className={`${darkMode ? "text-white" : "text-black"} ${
+                  selectedLanguage === "ar" ? "text-end" : "w-4/5"
+                } `}
               >
                 An idea you're bursting to share? We're all ears! Drop us a line and let's get this conversation started.
               </p>
             </div>
             <div
-              className={`flex flex-col gap-1 text-gray-500 font-thin text-[0.9rem] ${selectedLanguage === "ar" ? "items-end" : ""
-                }`}
+              className={`flex flex-col gap-1 text-gray-500 font-thin text-[0.9rem] ${
+                selectedLanguage === "ar" ? "items-end" : ""
+              }`}
             >
               <div
-                className={`flex items-center ${selectedLanguage === "ar" ? "flex-row-reverse" : ""
-                  } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
+                className={`flex items-center ${
+                  selectedLanguage === "ar" ? "flex-row-reverse" : ""
+                } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -147,17 +130,17 @@ const onFormSubmit = async (e) => {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  class="size-4"
+                  className="size-4"
                   style={{ stroke: darkMode ? "#fee819" : "#0f0f0f" }}
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                   />
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
                   />
                 </svg>
@@ -166,8 +149,9 @@ const onFormSubmit = async (e) => {
                 </p>
               </div>
               <div
-                className={`flex items-center ${selectedLanguage === "ar" ? "flex-row-reverse" : ""
-                  } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
+                className={`flex items-center ${
+                  selectedLanguage === "ar" ? "flex-row-reverse" : ""
+                } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -175,12 +159,12 @@ const onFormSubmit = async (e) => {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  class="size-4"
+                  className="size-4"
                   style={{ stroke: darkMode ? "#fee819" : "#0f0f0f" }}
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
                   />
                 </svg>
@@ -189,8 +173,9 @@ const onFormSubmit = async (e) => {
                 </p>
               </div>
               <div
-                className={`flex items-center ${selectedLanguage === "ar" ? "flex-row-reverse" : ""
-                  } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
+                className={`flex items-center ${
+                  selectedLanguage === "ar" ? "flex-row-reverse" : ""
+                } gap-2 tessst opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -198,12 +183,12 @@ const onFormSubmit = async (e) => {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  class="size-4"
+                  className="size-4"
                   style={{ stroke: darkMode ? "#fee819" : "#0f0f0f" }}
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
                   />
                 </svg>
@@ -216,18 +201,21 @@ const onFormSubmit = async (e) => {
 
           <form
             onSubmit={onFormSubmit}
-            className={`lg:w-[40%] relative py-6 px-7 shadow-md  border border-white/55 rounded-lg flex  ${selectedLanguage === "ar" ? "items-end" : "items-start"
-              } flex-col gap-6 bg-200/75`}
+            className={`lg:w-[40%] relative py-6 px-7 shadow-md border border-white/55 rounded-lg flex ${
+              selectedLanguage === "ar" ? "items-end" : "items-start"
+            } flex-col gap-6 bg-200/75`}
           >
             <div
               ref={womenRef}
-              className={`absolute w-[17rem] lg:flex hidden  z-10  top-0 ${selectedLanguage === "ar" ? "left-full " : "right-full"
-                }`}
+              className={`absolute w-[17rem] lg:flex hidden z-10 top-0 ${
+                selectedLanguage === "ar" ? "left-full" : "right-full"
+              }`}
             >
               <img
                 loading="lazy"
-                className={`  object-cover   ${selectedLanguage == "ar" && "transform scale-x-[-1]"
-                  } `}
+                className={`object-cover ${
+                  selectedLanguage == "ar" && "transform scale-x-[-1]"
+                }`}
                 src={women}
                 alt=""
               />
@@ -235,19 +223,22 @@ const onFormSubmit = async (e) => {
             <div className="input opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] relative h-11 w-full min-w-[200px]">
               <input
                 onChange={handleInputChange}
-                value={formInfo.first}
+                value={data.first}
                 type="text"
                 name="first"
                 id="first"
-                className={`${selectedLanguage === "ar" ? "text-end" : ""
-                  } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 `}
+                className={`${
+                  selectedLanguage === "ar" ? "text-end" : ""
+                } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0`}
                 placeholder=" "
                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
               />
               <label
-                className={`pt-1 pointer-events-none absolute ${selectedLanguage === "ar" ? "right-0" : "left-0"
-                  }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${darkMode ? "text-white/50" : "text-gray-500"
-                  }`}
+                className={`pt-1 pointer-events-none absolute ${
+                  selectedLanguage === "ar" ? "right-0" : "left-0"
+                } -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha ${
+                  darkMode ? "text-white/50" : "text-gray-500"
+                }`}
               >
                 first name
               </label>
@@ -255,19 +246,22 @@ const onFormSubmit = async (e) => {
             <div className="input opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] relative h-11 w-full min-w-[200px]">
               <input
                 onChange={handleInputChange}
-                value={formInfo.last}
+                value={data.last}
                 type="text"
                 name="last"
                 id="last"
-                className={` ${selectedLanguage === "ar" ? "text-end" : ""
-                  } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
+                className={`${
+                  selectedLanguage === "ar" ? "text-end" : ""
+                } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
                 placeholder=" "
                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
               />
               <label
-                className={`pt-1 pointer-events-none absolute ${selectedLanguage === "ar" ? "right-0" : "left-0"
-                  }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${darkMode ? "text-white/50" : "text-gray-500"
-                  }`}
+                className={`pt-1 pointer-events-none absolute ${
+                  selectedLanguage === "ar" ? "right-0" : "left-0"
+                } -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha ${
+                  darkMode ? "text-white/50" : "text-gray-500"
+                }`}
               >
                 last name
               </label>
@@ -275,19 +269,22 @@ const onFormSubmit = async (e) => {
             <div className="input opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] relative h-11 w-full min-w-[200px]">
               <input
                 onChange={handleInputChange}
-                value={formInfo.phone}
+                value={data.phone}
                 type="tel"
                 name="phone"
                 id="phone"
-                className={` ${selectedLanguage === "ar" ? "text-end" : ""
-                  } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
+                className={`${
+                  selectedLanguage === "ar" ? "text-end" : ""
+                } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
                 placeholder=" "
                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
               />
               <label
-                className={`pt-1 pointer-events-none absolute ${selectedLanguage === "ar" ? "right-0" : "left-0"
-                  }  -top-1.5 transition-all after:content[' ']  peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${darkMode ? "text-white/50" : "text-gray-500"
-                  }`}
+                className={`pt-1 pointer-events-none absolute ${
+                  selectedLanguage === "ar" ? "right-0" : "left-0"
+                } -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha ${
+                  darkMode ? "text-white/50" : "text-gray-500"
+                }`}
               >
                 phone number
               </label>
@@ -295,56 +292,55 @@ const onFormSubmit = async (e) => {
             <div className="input opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] relative h-11 w-full min-w-[200px]">
               <input
                 onChange={handleInputChange}
-                value={formInfo.email}
+                value={data.email}
                 type="email"
                 name="email"
                 id="email"
-                className={`${selectedLanguage === "ar" ? "text-end" : ""
-                  } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
+                className={`${
+                  selectedLanguage === "ar" ? "text-end" : ""
+                } peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
                 placeholder=" "
                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
               />
               <label
-                className={`pt-1 pointer-events-none absolute ${selectedLanguage === "ar" ? "right-0" : "left-0"
-                  }  -top-1.5 transition-all after:content[' ']  peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${darkMode ? "text-white/50" : "text-gray-500"
-                  }`}
+                className={`pt-1 pointer-events-none absolute ${
+                  selectedLanguage === "ar" ? "right-0" : "left-0"
+                } -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha ${
+                  darkMode ? "text-white/50" : "text-gray-500"
+                }`}
               >
                 email
               </label>
             </div>
             <div className="input opacity-0 translate-y-12 [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] relative h-11 w-full min-w-[200px]">
-              {/* <input
-                                className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                placeholder=" "
-                            /> */}
               <textarea
                 name="message"
                 id="message"
                 onChange={handleInputChange}
-                value={formInfo.message}
-                className={`${selectedLanguage === "ar" ? "text-end" : ""
-                  } resize-none  peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
+                value={data.message}
+                className={`${
+                  selectedLanguage === "ar" ? "text-end" : ""
+                } resize-none peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
                 placeholder=" "
                 style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
               />
               <label
-                className={`pt-1 pointer-events-none absolute ${selectedLanguage === "ar" ? "right-0" : "left-0"
-                  }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha  ${darkMode ? "text-white/50" : "text-gray-500"
-                  }`}
+                className={`pt-1 pointer-events-none absolute ${
+                  selectedLanguage === "ar" ? "right-0" : "left-0"
+                } -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha ${
+                  darkMode ? "text-white/50" : "text-gray-500"
+                }`}
               >
                 message
               </label>
             </div>
             <div className="input opacity-0 translate-y-12 [clip-path:polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)]">
               <Button
-                disabled={!formFilled}
-                className={" text-[0.9rem]  font-normal mt-2 px-4"}
+                disabled={!formFilled || processing}
+                className={"text-[0.9rem] font-normal mt-2 px-4"}
               >
-                {loading ? (
-                  <div
-                    role="status"
-                    className="flex items-center justify-center"
-                  >
+                {processing ? (
+                  <div role="status" className="flex items-center justify-center">
                     <svg
                       aria-hidden="true"
                       className="w-8 h-8 text-gray-200 animate-spin fill-[#fee819]"
@@ -367,39 +363,38 @@ const onFormSubmit = async (e) => {
                 )}
               </Button>
             </div>
-            {/* <button className="bg-alpha mt-2 text-gray-800 font-light text-[0.9rem] px-4 py-2 rounded-lg shadow-md">Send Message</button> */}
           </form>
         </div>
-      </div>
-      {/* <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3323.0584384950844!2d-7.5364266246542515!3d33.60378817332915!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda7cdb2f812837f%3A0xbbcfc74fbc11b2d9!2sLionsGeek!5e0!3m2!1sen!2sma!4v1719408103931!5m2!1sen!2sma" className='w-full h-[45vh] filter grayscale focus:border-none focus:outline-none map' allowfullscreen="" loading="lazy" ></iframe> */}
 
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white md:w-[38vw] w-64 h-64 p-6 rounded shadow-lg flex flex-col items-center justify-center text-center space-y-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="#22c55e"
-              className="size-9"
-            >
-              <path
-                fillRule="evenodd"
-                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <h2 className="text-lg font-medium text-gray-500">Success!</h2>
-            <p>Thank you , your message has been received!</p>
-            <button
-              onClick={() => setShowModal(false)}
-              className="px-4 py-2 bg-alpha font-medium rounded"
-            >
-              Close
-            </button>
+        {showModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white md:w-[38vw] w-64 h-64 p-6 rounded shadow-lg flex flex-col items-center justify-center text-center space-y-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="#22c55e"
+                className="size-9"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <h2 className="text-lg font-medium text-gray-500">Success!</h2>
+              <p>Thank you, your message has been received!</p>
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 bg-alpha font-medium rounded"
+              >
+                Close
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </AppLayout>
   );
 };
+
 export default ContactUs;
