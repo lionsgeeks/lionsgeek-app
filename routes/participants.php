@@ -13,5 +13,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/invite/interview', action: [ParticipantController::class, 'toInterview'])->name('invite.interview');
     Route::post('/invite/jungle', action: [ParticipantController::class, 'toJungle'])->name('invite.jungle');
     Route::post('/invite/school', action: [ParticipantController::class, 'toSchool'])->name('invite.school');
-    Route::resource('participants', ParticipantController::class);
+    Route::resource('participants', ParticipantController::class)->except(['store']);
 });;
+Route::post('/participants/store', [ParticipantController::class, 'store'])->name('participants.store');

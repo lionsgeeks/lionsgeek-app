@@ -52,6 +52,10 @@ class ParticipantController extends Controller
      */
     public function store(Request $request)
     {
+        $messages = [
+            'email.unique' => 'This email already exist',
+            'motivation.min' => 'Your motivation must be at least 150 characters long.',
+        ];
         $request->validate([
             'full_name' => 'required|string',
             'email' => 'required|string|email|unique:participants',
@@ -61,74 +65,73 @@ class ParticipantController extends Controller
             'prefecture' => 'required|string',
             'info_session_id' => 'required',
             'gender' => 'required|string',
-            'motivation' => 'required|string',
+            'motivation' => 'required|string|min:150',
             'source' => 'required|string',
-        ]);
-        $parts = Participant::where('info_session_id', $request->info_session_id)->count();
-        $infosession = InfoSession::where('id', $request->info_session_id)->first();
-        if ($parts + 1 > $infosession->places) {
-            return back()->with('error', 'Sorry places are full');
-        }
-        $checkUser = Participant::where('info_session_id', $request->info_session_id)
-            ->where('email', $request->email)->first();
-        if ($checkUser) {
-            return back()->with('error', 'This email already exist');
-        }
-        $time = Carbon::now();
-        $code = $request->full_name . $time->format('h:i:s');
-        $birthObj = new DateTime($request->birthday);
-        $currentDay = new DateTime();
-        $age = $birthObj->diff($currentDay)->y;
-        // create the participant
-        $participant = Participant::create([
-            'info_session_id' => $request->info_session_id,
-            'full_name' => $request->full_name,
-            'email' => $request->email,
-            'birthday' => $request->birthday,
-            'age' => $age,
-            'phone' => $request->phone,
-            'city' => $request->city,
-            'prefecture' => $request->prefecture,
-            'gender' => $request->gender,
-            'source' => $request->source,
-            'motivation' => $request->motivation,
-            'code' => $code
-        ]);
-        // one to one relationships
-        $questions = FrequentQuestion::create([
-            'participant_id' => $participant->id,
-        ]);
-        $satisfaction = Satisfaction::create([
-            'participant_id' => $participant->id,
-        ]);
-        $data['full_name'] = $participant->full_name;
-        $data['email'] = $participant->email;
-        $data['code'] = $participant->code;
-        $data['infosession'] = $participant->infoSession->name;
-        $data['formation'] = $participant->infoSession->formation;
-        $data['time'] = $participant->infoSession->start_date;
-        $data['created_at'] = $participant->created_at;
-        $jsonData = json_encode([
-            'email' => $data['email'],
-            'code' => $data['code']
-        ]);
-        ob_start();
-        QRCode::text($jsonData)
-            ->setErrorCorrectionLevel('H')
-            ->png();
-        $qrImage = ob_get_clean();
-        $image = base64_encode($qrImage);
-        $pdf = Pdf::loadView('pdf.code', compact(['image', 'data']));
-        $data['pdf'] = $pdf;
-        //!!!!!! add mail 
-        Mail::to($participant->email)->send(new CodeMail($data, $image));
-        if ($parts + 1 == $infosession->places) {
-            $infosession->update([
-                'isFull' => true
+        ], $messages);
+        try {
+            $parts = Participant::where('info_session_id', $request->info_session_id)->count();
+            $infosession = InfoSession::where('id', $request->info_session_id)->first();
+            if ($parts + 1 > $infosession->places) {
+                return back()->with('error', 'Sorry places are full');
+            }
+            $time = Carbon::now();
+            $code = $request->full_name . $time->format('h:i:s');
+            $birthObj = new DateTime($request->birthday);
+            $currentDay = new DateTime();
+            $age = $birthObj->diff($currentDay)->y;
+            // create the participant
+            $participant = Participant::create([
+                'info_session_id' => $request->info_session_id,
+                'full_name' => $request->full_name,
+                'email' => $request->email,
+                'birthday' => $request->birthday,
+                'age' => $age,
+                'phone' => $request->phone,
+                'city' => $request->city,
+                'prefecture' => $request->prefecture,
+                'gender' => $request->gender,
+                'source' => $request->source,
+                'motivation' => $request->motivation,
+                'code' => $code
             ]);
+            // one to one relationships
+            $questions = FrequentQuestion::create([
+                'participant_id' => $participant->id,
+            ]);
+            $satisfaction = Satisfaction::create([
+                'participant_id' => $participant->id,
+            ]);
+            $data['full_name'] = $participant->full_name;
+            $data['email'] = $participant->email;
+            $data['code'] = $participant->code;
+            $data['infosession'] = $participant->infoSession->name;
+            $data['formation'] = $participant->infoSession->formation;
+            $data['time'] = $participant->infoSession->start_date;
+            $data['created_at'] = $participant->created_at;
+            $jsonData = json_encode([
+                'email' => $data['email'],
+                'code' => $data['code']
+            ]);
+            ob_start();
+            QRCode::text($jsonData)
+                ->setErrorCorrectionLevel('H')
+                ->png();
+            $qrImage = ob_get_clean();
+            $image = base64_encode($qrImage);
+            $pdf = Pdf::loadView('pdf.code', compact(['image', 'data']));
+            $data['pdf'] = $pdf;
+            Mail::to($participant->email)->send(new CodeMail($data, $image));
+            if ($parts + 1 == $infosession->places) {
+                $infosession->update([
+                    'isFull' => true
+                ]);
+            }
+        } catch (\Throwable $th) {
+            flash()
+                ->option('position', 'bottom-right')
+                ->error('Something went wrong!');
+            return back();
         }
-        return back()->with('success', 'Registration successful! Check your email for your info session invite and QR code.
- ');
     }
 
     /**
@@ -261,7 +264,7 @@ class ParticipantController extends Controller
             'dates' => 'required|array',
             'infosession_id' => 'required',
         ]);
-        // try {
+        try {
             $candidats = Participant::where('info_session_id', $request->infosession_id)->where('current_step', 'interview')->get();
             $info = InfoSession::where('id', $request->infosession_id)->first();
             $formationType = $info->formation;
@@ -282,10 +285,10 @@ class ParticipantController extends Controller
                 }
             }
             return back()->with('success', 'The Invitation Has Been Sent Successfully!');
-        // } catch (\Throwable $th) {
-        //     //throw $th;
-        //     return back()->with('error', 'An Error Has Occurred!');
-        // }
+        } catch (\Throwable $th) {
+            //throw $th;
+            return back()->with('error', 'An Error Has Occurred!');
+        }
     }
     public function toJungle(Request $request)
     {

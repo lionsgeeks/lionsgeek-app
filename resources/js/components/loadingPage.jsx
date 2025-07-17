@@ -8,7 +8,7 @@ const LoadingPage = () => {
                 viewBox="0 0 37 36"
                 fill={darkMode ? "#fff" : "#000"}
                 xmlns="http://www.w3.org/2000/svg"
-                className="size-24 spin"
+                className="size-24 animate-spin"
             >
                 <path d="M29.8744 0H7.05262L0 21.706L18.463 35.121L36.93 21.706L29.8744 0ZM18.464 27.506L7.24261 19.353L11.5284 6.161H25.3986L29.6844 19.353L18.464 27.506Z" />
                 <path d="M13.1763 19.326L18.464 23.167L23.7517 19.326H13.1763Z" />

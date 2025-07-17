@@ -30,10 +30,14 @@ Route::get('/', function () {
 
 
 Route::get('/coding', function () {
-    return Inertia::render('client/coding/coding');
+    return Inertia::render('client/coding/coding', [
+        'sessions' => InfoSession::where('isAvailable', 1)->where('formation', 'Coding' )->where('isFinish', 0)->get(),
+    ]);
 })->name('coding');
 Route::get('/media', function () {
-    return Inertia::render('client/media/media');
+    return Inertia::render('client/media/media', [
+        'sessions' => InfoSession::where('isAvailable', 1)->where('formation', 'Media' )->where('isFinish', 0)->get(),
+    ]);
 })->name('media');
 Route::get('/pro', function () {
     $projects = Project::all();

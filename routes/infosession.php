@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\InfosessionController;
+use App\Models\InfoSession;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -9,9 +10,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::patch('infosessions/change-availabilty/{id}', [InfosessionController::class, 'availabilityStatus'])->name('infosession.availability');
     Route::patch('infosessions/change-status/{id}', [InfosessionController::class, 'completeStatus'])->name('infosession.status');
 });
-
 Route::get('/postuler', function () {
-    return Inertia::render('client/infoSession/infoSession');
+    return Inertia::render('client/infoSession/infoSession', [
+        'sessions' => InfoSession::where('isAvailable', true)->where('isFinish', false)->where('isFUll', false)->get()
+    ]);
 })->name('postuler');
 Route::get('/private-session', function () {
     return Inertia::render('client/infoSession/privatesession');
