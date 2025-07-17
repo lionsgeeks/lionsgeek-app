@@ -4,8 +4,10 @@ import { TransText } from "../../../components/TransText";
 import { useState } from "react";
 import Modal from "../../../components/Modal";
 import LoadingPage from "../../../components/loadingPage";
+import { useAppContext } from "@/context/appContext";
 
 export default function CoworkingForm() {
+    const {selectedLanguage, darkMode} = useAppContext();
     const { data, setData, post, processing } = useForm({
         // text
         full_name: "",
@@ -241,8 +243,6 @@ export default function CoworkingForm() {
 
     };
 
-    const darkMode = false;
-    const selectedLanguage = "en";
     return (
         <AppLayout>
             <Head title="Apply to Co-work" />

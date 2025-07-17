@@ -7,6 +7,7 @@ use App\Models\Coworking;
 use App\Models\Event;
 use App\Models\General;
 use App\Models\InfoSession;
+use App\Models\Press;
 use App\Models\Project;
 use App\Models\Subscriber;
 use Carbon\Carbon;
@@ -27,8 +28,6 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-// Event routes moved to routes/event.php
-
 
 Route::get('/coding', function () {
     return Inertia::render('client/coding/coding');
@@ -45,17 +44,12 @@ Route::get('/pro', function () {
 Route::get('/contact', function () {
     return Inertia::render('client/ContactUs/contactUs');
 })->name('contact');
-Route::get('/postuler', function () {
-    return Inertia::render('client/infoSession/infoSession', [
-        'sessions' => InfoSession::where('isAvailable', true)->where('isFinish', false)->where('isFUll', false)->get()
-    ]);
-})->name('postuler');
-Route::get('/private-session', function () {
-    return Inertia::render('client/infoSession/privatesession');
-})->name('privateSession');
 
 Route::get('/about', function () {
-    return Inertia::render('client/about/about');
+    $presses = Press::all();
+    return Inertia::render('client/about/about', [
+        'presses' => $presses
+    ]);
 });
 Route::get('/whatislionsgeek', function () {
     return Inertia::render('client/about/partials/whatis');

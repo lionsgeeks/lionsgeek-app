@@ -1,10 +1,11 @@
 import logo from "../../../../../assets/images/About-us-page-pana.png";
 import {Button} from "../../../../components/Button";
 import { TransText } from "../../../../components/TransText";
+import { useAppContext } from "@/context/appContext";
+
 
 export const FirstSectionAbout = () => {
-    const selectedLanguage = "en";
-    const darkMode = false;
+    const {selectedLanguage, darkMode} = useAppContext();
 
     return (
         <>

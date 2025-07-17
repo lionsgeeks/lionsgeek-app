@@ -1,9 +1,9 @@
 import { TransText } from "@/components/TransText";
+import { useAppContext } from "@/context/appContext";
 
-const darkMode = false;
-const selectedLanguage = "en";
 
 const ServiceSvg = ({ children, className, ...rest }) => {
+    const { selectedLanguage } = useAppContext();
 
     return (
         <svg
@@ -19,6 +19,7 @@ const ServiceSvg = ({ children, className, ...rest }) => {
 };
 
 const ServicesSection = () => {
+    const { selectedLanguage, darkMode } = useAppContext();
 
     const services = [
         [
@@ -43,8 +44,8 @@ const ServicesSection = () => {
                 stroke="currentColor"
                 strokeWidth="2"
                 className={`${darkMode
-                        ? "stroke-alpha group-hover:stroke-gray-600"
-                        : "stroke-alpha group-hover:stroke-beta"
+                    ? "stroke-alpha group-hover:stroke-gray-600"
+                    : "stroke-alpha group-hover:stroke-beta"
                     }`}      >
                 <path
                     strokeLinecap="round"
@@ -68,8 +69,8 @@ const ServicesSection = () => {
             <ServiceSvg
                 fill="currentColor"
                 className={`${darkMode
-                        ? "stroke-alpha group-hover:stroke-gray-600"
-                        : "stroke-alpha group-hover:stroke-beta"
+                    ? "stroke-alpha group-hover:stroke-gray-600"
+                    : "stroke-alpha group-hover:stroke-beta"
                     }`}      >
                 <path
                     fillRule="evenodd"
@@ -101,8 +102,8 @@ const ServicesSection = () => {
                 strokeWidth="1.5"
                 stroke="currentColor"
                 className={`${darkMode
-                        ? "stroke-alpha group-hover:stroke-gray-600"
-                        : "stroke-alpha group-hover:stroke-beta"
+                    ? "stroke-alpha group-hover:stroke-gray-600"
+                    : "stroke-alpha group-hover:stroke-beta"
                     }`}      >
                 <path
                     strokeLinecap="round"
@@ -133,8 +134,8 @@ const ServicesSection = () => {
                 strokeWidth="1.5"
                 stroke="currentColor"
                 className={`${darkMode
-                        ? "stroke-alpha group-hover:stroke-gray-600"
-                        : "stroke-alpha group-hover:stroke-beta"
+                    ? "stroke-alpha group-hover:stroke-gray-600"
+                    : "stroke-alpha group-hover:stroke-beta"
                     }`}
             >
                 <path

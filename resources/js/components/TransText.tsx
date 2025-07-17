@@ -1,5 +1,5 @@
+import { useAppContext } from "@/context/appContext";
 import React from "react";
-// import { useAppContext } from "../utils/contextProvider";
 
 interface TextProps {
     ar: string;
@@ -8,12 +8,10 @@ interface TextProps {
 }
 
 export const TransText: React.FC<TextProps> = (props) => {
-    // const { selectedLanguage } = useAppContext();
-
-    const selectedLanguage = "en";
+    const {selectedLanguage} = useAppContext();
     const allowedLanguages = ["ar", "fr", "en"];
 
-    if (!allowedLanguages.includes(selectedLanguage)) {
+    if (!allowedLanguages.includes(selectedLanguage as keyof TextProps)) {
         throw new Error(
             `Invalid language: ${selectedLanguage}. Supported languages are: ${allowedLanguages.join(
                 ", "
@@ -21,6 +19,6 @@ export const TransText: React.FC<TextProps> = (props) => {
         );
     }
 
-    return props[selectedLanguage];
+    return props[selectedLanguage as keyof TextProps];
 };
 

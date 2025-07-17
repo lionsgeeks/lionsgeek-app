@@ -7,12 +7,11 @@ import eventspic from '../../../../assets/images/events.jpg';
 import marketingPic from '../../../../assets/images/marketing.jpg';
 import { TransText } from '../../../components/TransText';
 import { ChartBar, Code, Trophy, Video } from 'lucide-react';
-
+import { useAppContext } from "@/context/appContext";
 const Propage = () => {
     const { projects } = usePage().props;
 
-    const selectedLanguage = 'en';
-    const darkMode = false;
+    const { selectedLanguage, darkMode } = useAppContext();
 
     const services = [
         {
@@ -21,84 +20,182 @@ const Propage = () => {
             photo: codePic,
             header: <TransText
                 en="Web Development"
+                fr="Développement Web"
+                ar="تطوير الويب"
             />,
-            subHeader: '',
+            subHeader: "",
             descriptions: [
                 {
                     title: <TransText
                         en="Website Design and Development"
+                        fr="Conception et développement de sites Web"
+                        ar="تصميم وتطوير المواقع الإلكترونية"
                     />,
                     description: <TransText
                         en="Creation and redesign of websites to improve user experience and communication of NGO missions"
+                        fr="Création et refonte de sites Web pour améliorer l'expérience utilisateur et la communication des missions des ONG"
+                        ar="إنشاء وإعادة تصميم المواقع لتحسين تجربة المستخدم وتعزيز التواصل حول مهام المنظمات غير الحكومية"
                     />,
                 },
                 {
                     title: <TransText
                         en="Maintenance and Technical Support"
+                        fr="Maintenance et Support Technique"
+                        ar="الصيانة والدعم التقني"
                     />,
                     description: <TransText
                         en="Ongoing support and regular updates to ensure the smooth functioning of websites"
+                        fr="Support continu et mises à jour régulières pour garantir le bon fonctionnement des sites Web"
+                        ar="دعم مستمر وتحديثات منتظمة لضمان عمل المواقع بسلاسة"
                     />,
                 },
                 {
                     title: <TransText
                         en="Web and Mobile Application Development"
+                        fr="Développement d'Applications Web et Mobiles"
+                        ar="تطوير تطبيقات الويب والهواتف المحمولة"
                     />,
-                    description: 'main.lionsgeekpro.firstsection.desc1',
+                    description: <TransText
+                        en="Custom solutions for volunteer and donor management"
+                        fr="Solutions sur mesure pour la gestion des bénévoles et des donateurs"
+                        ar="حلول مخصصة لإدارة المتطوعين والمتبرعين"
+                    />,
                 },
             ],
         },
+
         {
             id: 2,
             icon: <Video size={25} />,
             photo: audioviuelPic,
-            header: 'main.lionsgeekpro.Secondsection.title1',
-            subHeader: '',
+            header: <TransText
+                en="Audiovisual Production"
+                fr="Production Audiovisuelle"
+                ar="الإنتاج السمعي البصري"
+            />,
+            subHeader: "",
             descriptions: [
                 {
-                    title: 'main.lionsgeekpro.Secondsection.title2',
-                    description: 'main.lionsgeekpro.Secondsection.desc1',
+                    title: <TransText
+                        en="Institutional Films"
+                        fr="Films Institutionnels"
+                        ar="أفلام مؤسساتية"
+                    />,
+                    description: <TransText
+                        en="Design films to present the missions and impacts of NGOs"
+                        fr="Conception de films pour présenter les missions et les impacts des ONG"
+                        ar="تصميم أفلام لعرض مهام وتأثيرات المنظمات غير الحكومية"
+                    />,
                 },
                 {
-                    title: 'main.lionsgeekpro.Secondsection.title3',
-                    description: 'main.lionsgeekpro.Secondsection.desc3',
+                    title: <TransText
+                        en="Viral Videos"
+                        fr="Vidéos Virales"
+                        ar="فيديوهات فيروسية"
+                    />,
+                    description: <TransText
+                        en="Production of engaging videos designed to be shared widely on social networks"
+                        fr="Production de vidéos engageantes destinées à être partagées massivement sur les réseaux sociaux"
+                        ar="إنتاج فيديوهات جذابة مصممة ليتم مشاركتها على نطاق واسع عبر شبكات التواصل الاجتماعي"
+                    />,
                 },
                 {
-                    title: 'main.lionsgeekpro.Secondsection.title4',
-                    description: 'main.lionsgeekpro.Secondsection.desc4',
+                    title: <TransText
+                        en="Podcasts"
+                        fr="Podcasts"
+                        ar="بودكاست"
+                    />,
+                    description: <TransText
+                        en="Create podcasts to discuss relevant topics and engage a wide audience"
+                        fr="Création de podcasts pour discuter de sujets pertinents et engager un large public"
+                        ar="إنشاء بودكاست لمناقشة مواضيع مهمة وجذب جمهور واسع"
+                    />,
                 },
                 {
-                    title: 'main.lionsgeekpro.Secondsection.title5',
-                    description: 'main.lionsgeekpro.Secondsection.desc5',
+                    title: <TransText
+                        en="Event Coverage"
+                        fr="Couverture d’Événements"
+                        ar="تغطية الفعاليات"
+                    />,
+                    description: <TransText
+                        en="Professional video and photography to document events"
+                        fr="Captation vidéo et photographie professionnelle pour documenter les événements."
+                        ar="تصوير فيديو ولقطات فوتوغرافية احترافية لتوثيق الفعاليات"
+                    />,
                 },
                 {
-                    title: 'main.lionsgeekpro.Secondsection.title6',
-                    description: 'main.lionsgeekpro.Secondsection.desc6',
+                    title: <TransText
+                        en="Live Social Media Broadcasts"
+                        fr="Live sur les Réseaux Sociaux"
+                        ar="البث المباشر على وسائل التواصل الاجتماعي"
+                    />,
+                    description: <TransText
+                        en="Organize live broadcasts for real-time events and interactive sessions"
+                        fr="Organisation de diffusions en direct pour des événements en temps réel et des sessions interactives"
+                        ar="تنظيم بثوث مباشرة للفعاليات والأحداث التفاعلية في الوقت الفعلي"
+                    />,
                 },
             ],
         },
+
         {
             id: 3,
             icon: <ChartBar size={25} />,
             photo: marketingPic,
-            header: 'main.lionsgeekpro.section3.title1',
-            subHeader: '',
+            header: <TransText
+                en="Digital Marketing"
+                fr="Marketing Digital"
+                ar="التسويق الرقمي"
+            />,
+            subHeader: "",
             descriptions: [
                 {
-                    title: 'main.lionsgeekpro.section3.title2',
-                    description: 'main.lionsgeekpro.section3.desc1',
+                    title: <TransText
+                        en="User Generated Content (UGC)"
+                        fr="Création de Contenu Utilisateur (UGC)"
+                        ar="إنشاء محتوى من إنتاج المستخدمين (UGC)"
+                    />,
+                    description: <TransText
+                        en="Training on creating and using user-generated content to increase community engagement"
+                        fr="Formation à la création et à l'utilisation de contenu généré par les utilisateurs pour augmenter l'engagement communautaire"
+                        ar="تدريب على إنشاء واستخدام المحتوى الذي ينشئه المستخدمون لزيادة التفاعل المجتمعي"
+                    />,
                 },
                 {
-                    title: 'main.lionsgeekpro.section3.title3',
-                    description: 'main.lionsgeekpro.section3.desc3',
+                    title: <TransText
+                        en="Social Media Management"
+                        fr="Gestion des Réseaux Sociaux"
+                        ar="إدارة وسائل التواصل الاجتماعي"
+                    />,
+                    description: <TransText
+                        en="Develop customized strategies and manage content to optimize online presence"
+                        fr="Développement de stratégies sur mesure et gestion de contenu pour optimiser la présence en ligne"
+                        ar="تطوير استراتيجيات مخصصة وإدارة المحتوى لتحسين الوجود الرقمي"
+                    />,
                 },
                 {
-                    title: 'main.lionsgeekpro.section3.title4',
-                    description: 'main.lionsgeekpro.section3.desc4',
+                    title: <TransText
+                        en="SEO and Content Marketing"
+                        fr="SEO et Marketing de Contenu"
+                        ar="تحسين محركات البحث وتسويق المحتوى"
+                    />,
+                    description: <TransText
+                        en="SEO audits and content strategies to improve search engine visibility"
+                        fr="Audits SEO et stratégies de contenu pour améliorer la visibilité sur les moteurs de recherche"
+                        ar="تحليلات تحسين محركات البحث واستراتيجيات محتوى لتحسين الظهور في نتائج البحث"
+                    />,
                 },
                 {
-                    title: 'main.lionsgeekpro.section3.title5',
-                    description: 'main.lionsgeekpro.section3.desc5',
+                    title: <TransText
+                        en="Online Advertising"
+                        fr="Publicité en Ligne"
+                        ar="الإعلانات عبر الإنترنت"
+                    />,
+                    description: <TransText
+                        en="Create, manage, and optimize online advertising campaigns"
+                        fr="Création, gestion et optimisation de campagnes publicitaires en ligne"
+                        ar="إنشاء وإدارة وتحسين حملات الإعلانات الرقمية"
+                    />,
                 },
             ],
         },
@@ -106,19 +203,40 @@ const Propage = () => {
             id: 4,
             icon: <Trophy size={25} />,
             photo: eventspic,
-            header: 'main.lionsgeekpro.section4.title1',
-            subHeader: '',
+            header: <TransText
+                en="Events and Hackathons"
+                fr="Événements et Hackathons"
+                ar="الفعاليات و الهاكاثونات"
+            />,
+            subHeader: "",
             descriptions: [
                 {
-                    title: 'main.lionsgeekpro.section4.title2',
-                    description: 'main.lionsgeekpro.section4.desc1',
+                    title: <TransText
+                        en="Organizing Hackathons"
+                        fr="Organisation de Hackathons"
+                        ar="تنظيم الهاكاثونات"
+                    />,
+                    description: <TransText
+                        en="Plan and manage hackathons to stimulate innovation and find technological solutions to NGO challenges"
+                        fr="Planification et gestion de hackathons pour stimuler l'innovation et trouver des solutions technologiques aux défis des ONG"
+                        ar="تخطيط وإدارة الهاكاثونات لتحفيز الابتكار وإيجاد حلول تكنولوجية لتحديات المنظمات غير الحكومية"
+                    />,
                 },
                 {
-                    title: 'main.lionsgeekpro.section4.title3',
-                    description: 'main.lionsgeekpro.section4.desc3',
+                    title: <TransText
+                        en="Workshops and Trainings"
+                        fr="Ateliers et Formations"
+                        ar="ورش عمل ودورات تدريبية"
+                    />,
+                    description: <TransText
+                        en="Training sessions to improve the technical skills of NGO volunteers and members"
+                        fr="Séances de formation pour améliorer les compétences techniques des bénévoles et des membres des ONG"
+                        ar="جلسات تدريبية لتحسين المهارات التقنية للمتطوعين وأعضاء المنظمات غير الحكومية"
+                    />,
                 },
             ],
-        },
+        }
+
     ];
 
     return (
@@ -129,11 +247,19 @@ const Propage = () => {
                     {/* hero section */}
                     <div className="flex w-full flex-col items-center gap-4 self-center py-8">
                         <h1 className="text-3xl font-bold lg:text-5xl" style={{ color: darkMode ? '#ffffff' : '#0f0f0f' }}>
-                            OUR SERVICES
+                            <TransText
+                                en="OUR SERVICES"
+                                fr="NOS SERVICES"
+                                ar="خدماتنا"
+                            />
                         </h1>
                         <p className="w-[95%] py-2 text-center font-normal lg:w-[50%] lg:text-xl" style={{ color: darkMode ? '#ffffff' : '#0f0f0f' }}>
-                            Feeling overwhelmed? We offer a range of services to streamline your operations, boost efficiency, and help you achieve your
-                            goals.
+                            <TransText
+                                en="Feeling overwhelmed? We offer a range of services to streamline your operations, boost efficiency, and help you achieve your
+                            goals."
+                                fr="Vous vous sentez submergé ? Nous proposons une gamme de services pour rationaliser vos opérations, améliorer le fficacité et vous aider à atteindre vos objectifs"
+                                ar="تشعر بالإرهاق؟ نحن نقدم مجموعة من الخدمات لتبسيط عملياتك وتعزيز الكفاءة ومساعدتك على تحقيق أهدافك"
+                            />
                         </p>
                     </div>
 
@@ -177,7 +303,7 @@ const Propage = () => {
                                                 </svg>
                                             </div>
 
-                                            <h3 className="">e.title</h3>
+                                            <h3 className="">{e.title}</h3>
                                         </div>
                                     ))}
                                 </div>

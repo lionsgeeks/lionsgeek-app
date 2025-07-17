@@ -1,9 +1,9 @@
 import { TransText } from "@/components/TransText";
 import {Button} from "@/components/Button";
+import { useAppContext } from "@/context/appContext";
 
 export default function HeroSection() {
-    const darkMode = false;
-    const selectedLanguage = "en";
+    const { selectedLanguage, darkMode} = useAppContext()
 
     const pillars = [
         {

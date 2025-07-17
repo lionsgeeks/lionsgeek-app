@@ -6,9 +6,10 @@ import part4 from "../../../../../assets/images/partners/partner-4.png"
 import part5 from "../../../../../assets/images/partners/partner-5.png"
 import part6 from "../../../../../assets/images/partners/partner-6.png"
 import part7 from "../../../../../assets/images/partners/partner-7.png"
+import { useAppContext } from "@/context/appContext";
 
 export const Partners = () => {
-    const darkMode = false;
+    const {darkMode} = useAppContext();
     return (
         <div className={`${darkMode && "bg-[#0f0f0f]"} px-16 py-20`}>
             <div className="overflow-hidden flex flex-col gap-6 items-center justify-between">

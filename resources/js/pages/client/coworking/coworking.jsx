@@ -5,9 +5,10 @@ import { RiDoubleQuotesR } from "react-icons/ri";
 import gsap from "gsap";
 import AppLayout from "@/layouts/app-layout";
 import { Camera, Gamepad, Podcast, Shield, Users, Wifi } from "lucide-react";
-import { Link } from "@inertiajs/react";
-
+import { Head, Link } from "@inertiajs/react";
+import { useAppContext } from "@/context/appContext";
 const Coworking = () => {
+    const { selectedLanguage, darkMode } = useAppContext();
 
     const videoPlay = useRef(null);
     useEffect(() => {
@@ -113,7 +114,7 @@ const Coworking = () => {
     return (
         <>
             <AppLayout>
-
+                <Head title="Co-Working" />
                 <div className="min-h-screen ">
 
                     <div className="grid lg:grid-cols-2 mx-10 mt-20 gap-20 items-center">

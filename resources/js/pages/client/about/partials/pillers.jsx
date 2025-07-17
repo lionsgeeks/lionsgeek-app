@@ -1,10 +1,10 @@
 import myImage from "../../../../../assets/images/coding_afiche.jpg";
 import myImage2 from "../../../../../assets/images/media_affiche.jpg"; // Adjust the path to your image
 import { TransText } from "../../../../components/TransText";
+import { useAppContext } from "@/context/appContext";
 
 export const Pillers = () => {
-    const selectedLanguage = "en";
-    const darkMode = false;
+   const {selectedLanguage, darkMode} = useAppContext();
 
     return (
         <div

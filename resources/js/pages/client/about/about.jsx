@@ -4,10 +4,12 @@ import { Press } from './partials/press';
 import { Stats } from './partials/stats';
 import { Pillers } from './partials/pillers';
 import AppLayout from "@/layouts/app-layout";
+import { Head } from '@inertiajs/react';
 
 export const AboutPage = () => {
     return (
         <AppLayout>
+        <Head title="About" />
             <FirstSectionAbout/>
             <Pillers/>
             <Stats/>

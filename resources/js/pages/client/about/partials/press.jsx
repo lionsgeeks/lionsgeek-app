@@ -1,10 +1,10 @@
 import { usePage } from '@inertiajs/react';
+import { useAppContext } from "@/context/appContext";
 
 export const Press = () => {
-    const selectedLanguage = "en";
-    const darkMode = false;
+    const {selectedLanguage, darkMode} = useAppContext();
     const { presses } = usePage().props;
-    console.log("hhhhh:", presses);
+
 
     return (
         <section className={`${darkMode ? "bg-[#0f0f0f]" : ""} py-[4vh]`}>

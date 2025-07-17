@@ -1,6 +1,8 @@
 import AppLayout  from "@/layouts/app-layout";
+import { useAppContext } from "@/context/appContext";
+
 const WhatIsLionsGeek = () => {
-    const darkMode = false;
+    const {darkMode} = useAppContext();
 
     return (
         <AppLayout>

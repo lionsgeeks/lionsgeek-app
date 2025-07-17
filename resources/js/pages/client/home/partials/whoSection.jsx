@@ -1,9 +1,11 @@
 import { TransText } from "@/components/TransText";
 import { Link } from "@inertiajs/react";
+import { useAppContext } from "@/context/appContext";
+import {Button} from "../../../../components/Button"
+
 
 const WhoSection = () => {
-    const darkMode = false;
-    const selectedLanguage = "en";
+    const {selectedLanguage, darkMode} = useAppContext()
 
     return (
         <div className="px-7 md:px-16 pt-6 py-12" style={{ backgroundColor: darkMode ? "#0f0f0f" : "#ffffff" }}>
@@ -34,9 +36,9 @@ const WhoSection = () => {
                     </p>
 
                     <Link to={"/about"}>
-                        <button>
+                        <Button>
                             <TransText en="Learn more" fr="En savoir plus" ar="تعرف أكثر" />
-                        </button>
+                        </Button>
                     </Link>
                 </div>
             </div>

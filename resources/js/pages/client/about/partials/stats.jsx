@@ -1,9 +1,10 @@
 import staff from "../../../../../assets/images/ceremonie.jpeg";
 import { TransText } from "../../../../components/TransText";
+import { useAppContext } from "@/context/appContext";
 
 export const Stats = () => {
-    const selectedLanguage = "en";
-    const darkMode = false;
+    const {selectedLanguage, darkMode} = useAppContext();
+
     const stats = [
         {
             icon: (

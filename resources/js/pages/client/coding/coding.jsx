@@ -6,14 +6,10 @@ import { FourthSection } from './components/fourthSection';
 import { FifthSection } from './components/fifthSection';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
-// import { useAppContext } from '../../utils/contextProvider';
+
 
 const CodingPage = () => {
-    // const {fetchInfosession} = useAppContext()
-    // useEffect(() => {
-    //     fetchInfosession()
-    // }, [])
-
+    
     return (
         <AppLayout >
             <Head title='Coding' />

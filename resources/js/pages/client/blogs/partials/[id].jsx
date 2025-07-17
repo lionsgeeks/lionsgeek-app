@@ -1,11 +1,11 @@
 import { Head, Link, usePage } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
+import { useAppContext } from "@/context/appContext";
 
 export default function BlogDetails() {
     const { blogs, blog } = usePage().props;
 
-    const selectedLanguage = "en";
-    const darkMode = false;
+    const {selectedLanguage, darkMode} = useAppContext();
 
     return (
         <AppLayout>

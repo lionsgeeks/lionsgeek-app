@@ -1,9 +1,10 @@
 import { TransText } from "@/components/TransText";
 import { Link } from "@inertiajs/react";
+import { useAppContext } from "@/context/appContext";
+
 
 const TrainingSection = () => {
-    const darkMode = false;
-    const selectedLanguage = "en";
+    const {selectedLanguage, darkMode} = useAppContext();
 
     return (
         <div style={{ backgroundColor: darkMode ? "#0f0f0f" : "#ffffff" }}

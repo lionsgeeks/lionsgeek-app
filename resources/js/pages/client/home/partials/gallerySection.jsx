@@ -4,16 +4,17 @@ import SubstringText from "../../../../components/SubStringText";
 import "./gallerySection.css"
 import { Image } from "lucide-react";
 import { usePage } from "@inertiajs/react";
+import { useAppContext } from "@/context/appContext";
+
 
 export default function GallerySection() {
     const [count, setCount] = useState(0);
     const [onLoop, setOnLoop] = useState(true);
     const [onScroll, setOnScroll] = useState(false);
 
-    const darkMode = false;
+    const {selectedLanguage, darkMode} = useAppContext();
 
     const { galleries } = usePage().props
-    const selectedLanguage = "en";
 
 
 

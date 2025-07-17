@@ -2,12 +2,12 @@ import { Button } from "../../../../components/Button";
 import { AiFillPicture } from "react-icons/ai";
 import { TransText } from "../../../../components/TransText";
 import { Link, usePage } from "@inertiajs/react";
+import { useAppContext } from "@/context/appContext";
 
 export const BlogContentsSection = () => {
     const { blogs } = usePage().props;
 
-    const selectedLanguage = 'en'
-    const darkMode = false;
+    const {selectedLanguage, darkMode} = useAppContext();
 
     const formatDate = (date) => {
         return new Date(date).toLocaleDateString("en-US", {

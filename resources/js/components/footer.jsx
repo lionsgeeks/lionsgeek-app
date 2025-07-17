@@ -4,11 +4,11 @@ import { Button } from "./Button";
 import { TransText } from "./TransText";
 import { Link } from "@inertiajs/react";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
+import { useAppContext } from "@/context/appContext";
 
 export const Footer = () => {
-    const selectedLanguage = "en";
+    const {selectedLanguage, darkMode} = useAppContext();
     const URL = '';
-    const darkMode = false;
     const date = new Date();
     const currentYear = date.getFullYear();
     const [subscriber, setSubscriber] = useState("");

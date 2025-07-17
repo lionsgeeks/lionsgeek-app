@@ -21,8 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         Inertia::share([
-        'presses' => fn () => Press::all(),
-    ]);
+        Inertia::share([
+            'selectedLanguage' => session('language', 'en'),
+        ]);
     }
 }

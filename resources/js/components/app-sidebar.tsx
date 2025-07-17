@@ -47,13 +47,8 @@ const adminNavItems: NavItem[] = [
         title: 'Infosessions',
         href: '/admin/infosessions',
         icon: Mic
-       },
-        {
-        title: 'Press',
-        href: '/press',
-        icon: Mic,
     },
-         {
+    {
         title: 'ContactUs',
         href: 'contactus',
         icon: Contact,

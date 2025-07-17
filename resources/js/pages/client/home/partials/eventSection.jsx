@@ -1,11 +1,13 @@
 import { TransText } from "../../../../components/TransText";
 import SubstringText from "../../../../components/SubStringText";
+import { useAppContext } from "@/context/appContext";
+
 
 const EventSection = () => {
-    const selectedLanguage = "en";
+    const {selectedLanguage, darkMode} = useAppContext();
+
     const upcomingEvent = [];
     const IMAGEURL = '';
-    const darkMode = false;
 
     const checkDate = () => {
         const currentDate = new Date();
