@@ -59,6 +59,9 @@ Route::get('/about', function () {
 Route::get('/whatislionsgeek', function () {
     return Inertia::render('client/about/partials/whatis');
 });
+Route::get('/attendance/confirmation', function () {
+    return Inertia::render('client/attendanceConfirmation/attendanceConfirmation');
+});
 Route::get('/export-messages', function () {
     return Excel::download(new MessagesExport, 'messages.xlsx');
 })->name('messages.export');

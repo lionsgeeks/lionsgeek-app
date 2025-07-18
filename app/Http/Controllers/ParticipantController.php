@@ -334,7 +334,7 @@ class ParticipantController extends Controller
             $confirmation->update([
                 'jungle' => 1
             ]);
-            return redirect()->away('https://lionsgeek.ma/attendance/confirmation');
+            return redirect()->away('/attendance/confirmation');
         }
     }
 
@@ -349,7 +349,7 @@ class ParticipantController extends Controller
                 'school' => 1
             ]);
 
-            return redirect()->away('https://lionsgeek.ma/attendance/confirmation');
+            return redirect()->away('/attendance/confirmation');
         }
     }
 }
