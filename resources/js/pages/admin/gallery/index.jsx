@@ -48,53 +48,57 @@ export default function GalleryAdmin() {
                 </div>
 
                 <div className="pt-12 lg:px-10">
-                    <div
-                        className={`grid grid-cols-1 lg:grid-cols-3 gap-2 w-full rounded-lg min-h-[40vh]`}
-                    >
-                        <GalleryStore />
-                        {galleries.length === 0 && (
-                            <div className="h-full bg-white flex rounded-lg items-center justify-center w-full">
-                                <div className="text-center">
-                                    <h1 className="text-2xl font-semibold text-gray-700 mb-3">No gallery Available</h1>
-                                    <p className="text-gray-500 mb-6">
-                                        It looks like there aren’t any galleries created yet.
-                                    </p>
-                                    <GalleryStore />
-                                </div>
+                    {galleries.length === 0 ? (
+                        <div className="h-full bg-white flex rounded-lg items-center justify-center w-full">
+                            <div className="text-center w-[50%]">
+                                <h1 className="text-2xl font-semibold text-gray-700 mb-3">No gallery Available</h1>
+                                <p className="text-gray-500 mb-6">
+                                    It looks like there aren’t any galleries created yet.
+                                </p>
+                                <GalleryStore />
                             </div>
-                        )}
+                        </div>
+                    )
+                        :
+
+                        <div
+                            className={`grid grid-cols-1 lg:grid-cols-3 gap-2 w-full rounded-lg min-h-[40vh]`}
+                        >
+                            <GalleryStore />
 
 
-                        {filteredGallery?.map((gallery, index) => (
-                            <div
-                                key={index}
-                                className={` text-nowrap flex flex-col overflow-hidden gap-3 px-4 py-4 rounded-[16px] border border-black`}
-                            >
-                                <img
-                                    className="w-full h-[12rem] object-cover rounded-[16px]"
-                                    src={`/storage/images/gallery/${gallery.couverture}`} // Adjust path as needed
-                                    alt=""
-                                />
-                                <div className="w-full flex flex-row items-center justify-between">
-                                    <h4 className="lg:text-[20px] text-black text-[15px] font-semibold">
-                                        {gallery.title?.en?.length > 25
-                                            ? `${gallery.title?.en.slice(0, 15)}...`
-                                            : gallery.title?.en}
-                                    </h4>
+                            {filteredGallery?.map((gallery, index) => (
+                                <div
+                                    key={index}
+                                    className={` text-nowrap flex flex-col overflow-hidden gap-3 px-4 py-4 rounded-[16px] border border-black`}
+                                >
+                                    <img
+                                        className="w-full h-[12rem] object-cover rounded-[16px]"
+                                        src={`/storage/images/gallery/${gallery.couverture}`} // Adjust path as needed
+                                        alt=""
+                                    />
+                                    <div className="w-full flex flex-row items-center justify-between">
+                                        <h4 className="lg:text-[20px] text-black text-[15px] font-semibold">
+                                            {gallery.title?.en?.length > 25
+                                                ? `${gallery.title?.en.slice(0, 15)}...`
+                                                : gallery.title?.en}
+                                        </h4>
 
+                                    </div>
+                                    <div className="flex justify-around lg:justify-end gap-3 items-center">
+                                        <GalleryShow gallery={gallery} />
+                                        <GalleryStore gallery={gallery} />
+                                        <button
+                                            onClick={() => { onDeleteGallery(gallery.id) }}
+                                        >
+                                            <Trash color="red" />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="flex justify-around lg:justify-end gap-3 items-center">
-                                    <GalleryShow gallery={gallery} />
-                                    <GalleryStore gallery={gallery} />
-                                    <button
-                                        onClick={() => { onDeleteGallery(gallery.id) }}
-                                    >
-                                        <Trash color="red" />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    }
+
                 </div>
             </div>
         </AppLayout>

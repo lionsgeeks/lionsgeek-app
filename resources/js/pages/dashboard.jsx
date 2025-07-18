@@ -1,6 +1,12 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Calendar, Mail, MousePointerClick, Users } from 'lucide-react';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input"
+
+import { useState } from 'react';
 
 const breadcrumbs = [
     {
@@ -12,11 +18,68 @@ const breadcrumbs = [
 export default function Dashboard() {
     const { totalContacts, members, sessions, upcomingEvents, pendingCoworkings, blogs, views, unreadMessages } = usePage().props;
 
+    const { data, setData, post } = useForm({
+        name: '',
+        email: '',
+    });
+
+    const [isOpen, setIsOpen] = useState(false);
+    const onAddAdmin = (e) => {
+        e.preventDefault();
+        post(route('add.admin'));
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
 
             <div className='p-6'>
+                <div className='flex justify-end p-2'>
+                    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                        <DialogTrigger asChild>
+                            <Button
+                                className='hover:bg-alpha hover:text-black transition-all duration-150'
+                            >ADD ADMIN</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogTitle>Create a new Admin Account?</DialogTitle>
+
+                            <form onSubmit={onAddAdmin} className='space-y-2'>
+                                <div>
+                                    <Label htmlFor="name">Name:</Label>
+                                    <Input type="text" name="name" id="name"
+                                        value={data.name} onChange={(e) => { setData('name', e.target.value) }}
+                                        placeholder='Username for the Account' required
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="email">Email</Label>
+                                    <Input type="email" name="email" id="email"
+                                        value={data.email} onChange={(e) => { setData('email', e.target.value) }}
+                                        placeholder='Email for the Account' required
+                                    />
+                                </div>
+
+                                <div className='flex justify-end gap-2'>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => { setIsOpen(false) }}
+                                        type='button'
+                                    >
+                                        Cancel
+                                    </Button>
+
+                                    <Button
+                                        type='submit'
+                                    >
+                                        Add Admin
+                                    </Button>
+                                </div>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </div>
                 <div className='space-y-6 min-h-[80vh]'>
                     {/* Top Cards */}
                     <div className="w-full grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-x-4 lg:gap-y-0 md:gap-y-2 gap-y-4">
