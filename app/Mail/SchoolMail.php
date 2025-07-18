@@ -24,7 +24,6 @@ class SchoolMail extends Mailable implements ShouldQueue
         $this->id = $id;
     }
      /**
-     *! add schoolMail2 email
      */
     public function build()
     {

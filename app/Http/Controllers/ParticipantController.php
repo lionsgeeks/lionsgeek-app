@@ -9,7 +9,10 @@ use App\Mail\JungleMail;
 use App\Mail\SchoolMail;
 use App\Models\InfoSession;
 use App\Models\Participant;
+use App\Models\ParticipantConfirmation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use App\Http\Controllers\Controller;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -95,6 +98,9 @@ class ParticipantController extends Controller
                 'code' => $code
             ]);
             // one to one relationships
+            ParticipantConfirmation::create([
+                'participant_id' => $participant->id,
+            ]);
             $questions = FrequentQuestion::create([
                 'participant_id' => $participant->id,
             ]);
@@ -301,7 +307,8 @@ class ParticipantController extends Controller
         $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->query('infosession_id'))->get();
         $day = $request->query('date');
         foreach ($candidats as $candidat) {
-            Mail::mailer($emailRecipient)->to($candidat->email)->send(new JungleMail($candidat->full_name, $candidat->id, $day, $traning));
+            $id = Crypt::encryptString($candidat->id);
+            Mail::mailer($emailRecipient)->to($candidat->email)->send(new JungleMail($candidat->full_name, $id, $day, $traning));
         }
         return back()->with('success', 'The Invitation Has Been Sent Successfully!');
     }
@@ -313,8 +320,36 @@ class ParticipantController extends Controller
         $day = $request->query('submit_without_date') ? null : $request->query('date');
         foreach ($candidats as $key => $candidat) {
             $school = $candidat->current_step == "coding_school" ? "Coding" : "Media";
-            Mail::to($candidat->email)->send(new SchoolMail($candidat->full_name, $candidat->id, $day, $school));
+            $id = Crypt::encryptString($candidat->id);
+            Mail::to($candidat->email)->send(new SchoolMail($candidat->full_name, $id, $day, $school));
         }
         return back()->with('success', 'The Invitation Has Been Sent Successfully!');
+    }
+    public function confirmationJungle($full_name, $id)
+    {
+        if ($full_name) {
+            $participant_id = Crypt::decryptString($id);
+            $participant = Participant::where('full_name', $full_name)->where('id', $participant_id)->first();
+            $confirmation = $participant->confirmation;
+            $confirmation->update([
+                'jungle' => 1
+            ]);
+            return redirect()->away('https://lionsgeek.ma/attendance/confirmation');
+        }
+    }
+
+
+    public function confirmationSchool($full_name, $id)
+    {
+        if ($full_name) {
+            $participant_id = Crypt::decryptString($id);
+            $participant = Participant::where('full_name', $full_name)->where('id', $participant_id)->first();
+            $confirmation = $participant->confirmation;
+            $confirmation->update([
+                'school' => 1
+            ]);
+
+            return redirect()->away('https://lionsgeek.ma/attendance/confirmation');
+        }
     }
 }

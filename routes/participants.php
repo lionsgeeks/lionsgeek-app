@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ParticipantController;
+use App\Models\Participant;
+use App\Models\ParticipantConfirmation;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
@@ -16,3 +18,18 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::resource('participants', ParticipantController::class)->except(['store']);
 });;
 Route::post('/participants/store', [ParticipantController::class, 'store'])->name('participants.store');
+Route::get('/participant/confirmation/jungle/{full_name}/{id}', [ParticipantController::class, 'confirmationJungle']);
+Route::get('/participant/confirmation/school/{full_name}/{id}', [ParticipantController::class, 'confirmationSchool']);
+
+Route::get('/participant/associate-confirmation', function () {
+    $participants = Participant::all();
+    foreach ($participants as $participant) {
+        if (!$participant->confirmation) {
+            ParticipantConfirmation::create([
+                'participant_id' => $participant->id,
+            ]);
+        }
+    }
+
+    return response()->json(['message' => 'Participant Confirmation associations created Successfully!']);
+});

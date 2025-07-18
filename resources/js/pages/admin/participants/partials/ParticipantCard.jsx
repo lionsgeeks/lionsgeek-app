@@ -2,8 +2,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link, router } from '@inertiajs/react';
-import { Eye, Image } from 'lucide-react';
-import logo from '../../../../../assets/images/lionsgeek_logo_2.png'
+import { Eye } from 'lucide-react';
+import logo from '../../../../../assets/images/lionsgeek_logo_2.png';
 const ParticipantCard = ({ participant }) => {
     const changeStep = (action) => {
         router.patch(`/admin/participant/current-step/${participant.id}`, {
@@ -26,23 +26,27 @@ const ParticipantCard = ({ participant }) => {
                     height={200}
                     className="h-48 w-full object-cover"
                 /> */}
-                <img src={'/storage/' + participant.image} className="h-72 w-full object-cover" alt={participant.full_name} />
-                <div className="absolute top-2 left-2 flex justify-between w-full pr-6 gap-2">
+                {participant.image ? (
+                    <img src={'/storage/' + participant.image} className="h-72 w-full object-cover" alt={participant.full_name} />
+                ) : (
+                    <img src={logo} className="h-72 w-full object-cover" alt={participant.full_name} />
+                )}
+                <div className="absolute top-2 left-2 flex w-full justify-between gap-2 pr-6">
                     <div>
-                        <Badge variant="secondary" className="bg-black text-white mr-3">
+                        <Badge variant="secondary" className="mr-3 bg-black text-white">
                             {participant.current_step.replaceAll('_', ' ')}
                         </Badge>
-                        {participant.current_step === 'jungle' && (
-                                <Badge
-                                    variant={getConfirmationStatus(participant) ? 'default' : 'destructive'}
-                                    className={getConfirmationStatus(participant) ? 'bg-green-500' : 'bg-red-500'}
-                                >
-                                    {getConfirmationStatus(participant) ? 'Confirmed' : 'Not Confirmed'}
-                                </Badge>
-                            )}
+                        {(participant.current_step === 'jungle' || participant.current_step.includes('school')) && (
+                            <Badge
+                                variant={getConfirmationStatus(participant) ? 'default' : 'destructive'}
+                                className={getConfirmationStatus(participant) ? 'bg-green-500' : 'bg-red-500'}
+                            >
+                                {getConfirmationStatus(participant) ? 'Confirmed' : 'Not Confirmed'}
+                            </Badge>
+                        )}
                     </div>
                     <Link href={`/admin/participants/${participant.id}`}>
-                    <Eye className='cursor-pointer' />
+                        <Eye className="cursor-pointer" />
                     </Link>
                 </div>
             </div>

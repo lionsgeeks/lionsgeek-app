@@ -8,7 +8,7 @@ import ParticipantCard from './partials/ParticipantCard';
 export default function Participants() {
     const { participants, infosessions } = usePage().props;
     const [filtredParticipants, setFiltredParticipants] = useState(participants);
-
+    // console.log('rr',participants);
     const breadcrumbs = [
         {
             title: 'Participants',

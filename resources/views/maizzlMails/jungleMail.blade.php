@@ -80,6 +80,12 @@
                   <p style="font-size: 16px; line-height: 24px; color: #475569">We are excited to have you on board and can’t wait
                     to see you
                     flourish in the jungle!</p>
+                  <div style="text-align:center">
+                    <a href="http://192.168.100.136:8000/participant/confirmation/jungle/{{ $full_name }}/{{$id}}" style="padding: 10px 20px; background-color:#000; color: #fff; text-decoration: none; border-radius: 10px;
+                                            ">
+                      Click To Confirm Your Attendance
+                    </a>
+                  </div>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
                   <p style="font-size: 16px; line-height: 24px; font-weight: 700; color: #475569">Best wishes,</p>
                   <div role="separator" style="line-height: 4px">&zwj;</div>
@@ -93,7 +99,13 @@
                                             الدار البيضاء 20050</li>
                                     </ul>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">تابعنا للحصول على المزيد من التعليمات لتحقيق
                                         أقصى استفادة من رحلتك.</p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">نحن متحمسون لانضمامك إلينا ولا نستطيع الانتظار
-                                        لرؤيتك تتألق في الـJungle!</p>  <div role="separator" style="line-height: 24px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; font-weight: 700; color: #475569">مع أطيب التمنيات،</p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">LionsGeek</p>
+                                        لرؤيتك تتألق في الـJungle!</p>
+                                         <div style="text-align:center">
+                                            <a href="http://192.168.100.136:8000/participant/confirmation/jungle/{{ $full_name }}/{{$id}}" style="padding: 10px 20px; background-color:#000; color: #fff; text-decoration: none; border-radius: 10px;
+                                            ">
+                                                انقر هنا لتأكيد حضورك
+                                            </a>
+                                        </div>  <div role="separator" style="line-height: 24px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; font-weight: 700; color: #475569">مع أطيب التمنيات،</p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">LionsGeek</p>
                                 </span>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
                   <div role="separator" style="height: 1px; line-height: 1px; background-color: #cbd5e1; margin-top: 24px; margin-bottom: 24px">&zwj;</div>

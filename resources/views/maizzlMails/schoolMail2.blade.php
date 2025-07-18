@@ -63,13 +63,15 @@
                     earned you a place in this dynamic and inspiring environment where creativity meets innovation.
                   </p>
                   <div role="separator" style="line-height: 4px">&zwj;</div>
-                  <p style="font-size: 16px; line-height: 24px; color: #475569">Here are your important details:</p>
+                  <p style="font-size: 16px; line-height: 24px; color: #475569">
+                    Although the official start date has not yet been set, rest assured that the program will begin very soon. We will
+                    keep you informed and share all the details as soon as possible.
+                  </p>
                   <div role="separator" style="line-height: 4px">&zwj;</div>
-                  <ul style="font-size: 16px; line-height: 24px; color: #475569">
-                    <li style="margin-top: 12px">Program: {{ $school }}</li>
-                    <li style="margin-top: 12px">Start Date: {{ \Carbon\Carbon::parse($day)->format('Y-m-d') }} at 9:30 am</li>
-                    <li style="margin-top: 12px">Location: 4eme étage, Ain Sebaa Center, Route de Rabat-، Km 8, Casablanca 20050</li>
-                  </ul>
+                  <p style="font-size: 16px; line-height: 24px; color: #475569">
+                    In the meantime, get ready to dive into a world of creativity, storytelling, and digital innovation. Once again,
+                    congratulations on this well-deserved opportunity!
+                  </p>
                   <div role="separator" style="line-height: 4px">&zwj;</div>
                   <p style="font-size: 16px; line-height: 24px; color: #475569">
                     Prepare to unlock new skills, work on exciting projects, and collaborate with like-minded peers. From mastering
@@ -87,22 +89,19 @@
                   </div>
                   <div role="separator" style="line-height: 4px">&zwj;</div>
                   <p style="font-size: 16px; line-height: 24px; color: #475569">Welcome aboard,</p>
-                  <p style="font-size: 16px; line-height: 24px; color: #475569">LionsGeek</p>
-                  <span dir="rtl">
+                  <p style="font-size: 16px; line-height: 24px; color: #475569">LionsGeek</p> <span dir="rtl">
                                     <h1 style="margin: 0 0 24px; font-size: 24px; line-height: 32px; font-weight: 600; color: #0f172a">
                                         مرحبا بيك فمدرسة {{ $school }} !رحلتك غاتبدى قريبا
                                     </h1>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">عزيزنا {{ $full_name }},</p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">
                                         فرحانين بزاف باش نبلغوك بالدعوة للالتحاق بمدرسة {{ $school }} مع LionsGeek! الحماس والموهبة ديالك عطاوك
                                         الفرصة باش تكون جزء من هاد البيئة الحماسية والملهمة اللي كاتجمع بين الإبداع والابتكار.
-                                    </p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">ها التفاصيل المهمة ديالك:</p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <ul style="font-size: 16px; line-height: 24px; color: #475569">
-                                        <li style="margin-top: 12px">البرنامج: {{ $school }}</li>
-                                        <li style="margin-top: 12px">تاريخ البداية: {{ \Carbon\Carbon::parse($day)->format('Y-m-d')}} مع 9:30 صباحا</li>
-                                        <li style="margin-top: 12px">الموقع: الطابق الرابع، عين السبع سنتر، طريق الرباط، كيلومتر 8، الدار البيضاء 20050</li>
-                                    </ul>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">
+                                    </p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">
+                                        على الرغم من أن تاريخ البدء الرسمي لم يتم تحديده بعد، كن مطمئنًا أن البرنامج سيبدأ قريبا جدا. سوف نبقيك سيتم
+                                        إبلاغك بجميع التفاصيل في أقرب وقت ممكن.
+                                    </p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">
                                         وجد راسك باش تكتسب مهارات جديدة، تخدم على مشاريع زوينة، وتتعامل مع زملاء عندهم نفس الطموحات. من إتقان فن
                                         البرمجة إلى إنشاء محتوى مؤثر، الرحلة ديالك كاتبدا هنا.
-                                    </p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">تابع معنا التحديثات، ووجد راسك لتجربة مميزة ما غتنساهاش!</p>
-                                    <div style="text-align: center">
+                                    </p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">تابع معنا التحديثات، ووجد راسك لتجربة مميزة ما غتنساهاش!</p>                                    <div style="text-align: center">
                                         <a href="http://192.168.100.136:8000/participant/confirmation/school/{{ $full_name }}/{{$id}}" style="
                                                 padding: 10px 20px;
                                                 background-color: #000;
@@ -112,8 +111,7 @@
                                             ">
                                             انقر هنا لتأكيد حضورك
                                         </a>
-                                    </div>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">مرحبا بيك معانا،</p>
-                                    <p style="font-size: 16px; line-height: 24px; color: #475569">LionsGeek</p>
+                                    </div>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">مرحبا بيك معانا،</p>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">LionsGeek</p>
                                 </span>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
                   <div role="separator" style="height: 1px; line-height: 1px; background-color: #cbd5e1; margin-top: 24px; margin-bottom: 24px">&zwj;</div>
