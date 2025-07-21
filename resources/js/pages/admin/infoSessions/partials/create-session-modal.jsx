@@ -13,11 +13,10 @@ export function CreateSessionModal({ open, onOpenChange }) {
         start_date: '',
         places: '',
     });
-    console.log(errors);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        post(route('infosession.store'), {
+        post(route('infosessions.store'), {
             onSuccess: () => {
                 setData({
                     name: '',

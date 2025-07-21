@@ -12,7 +12,6 @@ export default function InfoSessions() {
     const { infosessions } = usePage().props;
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [selectedSession, setSelectedSession] = useState(null);
 
     const breadcrumbs = [
@@ -21,36 +20,40 @@ export default function InfoSessions() {
             href: '/admin/infosession',
         },
     ];
-    const handleViewDetails = (session) => {
-        setSelectedSession(session);
-        setDetailsModalOpen(true);
-    };
-
-    const handleEdit = (session) => {
-        setSelectedSession(session);
-        setEditModalOpen(true);
-    };
-
-    const handleEditFromDetails = () => {
-        setDetailsModalOpen(false);
-        setEditModalOpen(true);
-    };
-
-    const handleDelete = (session) => {
-        setSelectedSession(session);
-        setDeleteDialogOpen(true);
-    };
     const changeAvailabilty = (id) => {
         router.patch(`infosessions/change-availabilty/${id}`);
     };
     const changeStatus = (id) => {
         router.patch(`infosessions/change-status/${id}`);
     };
+    // if theres no infosessions, show a message
+    if (infosessions.length === 0) {
+        return (
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="Info session" />
+                <div className="p-3 lg:p-6">
+                    <div className="mb-3 flex flex-col justify-between md:flex-row md:items-center">
+                        <div>
+                            <h1 className="text-2xl font-bold">Info Sessions</h1>
+                            <p>Manage informational sessions about your training programs</p>
+                        </div>
+                        <Button className="cursor-pointer" onClick={() => setCreateModalOpen(true)}>
+                            <Plus className="text-white" /> Create Info Session
+                        </Button>
+                        <CreateSessionModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+                    </div>
+                    <div className='h-[50vh] flex justify-center items-center '>
+                    <p className="text-center text-lg">No info sessions yet</p>
+                    </div>
+                </div>
+            </AppLayout>
+        );
+    }   
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Info session" />
             <div className="p-3 lg:p-6">
-                <div className="mb-3 flex items-center justify-between">
+                <div className="mb-3 flex flex-col justify-between md:flex-row md:items-center">
                     <div>
                         <h1 className="text-2xl font-bold">Info Sessions</h1>
                         <p>Manage informational sessions about your training programs</p>
@@ -60,14 +63,14 @@ export default function InfoSessions() {
                     </Button>
                     <CreateSessionModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
                 </div>
-                <div className="flex flex-wrap gap-6">
+                <div className="flex flex-col flex-wrap gap-6 lg:flex-row">
                     {infosessions.map((session, index) => (
-                        <Card key={index} className=" h-fit w-[32%]">
+                        <Card key={index} className="h-fit w-full md:w-[32%]">
                             <CardHeader className="pb-3">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">{session.name}</CardTitle>
-                                    <div className="flex gap-2 items-center">
-                                        <Eye className='cursor-pointer' onClick={() => router.visit(`/admin/infosessions/${session.id}`)}/>
+                                    <div className="flex items-center gap-2">
+                                        <Eye className="cursor-pointer" onClick={() => router.visit(`/admin/infosessions/${session.id}`)} />
                                         <LucidePencil
                                             onClick={() => {
                                                 setSelectedSession(session);

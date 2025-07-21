@@ -1,12 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Mail, Phone, MapPin, Users, Image } from "lucide-react"
-// import Image from "next/image"
-// import type { ParticipantProfile } from "@/hooks/use-participants"
-
-// interface ParticipantProfileHeaderProps {
-//   participant: ParticipantProfile
-// }
 
 export function ParticipantProfileHeader({ participant }) {
   const formatDate = (dateString) => {
@@ -23,7 +17,6 @@ export function ParticipantProfileHeader({ participant }) {
     if (step.toLowerCase().includes("scheduled")) return "bg-blue-100 text-blue-800"
     return "bg-yellow-100 text-yellow-800"
   }
-
   return (
     <Card className="mb-6">
       <CardContent className="p-6">
@@ -50,7 +43,7 @@ export function ParticipantProfileHeader({ participant }) {
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  <span>{formatDate(participant.birthDate)}</span>
+                  <span>{formatDate(participant.birthday)}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Mail className="w-4 h-4" />

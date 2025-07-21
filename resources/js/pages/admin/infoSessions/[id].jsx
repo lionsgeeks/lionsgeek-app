@@ -4,22 +4,30 @@ import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
 import { GraduationCap, Mic, School, TreePine, User, UserCheck, Users } from 'lucide-react';
-import FilterHeader from '../../../components/filter-header';
 import { useState } from 'react';
+import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from '../participants/partials/ParticipantCard';
 const InfosessionDetails = () => {
     const { infosession } = usePage().props;
     const [filtredParticipants, setFiltredParticipants] = useState(infosession?.participants);
-    console.log(infosession);
     const dispatchParticipant = (step) => {
         return infosession?.participants.filter((p) => p.current_step === step).length;
     };
     const dispatchGender = (gender) => {
         return infosession?.participants.filter((p) => p.gender === gender).length;
     };
-    
+    const breadcrumbs = [
+        {
+            title: 'Infosession',
+            href: `/admin/infosessions`,
+        },
+        {
+            title: 'Session Details',
+            href: `/admin/sessions/${infosession.id}`,
+        },
+    ];
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Session Details" />
             <div className="p-3 lg:p-6">
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-3">

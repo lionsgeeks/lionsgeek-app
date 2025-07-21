@@ -19,13 +19,6 @@ const ParticipantCard = ({ participant }) => {
     return (
         <Card className="overflow-hidden">
             <div className="relative">
-                {/* <Image
-                    src={participant.image || '/placeholder.svg'}
-                    alt={participant.full_name}
-                    width={300}
-                    height={200}
-                    className="h-48 w-full object-cover"
-                /> */}
                 {participant.image ? (
                     <img src={'/storage/' + participant.image} className="h-72 w-full object-cover" alt={participant.full_name} />
                 ) : (

@@ -4,7 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
-export function SatisfactionMetricsSection({ participant, loading = false }) {
+export function SatisfactionMetricsSection({ participant }) {
     const { data, setData, processing, post } = useForm({
         participant_id: participant.id,
         interest_in_joining_lionsgeek: participant.satisfaction.interest_in_joining_lionsgeek,
@@ -43,7 +43,7 @@ export function SatisfactionMetricsSection({ participant, loading = false }) {
         <Card className="mb-6">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Satisfaction Percentage:</CardTitle>
-                <Button onClick={handleSave} disabled={loading} size="sm">
+                <Button onClick={handleSave} disabled={processing} size="sm">
                     Save
                 </Button>
             </CardHeader>
@@ -57,7 +57,7 @@ export function SatisfactionMetricsSection({ participant, loading = false }) {
                                         id={key}
                                         checked={data[key]}
                                         onCheckedChange={(checked) => handleMetricChange(key, checked)}
-                                        disabled={loading}
+                                        disabled={processing}
                                     />
                                     <label
                                         htmlFor={key}

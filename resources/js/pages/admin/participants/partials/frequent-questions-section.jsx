@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useForm } from '@inertiajs/react';
 // import { useToast } from "@/hooks/use-toast"
 
-export function FrequentQuestionsSection({ participant, onUpdate, loading = false }) {
+export function FrequentQuestionsSection({ participant }) {
     //   const { toast } = useToast()
     const { data, setData, processing, post } = useForm({
         participant_id: participant.id,
@@ -40,7 +40,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
         <Card className="mb-6">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Frequent Questions:</CardTitle>
-                <Button onClick={handleSave} disabled={loading} size="sm">
+                <Button onClick={handleSave} disabled={processing} size="sm">
                     Save
                 </Button>
             </CardHeader>
@@ -60,7 +60,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('mode_of_transportation', e.target.value)}
                                     placeholder="Enter mode of transportation"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
 
@@ -72,7 +72,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('living_situation', e.target.value)}
                                     placeholder="Enter living situation"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
 
@@ -84,7 +84,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('where_have_you_heard_of_lionsgeek', e.target.value)}
                                     placeholder="Enter how you heard about LionsGeek"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
 
@@ -96,7 +96,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('academic_background', e.target.value)}
                                     placeholder="Enter academic background"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
 
@@ -108,7 +108,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('professional_experience', e.target.value)}
                                     placeholder="Enter professional experience"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
                         </div>
@@ -129,7 +129,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('interest_in_joining_lionsgeek', e.target.value)}
                                     placeholder="Enter interest in joining"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
 
@@ -141,7 +141,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('technical_skills', e.target.value)}
                                     placeholder="Enter technical skills"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
 
@@ -153,7 +153,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('profeciency_in_french', e.target.value)}
                                     placeholder="Enter French proficiency level"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
 
@@ -165,7 +165,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('profeciency_in_english', e.target.value)}
                                     placeholder="Enter English proficiency level"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
                         </div>
@@ -186,7 +186,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('strengths', e.target.value)}
                                     placeholder="Enter strengths"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
 
@@ -198,7 +198,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('weaknesses', e.target.value)}
                                     placeholder="Enter weaknesses"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
 
@@ -210,7 +210,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('do_you_have_a_laptop', e.target.value)}
                                     placeholder="Enter laptop availability"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
 
@@ -222,7 +222,7 @@ export function FrequentQuestionsSection({ participant, onUpdate, loading = fals
                                     onChange={(e) => handleChange('available_all_week', e.target.value)}
                                     placeholder="Enter availability"
                                     className="mt-1"
-                                    disabled={loading}
+                                    disabled={processing}
                                 />
                             </div>
                         </div>

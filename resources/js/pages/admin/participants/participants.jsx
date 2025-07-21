@@ -20,7 +20,7 @@ export default function Participants() {
             <Head title="Participants" />
             <div className="p-3 lg:p-6">
                 {/* Header */}
-                <div className="mb-6 flex items-center justify-between">
+                <div className="mb-6 flex  md:flex-row flex-col gap-3 md:items-center justify-between">
                     <h1 className="text-2xl font-bold">Participants</h1>
                     <div className="flex gap-2">
                         <a href="/admin/questions/export">
