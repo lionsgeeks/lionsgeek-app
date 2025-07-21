@@ -12,9 +12,6 @@ use App\Models\Project;
 use App\Models\Subscriber;
 use Carbon\Carbon;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\CoworkingController;
-use App\Http\Controllers\PressController;
-use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -32,12 +29,12 @@ Route::get('/', function () {
 
 Route::get('/coding', function () {
     return Inertia::render('client/coding/coding', [
-        'sessions' => InfoSession::where('isAvailable', 1)->where('formation', 'Coding' )->where('isFinish', 0)->get(),
+        'sessions' => InfoSession::where('isAvailable', 1)->where('formation', 'Coding')->where('isFinish', 0)->get(),
     ]);
 })->name('coding');
 Route::get('/media', function () {
     return Inertia::render('client/media/media', [
-        'sessions' => InfoSession::where('isAvailable', 1)->where('formation', 'Media' )->where('isFinish', 0)->get(),
+        'sessions' => InfoSession::where('isAvailable', 1)->where('formation', 'Media')->where('isFinish', 0)->get(),
     ]);
 })->name('media');
 Route::get('/pro', function () {
@@ -46,9 +43,7 @@ Route::get('/pro', function () {
         'projects' => $projects,
     ]);
 })->name('pro');
-Route::get('/contact', function () {
-    return Inertia::render('client/ContactUs/contactUs');
-})->name('contact');
+
 
 Route::get('/about', function () {
     $presses = Press::all();
@@ -97,17 +92,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'unreadMessages' => $unreadMessages
         ]);
     })->name('dashboard');
-    Route::get('/press', [PressController::class, 'index']);
-    Route::post('/press', [PressController::class, 'store'])->name('press.store');
-    Route::get('/admin/presses/{press}', [PressController::class, 'show'])->name('press.show');
-    Route::put('/presses/{press}', [PressController::class, 'update'])->name('press.update');
-    Route::delete('/presses/{press}', [PressController::class, 'destroy'])->name('press.destroy');
-    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-    Route::get('/contactus', [ContactController::class, 'show'])->name('admin.contacts.show');
-    Route::put('/email/markread/{message}', [ContactController::class, 'toggleRead'])->name('email.markread');
-    Route::delete('/contactus/{contact}', [ContactController::class, 'destroy'])->name('contact.destroy');
-    Route::post('/messages/send', [CustomEmailController::class, 'store'])->name('messages.send');
 
+    Route::put('/email/markread/{message}', [ContactController::class, 'toggleRead'])->name('email.markread');
+    Route::post('/messages/send', [CustomEmailController::class, 'store'])->name('messages.send');
 });
 
 Route::post('/add-admin', [UserController::class, 'AddAdmin'])->name('add.admin');
@@ -121,3 +108,5 @@ require __DIR__ . '/event.php';
 require __DIR__ . '/projects.php';
 require __DIR__ . '/press.php';
 require __DIR__ . '/coworking.php';
+require __DIR__ . '/newsletter.php';
+require __DIR__ . '/contact.php';

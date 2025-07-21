@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, BriefcaseBusiness, Calendar, Camera, CircleArrowDown, CircleArrowUp, Code, Contact, FolderKanban, GalleryHorizontal, GalleryHorizontalEnd, HeartHandshake, Home, LayoutGrid, MessageCircleQuestion, Mic, MicVocal, UserPen, Users } from 'lucide-react';
+import { BookOpen, BriefcaseBusiness, Calendar, Camera, CircleArrowDown, CircleArrowUp, Code, Contact, FolderKanban, GalleryHorizontal, GalleryHorizontalEnd, HeartHandshake, Home, LayoutGrid, Mail, MessageCircleQuestion, Mic, MicVocal, UserPen, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 import { useState } from 'react';
 
@@ -29,9 +29,19 @@ const adminNavItems: NavItem[] = [
         icon: MicVocal,
     },
     {
+        title: 'ContactUs',
+        href: 'contactus',
+        icon: Contact,
+    },
+    {
         title: 'Coworking',
         href: '/admin/coworking',
         icon: HeartHandshake,
+    },
+    {
+        title: 'Newsletter',
+        href: '/admin/newsletter',
+        icon: Mail,
     },
     {
         title: 'Gallery',
@@ -47,11 +57,6 @@ const adminNavItems: NavItem[] = [
         title: 'Infosessions',
         href: '/admin/infosessions',
         icon: Mic
-    },
-    {
-        title: 'ContactUs',
-        href: 'contactus',
-        icon: Contact,
     },
     {
         title: 'Participants',

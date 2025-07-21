@@ -173,6 +173,9 @@
     all: revert;
 }
 
+.fl-flasher.fl-container.fl-show{
+    z-index: 100;
+}
 
 .bg-image {
     background-image: url("../assets/images/gallery/image.png");

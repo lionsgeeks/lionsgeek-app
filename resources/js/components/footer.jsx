@@ -2,18 +2,18 @@ import Logo from "../../assets/images/lionsgeek_logo_2.png";
 import { useEffect, useState } from "react";
 import { Button } from "./Button";
 import { TransText } from "./TransText";
-import { Link } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 import { useAppContext } from "@/context/appContext";
 
 export const Footer = () => {
-    const {selectedLanguage, darkMode} = useAppContext();
-    const URL = '';
+    const { selectedLanguage, darkMode } = useAppContext();
+    const { data, setData, post } = useForm({
+        email: '',
+    });
+
     const date = new Date();
     const currentYear = date.getFullYear();
-    const [subscriber, setSubscriber] = useState("");
-    const [inputError, setInputError] = useState(false);
-    const [validEmail, setValidEmail] = useState(false);
     const [sending, setSending] = useState(false);
     useEffect(() => {
         if (sending) {
@@ -25,26 +25,15 @@ export const Footer = () => {
             document.body.style.overflow = "auto";
         };
     }, [sending]);
-    const sendEmail = () => {
-        try {
-            const data = { email: subscriber };
-            if (subscriber) {
-                if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(subscriber)) {
-                    setValidEmail(true);
-                    return;
-                }
-                axios.post(URL + "subscriber", data).then((response) => {
-                    if (response.data.status === 69) {
-                        setInputError(true);
-                    } else if (response.data.status === 200) {
-                        setSending(true);
-                        setSubscriber("");
-                    }
-                });
+
+    const sendEmail = (e) => {
+        e.preventDefault();
+        post(route('newsletter.subscribe'), {
+            onSuccess: () => {
+                setSending(true);
+                setData('email', '');
             }
-        } catch (error) {
-            console.log(error);
-        }
+        });
     };
     return (
         <>
@@ -129,10 +118,10 @@ export const Footer = () => {
                                         />
                                     </h1>
                                     <div className="flex flex-col gap-1">
-                                        {/* <div>
-                                        <p className='font-medium text-gray-400 text-[0.9rem]'>Address:</p>
-                                        <p className='text-gray-400 text-[0.9rem] w-[20vw] '>4ème étage, Ain Sebaa Center, Route de Rabat, Casablanca</p>
-                                    </div> */}
+                                        <div>
+                                            <p className='font-medium text-gray-400 text-[0.9rem]'>Address:</p>
+                                            <p className='text-gray-400 text-[0.9rem] w-[20vw] '>4ème étage, Ain Sebaa Center, Route de Rabat, Casablanca</p>
+                                        </div>
                                         <div>
                                             <p
                                                 className={`font-medium text-gray-400  text-[0.9rem]  ${selectedLanguage == "ar" ? "text-end" : ""
@@ -187,63 +176,42 @@ export const Footer = () => {
                                     ar="ابق على اتصال"
                                 />
                             </h1>
-                            <div className="relative h-11 w-full min-w-[200px]">
-                                <input
-                                    onChange={(e) => {
-                                        setSubscriber(e.target.value);
-                                        setInputError(false);
-                                        setValidEmail(false);
-                                    }}
-                                    value={subscriber}
-                                    className={`
-                  ${darkMode && "text-white/90"}
-                  ${selectedLanguage == "ar" ? "text-end" : ""
-                                        } peer h-full w-full border-b  ${inputError
-                                            ? " border-red-500 rounded text-red-500 text-blue-gray-700"
-                                            : " border-blue-gray-200"
-                                        } bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
-                                    placeholder=" "
-                                />
-                                {inputError && (
-                                    <span className="text-red-500 text-sm">
+                            <form onSubmit={sendEmail}>
+                                <div className="relative h-11 w-full min-w-[200px]">
+                                    <input
+                                        type="email"
+                                        onChange={(e) => {
+                                            setData('email', e.target.value);
+                                        }}
+                                        value={data.email}
+                                        className={`
+                                    ${darkMode && "text-white/90"}
+                                    ${selectedLanguage == "ar" ? "text-end" : ""
+                                            } peer h-full w-full border-b bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-alpha focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50`}
+                                        placeholder=" "
+                                    />
+
+                                    <label
+                                        className={`pt-1 pointer-events-none absolute ${selectedLanguage == "ar" ? "right-0" : "left-0"
+                                            }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha text-gray-500`}
+                                    >
                                         <TransText
-                                            fr="Cette adresse e-mail est déjà enregistrée."
-                                            en="This email address is already registered."
-                                            ar="  عنوان البريد الإلكتروني هذا مسجل بالفعل"
+                                            en="Type your email"
+                                            fr="Tapez votre email"
+                                            ar="اكتب بريدك الالكتروني"
                                         />
-                                    </span>
-                                )}
-                                {validEmail && (
-                                    <span className="text-red-500 text-sm">
-                                        <TransText
-                                            fr="Veuillez entrer une adresse e-mail valide."
-                                            en="Please enter a valid email address."
-                                            ar=" يرجى إدخال عنوان بريد إلكتروني صالح "
-                                        />
-                                    </span>
-                                )}
-                                <label
-                                    className={`pt-1 pointer-events-none absolute ${selectedLanguage == "ar" ? "right-0" : "left-0"
-                                        }  -top-1.5 transition-all after:content[' '] peer-placeholder-shown:text-sm  peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha text-gray-500`}
+                                    </label>
+                                </div>
+                                <Button
+                                    className={"shadow-md font-normal w-full mt-5 text-[0.8rem]"}
                                 >
                                     <TransText
-                                        en="Type your email"
-                                        fr="Tapez votre email"
-                                        ar="اكتب بريدك الالكتروني"
+                                        en="SIGN UP"
+                                        fr="INSCRIRE"
+                                        ar="اشترك"
                                     />
-                                </label>
-                            </div>
-                            {/* <button className="bg-alpha mt-2   font-light text-[0.8rem] px-4 py-2 rounded-lg shadow-md">SIGN UP</button> */}
-                            <Button
-                                className={"shadow-md font-normal w-full mt-5 text-[0.8rem]"}
-                                onClick={sendEmail}
-                            >
-                                <TransText
-                                    en="SIGN UP"
-                                    fr="INSCRIRE"
-                                    ar="اشترك"
-                                />
-                            </Button>
+                                </Button>
+                            </form>
                         </div>
                     </div>
                     <div className="flex flex-col items-center justify-between gap-2 pt-4 border-t-[3px] border-gray-500  border-opacity-50">
