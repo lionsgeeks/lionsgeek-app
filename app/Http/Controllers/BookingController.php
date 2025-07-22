@@ -27,7 +27,11 @@ class BookingController extends Controller
         if ($event->capacity <= 0) {
             return response()->json([
                 'success' => false,
-                'message' => 'Sorry, this event is fully booked.'
+                'message' => [
+                    'en' => 'Sorry, this event is fully booked.',
+                    'fr' => "Désolé, cet événement est complet.",
+                    'ar' => "عذرًا، هذا الحدث مكتمل."
+                ]
             ], 422);
         }
 
@@ -39,7 +43,11 @@ class BookingController extends Controller
         if ($existingBooking) {
             return response()->json([
                 'success' => false,
-                'message' => 'You have already booked this event.'
+                'message' => [
+                    'en' => 'You have already booked this event.',
+                    'fr' => "Vous avez déjà réservé cet événement.",
+                    'ar' => "لقد قمت بحجز هذا الحدث بالفعل."
+                ]
             ], 422);
         }
 
@@ -65,7 +73,11 @@ class BookingController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Booking confirmed! Check your email for confirmation details.'
+            'message' => [
+                'en' => 'Booking confirmed! Check your email for confirmation details.',
+                'fr' => 'Réservation confirmée ! Vérifiez votre e-mail pour les détails de confirmation.',
+                'ar' => 'تم تأكيد الحجز! تحقق من بريدك الإلكتروني للحصول على تفاصيل التأكيد.'
+            ]
         ]);
     }
 }

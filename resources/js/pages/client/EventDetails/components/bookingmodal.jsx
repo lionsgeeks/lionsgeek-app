@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import NotificationModal from "@/components/NotificationModal";
+import { useAppContext } from "@/context/appContext";
 
 export default function BookingModal({ isOpen, onClose, event }) {
+  const { selectedLanguage, darkMode } = useAppContext();
+
+  const t = (translations) => translations[selectedLanguage] || translations.en;
+
   const [showNotification, setShowNotification] = useState(false);
   const [notificationType, setNotificationType] = useState('success');
   const [notificationMessage, setNotificationMessage] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const selectedLanguage = "en";
 
   const [formData, setFormData] = useState({
     name: '',
@@ -18,8 +21,7 @@ export default function BookingModal({ isOpen, onClose, event }) {
     event_id: event?.id || ''
   });
 
-  // Update event_id when event changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (event?.id) {
       setFormData(prev => ({ ...prev, event_id: event.id }));
     }
@@ -29,38 +31,27 @@ export default function BookingModal({ isOpen, onClose, event }) {
 
   const getPlaceholder = (field) => {
     const placeholders = {
-      name: {
-        en: "Enter your name",
-        fr: "Entrez votre nom",
-        ar: "أدخل اسمك",
-      },
-      email: {
-        en: "Enter your email",
-        fr: "Entrez votre email",
-        ar: "أدخل بريدك الإلكتروني",
-      }
+      name: t({ en: "Enter your name", fr: "Entrez votre nom", ar: "أدخل اسمك" }),
+      email: t({ en: "Enter your email", fr: "Entrez votre email", ar: "أدخل بريدك الإلكتروني" }),
+      phone: t({ en: "Enter phone number", fr: "Entrez le numéro de téléphone", ar: "أدخل رقم الهاتف" })
     };
-    return placeholders[field][selectedLanguage] || placeholders[field].en;
+    return placeholders[field];
   };
 
   const submit = async (e) => {
     e.preventDefault();
-
     if (!formData.name || !formData.email || !formData.gender || !formData.phone) {
-      const message = {
+      setNotificationMessage(t({
         en: "Please fill out all fields.",
         fr: "Veuillez remplir tous les champs.",
         ar: "يرجى ملء جميع الحقول."
-      }[selectedLanguage] || "Please fill out all fields.";
-
-      setNotificationMessage(message);
+      }));
       setNotificationType('error');
       setShowNotification(true);
       return;
     }
 
     setLoading(true);
-
     try {
       const response = await axios.post(route('booking.store'), formData, {
         headers: {
@@ -73,16 +64,13 @@ export default function BookingModal({ isOpen, onClose, event }) {
       setNotificationType('success');
       setShowNotification(true);
 
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        gender: '',
-        event_id: event?.id || ''
-      });
+      setFormData({ name: '', email: '', phone: '', gender: '', event_id: event?.id || '' });
     } catch (error) {
-      const message = error.response?.data?.message || "Error submitting the booking.";
+      const message = error.response?.data?.message || t({
+        en: "Error submitting the booking.",
+        fr: "Erreur lors de la soumission de la réservation.",
+        ar: "حدث خطأ أثناء إرسال الحجز."
+      });
       setNotificationMessage(message);
       setNotificationType('error');
       setShowNotification(true);
@@ -95,27 +83,23 @@ export default function BookingModal({ isOpen, onClose, event }) {
     setShowNotification(false);
     if (notificationType === 'success') {
       onClose();
-      // Redirect to events page after successful booking
       window.location.href = '/events';
     }
   };
 
-
-
-  const inputClassName = `border p-2 w-full border-black rounded-lg ${
-    selectedLanguage === "ar" ? "text-right" : "text-left"
-  }`;
-
-  const containerClassName = `mb-6 text-gray-600 flex flex-col gap-x-4 items-start ${
-    selectedLanguage === "ar" ? "lg:flex-col" : ""
-  }`;
+  const inputClassName = `border p-2 w-full rounded-lg ${darkMode ? "bg-[#1a1a1a] text-white border-white/20" : "border-black text-black"} ${selectedLanguage === "ar" ? "text-right" : "text-left"}`;
+  const labelClass = selectedLanguage === "ar" ? "self-end" : "";
+  const bgModal = darkMode ? "bg-[#1f1f1f] text-white" : "bg-white text-black";
 
   return (
     <>
       <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
         <div className="fixed inset-0 bg-black opacity-10 transition-opacity"></div>
         <div className="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
-          <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg" onClick={(e) => e.stopPropagation()}>
+          <div
+            className={`relative transform overflow-hidden rounded-lg ${bgModal} text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="absolute right-0 top-0 p-2">
               <button
                 onClick={onClose}
@@ -127,39 +111,34 @@ export default function BookingModal({ isOpen, onClose, event }) {
               </button>
             </div>
             <div className="p-6">
-              <h3 className="text-xl font-semibold text-gray-900">Book Event</h3>
+              <h3 className="text-xl font-semibold">{t({ en: "Book Event", fr: "Réserver l'événement", ar: "احجز الحدث" })}</h3>
               <p className="text-sm text-gray-400 mb-4">
-                Enter your details to book this event. You will receive a confirmation email.
+                {t({
+                  en: "Enter your details to book this event. You will receive a confirmation email.",
+                  fr: "Entrez vos coordonnées pour réserver cet événement. Vous recevrez un email de confirmation.",
+                  ar: "أدخل تفاصيلك لحجز هذا الحدث. ستتلقى رسالة تأكيد عبر البريد الإلكتروني."
+                })}
               </p>
-              <div className={containerClassName}>
-                <div className="flex flex-col items-start gap-y-2 w-full">
-                  <label htmlFor="name" className={selectedLanguage === "ar" ? "self-end" : ""}>Name</label>
+
+              {["name", "email", "phone"].map((field) => (
+                <div key={field} className="flex flex-col items-start gap-y-2 mt-3 w-full">
+                  <label htmlFor={field} className={labelClass}>
+                    {t({ en: field[0].toUpperCase() + field.slice(1), fr: field === "phone" ? "Téléphone" : field === "name" ? "Nom" : "Email", ar: field === "phone" ? "رقم الهاتف" : field === "name" ? "الاسم" : "البريد الإلكتروني" })}
+                  </label>
                   <input
-                    id="name"
+                    id={field}
                     className={inputClassName}
-                    type="text"
-                    placeholder={getPlaceholder("name")}
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    type={field === "email" ? "email" : field === "phone" ? "tel" : "text"}
+                    placeholder={getPlaceholder(field)}
+                    value={formData[field]}
+                    onChange={(e) => setFormData(prev => ({ ...prev, [field]: e.target.value }))}
                     dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
                   />
                 </div>
-                <div className="flex flex-col items-start gap-y-2 mt-3 w-full">
-                  <label htmlFor="email" className={selectedLanguage === "ar" ? "self-end" : ""}>Email</label>
-                  <input
-                    id="email"
-                    className={inputClassName}
-                    type="email"
-                    placeholder={getPlaceholder("email")}
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
-                  />
-                </div>
-              </div>
+              ))}
 
               <div className="flex flex-col items-start gap-y-2 mt-3 w-full">
-                <label htmlFor="gender" className={selectedLanguage === "ar" ? "self-end" : ""}>Gender</label>
+                <label htmlFor="gender" className={labelClass}>{t({ en: "Gender", fr: "Genre", ar: "الجنس" })}</label>
                 <select
                   id="gender"
                   className={inputClassName}
@@ -167,40 +146,19 @@ export default function BookingModal({ isOpen, onClose, event }) {
                   onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
                   dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
                 >
-                  <option value="">{selectedLanguage === "ar" ? "اختر الجنس" : selectedLanguage === "fr" ? "Sélectionner le genre" : "Select gender"}</option>
-                  <option value="male">{selectedLanguage === "ar" ? "ذكر" : selectedLanguage === "fr" ? "Homme" : "Male"}</option>
-                  <option value="female">{selectedLanguage === "ar" ? "أنثى" : selectedLanguage === "fr" ? "Femme" : "Female"}</option>
+                  <option value="">{t({ en: "Select gender", fr: "Sélectionner le genre", ar: "اختر الجنس" })}</option>
+                  <option value="male">{t({ en: "Male", fr: "Homme", ar: "ذكر" })}</option>
+                  <option value="female">{t({ en: "Female", fr: "Femme", ar: "أنثى" })}</option>
                 </select>
-              </div>
-
-              <div className="flex flex-col items-start gap-y-2 mt-3 w-full">
-                <label htmlFor="phone" className={selectedLanguage === "ar" ? "self-end" : ""}>Phone Number</label>
-                <input
-                  id="phone"
-                  className={inputClassName}
-                  type="tel"
-                  placeholder={
-                    selectedLanguage === "ar"
-                      ? "أدخل رقم الهاتف"
-                      : selectedLanguage === "fr"
-                      ? "Entrez le numéro de téléphone"
-                      : "Enter phone number"
-                  }
-                  value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
-                />
               </div>
 
               <div className="flex justify-center gap-3 mt-5">
                 <button
                   onClick={submit}
                   disabled={loading}
-                  className={`text-black bg-alpha w-full justify-center font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center transition-colors duration-200 ${
-                    loading ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  className={`text-black bg-alpha w-full justify-center font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center transition-colors duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  {loading ? "Booking..." : "Book Event"}
+                  {loading ? t({ en: "Booking...", fr: "Réservation...", ar: "جاري الحجز..." }) : t({ en: "Book Event", fr: "Réserver", ar: "احجز" })}
                 </button>
               </div>
             </div>
@@ -208,13 +166,13 @@ export default function BookingModal({ isOpen, onClose, event }) {
         </div>
       </div>
 
-      <NotificationModal 
+      <NotificationModal
         isOpen={showNotification}
         onClose={handleNotificationClose}
         type={notificationType}
-        title={notificationType === 'success' ? 'Booking Confirmed!' : 'Booking Error'}
+        title={notificationType === 'success' ? t({ en: "Booking Confirmed!", fr: "Réservation Confirmée !", ar: "تم تأكيد الحجز!" }) : t({ en: "Booking Error", fr: "Erreur de réservation", ar: "خطأ في الحجز" })}
         message={notificationMessage}
       />
     </>
   );
-};
+}
