@@ -7,15 +7,23 @@ import part5 from "../../../../../assets/images/partners/partner-5.png"
 import part6 from "../../../../../assets/images/partners/partner-6.png"
 import part7 from "../../../../../assets/images/partners/partner-7.png"
 import { useAppContext } from "@/context/appContext";
+import { TransText } from "../../../../components/TransText"
 
 export const Partners = () => {
-    const {darkMode} = useAppContext();
+    const { darkMode } = useAppContext();
     return (
         <div className={`${darkMode && "bg-[#0f0f0f]"} px-16 py-20`}>
             <div className="overflow-hidden flex flex-col gap-6 items-center justify-between">
                 <div className="w-full text-center pb-10">
-                    {/* <h1 className={`${darkMode && "text-alpha"} text-xl`}>{t('main.about.section5.title.name')}</h1>
-                    <h1 className={`${darkMode && "text-white"} xl:text-5xl text-3xl font-bold`}>{t('main.about.section5.title.description')}</h1> */}
+                    <h1 className={`${darkMode && "text-alpha"} text-xl`}>
+                        <TransText en="Partners" ar="شركاء" fr="Partenaires" />
+                    </h1>
+                    <h1 className={`${darkMode && "text-white"} xl:text-5xl text-3xl font-bold`}>
+                        <TransText
+                            en="Develop Future-Ready Skills"
+                            ar="طوّر مهارات جاهزة للمستقبل"
+                            fr="Développez des compétences prêtes pour l'avenir" />
+                    </h1>
                 </div>
 
                 <div className="flex w-full md:px-28 gap-x-7 md:gap-x-20 gap-14 md:gap-y-14 justify-center flex-wrap">

@@ -72,7 +72,7 @@ export const FirstSection = () => {
             ar: 'الأماكن ممتلئة',
         },
     };
-    console.log(sessions);
+
     const filterSession = () => {
         if (sessions.length > 0) {
             const session_is_full = sessions.every((e) => e.isFull == true);
