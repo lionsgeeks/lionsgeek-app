@@ -40,17 +40,16 @@ export default function CardsSection({ events = [], IMAGEURL = "http://127.0.0.1
                         <div
                             key={index}
                             id="eventCard"
-                            className={`shadow-lg h-fit overflow-hidden flex flex-col justify-between lg:w-[30%] md:w-[48%] w-full rounded-xl transition duration-200 ${
-                                element.capacity > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-75"
-                            }`}
-                            onClick={() => element.capacity > 0 && router.visit(`/events/${element.id}`)}
+                            className={`shadow-lg h-fit overflow-hidden flex flex-col justify-between lg:w-[30%] md:w-[48%] w-full rounded-xl transition duration-200 ${"cursor-pointer"
+                                }`}
+                            onClick={() => router.visit(`/events/${element.id}`)}
                             dir="ltr"
                             style={cardBgColor}
                         >
                             <div className="w-full h-[13rem]">
                                 <img
                                     loading="lazy"
-                                    src={`${appUrl}/storage/${element.cover}`}
+                                    src={`${appUrl}/storage/images/events/${element.cover}`}
                                     // src={musicFestivalImage}
                                     className="w-full h-full object-cover rounded-t-xl"
                                     alt="event"
@@ -65,33 +64,25 @@ export default function CardsSection({ events = [], IMAGEURL = "http://127.0.0.1
                                         <p className="text-[15px] flex items-center gap-1">
                                             <TransText fr="Date :" ar="التاريخ:" en="Date:" /> {DateComponent(element?.date)}
                                         </p>
-                                        <p className="text-[15px] flex items-center gap-1 truncate">
-                                            {element.capacity > 0 ? (
+                                       {element.capacity > 0 && (
+                                            <p className="text-[15px] flex items-center gap-1">
                                                 <TransText
                                                     fr={`${element.capacity} places restantes`}
                                                     ar={`تبقى ${element.capacity} مقاعد`}
                                                     en={`${element.capacity} spots left`}
                                                 />
-                                            ) : (
-                                                <TransText fr="Complet" ar="مكتمل" en="Fully booked" />
-                                            )}
-                                        </p>
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
-                                <button
-                                    className={`transition duration-150 w-full py-2 font-semibold ${
-                                        element.capacity > 0
-                                            ? "bg-[#fee819] text-black hover:bg-yellow-400"
-                                            : "bg-gray-400 text-gray-700 cursor-not-allowed"
-                                    }`}
-                                    disabled={element.capacity <= 0}
+                                <div
+                                    onClick={() => router.visit(`/events/${element.id}`)}
+
+                                    className={`transition duration-150 w-full flex items-center justify-center py-2 font-semibold bg-[#fee819] text-black hover:bg-yellow-400 `}
+                                // disabled={element.capacity <= 0}
                                 >
-                                    {element.capacity > 0 ? (
-                                        <TransText fr="Voir tout" ar="شاهد الكل" en="See all" />
-                                    ) : (
-                                        <TransText fr="Complet" ar="مكتمل" en="Fully Booked" />
-                                    )}
-                                </button>
+                                    <TransText fr="Voir tout" ar="شاهد الكل" en="See all" />
+                                </div>
                             </div>
                         </div>
                     ))
