@@ -30,7 +30,7 @@ const adminNavItems: NavItem[] = [
     },
     {
         title: 'ContactUs',
-        href: 'contactus',
+        href: '/admin/contactus',
         icon: Contact,
     },
     {
