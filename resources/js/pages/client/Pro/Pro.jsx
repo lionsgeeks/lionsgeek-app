@@ -116,7 +116,7 @@ const Propage = () => {
                 {
                     title: <TransText
                         en="Event Coverage"
-                        fr="Couverture d’Événements"
+                        fr="Couverture d'Événements"
                         ar="تغطية الفعاليات"
                     />,
                     description: <TransText
@@ -339,16 +339,30 @@ const Propage = () => {
                         </p>
                     </div>
 
-                    {/* projects */}
-                    <div className={`flex flex-wrap items-center gap-5 px-5 py-10`}>
+                    <div className="flex flex-wrap items-center gap-5 px-5 py-10">
                         {projects &&
                             projects.map((ele, indx) => (
                                 <div
                                     key={indx}
-                                    className={`projects relative w-full overflow-hidden rounded-lg border border-black p-5 transition-all lg:w-[32%] ${darkMode ? 'bg-[#E1E1E1]' : ''} `}
+                                    className={`relative w-full overflow-hidden rounded-lg p-5 transition-all lg:w-[32%] h-[500px] flex flex-col ${
+                                        darkMode 
+                                            ? 'bg-[#1a1a1a] border border-[#333]' 
+                                            : 'bg-white border border-black'
+                                    }`}
                                 >
-                                    <div className="flex w-full items-center justify-between">
-                                        <p className="font-bold">{ele.name}</p>
+                                    <div className="mb-4 flex-shrink-0">
+                                        <img
+                                            loading="lazy"
+                                            className="h-48 w-full object-cover rounded-lg"
+                                            src={'storage/images/projects/' + (ele.preview || ele.logo)}
+                                            alt=""
+                                        />
+                                    </div>
+                                    
+                                    <div className="flex w-full items-center justify-between mb-3 flex-shrink-0">
+                                        <p className={`font-bold ${darkMode ? 'text-white' : 'text-black'}`}>
+                                            {ele.name}
+                                        </p>
                                         <img
                                             loading="lazy"
                                             className="aspect-square w-16 rounded-full object-cover"
@@ -356,16 +370,19 @@ const Propage = () => {
                                             alt=""
                                         />
                                     </div>
-                                    <p className={`h-[25vh] overflow-y-auto py-6 text-base ${selectedLanguage == 'ar' && 'text-end'}`}>
-                                        {ele.description[selectedLanguage]}
-                                    </p>
-                                    <div className="preview h-full w-full rounded-lg bg-white">
-                                        <img
-                                            loading="lazy"
-                                            className="h-full w-full object-cover"
-                                            src={'storage/images/projects/' + (ele.preview || ele.logo)}
-                                            alt=""
-                                        />
+                                    
+                                    <div 
+                                        className="flex-1 overflow-y-auto pr-2"
+                                        style={{
+                                            scrollbarWidth: 'thin',
+                                            scrollbarColor: darkMode ? '#4a5568 #2d3748' : '#9ca3af #e5e7eb'
+                                        }}
+                                    >
+                                        <p className={`text-base ${selectedLanguage == 'ar' && 'text-end'} ${
+                                            darkMode ? 'text-gray-300' : 'text-gray-700'
+                                        }`}>
+                                            {ele.description[selectedLanguage]}
+                                        </p>
                                     </div>
                                 </div>
                             ))}
@@ -376,15 +393,3 @@ const Propage = () => {
     );
 }
 export default Propage;
-
-
-
-
-
-
-
-
-
-
-
-
