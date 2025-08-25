@@ -116,7 +116,7 @@ export default function AdminEventShow() {
                             <Card>
                                 <CardContent className="p-0">
                                     <img
-                                        src={`${appUrl}/storage/${event.cover}`}
+                                        src={`${appUrl}/storage/images/events/${event.cover}`}
                                         alt={nameTexts.en}
                                         className="w-full h-64 object-cover rounded-t-lg"
                                     />

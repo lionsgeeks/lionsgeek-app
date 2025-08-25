@@ -77,7 +77,7 @@ export default function EventCard({ event, onEdit, onDelete }) {
             <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200 h-80 p-0">
                 <div className="relative h-full">
                     <img
-                        src={`${appUrl}/storage/${event.cover}`}
+                        src={`${appUrl}/storage/images/events/${event.cover}`}
                         alt={getDisplayName(event.name)}
                         className="w-full h-full object-cover"
                     />

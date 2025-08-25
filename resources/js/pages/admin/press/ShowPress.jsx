@@ -6,8 +6,8 @@ const ShowPress = () => {
     const { press } = usePage().props;
 
     const [activeTab, setActiveTab] = useState('en');
-    const [coverPreview, setCoverPreview] = useState(`/storage/${press.cover}`);
-    const [logoPreview, setLogoPreview] = useState(`/storage/${press.logo}`);
+    const [coverPreview, setCoverPreview] = useState(`/storage/images/press/${press.cover}`);
+    const [logoPreview, setLogoPreview] = useState(`/storage/images/press/${press.logo}`);
 
     const { data, setData, processing, errors } = useForm({
         name: {

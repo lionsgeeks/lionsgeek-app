@@ -108,7 +108,7 @@ export default function Press() {
                             <div key={press.id} className="bg-white rounded-lg shadow overflow-hidden">
                                 <div className="h-48 overflow-hidden">
                                     <img
-                                        src={`/storage/${press.cover}`}
+                                        src={`/storage/images/press/${press.cover}`}
                                         alt={press.name.fr}
                                         className="w-full h-full object-cover"
                                     />
