@@ -17,7 +17,7 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
         }
     }, [messages]);
     const currentUrl = window.location.href;
-    const LayoutComponent = auth?.user && currentUrl.includes('/admin/') ? AppSidebarLayout : AppHeaderLayout;
+    const LayoutComponent = auth?.user && currentUrl.toLowerCase().includes('/admin/') ? AppSidebarLayout : AppHeaderLayout;
     
 
     return (
