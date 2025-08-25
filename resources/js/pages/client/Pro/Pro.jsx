@@ -8,6 +8,8 @@ import marketingPic from '../../../../assets/images/marketing.jpg';
 import { TransText } from '../../../components/TransText';
 import { ChartBar, Code, Trophy, Video } from 'lucide-react';
 import { useAppContext } from "@/context/appContext";
+import { Button } from "@/components/Button";
+
 const Propage = () => {
     const { projects } = usePage().props;
 
@@ -317,8 +319,10 @@ const Propage = () => {
                     </div>
 
                     <div className="mt-5 py-5 text-center">
-                        <Link className="rounded-lg bg-alpha px-7 py-3" to={'/contact-us'}>
-                            <TransText en="Contact Us" fr="Contactez-nous" ar="اتصل بنا" />
+                        <Link to={"/contact-us"}>
+                            <Button className="px-7 py-3">
+                                <TransText en="Contact Us" fr="Contactez-nous" ar="اتصل بنا" />
+                            </Button>
                         </Link>
                     </div>
 
