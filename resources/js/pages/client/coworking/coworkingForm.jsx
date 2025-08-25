@@ -250,7 +250,7 @@ export default function CoworkingForm() {
                 !sending ?
                     <form
                         onSubmit={onFormSubmit}
-                        className={`p-6  rounded-lg shadow-md mb-4 ${darkMode ? "bg-[#212529]" : "bg-gray-50/50"}  `}
+                        className={`p-6  rounded-lg shadow-md mb-4 ${darkMode ? "bg-[#212529] "  : "bg-gray-50/50"}  `}
                     >
                         <h1 className={`text-2xl font-bold mb-4 ${darkMode ? "text-white" : ""}`}>Application Form</h1>
 
@@ -275,7 +275,7 @@ export default function CoworkingForm() {
                                                 "أدخل اسمك الكامل"}
                                     value={data.full_name}
                                     onChange={handleChange}
-                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta `}
+                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                                     required
                                 />
                             </div>
@@ -297,7 +297,7 @@ export default function CoworkingForm() {
                                                 "أدخل بريدك الإلكتروني  "}
                                     value={data.email}
                                     onChange={handleChange}
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-beta"
+                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                                     required
                                 />
                             </div>
@@ -321,7 +321,7 @@ export default function CoworkingForm() {
                                                 "أدخل رقم هاتفك"}
                                     value={data.phone}
                                     onChange={handleChange}
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta"
+                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                                     required
                                 />
                             </div>
@@ -343,7 +343,7 @@ export default function CoworkingForm() {
                                     name="birthday"
                                     value={data.birthday}
                                     onChange={handleChange}
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta "
+                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                                     required
                                 />
                             </div>
@@ -371,7 +371,7 @@ export default function CoworkingForm() {
                                                 "التعليم/الخبرة المهنية"}
                                     value={data.formation}
                                     onChange={handleChange}
-                                    className="shadow border rounded w-full p-3 text-gray-700 fo focus:outline-beta"
+                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                                     required
                                 />
                             </div>
@@ -379,7 +379,7 @@ export default function CoworkingForm() {
                             <div className="mb-6 w-full">
                                 <p className={`mb-3 text-sm font-bold ${darkMode ? "text-white" : ""}`}>
                                     <TransText
-                                        className={`${darkMode ? "text-white" : ""}`}
+                                        className={`${darkMode ? "text-white bg" : ""}`}
                                         en="Upload CV"
                                         fr="Télécharger le CV"
                                         ar="رفع السيرة الذاتية"
@@ -438,16 +438,16 @@ export default function CoworkingForm() {
                                 onChange={(e) => {
                                     setData('gender', e.target.value);
                                 }}
-                                className={`w-full rounded border border-gray-300 p-[10px] appearance-none`}
+                                className={`w-full rounded border border-gray-300 p-[10px] appearance-none ${darkMode ? "text-white" : "text-gray-700"}`}
                                 required
                             >
-                                <option value="" disabled defaultValue>
+                                <option value="" disabled defaultValue className={darkMode ? "bg-[#212529] text-white" : "bg-white text-gray-700"}>
                                     <TransText en="Select Gender" fr="Sélectionnez le sexe" ar="حدد الجنس" />
                                 </option>
-                                <option value="male">
+                                <option value="male" className={darkMode ? "bg-[#212529] text-white" : "bg-white text-gray-700"}>
                                     <TransText en="Male" fr="Homme" ar="ذكر" />
                                 </option>
-                                <option value="female">
+                                <option value="female" className={darkMode ? "bg-[#212529] text-white" : "bg-white text-gray-700"}>
                                     <TransText en="Female" fr="Female" ar="أنثى" />
                                 </option>
                             </select>
@@ -478,7 +478,7 @@ export default function CoworkingForm() {
                                             "أدخل اسم المشروع"}
                                 value={data.proj_name}
                                 onChange={handleChange}
-                                className="shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta"
+                                className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                                 required
                             />
                         </div>
@@ -503,7 +503,7 @@ export default function CoworkingForm() {
                                             "أدخل وصف المشروع"}
                                 value={data.proj_desc}
                                 onChange={handleChange}
-                                className="shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta"
+                                className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                                 required
                             />
                         </div>
@@ -537,7 +537,7 @@ export default function CoworkingForm() {
                                     value={data.otherDomains}
                                     required
                                     onChange={(e) => setData('otherDomains', e.target.value)}
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta"
+                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                                 />
                             )}
                         </fieldset>
@@ -563,7 +563,7 @@ export default function CoworkingForm() {
                                             "أدخل خطة العمل"}
                                 value={data.proj_plan}
                                 onChange={handleChange}
-                                className="shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta"
+                                className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                                 required
                             />
                         </div>
@@ -635,7 +635,7 @@ export default function CoworkingForm() {
                                             "أدخل مشروع مشابه سابق"}
                                 value={data.prev_proj}
                                 onChange={handleChange}
-                                className="shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta"
+                                className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                             />
                         </div>
 
@@ -669,7 +669,7 @@ export default function CoworkingForm() {
                                     value={data.otherReasons}
                                     required
                                     onChange={(e) => setData('otherReasons', e.target.value)}
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta"
+                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
                                 />
                             )}
                         </fieldset>
