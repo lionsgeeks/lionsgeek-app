@@ -27,6 +27,7 @@ export default function FirstSectionEvent() {
     const textStyle = { color: darkMode ? "#fff" : "#1f1f1f" };
     const strokeColor = darkMode ? "white" : "black";
     const strokeClass = darkMode ? "stroke-alpha" : "stroke-beta";
+    
 
     return (
         <div
