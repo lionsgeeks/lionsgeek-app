@@ -23,7 +23,6 @@ export default function NewsletterAdmin() {
 
     const handleSendNewsletter = (e) => {
         e.preventDefault();
-        console.log('Sending Newsletter:', data.subject, data.content);
         post(route('newsletter.store'))
     };
     return (

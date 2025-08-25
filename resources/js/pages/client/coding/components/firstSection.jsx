@@ -8,7 +8,7 @@ import gsap from 'gsap';
 
 export const FirstSection = () => {
     const { sessions } = usePage().props;
-    console.log(sessions);
+
     const { selectedLanguage, darkMode } = useAppContext();
     const leftside = useRef(null);
     const rightside = useRef(null);
@@ -73,7 +73,7 @@ export const FirstSection = () => {
     const filterSession = () => {
         if (sessions.length > 0) {
             const session_is_full = sessions.every((e) => e.isFull == true);
-            console.log(session_is_full);
+
             setCheckingStatus(session_is_full ? 'full' : 'open');
         } else {
             setCheckingStatus('closed');

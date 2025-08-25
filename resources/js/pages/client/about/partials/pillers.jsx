@@ -1,22 +1,27 @@
 import myImage from "../../../../../assets/images/coding_afiche.jpg";
-import myImage2 from "../../../../../assets/images/media_affiche.jpg"; // Adjust the path to your image
+import myImage2 from "../../../../../assets/images/media_affiche.jpg";
 import { TransText } from "../../../../components/TransText";
 import { useAppContext } from "@/context/appContext";
 
 export const Pillers = () => {
-   const {selectedLanguage, darkMode} = useAppContext();
+    const { selectedLanguage, darkMode } = useAppContext();
 
     return (
         <div
             className={`flex flex-col items-center justify-between py-14 ${darkMode ? "bg-[#0f0f0f]" : "bg-beta"}  border-t- border-t-alpha border-b-alpha`}
         >
             <div className=" rounded-lg xl:w-[50vw] w-[100vw]  px-1 text-center">
-                {/* <h1 className="xl:text-7xl text-4xl text-alpha font-bold py-4">
-                    {t("main.about.section2.title.first")}
+                <h1 className="xl:text-7xl text-4xl text-alpha font-bold py-4">
+                    <TransText en="Formations" ar="الدورات التدريبية" fr="Formations" />
+
                 </h1>
                 <p className="xl:text-2xl text-sm text-alpha font-normal ">
-                    {t("main.about.section2.title.second")}
-                </p> */}
+                    <TransText
+                        en="Free training and mentorship to help you thrive in the tech and media industries"
+                        ar="دورات تدريبية وإرشاد مجاني لمساعدتك على النجاح في صناعات التكنولوجيا والإعلام"
+                        fr="Formation gratuite et mentorat pour vous aider à prospérer dans les industries de la technologie et des médias"
+                    />
+                </p>
             </div>
             {/* Coding */}
             <div className={`${darkMode ? "bg-beta" : "bg-[#f9f9f9]"}  relative xl:flex hidden flex-row rounded-lg w-[80vw] lg:h-fit h-[40vh] mt-8 `}>
@@ -60,7 +65,12 @@ export const Pillers = () => {
                     className="w-[50%] h-[70%] gap-4 flex flex-col justify-around py-8 px-5"
                 >
                     <p className={`${darkMode && "text-white"} text-4xl font-semibold py-3`}>
-                        {/* {t("main.about.section2.coding.title")} */}
+                        <TransText
+                            en="Coding"
+                            ar="البرمجة"
+                            fr="Coding"
+                        />
+
                     </p>
                     <p className={`${darkMode && "text-white"}`}>
                         <TransText
@@ -115,7 +125,11 @@ export const Pillers = () => {
                     className="w-[50%] h-[70%] gap-4 flex flex-col justify-around  py-8 px-5"
                 >
                     <p className={`text-4xl font-semibold py-3 ${darkMode && "text-white"} `}>
-                        {/* {t("main.about.section2.media.title")} */}
+                        <TransText
+                            en="Media"
+                            ar="الإعلام"
+                            fr="Médias"
+                        />
                     </p>
                     <p className={`${darkMode && "text-white"}`}>
                         <TransText
@@ -133,7 +147,12 @@ export const Pillers = () => {
                 </div>
                 <div className="text h-[50%] border-b-4 rounded-lg border-b-alpha flex flex-col justify-around">
                     <h1 className="font-bold text-2xl text-center">
-                        {/* {t("main.about.section2.coding.title")} */}
+                        <TransText
+                            en="Coding"
+                            ar="البرمجة"
+                            fr="Programmation"
+                        />
+
                     </h1>
                     <p className="w-[80vw] px-4 ">
                         <TransText
@@ -151,7 +170,11 @@ export const Pillers = () => {
                 </div>
                 <div className="text h-[50%] border-b-4 rounded-lg border-b-alpha flex flex-col justify-around">
                     <h1 className="font-bold text-2xl text-center">
-                        {/* {t("main.about.section2.media.title")} */}
+                        <TransText
+                            en="Media"
+                            ar="الإعلام"
+                            fr="Médias"
+                        />
                     </h1>
                     <p className="w-[80vw] px-4 ">
                         <TransText
