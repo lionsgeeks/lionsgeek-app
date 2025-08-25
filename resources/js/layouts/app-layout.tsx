@@ -16,7 +16,9 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
             flasher.render(messages);
         }
     }, [messages]);
-    const LayoutComponent = auth?.user ? AppSidebarLayout : AppHeaderLayout;
+    const currentUrl = window.location.href;
+    const LayoutComponent = auth?.user && currentUrl.toLowerCase().includes('/admin/') ? AppSidebarLayout : AppHeaderLayout;
+    
 
     return (
         <LayoutComponent breadcrumbs={breadcrumbs} {...props}>

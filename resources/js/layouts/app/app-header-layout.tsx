@@ -3,8 +3,8 @@ import { AppContent } from '@/components/app-content';
 import { AppShell } from '@/components/app-shell';
 import { type BreadcrumbItem } from '@/types';
 import type { PropsWithChildren } from 'react';
-import { Footer } from "../../components/footer";
-import Navbar  from "../../components/navbar";
+import Footer from '../../components/footer';
+import Navbar from '../../components/navbar';
 
 export default function AppHeaderLayout({ children }: PropsWithChildren<{ breadcrumbs?: BreadcrumbItem[] }>) {
     return (
