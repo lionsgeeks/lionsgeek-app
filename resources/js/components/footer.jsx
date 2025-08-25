@@ -184,6 +184,7 @@ const Footer = () => {
                                             setData('email', e.target.value);
                                         }}
                                         value={data.email}
+                                        required
                                         className={`
                                     ${darkMode && "text-white/90"}
                                     ${selectedLanguage == "ar" ? "text-end" : ""
