@@ -25,7 +25,7 @@ export const BlogHeroSection = () => {
                     <div className={`lg:flex-row flex-col lg:gap-y-0 gap-y-4  pt-[10vh] ${blogs[0] ? "flex" : "hidden"}`}>
                         <img
                             loading="lazy"
-                            className="lg:w-1/2 lg:h-[60vh] h-1/2 object-cover rounded-xl "
+                            className="lg:w-0.5/1 lg:h-[60vh] h-1/2 object-cover rounded-xl "
                             src={'storage/images/blog/' + blogs[0]?.image}
                             alt=""
                         />
