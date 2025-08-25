@@ -116,7 +116,7 @@ export default function Press() {
                                 <div className="p-4 " >
                                     <div className="flex items-center mb-3">
                                         <img
-                                            src={`/storage/${press.logo}`}
+                                            src={`/storage/images/press/${press.logo}`}
                                             alt={`Logo ${press.name.fr}`}
                                             className="w-10 h-10 object-contain mr-3 rounded-full"
                                         />
