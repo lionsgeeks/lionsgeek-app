@@ -20,7 +20,7 @@ const ParticipantCard = ({ participant }) => {
         <Card className="overflow-hidden">
             <div className="relative">
                 {participant.image ? (
-                    <img src={'/storage/' + participant.image} className="h-72 w-full object-cover" alt={participant.full_name} />
+                    <img src={'/storage/images/participants/' + participant.image} className="h-72 w-full object-cover" alt={participant.full_name} />
                 ) : (
                     <img src={logo} className="h-72 w-full object-cover" alt={participant.full_name} />
                 )}
