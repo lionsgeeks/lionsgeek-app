@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input"
 
 import { useState } from 'react';
+import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 
 const breadcrumbs = [
     {
@@ -30,7 +31,7 @@ export default function Dashboard() {
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppSidebarLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
 
             <div className='p-6'>
@@ -416,6 +417,6 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </AppSidebarLayout>
     );
 }

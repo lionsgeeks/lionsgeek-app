@@ -1,5 +1,6 @@
 import { Partners } from "../about/partials/partners";
 import AppLayout from "@/layouts/app-layout";
+
 import {
     EventSection,
     GallerySection,
