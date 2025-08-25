@@ -10,7 +10,7 @@ import { useState } from 'react';
 const adminNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
         icon: LayoutGrid,
     },
     {
@@ -30,7 +30,7 @@ const adminNavItems: NavItem[] = [
     },
     {
         title: 'ContactUs',
-        href: 'contactus',
+        href: '/admin/contactus',
         icon: Contact,
     },
     {
