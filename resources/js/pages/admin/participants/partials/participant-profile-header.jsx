@@ -25,9 +25,9 @@ export function ParticipantProfileHeader({ participant }) {
           <div className="flex-shrink-0">
             <div className="w-32 aspect-square bg-black rounded-lg flex items-center justify-center">
               {participant?.image ? (
-                 <img src={'/storage/' + participant.image}   alt={participant.full_name}
+                 <img src={'/storage/images/participants/' + participant.image}   alt={participant.full_name}
                     className="rounded-lg w-[100%] aspect-square object-cover" />
-                 
+
               ) : (
                 <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
                   <Users className="w-8 h-8 text-black" />
