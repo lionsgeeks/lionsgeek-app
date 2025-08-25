@@ -11,7 +11,7 @@ import { useState } from 'react';
 const breadcrumbs = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
     },
 ];
 

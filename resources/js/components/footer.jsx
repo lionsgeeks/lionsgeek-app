@@ -6,7 +6,7 @@ import { Link, useForm } from "@inertiajs/react";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 import { useAppContext } from "@/context/appContext";
 
-export const Footer = () => {
+const Footer = () => {
     const { selectedLanguage, darkMode } = useAppContext();
     const { data, setData, post } = useForm({
         email: '',
@@ -323,3 +323,6 @@ export const Footer = () => {
         </>
     );
 };
+
+
+export default Footer;
