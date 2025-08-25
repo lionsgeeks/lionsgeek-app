@@ -26,7 +26,7 @@ export default function FirstSectionEvent() {
     const backgroundStyle = { backgroundColor: darkMode ? "#0f0f0f" : "#ffffff" };
     const textStyle = { color: darkMode ? "#fff" : "#1f1f1f" };
     const strokeColor = darkMode ? "white" : "black";
-    const strokeClass = darkMode ? "stroke-white/[15.25%]" : "stroke-beta/[6.25%]";
+    const strokeClass = darkMode ? "stroke-alpha" : "stroke-beta";
 
     return (
         <div
@@ -79,7 +79,7 @@ export default function FirstSectionEvent() {
                         onClick={() =>
                             document.getElementById("cards")?.scrollIntoView({ behavior: "smooth" })
                         }
-                        className={`bg-alpha w-fit px-5 py-2 rounded-lg hover:scale-105 transition duration-300 ${
+                        className={`bg-alpha w-fit text-black px-5 py-2 rounded-lg hover:scale-105 transition duration-300 ${
                             darkMode
                                 ? "hover:bg-transparent hover:text-alpha hover:border-alpha hover:border"
                                 : "hover:bg-transparent hover:text-alpha hover:border"

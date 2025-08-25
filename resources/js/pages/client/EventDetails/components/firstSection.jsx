@@ -173,7 +173,7 @@ export default function FirstSectionEventDetail({ event: eventProp }) {
           <img
             loading="lazy"
             className="lg:h-[25rem] md:h-[25rem] w-[100%] rounded-lg object-cover"
-            src={event?.cover ? `${appUrl}/storage/${event.cover}` : musicFestivalImage}
+            src={event?.cover ? `${appUrl}/storage/images/events/${event.cover}` : musicFestivalImage}
             alt={getMultilingualText(event.name)}
           />
           <div className="shadow-sm px-4 border rounded-lg flex flex-col py-4">
