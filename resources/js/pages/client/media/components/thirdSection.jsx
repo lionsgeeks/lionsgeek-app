@@ -131,6 +131,7 @@ export const ThirdSection = () => {
                             />
                         </svg>
                         <Icon
+                            size={50}
                             className={`text-5xl absolute -top-6 ${title.en === "Media School" ? "stroke-alpha" : "fill-alpha"
                                 } `}
                         />

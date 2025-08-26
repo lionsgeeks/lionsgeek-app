@@ -166,7 +166,7 @@ const InfoSession = () => {
 
                                         <div className="flex flex-col gap-y-4 md:flex-row lg:items-center lg:gap-2">
                                             <select
-                                                className="w-full appearance-none rounded border border-gray-300 px-4 py-2"
+                                                className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
                                                 name="formation"
                                                 required
                                                 onChange={(e) => {
@@ -174,13 +174,13 @@ const InfoSession = () => {
                                                     setChosenSession('');
                                                 }}
                                             >
-                                                <option disabled selected value="">
+                                                <option disabled selected value="" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Choose Formation" fr="Choisir la formation" ar="اختر التكوين" />
                                                 </option>
-                                                <option value="coding">
+                                                <option value="coding" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Coding" fr="Codage" ar="البرمجة" />
                                                 </option>
-                                                <option value="media">
+                                                <option value="media" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Digital" fr="Média" ar="صانع محتوى" />
                                                 </option>
                                             </select>
@@ -193,10 +193,10 @@ const InfoSession = () => {
                                                 id="info_session_id"
                                                 value={data.info_session_id}
                                                 onChange={handleChange}
-                                                className="w-full appearance-none rounded border border-gray-300 px-4 py-2"
+                                                className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
                                                 required
                                             >
-                                                <option disabled selected value="">
+                                                <option disabled selected value="" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Choose a Session" fr="Choisir une session" ar="اختر جلسة" />
                                                 </option>
                                                 {sessions
@@ -207,7 +207,7 @@ const InfoSession = () => {
                                                     .map(
                                                         (opt, ind) =>
                                                             opt.isAvailable && (
-                                                                <option key={ind} className="text-lg" value={opt.id}>
+                                                                <option key={ind} className={`text-lg ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`} value={opt.id}>
                                                                     {formatDate(opt.start_date)}
                                                                 </option>
                                                             ),
@@ -231,11 +231,11 @@ const InfoSession = () => {
                                                     placeholder={field.label[selectedLanguage]}
                                                     value={data[field.name]}
                                                     onChange={handleChange}
-                                                    className={`rounded-md border px-4 py-2 focus:ring-2 focus:ring-beta focus:outline-none ${
+                                                    className={`rounded border px-4 py-2 focus:ring-2 focus:ring-beta focus:outline-none ${
                                                         emailError && field.name === 'email'
                                                             ? 'border-red-500 text-red-500'
                                                             : 'border-gray-300 text-black'
-                                                    }`}
+                                                    } ${darkMode ? 'text-white placeholder:text-white'  : 'text-gray-700'}` }
                                                     required
                                                 />
                                                 {errors[field.name] && <span className="text-sm text-red-500">{errors[field.name]}</span>}
@@ -252,19 +252,19 @@ const InfoSession = () => {
                                                 id="city"
                                                 onChange={handleChange}
                                                 value={data.city}
-                                                className="w-full appearance-none rounded border border-gray-300 px-4 py-[11px]"
+                                                className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
                                                 required
                                             >
-                                                <option value="" disabled>
+                                                <option value="" disabled className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="City" fr="Ville" ar="مدينة" />
                                                 </option>
-                                                <option value="casablanca">
+                                                <option value="casablanca" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Casablanca" fr="Casablanca" ar="الدار البيضاء" />
                                                 </option>
-                                                <option value="mohammedia">
+                                                <option value="mohammedia" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Mohammedia" fr="Mohammedia" ar="المحمدية" />
                                                 </option>
-                                                <option value="other">
+                                                <option value="other" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Other" fr="Autres" ar="اخر" />
                                                 </option>
                                             </select>
@@ -281,13 +281,13 @@ const InfoSession = () => {
                                                 value={data.prefecture}
                                                 id="prefecture"
                                                 onChange={handleChange}
-                                                className="w-full appearance-none rounded border border-gray-300 px-4 py-[11px]"
+                                                className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
                                                 required
                                             >
-                                                <option value="" disabled>
+                                                <option value="" disabled className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Prefecture" fr="Préfecture" ar="العمالة" />
                                                 </option>
-                                                <option value="none">
+                                                <option value="none" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="None" fr="Aucun" ar="لا شيء" />
                                                 </option>
                                                 {[
@@ -300,7 +300,7 @@ const InfoSession = () => {
                                                     "Ben M'Sick Sidi Othmane",
                                                     'Hay Hassani',
                                                 ].map((el, ind) => (
-                                                    <option key={ind} value={el.toLowerCase().replace(/ /g, '_')}>
+                                                    <option key={ind} value={el.toLowerCase().replace(/ /g, '_')} className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                         {el}
                                                     </option>
                                                 ))}
@@ -317,16 +317,16 @@ const InfoSession = () => {
                                                 name="gender"
                                                 id="gender"
                                                 onChange={handleChange}
-                                                className="w-full appearance-none rounded border border-gray-300 px-4 py-[11px]"
+                                                className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
                                                 required
                                             >
-                                                <option value="" selected disabled>
+                                                <option value="" selected disabled className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Gender" fr="Genre" ar="الجنس" />
                                                 </option>
-                                                <option value="male">
+                                                <option value="male" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Male" fr="Homme" ar="ذكر" />
                                                 </option>
-                                                <option value="female">
+                                                <option value="female" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Female" fr="Female" ar="أنثى" />
                                                 </option>
                                             </select>
@@ -349,7 +349,7 @@ const InfoSession = () => {
                                                 id="source"
                                                 placeholder={selectedLanguage == 'en' ? 'Source' : selectedLanguage == 'fr' ? 'Source' : 'مصدر'}
                                                 onChange={handleChange}
-                                                className="rounded-md border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-beta focus:outline-none"
+                                                className={`rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-beta focus:outline-none ${darkMode ? 'text-white placeholder:text-white' : 'text-gray-700'}`}
                                                 required
                                             />
                                             {errors.source && <span className="text-sm text-red-500">{errors.source}</span>}
@@ -370,7 +370,7 @@ const InfoSession = () => {
                                                 id="motivation"
                                                 // bach mankhalich l user idir copy past  l l motivation
                                                 onPaste={handlePaste}
-                                                className="rounded border border-gray-400 p-[6px]"
+                                                className={`rounded border border-gray-400 p-[6px] ${darkMode ? 'text-white placeholder:text-white' : 'text-gray-700'}`}
                                                 onChange={handleChange}
                                                 placeholder={
                                                     selectedLanguage == 'en' ? 'Motivation' : selectedLanguage == 'fr' ? 'Motivation' : 'دافع'

@@ -98,6 +98,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 });
 
 Route::post('/add-admin', [UserController::class, 'AddAdmin'])->name('add.admin');
+
+
+Route::get('/policy', function () {
+    return Inertia::render('policy/policy');
+})->name('home');
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/infosession.php';
