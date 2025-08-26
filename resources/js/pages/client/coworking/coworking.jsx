@@ -8,6 +8,7 @@ import { Camera, Gamepad, Podcast, Shield, Users, Wifi } from "lucide-react";
 import { Head, Link } from "@inertiajs/react";
 import { useAppContext } from "@/context/appContext";
 import { TransText } from '@/components/TransText';
+import { Button } from "@/components/Button";
 
 const Coworking = () => {
     const { selectedLanguage, darkMode } = useAppContext();
@@ -178,11 +179,10 @@ const Coworking = () => {
                                     ar="مرحبًا بكم في مساحة العمل المشترك المجانية لدينا، ملاذًا للسلامة والأمان مصممًا لإلهام الإنتاجية والإبداع. هنا يمكنك العمل على أفكارك، والدراسة، والتواصل مع الأشخاص المتشابهين في التفكير. سواء كنت مستقلاً، طالبًا، أو رائد أعمال، توفر مساحتنا البيئة المثالية للتركيز والتعاون. انضم إلينا واكتشف مجتمعًا داعمًا حيث تزدهر الابتكارات والتواصل."
                                 />
                             </p>
-                            <Link href={'/coworking/form'} className="cursor-pointer">
-                                <button
-                                    className="bg-alpha text-black lg:px-10 px-20  py-3 rounded-lg transition-colors cursor-pointer">
+                            <Link href={"/coworking/form"} className="cursor-pointer">
+                                <Button className="px-10 py-3">
                                     <TransText en="Join Us" fr="Rejoignez-nous" ar="انضم إلينا" />
-                                </button>
+                                </Button>
                             </Link>
                         </div>
 

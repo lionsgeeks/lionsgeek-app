@@ -8,10 +8,28 @@ import marketingPic from '../../../../assets/images/marketing.jpg';
 import { TransText } from '../../../components/TransText';
 import { ChartBar, Code, Trophy, Video } from 'lucide-react';
 import { useAppContext } from "@/context/appContext";
+import { Button } from "@/components/Button";
+
 const Propage = () => {
     const { projects } = usePage().props;
-
     const { selectedLanguage, darkMode } = useAppContext();
+
+    // Helper function to get text alignment classes based on language
+    const getTextAlignClass = () => {
+        return selectedLanguage === 'ar' ? 'text-right' : 'text-left';
+    };
+
+    // Helper function to get direction class based on language
+    const getDirectionClass = () => {
+        return selectedLanguage === 'ar' ? 'rtl' : 'ltr';
+    };
+
+    // Helper function to get icon background classes
+    const getIconBgClass = () => {
+        return darkMode 
+            ? 'bg-white/10 backdrop-blur-sm border border-white/20' 
+            : 'bg-white/90 backdrop-blur-sm border border-black/10 shadow-lg';
+    };
 
     const services = [
         {
@@ -114,7 +132,7 @@ const Propage = () => {
                 {
                     title: <TransText
                         en="Event Coverage"
-                        fr="Couverture d’Événements"
+                        fr="Couverture d'Événements"
                         ar="تغطية الفعاليات"
                     />,
                     description: <TransText
@@ -206,7 +224,7 @@ const Propage = () => {
             header: <TransText
                 en="Events and Hackathons"
                 fr="Événements et Hackathons"
-                ar="الفعاليات و الهاكاثونات"
+                ar="الفعاليات والهاكاثونات"
             />,
             subHeader: "",
             descriptions: [
@@ -236,16 +254,15 @@ const Propage = () => {
                 },
             ],
         }
-
     ];
 
     return (
         <AppLayout>
             <Head title="LionsGeek Pro" />
-            <div className="pt-16">
+            <div className={`pt-16 ${getDirectionClass()}`} dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
                 <div className="w-full lg:px-16" style={{ backgroundColor: darkMode ? '#0f0f0f' : '#ffffff1f' }}>
-                    {/* hero section */}
-                    <div className="flex w-full flex-col items-center gap-4 self-center py-8">
+                    {/* Hero Section */}
+                    <div className={`flex w-full flex-col items-center gap-4 self-center py-8 ${getTextAlignClass()}`}>
                         <h1 className="text-3xl font-bold lg:text-5xl" style={{ color: darkMode ? '#ffffff' : '#0f0f0f' }}>
                             <TransText
                                 en="OUR SERVICES"
@@ -255,78 +272,103 @@ const Propage = () => {
                         </h1>
                         <p className="w-[95%] py-2 text-center font-normal lg:w-[50%] lg:text-xl" style={{ color: darkMode ? '#ffffff' : '#0f0f0f' }}>
                             <TransText
-                                en="Feeling overwhelmed? We offer a range of services to streamline your operations, boost efficiency, and help you achieve your
-                            goals."
-                                fr="Vous vous sentez submergé ? Nous proposons une gamme de services pour rationaliser vos opérations, améliorer le fficacité et vous aider à atteindre vos objectifs"
+                                en="Feeling overwhelmed? We offer a range of services to streamline your operations, boost efficiency, and help you achieve your goals."
+                                fr="Vous vous sentez submergé ? Nous proposons une gamme de services pour rationaliser vos opérations, améliorer l'efficacité et vous aider à atteindre vos objectifs"
                                 ar="تشعر بالإرهاق؟ نحن نقدم مجموعة من الخدمات لتبسيط عملياتك وتعزيز الكفاءة ومساعدتك على تحقيق أهدافك"
                             />
                         </p>
                     </div>
 
+                    {/* Services Grid */}
                     <div className="flex w-full flex-wrap justify-between gap-3 px-3">
-                        {services.map((ele, idx) => (
+                        {services.map((service, idx) => (
                             <div
                                 key={idx}
-                                className={`relative w-full border py-5 lg:w-[48%] min-h-[50vh] ${selectedLanguage === 'ar' && 'text-end'} overflow-hidden rounded-xl`}
+                                className={`relative w-full border py-5 lg:w-[48%] min-h-[50vh] overflow-hidden rounded-xl ${getTextAlignClass()}`}
                             >
-
-                                <div className="absolute top-0 z-10 h-full w-full bg-black/60"></div>
-                                <div className="flex w-full items-center justify-between p-8 z-20 absolute">
-                                    <div className="rounded-lg bg-[#e7e7e8] p-3 text-alpha">{ele.icon}</div>
-                                    <h1 className="text-4xl font-bold text-alpha shadow">0{ele.id}</h1>
-                                </div>
-
-                                <div className="px-8 py-5 text-white z-20 absolute top-24">
-                                    <h1 className="text-3xl font-bold ">{ele.header}</h1>
-                                    <h1 className="py-3 /80">{ele.header}</h1>
-                                </div>
-
-                                <div className="px-8 py-2 text-white z-20 absolute top-45">
-                                    {ele.descriptions.map((e, i) => (
-                                        <div
-                                            key={i}
-                                            className={`mt-2 flex items-center gap-x-3  ${selectedLanguage === 'ar' && 'flex-row-reverse'}`}
-                                        >
-                                            <div className={` ${selectedLanguage === 'ar' && 'rotate-180'}`}>
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="16"
-                                                    height="16"
-                                                    fill="white"
-                                                    className="bi bi-arrow-right"
-                                                    viewBox="0 0 16 16"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                                                    />
-                                                </svg>
-                                            </div>
-
-                                            <h3 className="">{e.title}</h3>
-                                        </div>
-                                    ))}
-                                </div>
+                                {/* Background Image */}
                                 <img
                                     loading="lazy"
-                                    className={`absolute top-0 h-full w-full object-cover`}
-                                    src={ele.photo}
+                                    className="absolute top-0 h-full w-full object-cover"
+                                    src={service.photo}
+                                    alt=""
                                 />
+                                
+                                {/* Dark Overlay */}
+                                <div className="absolute top-0 z-10 h-full w-full bg-gradient-to-b from-black/50 via-black/60 to-black/80"></div>
+                                
+                                {/* Header Section */}
+                                <div className={`flex w-full items-center ${selectedLanguage === 'ar' ? 'justify-between flex-row-reverse' : 'justify-between'} p-8 z-20 absolute top-0`}>
+                                    <div className={`rounded-xl p-4 ${getIconBgClass()}`} 
+                                         style={{ color: darkMode ? '#ffffff' : '#1f2937' }}>
+                                        {service.icon}
+                                    </div>
+                                    <h1 className="text-4xl font-bold text-yellow-400 drop-shadow-lg">
+                                        0{service.id}
+                                    </h1>
+                                </div>
+
+                                {/* Title Section */}
+                                <div className={`px-8 py-5 text-white z-20 absolute top-24 w-full ${getTextAlignClass()}`}>
+                                    <h1 className={`${selectedLanguage === 'ar' ? 'text-2xl md:text-3xl font-black leading-snug tracking-wide' : 'text-3xl font-bold'} drop-shadow-lg`}>
+                                        {service.header}
+                                    </h1>
+                                </div>
+
+                                {/* Descriptions Section */}
+                                <div className={`px-8 py-2 text-white z-20 absolute top-40 w-full ${getTextAlignClass()}`}>
+                                    <div className={`space-y-2 ${selectedLanguage === 'ar' ? 'mt-2' : 'mt-0'}`}>
+                                        {service.descriptions.map((desc, i) => (
+                                            <div
+                                                key={i}
+                                                className={`flex items-start gap-x-3 ${selectedLanguage === 'ar' ? 'flex-row text-right' : 'flex-row text-left'}`}
+                                            >
+                                                <div className={`flex-shrink-0 mt-1`}>
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="12"
+                                                        height="12"
+                                                        fill="white"
+                                                        className="drop-shadow-sm opacity-90"
+                                                        viewBox="0 0 16 16"
+                                                        style={{ 
+                                                            transform: selectedLanguage === 'ar' ? 'scaleX(-1)' : 'none' 
+                                                        }}
+                                                    >
+                                                        <path
+                                                            fillRule="evenodd"
+                                                            d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
+                                                        />
+                                                    </svg>
+                                                </div>
+                                                <h3 className={`${selectedLanguage === 'ar' 
+                                                    ? 'font-bold text-sm md:text-base leading-relaxed tracking-wide flex-1' 
+                                                    : 'font-medium text-sm md:text-base'} drop-shadow-sm`}>
+                                                    {desc.title}
+                                                </h3>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>
 
-                    <div className="mt-5 py-5 text-center">
-                        <Link className="rounded-lg bg-alpha px-7 py-3" to={'/contact-us'}>
-                            <TransText en="Contact Us" fr="Contactez-nous" ar="اتصل بنا" />
+                    {/* Contact Button */}
+                    <div className="flex justify-center mt-8 py-6">
+                        <Link href="/contact">
+                            <Button>
+                                <TransText en="Contact Us" fr="Contactez-nous" ar="اتصل بنا" />
+                            </Button>
                         </Link>
                     </div>
 
-                    <div className="mt-3 py-3 text-center">
+                    {/* Trusted Partners Section */}
+                    <div className={`mt-6 py-6 text-center ${getTextAlignClass()}`}>
                         <h1 className="text-3xl font-bold lg:text-5xl" style={{ color: darkMode ? '#ffffff' : '#0f0f0f' }}>
                             <TransText en="Those Who Trust in Us" fr="Ceux Qui Nous Font Confiance" ar="من يثقون بنا" />
                         </h1>
-                        <p className="lg:text-l mt-2 px-4 py-3 font-normal lg:px-0" style={{ color: darkMode ? '#ffffff' : '#0f0f0f' }}>
+                        <p className="lg:text-xl mt-4 px-4 py-3 font-normal lg:px-0" style={{ color: darkMode ? '#ffffff' : '#0f0f0f' }}>
                             <TransText
                                 en="We are honored to work alongside organizations that share our values, striving for success together."
                                 fr="Nous sommes honorés de collaborer avec des organisations partageant nos valeurs, œuvrant ensemble vers la réussite."
@@ -335,33 +377,49 @@ const Propage = () => {
                         </p>
                     </div>
 
-                    {/* projects */}
-                    <div className={`flex flex-wrap items-center gap-5 px-5 py-10`}>
+                    {/* Projects Grid */}
+                    <div className="flex flex-wrap items-center gap-6 px-5 py-10">
                         {projects &&
-                            projects.map((ele, indx) => (
+                            projects.map((project, indx) => (
                                 <div
                                     key={indx}
-                                    className={`projects relative w-full overflow-hidden rounded-lg border border-black p-5 transition-all lg:w-[32%] ${darkMode ? 'bg-[#E1E1E1]' : ''} `}
+                                    className={`relative w-full overflow-hidden rounded-xl p-6 transition-all duration-300 hover:scale-105 lg:w-[32%] h-[500px] flex flex-col ${getTextAlignClass()} ${darkMode
+                                        ? 'bg-gray-900/90 border border-gray-700 hover:border-gray-600'
+                                        : 'bg-white/95 border border-gray-200 hover:border-gray-300 shadow-lg'
+                                        }`}
                                 >
-                                    <div className="flex w-full items-center justify-between">
-                                        <p className="font-bold">{ele.name}</p>
+                                    <div className="mb-4 flex-shrink-0">
                                         <img
                                             loading="lazy"
-                                            className="aspect-square w-16 rounded-full object-cover"
-                                            src={'storage/images/projects/' + ele.logo}
+                                            className="h-48 w-full object-cover rounded-lg transition-transform duration-300 hover:scale-105"
+                                            src={'storage/images/projects/' + (project.preview || project.logo)}
                                             alt=""
                                         />
                                     </div>
-                                    <p className={`h-[25vh] overflow-y-auto py-6 text-base ${selectedLanguage == 'ar' && 'text-end'}`}>
-                                        {ele.description[selectedLanguage]}
-                                    </p>
-                                    <div className="preview h-full w-full rounded-lg bg-white">
+
+                                    <div className={`flex w-full items-center ${selectedLanguage === 'ar' ? 'justify-between flex-row-reverse' : 'justify-between'} mb-4 flex-shrink-0`}>
+                                        <p className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                            {project.name}
+                                        </p>
                                         <img
                                             loading="lazy"
-                                            className="h-full w-full object-cover"
-                                            src={'storage/images/projects/' + (ele.preview || ele.logo)}
+                                            className="aspect-square w-16 rounded-full object-cover border-2 border-gray-300"
+                                            src={'storage/images/projects/' + project.logo}
                                             alt=""
                                         />
+                                    </div>
+
+                                    <div
+                                        className={`flex-1 overflow-y-auto ${selectedLanguage === 'ar' ? 'pl-2' : 'pr-2'} ${getTextAlignClass()}`}
+                                        style={{
+                                            scrollbarWidth: 'thin',
+                                            scrollbarColor: darkMode ? '#4a5568 #2d3748' : '#9ca3af #e5e7eb'
+                                        }}
+                                    >
+                                        <p className={`text-base leading-relaxed ${darkMode ? 'text-gray-300' : 'text-gray-700'
+                                            } ${selectedLanguage === 'ar' ? 'font-medium' : ''}`}>
+                                            {project.description[selectedLanguage]}
+                                        </p>
                                     </div>
                                 </div>
                             ))}
@@ -371,16 +429,5 @@ const Propage = () => {
         </AppLayout>
     );
 }
+
 export default Propage;
-
-
-
-
-
-
-
-
-
-
-
-

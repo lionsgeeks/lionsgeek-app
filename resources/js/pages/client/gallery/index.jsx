@@ -39,7 +39,6 @@ export default function GalleryPage() {
     useEffect(() => {
         const updateLength = () => {
             const screenSize = window.innerWidth;
-            console.log(screenSize);
 
             if (screenSize >= 1024) {
                 setLength(150)
