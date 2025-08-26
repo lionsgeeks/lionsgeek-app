@@ -16,6 +16,7 @@ const breadcrumbs = [
         title: 'Gallery',
         href: '/gallery',
     },
+
 ];
 
 export default function GalleryPage() {
@@ -83,10 +84,16 @@ export default function GalleryPage() {
                                     </h2>
                                     <p className="font-semibold  text-white py-4 lg:text-[17px] text-sm">
 
-                                        <TransText fr={gallery.description?.fr} ar={gallery.description?.ar} en={gallery.description?.en} /> {}
+                                        <TransText fr={gallery.description?.fr} ar={gallery.description?.ar} en={gallery.description?.en} /> { }
                                     </p>
                                     <Link href={`/album/${gallery.id}`}>
-                                        <button>Read More</button>
+                                        <button>
+                                            <TransText
+                                                fr={ "Vue galerie"}
+                                                ar={"عرض الصور"}
+                                                en={"Gallery view"}
+                                            />
+                                        </button>
                                     </Link>
                                 </div>
                             </li>
