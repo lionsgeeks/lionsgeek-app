@@ -264,12 +264,12 @@ const Propage = () => {
                             />
                         </p>
                     </div>
-
-                    <div className="flex w-full flex-wrap justify-between gap-3 px-3">
+{/* SERVICES */}
+                       <div className="flex w-full flex-wrap justify-between gap-3 px-3">
                         {services.map((ele, idx) => (
                             <div
                                 key={idx}
-                                className={`relative w-full border py-5 lg:w-[48%] min-h-[50vh] ${selectedLanguage === 'ar' && 'text-end'} overflow-hidden rounded-xl`}
+                                className={`relative w-full border py-1 lg:w-[48%] min-h-[55vh] ${selectedLanguage === 'ar' && 'text-end'} overflow-hidden rounded-xl`}
                             >
 
                                 <div className="absolute top-0 z-10 h-full w-full bg-black/60"></div>
@@ -278,12 +278,12 @@ const Propage = () => {
                                     <h1 className="text-4xl font-bold text-alpha shadow">0{ele.id}</h1>
                                 </div>
 
-                                <div className="px-8 py-5 text-white z-20 absolute top-24">
+                                <div className="px-8 py-5 text-white z-20 absolute top-20">
                                     <h1 className="text-3xl font-bold ">{ele.header}</h1>
-                                    <h1 className="py-3 /80">{ele.header}</h1>
+                                    <h1 className="py-2 /80">{ele.header}</h1>
                                 </div>
 
-                                <div className="px-8 py-2 text-white z-20 absolute top-45">
+                                <div className="px-8 py-7 text-white z-20 absolute top-43">
                                     {ele.descriptions.map((e, i) => (
                                         <div
                                             key={i}
@@ -317,7 +317,6 @@ const Propage = () => {
                             </div>
                         ))}
                     </div>
-
                     <div className="flex justify-center mt-5 py-5">
                         <Link href="/contact">
                             <Button>
