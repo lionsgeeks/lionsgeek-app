@@ -26,7 +26,7 @@ const TrainingSection = () => {
 
             <div className="flex flex-col w-full gap-3">
                 <Link
-                    to={"/coding"}
+                    href={"/coding"}
                     className={`group/coding rounded-lg flex flex-col-reverse border-2 ${selectedLanguage === "ar" ? "md:flex-row-reverse text-end" : "md:flex-row"
                         }`}
                 >
@@ -150,7 +150,7 @@ const TrainingSection = () => {
                 </Link>
 
                 <Link
-                    to={"/media"}
+                    href={"/media"}
                     className={`group/media rounded-lg flex flex-col-reverse border-2 ${selectedLanguage === "ar" ? "md:flex-row text-end" : "md:flex-row-reverse"
                         }`}
                 >
