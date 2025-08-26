@@ -255,7 +255,7 @@ const Footer = () => {
                         </p>
                         {/* policy*/}
                         <div>
-                            <Link to="/policy" className="text-gray-400 hover:underline">
+                            <Link href="/policy" className="text-gray-400 hover:underline">
                                 Privacy Policy
                             </Link>
                         </div>
