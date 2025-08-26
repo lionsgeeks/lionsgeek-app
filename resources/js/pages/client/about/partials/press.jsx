@@ -24,14 +24,14 @@ export const Press = () => {
                     >
                         <div className="bg-white rounded-lg relative hover:scale-105 transition-all duration-300 shadow-md h-full flex flex-col">
                             <img
-                                src={`/storage/${press.cover}`}
+                                src={`/storage/images/press/${press.cover}`}
                                 className="h-[25vh] w-full object-cover rounded-t-lg"
                                 alt={press.name[selectedLanguage]}
                             />
                             <div className="flex items-center gap-2 p-2 mt-2 flex-grow">
                                 {press.logo && (
                                     <img
-                                        src={`/storage/${press.logo}`}
+                                        src={`/storage/images/press/${press.logo}`}
                                         className="w-[25px] rounded-full aspect-square"
                                         alt={`Logo ${press.name[selectedLanguage]}`}
                                     />
