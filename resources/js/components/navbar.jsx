@@ -154,8 +154,8 @@ const Navbar = () => {
                 },
                 {
                     id: 'mediaLink',
-                    eng: 'blogs',
-                    fr: 'blogs',
+                    eng: 'Blogs',
+                    fr: 'Blogs',
                     ar: 'مدونة',
                     link: 'blogs',
                     icon: BookOpen,
