@@ -35,7 +35,7 @@ const WhoSection = () => {
                         />
                     </p>
 
-                    <Link to={"/about"}>
+                    <Link href={"/about"}>
                         <Button>
                             <TransText en="Learn more" fr="En savoir plus" ar="تعرف أكثر" />
                         </Button>
