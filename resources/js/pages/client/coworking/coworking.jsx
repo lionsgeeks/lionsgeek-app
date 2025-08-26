@@ -163,17 +163,15 @@ const Coworking = () => {
         <>
             <AppLayout>
                 <Head title="Co-Working" />
-                <div className={`min-h-screen ${darkMode ? "bg-[#0f0f0f] text-white" : "bg-white text-black"}`}>
-
-                    <div className="grid lg:grid-cols-2 mx-10 mt-20 gap-20 items-center">
-
-                        <div className="space-y-8 w-[85%] mt-16 ml-16" ref={leftside}>
+                <div className={`min-h-screen w-full ${darkMode ? "bg-[#0f0f0f] text-white" : "bg-white text-black"}`}>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 mx-5 sm:mx-10 lg:mt-10 mt-20 gap-10 lg:gap-20 items-center">
+                        <div className=" order-2 lg:order-1 space-y-6 sm:space-y-8 w-full sm:w-[90%] lg:w-[85%] mt-8 sm:mt-16 sm:ml-0 lg:ml-16 lg:text-left  text-center " ref={leftside}>
                             <h1
-                                className={`text-6xl font-extrabold ${selectedLanguage === "ar" ? "text-right" : ""
+                                className={`text-3xl font-extrabold sm:text-4xl md:text-5xl lg:text-6xl  ${selectedLanguage === "ar" ? "text-right" : ""
                                     }`}
                                 dangerouslySetInnerHTML={{ __html: titles[selectedLanguage] || titles.en }}
                             />
-                            <p className="text-sm w-lg">
+                            <p className="text-sm sm:text-base md:text-lg ">
                                 <TransText
                                     en="Welcome to our free coworking space, a haven of peace and security designed to inspire productivity and creativity. Here, you can work on your ideas, study, and connect with like-minded people. Whether you're a freelancer, student, or entrepreneur, our space offers the ideal environment to focus and collaborate. Join us and discover a supportive community where innovation and networking thrive."
                                     fr="Bienvenue dans notre espace de coworking gratuit, un havre de paix et de sécurité conçu pour inspirer productivité et créativité. Ici, vous pouvez travailler sur vos idées, étudier et vous connecter avec des personnes partageant les mêmes idées. Que vous soyez freelance, étudiant ou entrepreneur, notre espace offre l'environnement idéal pour se concentrer et collaborer. Rejoignez-nous et découvrez une communauté solidaire où l'innovation et le réseautage prospèrent."
@@ -182,29 +180,29 @@ const Coworking = () => {
                             </p>
                             <Link href={'/coworking/form'} className="cursor-pointer">
                                 <button
-                                    className="bg-alpha text-black px-10 py-3 rounded-lg transition-colors cursor-pointer">
+                                    className="bg-alpha text-black lg:px-10 px-20  py-3 rounded-lg transition-colors cursor-pointer">
                                     <TransText en="Join Us" fr="Rejoignez-nous" ar="انضم إلينا" />
                                 </button>
                             </Link>
                         </div>
 
-                        <div className="w-[85%]" ref={rightside}>
+                        <div className="order-1 lg:order-2  w-full flex justify-center lg:justify-end" ref={rightside}>
                             <img src="https://lionsgeek.ma/static/media/Coworking-pana.54ca50c5174b93da3b62.png" alt="coworking illustration" className="object-contain" />
                         </div>
                     </div>
 
-                    <div className={`pb-14 pt-40 px-4 sm:px-6 lg:px-8 ${darkMode ? "bg-[#0f0f0f]" : "bg-white"}`}>
+                    <div className={`pb-14 pt-20 px-4 sm:px-6 lg:px-8 ${darkMode ? "bg-[#0f0f0f]" : "bg-white"}`}>
                         <div className="max-w-7xl mx-auto">
                             <div className="text-center mb-16">
                                 <h1 className={`text-lg mb-2 ${darkMode ? "text-white" : "text-black"}`}>
                                     <TransText en="Services" fr="Services" ar="الخدمات" />
                                 </h1>
-                                <h2 className={`text-5xl font-bold ${darkMode ? "text-white" : "text-black"}`}>
+                                <h2 className={`text-3xl font-extrabold sm:text-4xl md:text-5xl lg:text-6xl ${darkMode ? "text-white" : "text-black"}`}>
                                     <TransText en="Our Included Services" fr="Nos Services Inclus" ar="خدماتنا المدرجة" />
                                 </h2>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-x-20 gap-y-8">
+                            <div className="grid lg:grid-cols-3 gap-x-20 gap-y-8">
                                 {services.map((service, index) => (
                                     <div key={index} className={`rounded-2xl shadow-xl overflow-hidden ${darkMode ? "bg-[#1a1a1a]" : "bg-white"}`}>
                                         <div className="px-5 py-8 flex flex-col items-center justify-center gap-2">
@@ -222,17 +220,17 @@ const Coworking = () => {
                         </div>
                     </div>
 
-                    <div className={`flex flex-col gap-12 text-center ${darkMode ? "bg-[#0f0f0f]" : "bg-white"}`}>
+                    <div className={`flex flex-col lg:p-0 p-4 gap-12 text-center ${darkMode ? "bg-[#0f0f0f]" : "bg-white"}`}>
                         <div>
-                            <h1 className={`text-lg mb-2 mt-24 ${darkMode ? "text-white" : "text-black"}`}>
+                            <h1 className={`text-lg mb-2 mt-10 ${darkMode ? "text-white" : "text-black"}`}>
                                 <TransText en="Workspace" fr="Espace de Travail" ar="مساحة العمل" />
                             </h1>
-                            <h2 className={`text-5xl font-extrabold ${darkMode ? "text-white" : "text-black"}`}>
+                            <h2 className={`text-3xl font-extrabold sm:text-4xl md:text-5xl lg:text-6xl ${darkMode ? "text-white" : "text-black"}`}>
                                 <TransText en="Explore Our Space" fr="Explorez Notre Espace" ar="استكشف مساحتنا" />
                             </h2>
                         </div>
 
-                        <div className="w-full px-16">
+                        <div className="w-full lg:px-16">
                             <video
                                 ref={videoPlay}
                                 className="border-2 border-alpha rounded-xl"
@@ -245,16 +243,16 @@ const Coworking = () => {
                         </div>
                     </div>
 
-                    <div className={`flex flex-col gap-12 text-center pb-16 ${darkMode ? "bg-[#0f0f0f]" : "bg-white"}`}>
+                    <div className={`flex flex-col gap-12 px-4 lg:px-0 text-center pb-16 ${darkMode ? "bg-[#0f0f0f]" : "bg-white"}`}>
                         <div>
                             <h1 className={`text-lg mb-2 mt-32 ${darkMode ? "text-white" : "text-black"}`}>
                                 <TransText en="Testimonials" fr="Témoignages" ar="الشهادات" />
                             </h1>
-                            <h2 className={`text-5xl font-extrabold ${darkMode ? "text-white" : "text-black"}`}>
+                            <h2 className={`text-3xl font-extrabold  sm:text-4xl md:text-5xl lg:text-6xl ${darkMode ? "text-white" : "text-black"}`}>
                                 <TransText en="People Who Already Love Us" fr="Les Gens Qui Nous Aiment Déjà" ar="الأشخاص الذين يحبوننا بالفعل" />
                             </h2>
                         </div>
-                        <div className="flex flex-wrap px-16 justify-center gap-3">
+                        <div className="flex flex-wrap  lg:px-16 justify-center gap-3">
                             {testimoniels.map((element, index) => (
                                 <div
                                     key={index}
