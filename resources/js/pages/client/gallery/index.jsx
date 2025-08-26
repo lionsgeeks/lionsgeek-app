@@ -91,7 +91,7 @@ export default function GalleryPage() {
                                             <TransText
                                                 fr={ "Vue galerie"}
                                                 ar={"عرض الصور"}
-                                                en={"Gallery view"}
+                                                en={"View Gallery "}
                                             />
                                         </button>
                                     </Link>
