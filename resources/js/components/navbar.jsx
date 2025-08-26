@@ -84,6 +84,16 @@ const Navbar = () => {
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
 
+    // prevent background scrolling on mobile
+    useEffect(() => {
+        const scrollY = isOpen ? window.scrollY : -parseInt(document.body.style.top || '0');
+        document.body.style.position = isOpen ? 'fixed' : '';
+        document.body.style.top = isOpen ? `-${scrollY}px` : '';
+        document.body.style.left = isOpen && '0';
+        document.body.style.right = isOpen && '0';
+        !isOpen && window.scrollTo(0, scrollY);
+    }, [isOpen]);
+
     // array for navigation Link
     const navigation = [
         {
@@ -154,8 +164,8 @@ const Navbar = () => {
                 },
                 {
                     id: 'mediaLink',
-                    eng: 'blogs',
-                    fr: 'blogs',
+                    eng: 'Blogs',
+                    fr: 'Blogs',
                     ar: 'مدونة',
                     link: 'blogs',
                     icon: BookOpen,
@@ -174,7 +184,10 @@ const Navbar = () => {
 
     return (
         <>
-            <div className={`dark-mode:bg-gray-900 fixed inset-0 z-40 bg-gray-600/50 ${isOpen ? 'flex' : 'hidden'}`}></div>
+            <div
+                onClick={() => setIsOpen(false)}
+                className={`dark-mode:bg-gray-900 fixed inset-0 z-40 bg-gray-600/50 ${isOpen ? 'flex' : 'hidden'}`}
+            ></div>
             <div className="fixed top-0 right-0 left-0 z-50">
                 <div className="dark-mode:bg-gray-900 antialiased">
                     <div

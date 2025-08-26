@@ -1,6 +1,6 @@
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import { type BreadcrumbItem } from '@/types';
-import flasher from '@flasher/flasher';
+// import flasher from '@flasher/flasher';
 import { usePage } from '@inertiajs/react';
 import { useEffect, type ReactNode } from 'react';
 import AppHeaderLayout from './app/app-header-layout';
@@ -11,11 +11,11 @@ interface AppLayoutProps {
 
 export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
     const { auth, messages } = usePage<{ auth: { user: { role: string } } }>().props;
-    useEffect(() => {
-        if (messages) {
-            flasher.render(messages);
-        }
-    }, [messages]);
+    // useEffect(() => {
+    //     if (messages) {
+    //         flasher.render(messages);
+    //     }
+    // }, [messages]);
     const currentUrl = window.location.href;
     const LayoutComponent = auth?.user && currentUrl.toLowerCase().includes('/admin/') ? AppSidebarLayout : AppHeaderLayout;
     
