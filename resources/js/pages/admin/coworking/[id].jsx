@@ -49,10 +49,10 @@ export default function CoworkingShow() {
 
             return (
                 <a className="font-semibold" href={url} download={filename}>
-                    <div className="flex gap-2 border items-center justify-center bg-black text-alpha p-2 rounded">
+                    <div className="flex gap-2 border-2 border-beta items-center justify-center bg-alpha text-beta p-2 rounded">
                         {filename}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" strokeWidth="2.5" stroke="#ffc801" className="size-5">
+                            viewBox="0 0 24 24" strokeWidth="2.5" stroke="beta" className="size-5">
                             <path strokeLinecap="round" strokeLinejoin="round"
                                 d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
@@ -83,34 +83,35 @@ export default function CoworkingShow() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Coworking Details" />
-            <div className="p-6">
-                <div className="flex justify-end">
-                    <Button variant="destructive"
-                        onClick={() => { setIsOpen(true) }}
-                    >
-                        <Trash2 /> Delete
-                    </Button>
-                </div>
+            <div className="p-5">
+                
                 <div className="mt-6">
                     <table className="min-w-full mx-auto border border-black shadow-md">
                         <thead>
-                            <tr className="bg-alpha">
-                                <th className="border border-black p-3 w-[35vw]">Field</th>
-                                <th className="border border-black p-3">Value</th>
+                            <tr className="bg-beta">
+                                <th className="border-3 text-[3vh] border-r-alpha border-beta p-3 w-[35vw] text-alpha">Field</th>
+                                <th className="border-3 text-[3vh] border-l-alpha border-beta p-2 text-alpha">Value</th>
                             </tr>
                         </thead>
                         <tbody>
                             {Object.entries(fields).map(([label, value], index) => {
-                                const bgClass = index % 2 === 0 ? 'bg-alpha/10' : '';
+                                const bgClass = index % 2 === 0 ? '' : '';
                                 return (
                                     <tr key={label} className={bgClass}>
-                                        <td className="border p-3 border-alpha font-semibold">{label}</td>
-                                        <td className="border p-3 border-alpha">{formatValue(label, value)}</td>
+                                        <td className="border-2 p-3 border-beta font-semibold">{label}</td>
+                                        <td className="border-2 p-3 border-beta">{formatValue(label, value)}</td>
                                     </tr>
                                 );
                             })}
                         </tbody>
                     </table>
+                </div>
+                <div className="flex justify-end pt-7">
+                    <Button variant="destructive"
+                        onClick={() => { setIsOpen(true) }}
+                    >
+                        <Trash2 /> Delete
+                    </Button>
                 </div>
             </div>
 
