@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 import logo from "../../../../../assets/images/About-us-page-pana.png";
 import {Button} from "../../../../components/Button";
 import { TransText } from "../../../../components/TransText";
@@ -6,7 +7,6 @@ import { useAppContext } from "@/context/appContext";
 
 export const FirstSectionAbout = () => {
     const {selectedLanguage, darkMode} = useAppContext();
-
     return (
         <>
             <section
@@ -31,8 +31,7 @@ export const FirstSectionAbout = () => {
                         />
                     </p>
                     <Button
-                    // TODO: when adding whatislionsgeek
-                    // onClick={() => navigate('/whatislionsgeek')}
+                    onClick={() => router.visit("/whatislionsgeek")}
                     >
                         <TransText en="See More" fr="Voir plus" ar="شاهد المزيد" />{" "}
                     </Button>
