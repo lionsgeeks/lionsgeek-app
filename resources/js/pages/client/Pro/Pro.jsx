@@ -318,9 +318,9 @@ const Propage = () => {
                         ))}
                     </div>
 
-                    <div className="mt-5 py-5 text-center">
-                        <Link to={"/contact-us"}>
-                            <Button className="px-7 py-3">
+                    <div className="flex justify-center mt-5 py-5">
+                        <Link href="/contact">
+                            <Button>
                                 <TransText en="Contact Us" fr="Contactez-nous" ar="اتصل بنا" />
                             </Button>
                         </Link>
@@ -344,11 +344,10 @@ const Propage = () => {
                             projects.map((ele, indx) => (
                                 <div
                                     key={indx}
-                                    className={`relative w-full overflow-hidden rounded-lg p-5 transition-all lg:w-[32%] h-[500px] flex flex-col ${
-                                        darkMode 
-                                            ? 'bg-[#1a1a1a] border border-[#333]' 
-                                            : 'bg-white border border-black'
-                                    }`}
+                                    className={`relative w-full overflow-hidden rounded-lg p-5 transition-all lg:w-[32%] h-[500px] flex flex-col ${darkMode
+                                        ? 'bg-[#1a1a1a] border border-[#333]'
+                                        : 'bg-white border border-black'
+                                        }`}
                                 >
                                     <div className="mb-4 flex-shrink-0">
                                         <img
@@ -358,7 +357,7 @@ const Propage = () => {
                                             alt=""
                                         />
                                     </div>
-                                    
+
                                     <div className="flex w-full items-center justify-between mb-3 flex-shrink-0">
                                         <p className={`font-bold ${darkMode ? 'text-white' : 'text-black'}`}>
                                             {ele.name}
@@ -370,17 +369,16 @@ const Propage = () => {
                                             alt=""
                                         />
                                     </div>
-                                    
-                                    <div 
+
+                                    <div
                                         className="flex-1 overflow-y-auto pr-2"
                                         style={{
                                             scrollbarWidth: 'thin',
                                             scrollbarColor: darkMode ? '#4a5568 #2d3748' : '#9ca3af #e5e7eb'
                                         }}
                                     >
-                                        <p className={`text-base ${selectedLanguage == 'ar' && 'text-end'} ${
-                                            darkMode ? 'text-gray-300' : 'text-gray-700'
-                                        }`}>
+                                        <p className={`text-base ${selectedLanguage == 'ar' && 'text-end'} ${darkMode ? 'text-gray-300' : 'text-gray-700'
+                                            }`}>
                                             {ele.description[selectedLanguage]}
                                         </p>
                                     </div>
