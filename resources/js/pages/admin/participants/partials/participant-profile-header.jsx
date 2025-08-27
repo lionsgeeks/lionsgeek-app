@@ -1,85 +1,116 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Mail, Phone, MapPin, Users, Image } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Calendar, Mail, Phone, MapPin, Users, User, GraduationCap, Clock, CheckCircle2 } from "lucide-react"
 
 export function ParticipantProfileHeader({ participant }) {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
+      month: "long",
+      day: "numeric",
     })
   }
 
   const getStepColor = (step) => {
-    if (step.toLowerCase().includes("failed")) return "bg-red-100 text-red-800"
-    if (step.toLowerCase().includes("completed")) return "bg-green-100 text-green-800"
-    if (step.toLowerCase().includes("scheduled")) return "bg-blue-100 text-blue-800"
-    return "bg-yellow-100 text-yellow-800"
+    switch(step) {
+      case 'info_session':
+        return "bg-[#f2f2f2] text-[#212529]"
+      case 'interview':
+        return "bg-[#fee819] text-[#212529]"
+      case 'interview_pending':
+        return "bg-[#fee819] text-[#212529]"
+      case 'interview_failed':
+        return "bg-[#ff7376] text-white"
+      case 'jungle':
+        return "bg-[#fee819] text-[#212529]"
+      case 'jungle_failed':
+        return "bg-[#ff7376] text-white"
+      default:
+        return "bg-[#212529] text-white"
+    }
   }
-  return (
-    <Card className="mb-6">
-      <CardContent className="p-6">
-        <div className="flex items-start gap-6">
-          {/* Avatar */}
-          <div className="flex-shrink-0">
-            <div className="w-32 aspect-square bg-black rounded-lg flex items-center justify-center">
-              {participant?.image ? (
-                 <img src={'/storage/images/participants/' + participant.image}   alt={participant.full_name}
-                    className="rounded-lg w-[100%] aspect-square object-cover" />
 
+  const getFormationColor = (formation) => {
+    return formation === 'Coding' 
+      ? 'bg-[#fee819] text-[#212529]' 
+      : 'bg-[#fee819] text-[#212529]'
+  }
+
+  return (
+    <Card className="border rounded-lg bg-white shadow-md">
+      <CardContent className="p-6">
+        <div className="flex flex-col items-center text-center space-y-4">
+          {/* Avatar */}
+          <div className="relative">
+                                  <div className="w-32 h-32 rounded-lg overflow-hidden bg-gray-100">
+              {participant?.image ? (
+                <img 
+                  src={'/storage/images/participants/' + participant.image}   
+                  alt={participant.full_name}
+                  className="w-full h-full object-cover" 
+                />
               ) : (
-                <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
-                  <Users className="w-8 h-8 text-black" />
+                <div className="w-full h-full flex items-center justify-center">
+                  <User className="w-12 h-12 text-gray-400" />
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Profile Info */}
-          <div className="flex-1 space-y-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">{participant.full_name}</h1>
-              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>{formatDate(participant.birthday)}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Mail className="w-4 h-4" />
-                  <span>{participant.email}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Phone className="w-4 h-4" />
-                  <span>{participant.phone}</span>
-                </div>
+            <div className="absolute -bottom-2 -right-2">
+              <div className="bg-white rounded-full p-1 shadow-md">
+                <CheckCircle2 className="w-5 h-5 text-[#fee819]" />
               </div>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="text-sm font-medium text-gray-700">Current Step:</label>
-                <div className="mt-1">
-                  <Badge className={getStepColor(participant.current_step)}>{participant.current_step}</Badge>
-                </div>
-              </div>
+          {/* Name and badges */}
+          <div>
+            <h1 className="text-xl font-bold text-[#212529] mb-2">{participant.full_name}</h1>
+            <div className="flex flex-col gap-2">
+              <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1`}>
+                {participant.current_step.replaceAll('_', ' ')}
+              </Badge>
+              <Badge className={`${getFormationColor(participant.info_session.formation)} rounded-lg px-3 py-1`}>
+                {participant.info_session.formation}
+              </Badge>
+            </div>
+          </div>
 
-              <div>
-                <label className="text-sm font-medium text-gray-700">Location:</label>
-                <div className="mt-1 flex items-center gap-1 text-sm text-gray-600">
-                  <MapPin className="w-4 h-4" />
-                  <span>
-                    {participant.city}
-                  </span>
-                </div>
+          {/* Contact info */}
+          <div className="w-full space-y-3">
+            <div className="flex items-center gap-3 text-gray-600">
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <Mail className="w-4 h-4 text-[#212529]" />
               </div>
+              <span className="text-sm">{participant.email}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-600">
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <Phone className="w-4 h-4 text-[#212529]" />
+              </div>
+              <span className="text-sm">{participant.phone}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-600">
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <Calendar className="w-4 h-4 text-[#212529]" />
+              </div>
+              <span className="text-sm">{formatDate(participant.birthday)}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-600">
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <MapPin className="w-4 h-4 text-[#212529]" />
+              </div>
+              <span className="text-sm capitalize">{participant.city}, {participant.prefecture?.replaceAll('_', ' ')}</span>
+            </div>
+          </div>
 
-              <div>
-                <label className="text-sm font-medium text-gray-700">Session:</label>
-                <div className="mt-1">
-                  <Badge variant="outline">{participant.info_session.formation}</Badge>
-                </div>
-              </div>
+          {/* Session details */}
+          <div className="w-full bg-gray-50 rounded-lg p-4">
+            <h3 className="font-medium text-[#212529] mb-2">Session Details</h3>
+            <div className="text-sm text-gray-600 space-y-1">
+              <p><span className="font-medium">Session:</span> {participant.info_session.name}</p>
+              <p><span className="font-medium">Start Date:</span> {participant.info_session.start_date}</p>
+              <p><span className="font-medium">Gender:</span> <span className="capitalize">{participant.gender}</span></p>
             </div>
           </div>
         </div>
