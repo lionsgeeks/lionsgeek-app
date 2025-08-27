@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\booking;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -51,7 +52,7 @@ class EventController extends Controller
         $request->validate([
             'date' => 'required|date',
             'capacity' => 'required|integer|min:1',
-            'cover' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cover' => 'required|image|mimes:jpeg,png,jpg,gif',
         ]);
 
         if (!$request->name || !is_array($request->name) || empty(array_filter($request->name))) {
@@ -64,7 +65,13 @@ class EventController extends Controller
 
         $coverPath = null;
         if ($request->hasFile('cover')) {
-            $coverPath = $request->file('cover')->store('events', 'public');
+            if ($request->hasFile('cover')) {
+                $file = $request->file('cover');
+                $filename = $file->getClientOriginalName();
+                $file->storeAs('images/events', $filename, 'public');
+
+                $coverPath = $filename;
+            }
         }
 
         Event::create([
@@ -85,6 +92,7 @@ class EventController extends Controller
     {
         return Inertia::render('client/EventDetails/eventdetail', [
             'event' => $event
+
         ]);
     }
 
@@ -93,6 +101,9 @@ class EventController extends Controller
      */
     public function adminShow(Event $event)
     {
+
+        $event->load('bookings');
+
         return Inertia::render('admin/events/show', [
             'event' => $event
         ]);
@@ -107,7 +118,7 @@ class EventController extends Controller
         $request->validate([
             'date' => 'required|date',
             'capacity' => 'required|integer|min:1',
-            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ]);
 
         if (!$request->name || !is_array($request->name) || empty(array_filter($request->name))) {
@@ -126,11 +137,15 @@ class EventController extends Controller
         ];
 
         if ($request->hasFile('cover')) {
-            if ($event->cover) {
-                Storage::disk('public')->delete($event->cover);
-            }
-            $updateData['cover'] = $request->file('cover')->store('events', 'public');
+            $file = $request->file('cover');
+
+            $filename = $file->getClientOriginalName();
+
+            $file->storeAs('images/events', $filename, 'public');
+
+            $updateData['cover'] = $filename;
         }
+
 
         $event->update($updateData);
 
@@ -150,5 +165,4 @@ class EventController extends Controller
 
         return redirect()->route('admin.events.index')->with('success', 'Event deleted successfully!');
     }
-
 }

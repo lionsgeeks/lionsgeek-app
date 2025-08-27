@@ -32,7 +32,7 @@ export default function AdNavbar( ) {
 
     return (
         <nav>
-            <div className="mx-auto px-4 sm:px-4 lg:px-4">
+            <div className="mx-auto px-4 sm:px-4 lg:px-4 border-b-2">
                 <div className="flex justify-end h-16 items-center">
                     <div className="flex items-center gap-4">
                         <div className="relative">

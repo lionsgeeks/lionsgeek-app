@@ -34,6 +34,8 @@ export default function AdminEventShow() {
         });
     };
 
+    console.log(event);
+
     const handleEdit = () => {
         setShowEditDialog(true);
     };
@@ -179,7 +181,7 @@ export default function AdminEventShow() {
                                     <div>
                                         <p className="font-medium">Available Spots</p>
                                         <p className="text-2xl font-bold text-green-600">
-                                            {event.capacity - (event.bookings?.length || 0)}
+                                            {event.capacity}
                                         </p>
                                     </div>
                                 </CardContent>
