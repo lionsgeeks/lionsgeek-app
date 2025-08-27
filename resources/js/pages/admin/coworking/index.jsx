@@ -40,16 +40,16 @@ export default function CoworkingAdmin() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Coworking Requests" />
             <div className="p-6">
-                <div className=" shadow-md overflow-hidden">
+                <div className=" shadow-md overflow-hidden rounded-lg">
                     <table className="w-full border border-gray-300">
-                        <thead className="bg-beta">
+                        <thead className="bg-beta/95">
                             <tr className="border-b border-gray-300">
-                                <th className="border-r border-gray-300 px-3 py-2 text-center text-alpha">Name</th>
-                                <th className="sm:table-cell hidden border-r border-gray-300 px-3 py-2 text-center text-alpha">Phone</th>
-                                <th className="sm:table-cell hidden border-r border-gray-300 px-3 py-2 text-center text-alpha">Email</th>
-                                <th className="sm:table-cell hidden border-r border-gray-300 px-3 py-2 text-center text-alpha">Date</th>
+                                <th className="border-r border-gray-300 px-3 py-2 text-center text-white">Name</th>
+                                <th className="sm:table-cell hidden border-r border-gray-300 px-3 py-2 text-center text-white">Phone</th>
+                                <th className="sm:table-cell hidden border-r border-gray-300 px-3 py-2 text-center text-white">Email</th>
+                                <th className="sm:table-cell hidden border-r border-gray-300 px-3 py-2 text-center text-white">Date</th>
 
-                                <th className="px-3 py-2 text-center text-alpha">Action</th>
+                                <th className="px-3 py-2 text-center text-white">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -57,19 +57,19 @@ export default function CoworkingAdmin() {
                                 <tr
                                     key={cow.id}
                                     onClick={() => window.location.href = `/admin/coworking/${cow.id}`}
-                                    className=" group cursor-pointer   transition duration-700  w-full text-center h-[7vh] align-middle border-b border-gray-200"
+                                    className=" group cursor-pointer w-full text-center h-[7vh] align-middle border-b border-gray-200"
                                 >
-                                    <td className="border-r border-gray-200 px-3 py-2 group-hover:bg-beta group-hover:text-alpha">{cow.full_name}</td>
-                                    <td className="sm:table-cell hidden border-r border-gray-200 px-3 py-2 group-hover:bg-beta group-hover:text-alpha">{cow.phone}</td>
-                                    <td className="sm:table-cell hidden border-r border-gray-200 px-3 py-2 group-hover:bg-beta group-hover:text-alpha">{cow.email}</td>
-                                    <td className="sm:table-cell hidden border-r border-gray-200 px-3 py-2 group-hover:bg-beta group-hover:text-alpha">
+                                    <td className="border-r  border-gray-200 px-3 py-2 group-hover:bg-gray-100/60 transition  ">{cow.full_name}</td>
+                                    <td className="sm:table-cell hidden border-r  border-gray-200 px-3 py-2 group-hover:bg-gray-100/60 transition  ">{cow.phone}</td>
+                                    <td className="sm:table-cell hidden border-r  border-gray-200 px-3 py-2 group-hover:bg-gray-100/60 transition  ">{cow.email}</td>
+                                    <td className="sm:table-cell hidden border-r  border-gray-200 px-3 py-2 group-hover:bg-gray-100/60 transition  ">
                                         {new Date(cow.created_at).toLocaleDateString()}
                                     </td>
                                     <td onClick={(e) => {
                                         e.stopPropagation();
                                      
                                      
-                                    }} className="px-3 py-2 group-hover:bg-beta group-hover:text-alpha">
+                                    }} className="px-3 py-2 group-hover:bg-gray-100/60  transition ">
                                         <div className="flex justify-center">
                                             {!cow.status && (
                                                 <div
@@ -87,7 +87,7 @@ export default function CoworkingAdmin() {
                                                     </button>
                                                     <button
                                                         onClick={() => { onActionClick('approve', cow.id) }}
-                                                        className="bg-[#356966] text-white lg:px-2 p-1 rounded-md"
+                                                        className="bg-green-600 text-white rounded hover:bg-green-700 transition text-white lg:px-2 p-1 rounded-md"
                                                     >
                                                         <span className="lg:block hidden"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
                                                             <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z" />
@@ -101,7 +101,7 @@ export default function CoworkingAdmin() {
                                                 </div>
                                             )}
                                             {cow.status === 1 && (
-                                                <button className="bg-[#f3f8f0] cursor-none text-black lg:rounded-full flex items-center gap-x-2 lg:px-2 lg:py-0.5 lg:border border-green-900">
+                                                <button className=" cursor-none text-black lg:rounded-full flex items-center gap-x-2 lg:px-2 lg:py-0.5 lg:border border-green-900">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                         fill="currentColor" className="bi bi-check-circle text-green-900" viewBox="0 0 16 16">
                                                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
