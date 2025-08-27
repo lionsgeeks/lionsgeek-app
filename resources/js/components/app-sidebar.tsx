@@ -139,7 +139,7 @@ export function AppSidebar() {
             <SidebarContent className="overflow-auto no-scrollbar">
                 <NavMain items={adminNavItems} title='' />
 
-                <div className='flex items-center justify-center gap-2 cursor-pointer mt-2'
+                {/* <div className='flex items-center justify-center gap-2 cursor-pointer mt-2'
                     onClick={() => { setShowUserItems(!showUserItems) }}
                 >
                     <p className='underline text-center'>
@@ -156,11 +156,11 @@ export function AppSidebar() {
                 {
                     showUserItems &&
                     <NavMain items={userNavItems} />
-                }
+                } */}
             </SidebarContent>
 
             <SidebarFooter>
-                <NavUser />
+                {/* <NavUser /> */}
             </SidebarFooter>
         </Sidebar>
     );
