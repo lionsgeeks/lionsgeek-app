@@ -79,7 +79,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
         $pendingCoworkings = Coworking::where('status', 0)->take(4)->get();
         $blogs = Blog::latest()->with('user')->take(4)->get();
         $views = General::where('id', 1)->first();
-        $unreadMessages = Contact::where('mark_as_read', '0')->orderby("created_at", "desc")->take(4)->get();
+        $unreadMessages = Contact::where('mark_as_read', '0')->orderby("created_at", "desc")->take(3)->get();
 
         return Inertia::render('dashboard', [
             'totalContacts' => $totalContacts,
