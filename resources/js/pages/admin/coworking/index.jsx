@@ -15,6 +15,7 @@ export default function CoworkingAdmin() {
     const { coworkings } = usePage().props;
     const [isOpen, setIsOpen] = useState(false);
     const [cowID, setCowID] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const { data, setData, put } = useForm({
         status: ''
     });
@@ -35,11 +36,57 @@ export default function CoworkingAdmin() {
         setCowID(coworkID);
         setIsOpen(true);
     }
+    const filteredCoworkings = coworkings.filter((cow) => {
+        const query = searchQuery.toLowerCase();
+        return (
+            cow.full_name.toLowerCase().includes(query) ||
+            cow.email.toLowerCase().includes(query) ||
+            cow.phone.toLowerCase().includes(query)
+        );
+    });
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Coworking Requests" />
+
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 px-7 pt-2">
+                {/* Search Input */}
+                <div className="w-[86vw] md:w-1/3  flex items-center  bg-gray-100 border border-gray-300 rounded-md px-3 py-1.5 shadow-sm transition">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        className="w-5 h-5 text-gray-500"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                    <input
+                        type="search"
+                        name="search"
+                        id="search"
+                        placeholder="Search by name, email or phone"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="ml-3 w-full bg-transparent border-0 outline-0 text-sm text-gray-700 placeholder-gray-400"
+                    />
+                </div>
+
+                {/* Export Button */}
+                <form action="{{ route('coworking.export') }}" method="post" className="w-full md:w-auto text-right">
+                    {/* @csrf */}
+                    <button className="bg-beta/95 hover:bg-alpha hover:text-beta transition text-white px-4 py-2 rounded-lg mt-1 md:mt-0 md:block hidden ">
+                        Export Excel
+                    </button>
+                </form>
+            </div>
+
+
             <div className="p-6">
+
                 <div className=" shadow-md overflow-hidden rounded-lg">
                     <table className="w-full border border-gray-300">
                         <thead className="bg-beta/95">
@@ -53,7 +100,7 @@ export default function CoworkingAdmin() {
                             </tr>
                         </thead>
                         <tbody>
-                            {coworkings.map((cow) => (
+                            {filteredCoworkings.map((cow) => (
                                 <tr
                                     key={cow.id}
                                     onClick={() => window.location.href = `/admin/coworking/${cow.id}`}
@@ -67,8 +114,8 @@ export default function CoworkingAdmin() {
                                     </td>
                                     <td onClick={(e) => {
                                         e.stopPropagation();
-                                     
-                                     
+
+
                                     }} className="px-3 py-2 group-hover:bg-gray-100/60  transition ">
                                         <div className="flex justify-center">
                                             {!cow.status && (
@@ -77,17 +124,17 @@ export default function CoworkingAdmin() {
                                                 >
                                                     <button
                                                         onClick={() => { onActionClick('reject', cow.id) }}
-                                                        className="  lg:px-1.5 p-1 bg-red-500 rounded-md"
+                                                        className="  lg:px-1.5 p-1 white rounded-md border border-red-600 "
                                                     >
                                                         {/* X Icon */}
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" className="bi bi-x-lg text-white " viewBox="0 0 16 16">
+                                                            fill="currentColor" className="bi bi-x-lg text-red-600 " viewBox="0 0 16 16">
                                                             <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
                                                         </svg>
                                                     </button>
                                                     <button
                                                         onClick={() => { onActionClick('approve', cow.id) }}
-                                                        className="bg-green-600 text-white rounded hover:bg-green-700 transition text-white lg:px-2 p-1 rounded-md"
+                                                        className="bg-green-600 text-white rounded hover:bg-green-700 transition lg:px-2 p-1"
                                                     >
                                                         <span className="lg:block hidden"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
                                                             <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z" />
