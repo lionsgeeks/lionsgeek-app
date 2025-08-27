@@ -29,7 +29,7 @@ class EventController extends Controller
     public function adminIndex()
     {
         $events = Event::orderBy('created_at', 'desc')->get();
-        return Inertia::render('admin/events/events', [
+        return Inertia::render('admin/events/index', [
             'events' => $events
         ]);
     }
@@ -104,7 +104,7 @@ class EventController extends Controller
 
         $event->load('bookings');
 
-        return Inertia::render('admin/events/show', [
+        return Inertia::render('admin/events/[id]', [
             'event' => $event
         ]);
     }
