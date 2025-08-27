@@ -14,14 +14,15 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import EditEventDialog from "./components/EditEventDialog";
-
+import Participants from '../../../components/participants'; 
 export default function AdminEventShow() {
     const { event } = usePage().props;
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showEditDialog, setShowEditDialog] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-     const { props } = usePage();
+    const { props } = usePage();
     const appUrl = props.ziggy?.url || window.location.origin;
+        const tab = 'English'; //hta tzad language o twali dynamique
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
@@ -33,6 +34,8 @@ export default function AdminEventShow() {
             minute: '2-digit'
         });
     };
+
+    console.log(event);
 
     const handleEdit = () => {
         setShowEditDialog(true);
@@ -113,35 +116,24 @@ export default function AdminEventShow() {
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 space-y-6">
-                            <Card>
-                                <CardContent className="p-0">
-                                    <img
-                                        src={`${appUrl}/storage/images/events/${event.cover}`}
-                                        alt={nameTexts.en}
-                                        className="w-full h-64 object-cover rounded-t-lg"
-                                    />
-                                </CardContent>
-                            </Card>
+                            <div>
+                                <p className="text-lg font-semibold">{nameTexts.en}</p>
+                            </div>
 
-                            <Card>
 
-                                <CardContent className="space-y-4">
-                                    <div>
-                                        <p className="text-lg font-semibold">{nameTexts.en}</p>
-                                    </div>
 
-                                </CardContent>
-                            </Card>
+                            <div>
+                                <p className="text-gray-700">{descriptionTexts.en}</p>
+                            </div>
 
-                            <Card>
+                            <img
+                                src={`${appUrl}/storage/images/events/${event.cover}`}
+                                alt={nameTexts.en}
+                                className="w-full h-64 object-cover rounded-lg"
+                            />
 
-                                <CardContent className="space-y-4">
-                                    <div>
-                                        <p className="text-gray-700">{descriptionTexts.en}</p>
-                                    </div>
+                            <Participants bookings={event.bookings || []} tab={tab} />
 
-                                </CardContent>
-                            </Card>
                         </div>
 
                         <div className="space-y-6">
@@ -179,7 +171,7 @@ export default function AdminEventShow() {
                                     <div>
                                         <p className="font-medium">Available Spots</p>
                                         <p className="text-2xl font-bold text-green-600">
-                                            {event.capacity - (event.bookings?.length || 0)}
+                                            {event.capacity}
                                         </p>
                                     </div>
                                 </CardContent>

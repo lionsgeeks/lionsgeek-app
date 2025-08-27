@@ -14,7 +14,7 @@ class InfosessionController extends Controller
     public function index()
     {
         $infosessions = InfoSession::all();
-        return Inertia::render('admin/infoSessions/infosession', [
+        return Inertia::render('admin/infoSessions/index', [
             'infosessions' => $infosessions
         ]);
     }

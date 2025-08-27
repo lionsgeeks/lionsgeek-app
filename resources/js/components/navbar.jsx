@@ -453,7 +453,7 @@ const Navbar = () => {
                                     )}
                                 </div>
                                 <Link
-                                    href="contact"
+                                    href="/contact"
                                     onClick={() => {
                                         setIsOpen(false);
                                     }}

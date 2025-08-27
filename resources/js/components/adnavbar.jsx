@@ -1,14 +1,8 @@
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
-// import { usePage } from '@inertiajs/react';
-// import Navbar from './navbar';
 import { Link, usePage, router } from "@inertiajs/react";
 import { Bell, User, Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
-export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
-    // const page = usePage();
-    // const isAdminPage = page.url.startsWith('/admin');
+
+export default function AdNavbar( ) {
     const { props } = usePage();
     const notifications = props.notifications || [];
 
@@ -35,14 +29,11 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
             document.removeEventListener("click", handleClick);
         };
     }, [notifOpen]);
+
     return (
-        // isAdminPage &&
-        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-sidebar-border/50 px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
-            <div className="flex items-center gap-2">
-                <SidebarTrigger className="-ml-1" />
-                <Breadcrumbs breadcrumbs={breadcrumbs} />
-            </div>
-             <div className="flex h-16 items-center">
+        <nav>
+            <div className="mx-auto px-4 sm:px-4 lg:px-4 border-b-2">
+                <div className="flex justify-end h-16 items-center">
                     <div className="flex items-center gap-4">
                         <div className="relative">
                             <button
@@ -57,9 +48,9 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                                 {notifications.length > 0 ? (
                                     <span className="absolute -top-1 -right-1 inline-flex items-center justify-center p-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                                         {notifications.length}
-                                    </span>) : <span className="absolute -top-1 -right-1 inline-flex items-center justify-center p-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
-                                    0
-                                </span>}
+                                    </span>):<span className="absolute -top-1 -right-1 inline-flex items-center justify-center p-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                                        0
+                                    </span>}
                             </button>
 
                             {notifOpen && (
@@ -140,7 +131,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                         </div>
                     </div>
                 </div>
-        </header>
-
+            </div>
+        </nav>
     );
 }
