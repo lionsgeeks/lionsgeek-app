@@ -5,11 +5,13 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Upload, X } from "lucide-react";
 
 const breadcrumbs = [{
     title: 'Create Blog',
     href: '/admin/blogs/create'
 }]
+
 export default function BlogCreate() {
     const { blog } = usePage().props;
 
@@ -20,9 +22,26 @@ export default function BlogCreate() {
         description_en: blog ? blog.description?.en : '',
         description_fr: blog ? blog.description?.fr : '',
         description_ar: blog ? blog.description?.ar : '',
+        content_en: blog ? blog.content?.en : '',
+        content_fr: blog ? blog.content?.fr : '',
+        content_ar: blog ? blog.content?.ar : '',
         image: blog ? blog.image : '',
-    })
+    });
 
+    const [preview, setPreview] = useState(blog?.image ? `/storage/${blog.image}` : null);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setData("image", file);
+            setPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const removeImage = () => {
+        setData("image", "");
+        setPreview(null);
+    };
 
     const onFormSubmit = (e) => {
         e.preventDefault();
@@ -32,11 +51,7 @@ export default function BlogCreate() {
                     _method: 'put',
                     blog: blog.id,
                 }),
-                {
-                    onSuccess: () => {
-                        setIsOpen(false);
-                    }
-                }
+                { onSuccess: () => { setIsOpen(false); } }
             );
         } else {
             post(route('blogs.store'));
@@ -52,46 +67,146 @@ export default function BlogCreate() {
 
             <div className="p-6">
                 <form onSubmit={onFormSubmit} className="space-y-3">
-                    <div className="flex items-center justify-center gap-2 p-2 w-[100%] bg-slate-200 rounded">
-                        {languages.map((language) => (
-                            <button
-                                key={language}
-                                onClick={() => setTab(language)}
-                                className={`w-1/3 rounded-md font-medium p-1 ${tab === language ? 'bg-white text-black' : 'bg-slate-200 text-black'
-                                    }`}
-                                type="button"
+                    <div className="flex justify-end gap-2">
+                        <div>
+                            <select
+                                value={tab}
+                                onChange={(e) => setTab(e.target.value)}
+                                className="w-full cursor-pointer border-1 border-black text-black rounded-lg py-[7px] px-[12px]"
                             >
-                                {language}
-                            </button>
-                        ))}
+                                {languages.map((language) => (
+                                    <option key={language} value={language}>
+                                        {language}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <Button type="submit" className="hover:bg-alpha hover:text-black transition-all duration-150">
+                            Publish
+                        </Button>
                     </div>
-                    {
-                        tab == 'English' && (
-                            <>
-                                <div>
-                                    <Label htmlFor="title_en">English Title:</Label>
-                                    <Input type="text" name="title_en" placeholder="English Title"
-                                        onChange={(e) => { setData('title_en', e.target.value) }}
-                                        value={data.title_en}
-                                    />
-                                </div>
-
+                    {tab == 'English' && (
+                        <>
+                            <div>
+                                <Label htmlFor="title_en">Title</Label>
+                                <Input
+                                    type="text"
+                                    name="title_en"
+                                    placeholder="Title..."
+                                    onChange={(e) => { setData('title_en', e.target.value) }}
+                                    value={data.title_en}
+                                />
+                            </div>
+                            <div className="p-0 flex flex-col justify-between m-0">
+                                <Label htmlFor="description_en">Description</Label>
                                 <Tiptap content={data.description_en} setData={setData} lang={tab} />
-                            </>
-                        )
-                    }
+                            </div>
+                            <div>
+                                <Label htmlFor="image">Blog Cover</Label>
+                                <div className="mt-1 border border-gray-300 rounded-lg p-6 text-center relative">
+                                    <input
+                                        className="hidden"
+                                        type="file"
+                                        name="image"
+                                        id="image-upload"
+                                        accept="image/png, image/jpg, image/jpeg"
+                                        onChange={handleImageChange}
+                                    />
+
+                                    {preview ? (
+                                        <div className="relative flex justify-center">
+                                            <img
+                                                src={preview}
+                                                alt="Preview"
+                                                className="max-h-48 rounded-md object-contain"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={removeImage}
+                                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <label
+                                            htmlFor="image-upload"
+                                            className="cursor-pointer flex flex-col items-center"
+                                        >
+                                            <Upload className="w-12 h-12 text-gray-400 mb-4" />
+                                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                                                Click to upload image or drag and drop
+                                            </span>
+                                            <span className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                                PNG, JPG
+                                            </span>
+                                        </label>
+                                    )}
+                                </div>
+                            </div>
+                        </>
+                    )}
+
                     {
                         tab == 'Français' && (
                             <>
                                 <div>
-                                    <Label htmlFor="title_fr">Titre en Français:</Label>
-                                    <Input type="text" name="title_fr" placeholder="Titre en Français"
+                                    <Label htmlFor="title_fr">Titre</Label>
+                                    <Input type="text" name="title_fr" placeholder="Titre..."
                                         onChange={(e) => { setData('title_fr', e.target.value) }}
                                         value={data.title_fr}
                                     />
                                 </div>
 
-                                <Tiptap content={data.description_fr} setData={setData} lang={tab} />
+
+                                <div className=" p-0 flex flex-col justify-between m-0 ">
+                                    <Label htmlFor="description_fr">description</Label>
+                                    <Tiptap content={data.description_fr} setData={setData} lang={tab} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="image">couverture du blog</Label>
+                                    <div className="mt-1 border border-gray-300 rounded-lg p-6 text-center relative">
+                                        <input
+                                            className="hidden"
+                                            type="file"
+                                            name="image"
+                                            id="image-upload"
+                                            accept="image/png, image/jpg, image/jpeg"
+                                            onChange={handleImageChange}
+                                        />
+
+                                        {preview ? (
+                                            <div className="relative flex justify-center">
+                                                <img
+                                                    src={preview}
+                                                    alt="Preview"
+                                                    className="max-h-48 rounded-md object-contain"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={removeImage}
+                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <label
+                                                htmlFor="image-upload"
+                                                className="cursor-pointer flex flex-col items-center"
+                                            >
+                                                <Upload className="w-12 h-12 text-gray-400 mb-4" />
+                                                <span className="text-sm text-gray-600 dark:text-gray-400">
+                                                    Cliquez pour télécharger l'image ou faites-la glisser et déposez-la
+                                                </span>
+                                                <span className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                                    PNG, JPG
+                                                </span>
+                                            </label>
+                                        )}
+                                    </div>
+                                </div>
+
                             </>
                         )
                     }
@@ -99,32 +214,68 @@ export default function BlogCreate() {
                         tab == 'العربية' && (
                             <>
                                 <div>
-                                    <Label htmlFor="title_ar">العنوان بالعربية:</Label>
-                                    <Input type="text" name="title_ar" placeholder="العنوان بالعربية"
+                                    <Label htmlFor="title_ar">العنوان</Label>
+                                    <Input type="text" name="title_ar" placeholder="العنوان..."
                                         onChange={(e) => { setData('title_ar', e.target.value) }}
                                         value={data.title_ar}
                                     />
                                 </div>
+                                <div className=" p-0 flex flex-col justify-between m-0">
+                                    <Label htmlFor="description_ar">الوصف</Label>
+                                    <Tiptap content={data.description_ar} setData={setData} lang={tab} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="image">
+                                    غلاف المدونة
 
-                                <Tiptap content={data.description_ar} setData={setData} lang={tab} />
+                                    </Label>
+                                    <div className="mt-1 border border-gray-300 rounded-lg p-6 text-center relative">
+                                        <input
+                                            className="hidden"
+                                            type="file"
+                                            name="image"
+                                            id="image-upload"
+                                            accept="image/png, image/jpg, image/jpeg"
+                                            onChange={handleImageChange}
+                                        />
+
+                                        {preview ? (
+                                            <div className="relative flex justify-center">
+                                                <img
+                                                    src={preview}
+                                                    alt="Preview"
+                                                    className="max-h-48 rounded-md object-contain"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={removeImage}
+                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <label
+                                                htmlFor="image-upload"
+                                                className="cursor-pointer flex flex-col items-center"
+                                            >
+                                                <Upload className="w-12 h-12 text-gray-400 mb-4" />
+                                                <span className="text-sm text-gray-600 dark:text-gray-400">
+                                                    انقر لتحميل الصورة أو اسحبها
+                                                </span>
+                                                <span className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                                    PNG, JPG
+                                                </span>
+                                            </label>
+                                        )}
+                                    </div>
+                                </div>
+
                             </>
                         )
                     }
-
-                    <div>
-                        <Label htmlFor="image">Blog Cover</Label>
-                        <Input type="file" name="image"
-                            accept="image/png, image/jpg, image/jpeg"
-                            onChange={(e) => { setData('image', e.target.files[0]) }}
-                        />
-                    </div>
-                    <div className="flex justify-end">
-                        <Button type="submit" className="hover:bg-alpha hover:text-black transition-all duration-150">
-                            Submit
-                        </Button>
-                    </div>
                 </form>
             </div>
         </AppLayout>
-    )
+    );
 }

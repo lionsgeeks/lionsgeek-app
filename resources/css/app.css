@@ -171,6 +171,8 @@
 .reset-tw,
 .reset-tw * {
     all: revert;
+    margin: 0;
+    outline: none;
 }
 
 .fl-flasher.fl-container.fl-show{
