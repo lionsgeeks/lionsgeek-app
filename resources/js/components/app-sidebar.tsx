@@ -66,62 +66,62 @@ const adminNavItems: NavItem[] = [
 
 ];
 
-const userNavItems: NavItem[] = [
-    {
-        title: 'Home',
-        href: '/',
-        icon: Home,
-    },
-    {
-        title: 'Coding',
-        href: '/coding',
-        icon: Code,
-    },
-    {
-        title: 'Media',
-        href: '/media',
-        icon: Camera,
-    },
-    {
-        title: 'Coworking',
-        href: '/coworking',
-        icon: HeartHandshake,
-    },
-    {
-        title: 'Events',
-        href: '/events',
-        icon: Calendar,
-    },
-    {
-        title: 'LionsGeek Pro',
-        href: '/pro',
-        icon: FolderKanban,
-    },
-    {
-        title: 'About',
-        href: '/about',
-        icon: MessageCircleQuestion,
-    },
-    {
-        title: 'Blogs',
-        href: '/blogs',
-        icon: BookOpen,
-    },
-    {
-        title: 'Gallery',
-        href: '/gallery',
-        icon: GalleryHorizontal,
-    },
-    {
-        title: 'Contact',
-        href: '/contact',
-        icon: UserPen,
-    },
-]
+// const userNavItems: NavItem[] = [
+//     {
+//         title: 'Home',
+//         href: '/',
+//         icon: Home,
+//     },
+//     {
+//         title: 'Coding',
+//         href: '/coding',
+//         icon: Code,
+//     },
+//     {
+//         title: 'Media',
+//         href: '/media',
+//         icon: Camera,
+//     },
+//     {
+//         title: 'Coworking',
+//         href: '/coworking',
+//         icon: HeartHandshake,
+//     },
+//     {
+//         title: 'Events',
+//         href: '/events',
+//         icon: Calendar,
+//     },
+//     {
+//         title: 'LionsGeek Pro',
+//         href: '/pro',
+//         icon: FolderKanban,
+//     },
+//     {
+//         title: 'About',
+//         href: '/about',
+//         icon: MessageCircleQuestion,
+//     },
+//     {
+//         title: 'Blogs',
+//         href: '/blogs',
+//         icon: BookOpen,
+//     },
+//     {
+//         title: 'Gallery',
+//         href: '/gallery',
+//         icon: GalleryHorizontal,
+//     },
+//     {
+//         title: 'Contact',
+//         href: '/contact',
+//         icon: UserPen,
+//     },
+// ]
 
 
 export function AppSidebar() {
-    const [showUserItems, setShowUserItems] = useState(false);
+    // const [showUserItems, setShowUserItems] = useState(false);
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -139,7 +139,7 @@ export function AppSidebar() {
             <SidebarContent className="overflow-auto no-scrollbar">
                 <NavMain items={adminNavItems} title='' />
 
-                <div className='flex items-center justify-center gap-2 cursor-pointer mt-2'
+                {/* <div className='flex items-center justify-center gap-2 cursor-pointer mt-2'
                     onClick={() => { setShowUserItems(!showUserItems) }}
                 >
                     <p className='underline text-center'>
@@ -156,11 +156,11 @@ export function AppSidebar() {
                 {
                     showUserItems &&
                     <NavMain items={userNavItems} />
-                }
+                } */}
             </SidebarContent>
 
             <SidebarFooter>
-                <NavUser />
+                {/* <NavUser /> */}
             </SidebarFooter>
         </Sidebar>
     );
