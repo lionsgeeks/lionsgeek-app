@@ -1,7 +1,6 @@
-import { TransText } from '../../../components/TransText';
+import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
-import AppLayout from "@/layouts/app-layout"
-
+import { TransText } from '../../../components/TransText';
 
 const breadcrumbs = [
     {
@@ -15,22 +14,19 @@ export default function AlbumPage() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-        <Head title='Album' />
-            <div className='w-full p-10 lg:px-1 py-26 pt-32 ' style={{ backgroundColor: darkMode ? "#0f0f0f" : "#ffffff" }}>
-                <h1 className='text-center text-5xl font-bold pb-6' style={{ color: darkMode ? "#ffffff" : "#0f0f0f" }}
-                >
+            <Head title="Album" />
+            <div className="w-full p-10 py-26 pt-32 lg:px-1" style={{ backgroundColor: darkMode ? '#0f0f0f' : '#ffffff' }}>
+                <h1 className="pb-6 text-center text-5xl font-bold" style={{ color: darkMode ? '#ffffff' : '#0f0f0f' }}>
                     <TransText {...gallery?.title} />
                 </h1>
-                <div className='w-full flex flex-wrap gap-4 justify-center py-10' >
-                    {
-                        gallery?.images.map((image, index) => (
-                            <div key={index} className='w-full md:w-[30%] lg:w-[22%] h-60 lg:h-80  rounded-xl'>
-                                <img loading="lazy" src={`/storage/images/${image.path}`} className='w-full h-full object-cover rounded-xl' alt={`img`} />
-                            </div>
-                        ))
-                    }
+                <div className="flex w-full flex-wrap justify-center gap-4 py-10">
+                    {gallery?.images.map((image, index) => (
+                        <div key={index} className="h-60 w-full rounded-xl md:w-[30%] lg:h-80 lg:w-[22%]">
+                            <img loading="lazy" src={`/storage/images/${image.path}`} className="h-full w-full rounded-xl object-cover" alt={`img`} />
+                        </div>
+                    ))}
                 </div>
             </div>
         </AppLayout>
     );
-};
+}

@@ -4,7 +4,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 // import { initializeTheme } from './hooks/use-appearance';
-import { AppContextProvider } from "./context/appContext";
+import { AppContextProvider } from './context/appContext';
 
 const appName = 'LionsGeek';
 
@@ -17,7 +17,7 @@ createInertiaApp({
         root.render(
             <AppContextProvider>
                 <App {...props} />
-            </AppContextProvider>
+            </AppContextProvider>,
         );
     },
     progress: {
