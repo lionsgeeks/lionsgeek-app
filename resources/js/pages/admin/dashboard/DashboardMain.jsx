@@ -1,11 +1,13 @@
 import { Link, useForm, usePage } from '@inertiajs/react';
+import CoworkingRequests from './partials/CoworkingRequests';
+import NewsLetter from './partials/NewsLetter';
 import StatisticCards from './partials/StatisticCards';
 import UnreadMessages from './partials/UnreadMessages';
 
 import { useState } from 'react';
 
 const DashboardMain = () => {
-    const { sessions, upcomingEvents, pendingCoworkings, blogs } = usePage().props;
+    const { sessions, upcomingEvents, blogs } = usePage().props;
 
     const { data, setData, post } = useForm({
         name: '',
@@ -79,9 +81,10 @@ const DashboardMain = () => {
             <div className="min-h-[80vh] space-y-6">
                 {/* statistique cards */}
                 <StatisticCards />
+                <CoworkingRequests />
                 {/* Unread Messages */}
-                <div className='w-full flex items-center gap-5'>
-                    <UnreadMessages />
+                <div className="flex w-full gap-5">
+                    <NewsLetter />
                     <UnreadMessages />
                 </div>
 
@@ -123,7 +126,7 @@ const DashboardMain = () => {
                 {/* Pending Coworking Requests && Upcoming Events */}
                 <div className="grid w-full grid-cols-1 gap-x-4 gap-y-4 lg:grid-cols-2 lg:gap-y-0">
                     {/* Coworking Requests */}
-                    <div className="rounded-lg bg-white shadow-md">
+                    {/* <div className="rounded-lg bg-white shadow-md">
                         {pendingCoworkings.length > 0 ? (
                             <div className="overflow-hidden sm:rounded-lg">
                                 <div className="p-6 text-gray-900">
@@ -185,7 +188,7 @@ const DashboardMain = () => {
                                 </div>
                             </div>
                         )}
-                    </div>
+                    </div> */}
 
                     {/* Upcoming Events */}
                     <div className="rounded-lg bg-white py-4 shadow-md">

@@ -17,6 +17,7 @@ class CoworkingController extends Controller
         ]);
     }
 
+
     public function show(Coworking $coworking)
     {
         return Inertia::render("admin/coworking/[id]", [

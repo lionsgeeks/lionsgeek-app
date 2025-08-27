@@ -18,9 +18,9 @@ const UnreadMessages = () => {
                     </svg>
                     <h2 className="text-xl font-bold">Recent Messages</h2>
                 </div>
-                <a href="/admin/contacts" className="rounded bg-beta px-3 py-1 text-white hover:text-black hover:bg-alpha">
+                <Link href="/admin/contacts" className="rounded bg-beta px-3 py-1 text-white hover:text-black hover:bg-alpha">
                     View All
-                </a>
+                </Link>
             </div>
 
             {/* Messages List */}

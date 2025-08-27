@@ -18,6 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MessagesExport;
 use App\Http\Controllers\CustomEmailController;
 use App\Http\Controllers\UserController;
+use App\Models\Newsletter;
 
 Route::get('/', function () {
     $galleries = Gallery::with('images')->get();
@@ -72,21 +73,24 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
             ->whereBetween('start_date', [Carbon::now(), Carbon::now()->addMonth()])
             ->orderByRaw('ABS(julianday(start_date) - julianday(?))', [Carbon::now()])
             ->get();
+        // $upcomingEvents = Event::all();
         $upcomingEvents = Event::whereBetween('date', [Carbon::now(), Carbon::now()->addMonth()])
             ->orderByRaw('ABS(julianday(date) - julianday(?))', [Carbon::now()])
             ->take(4)
             ->get();
-        $pendingCoworkings = Coworking::where('status', 0)->take(4)->get();
+        // $coworkingsRequest = Coworking::where('status', 0)->take(4)->get();
+        $coworkingsRequest = Coworking::all();
+        $newsLetter = Newsletter::all();
         $blogs = Blog::latest()->with('user')->take(4)->get();
         $views = General::where('id', 1)->first();
         $unreadMessages = Contact::where('mark_as_read', '0')->orderby("created_at", "desc")->take(3)->get();
-
         return Inertia::render('dashboard', [
             'totalContacts' => $totalContacts,
             'members' => $members,
             'sessions' => $sessions,
             'upcomingEvents' => $upcomingEvents,
-            'pendingCoworkings' => $pendingCoworkings,
+            'coworkingsRequest' => $coworkingsRequest,
+            'newsLetter' => $newsLetter,
             'blogs' => $blogs,
             'views' => $views,
             'unreadMessages' => $unreadMessages
