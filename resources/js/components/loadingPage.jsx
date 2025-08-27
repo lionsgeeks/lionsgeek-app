@@ -1,14 +1,25 @@
-const LoadingPage = () => {
+import "../../css/loading.css";
+import { usePage } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 
-    const darkMode = false;
+const LoadingPage = () => {
+    const [darkMode, setDarkMode] = useState(false);
+
+    useEffect(() => {
+        // Check if we're in browser environment
+        if (typeof window !== 'undefined') {
+            const savedDarkMode = localStorage.getItem("darkMode") === "true";
+            setDarkMode(savedDarkMode);
+        }
+    }, []);
 
     return (
         <div className={`h-screen ${darkMode && "bg-[#0f0f0f]"} flex justify-center flex-col gap-8 items-center relative overflow-hidden group `}>
             <svg
                 viewBox="0 0 37 36"
-                fill={darkMode ? "#fff" : "#000"}
+                fill={darkMode ? "#fff" : "#212529"}
                 xmlns="http://www.w3.org/2000/svg"
-                className="size-24 animate-spin"
+                className="size-24 spin"
             >
                 <path d="M29.8744 0H7.05262L0 21.706L18.463 35.121L36.93 21.706L29.8744 0ZM18.464 27.506L7.24261 19.353L11.5284 6.161H25.3986L29.6844 19.353L18.464 27.506Z" />
                 <path d="M13.1763 19.326L18.464 23.167L23.7517 19.326H13.1763Z" />
@@ -18,7 +29,7 @@ const LoadingPage = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className={`animate-pulse absolute h-5/6 ${darkMode ? "fill-[#252529]" : "fill-beta/5"} -top-1/3 left-0 rotate-45 transition-all duration-700 group-hover/coding:rotate-[200deg] group-hover/coding:left-2/4 group-hover/coding:scale-[62.5%] group-hover/coding:top-0 ${darkMode ? "fill-[#252529]" : "fill-beta/5"}`}
+                className={`animate-pulse absolute h-5/6 ${darkMode ? "fill-[#252529]" : "fill-[#212529]/5"} -top-1/3 left-0 rotate-45 transition-all duration-700 group-hover/coding:rotate-[200deg] group-hover/coding:left-2/4 group-hover/coding:scale-[62.5%] group-hover/coding:top-0`}
             >
                 <path
                     fillRule="evenodd"
@@ -33,7 +44,7 @@ const LoadingPage = () => {
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                className={`animate-pulse absolute h-5/6 ${darkMode ? "stroke-[#252529]" : "stroke-beta/5"} -bottom-1/3 right-0 -rotate-45  transition-all duration-700 group-hover/media:rotate-[382.5deg] group-hover/media:right-1/2 group-hover/media:scale-75 group-hover/media:top-0`}
+                className={`animate-pulse absolute h-5/6 ${darkMode ? "stroke-[#252529]" : "stroke-[#212529]/5"} -bottom-1/3 right-0 -rotate-45  transition-all duration-700 group-hover/media:rotate-[382.5deg] group-hover/media:right-1/2 group-hover/media:scale-75 group-hover/media:top-0`}
             >
                 <path
                     strokeLinecap="round"

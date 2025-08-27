@@ -200,6 +200,9 @@
     overflow: hidden;
 }
 
+/* Loading animation styles */
+@import './loading.css';
+
 /* Skeleton container */
 .skeleton {
     background: #ddd;
