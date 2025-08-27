@@ -75,7 +75,6 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-
     *,
     ::after,
     ::before,
@@ -173,24 +172,23 @@
     all: revert;
 }
 
-.fl-flasher.fl-container.fl-show{
+.fl-flasher.fl-container.fl-show {
     z-index: 100;
 }
 
 .bg-image {
-    background-image: url("../assets/images/gallery/image.png");
+    background-image: url('../assets/images/gallery/image.png');
     /* background-position: center; */
 }
 
 .bg-image-coding {
-    background-image: url("../assets/images/gallery/coding.jpg");
+    background-image: url('../assets/images/gallery/coding.jpg');
     background-position: bottom;
 }
 
 .bg-image-media {
-    background-image: url("../assets/images/gallery/media.jpg");
+    background-image: url('../assets/images/gallery/media.jpg');
 }
-
 
 /* Text truncation utility */
 .line-clamp-2 {
@@ -256,10 +254,9 @@
     top: 120vh;
     left: 0;
     transition: 0.5s ease;
-
 }
 
-.projects:hover>.preview {
+.projects:hover > .preview {
     top: 0;
     transition: 0.5s ease;
 }
@@ -270,17 +267,15 @@
     }
 }
 
-
-input[type="checkbox"] {
+input[type='checkbox'] {
     width: 15px;
     height: 15px;
     accent-color: #fee819;
 }
 
-input[type="radio"] {
+input[type='radio'] {
     accent-color: black;
 }
-
 
 .codingformationpic {
     position: relative;
@@ -320,4 +315,30 @@ input[type="radio"] {
     right: 0;
     top: 0;
     height: 100%;
+}
+
+/* Custom scrollbar styling */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* For Firefox */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
 }

@@ -73,12 +73,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
             ->whereBetween('start_date', [Carbon::now(), Carbon::now()->addMonth()])
             ->orderByRaw('ABS(julianday(start_date) - julianday(?))', [Carbon::now()])
             ->get();
-        // $upcomingEvents = Event::all();
         $upcomingEvents = Event::whereBetween('date', [Carbon::now(), Carbon::now()->addMonth()])
             ->orderByRaw('ABS(julianday(date) - julianday(?))', [Carbon::now()])
             ->take(4)
             ->get();
-        // $coworkingsRequest = Coworking::where('status', 0)->take(4)->get();
         $coworkingsRequest = Coworking::all();
         $newsLetter = Newsletter::all();
         $blogs = Blog::latest()->with('user')->take(4)->get();

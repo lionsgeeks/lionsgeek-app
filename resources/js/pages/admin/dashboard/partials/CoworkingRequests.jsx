@@ -18,18 +18,18 @@ const CoworkingRequests = () => {
             ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full table-auto border-collapse text-sm">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gray-200">
                             <tr>
-                                <th className="px-4 py-3 text-left font-medium text-gray-600">Name</th>
-                                <th className="px-4 py-3 text-left font-medium text-gray-600">Email</th>
-                                <th className="px-4 py-3 text-left font-medium text-gray-600">Needs</th>
-                                <th className="px-4 py-3 text-left font-medium text-gray-600">Request Date</th>
-                                <th className="px-4 py-3 text-left font-medium text-gray-600">View Details</th>
+                                <th className="px-4 py-3 text-left font-medium text-black">Name</th>
+                                <th className="px-4 py-3 text-left font-medium text-black">Email</th>
+                                <th className="px-4 py-3 text-left font-medium text-black">Needs</th>
+                                <th className="px-4 py-3 text-left font-medium text-black">Request Date</th>
+                                <th className="px-4 py-3 text-left font-medium text-black">View Details</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {coworkingsRequest.map((request) => (
-                                <tr key={request.id} className="transition hover:bg-gray-50">
+                                <tr key={request.id}>
                                     <td className="px-4 py-3 font-medium text-gray-800">{request.full_name}</td>
                                     <td className="px-4 py-3 text-gray-600">{request.email}</td>
                                     <td className="px-4 py-3">

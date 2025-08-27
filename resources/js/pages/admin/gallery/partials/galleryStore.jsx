@@ -1,9 +1,9 @@
+import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useState } from 'react';
+import { Input } from '@/components/ui/input';
 import { useForm } from '@inertiajs/react';
-import { Pen, PenLine, PlusIcon } from 'lucide-react';
+import { Edit, Images, Plus, Upload, X } from 'lucide-react';
+import { useState } from 'react';
 
 export default function GalleryStore({ gallery }) {
     const { data, setData, post, put } = useForm({
@@ -21,12 +21,11 @@ export default function GalleryStore({ gallery }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleFileChange = (event) => {
-
         if (event.target.name == 'couverture') {
             setData('couverture', event.target.files[0]);
         }
         if (event.target.name == 'images') {
-            setData('images', Array.from(event.target.files))
+            setData('images', Array.from(event.target.files));
         }
     };
 
@@ -42,8 +41,8 @@ export default function GalleryStore({ gallery }) {
                 {
                     onSuccess: () => {
                         setIsOpen(false);
-                    }
-                }
+                    },
+                },
             );
         } else {
             post(route('gallery.store'), {
@@ -60,38 +59,64 @@ export default function GalleryStore({ gallery }) {
                     });
 
                     setIsOpen(false);
-                }
+                },
             });
         }
-    }
+    };
 
     return (
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <div className='cursor-pointer'>
-                        {
-                            gallery ? <PenLine /> :
-                                <div className='flex items-center justify-center h-full group w-full border-dashed border-1 border-black rounded-lg'>
-                                    <div className='flex flex-col gap-2 items-center group-hover:scale-110 transition-all duration-150'>
-                                        <PlusIcon size={40} />
-                                        <p className='text-lg'>Create Gallery</p>
-                                    </div>
-                                </div>
-                        }
-                    </div>
+                    {gallery ? (
+                        <div className="cursor-pointer">
+                            <Edit className="h-4 w-4" />
+                        </div>
+                    ) : (
+                        <Button className="transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Create Gallery
+                        </Button>
+                    )}
                 </DialogTrigger>
-                <DialogContent className="min-w-[40vw]">
-                    <DialogTitle>Add a Gallery</DialogTitle>
-                    <div>
-                        <form onSubmit={onFormSubmit}>
-                            <div className="flex items-center justify-center gap-2 p-2 w-[100%] bg-slate-200 rounded">
+                <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto p-0 sm:max-w-[700px] [&>button]:hidden">
+                    {/* Header */}
+                    <div className="relative rounded-t-lg bg-[#212529] p-6 text-white">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-lg bg-[#fee819] p-2">
+                                    <Images className="h-6 w-6 text-[#212529]" />
+                                </div>
+                                <div>
+                                    <DialogTitle className="text-xl font-bold text-white">
+                                        {gallery ? 'Edit Gallery' : 'Create New Gallery'}
+                                    </DialogTitle>
+                                    <p className="mt-1 text-sm text-gray-300">
+                                        {gallery ? 'Update gallery information and images' : 'Add a new gallery with cover and images'}
+                                    </p>
+                                </div>
+                            </div>
+                            {/* Custom close button */}
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="rounded-lg p-2 text-white transition-colors duration-200 hover:bg-white/10 hover:text-[#fee819]"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="p-6">
+                        <form onSubmit={onFormSubmit} className="space-y-6">
+                            {/* Language Tabs */}
+                            <div className="flex items-center justify-center gap-1 rounded-lg bg-gray-100 p-1">
                                 {languages.map((language) => (
                                     <button
                                         key={language}
                                         onClick={() => setTab(language)}
-                                        className={`w-1/3 rounded-md font-medium p-1 ${tab === language ? 'bg-white text-black' : 'bg-slate-200 text-black'
-                                            }`}
+                                        className={`flex-1 rounded-md px-3 py-2 font-medium transition-all duration-200 ${
+                                            tab === language ? 'bg-[#212529] text-white shadow-sm' : 'bg-transparent text-gray-600 hover:bg-gray-200'
+                                        }`}
                                         type="button"
                                     >
                                         {language}
@@ -99,35 +124,38 @@ export default function GalleryStore({ gallery }) {
                                 ))}
                             </div>
 
-
                             {/* English Form */}
                             {tab === 'English' && (
-                                <div className="flex flex-col items-center w-[100%] gap-5">
-                                    <div className="flex flex-col w-[100%] gap-1">
-                                        <label htmlFor="title_en">Title</label>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label htmlFor="title_en" className="mb-2 block text-sm font-medium text-[#212529]">
+                                            Title *
+                                        </label>
                                         <Input
-                                            placeholder="Enter title"
-                                            required
-                                            className="w-[100%] border-[2px] border-black rounded-[10px]"
-                                            type="text"
-                                            name="title[en]"
                                             id="title_en"
-                                            onChange={(e) => { setData('title_en', e.target.value) }}
+                                            name="title[en]"
+                                            type="text"
+                                            placeholder="Enter gallery title"
+                                            required
                                             value={data.title_en}
+                                            onChange={(e) => setData('title_en', e.target.value)}
+                                            className="w-full rounded-lg border-gray-300 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
                                         />
                                     </div>
 
-                                    <div className="flex flex-col w-[100%] gap-1">
-                                        <label htmlFor="description_en">Description</label>
+                                    <div>
+                                        <label htmlFor="description_en" className="mb-2 block text-sm font-medium text-[#212529]">
+                                            Description *
+                                        </label>
                                         <textarea
-                                            placeholder="Enter description"
-                                            required
-                                            rows="5"
-                                            className="w-[100%] border-[2px] border-black rounded-[10px] p-1"
-                                            name="description[en]"
                                             id="description_en"
-                                            onChange={(e) => { setData('description_en', e.target.value) }}
+                                            name="description[en]"
+                                            placeholder="Enter gallery description"
+                                            required
+                                            rows={4}
                                             value={data.description_en}
+                                            onChange={(e) => setData('description_en', e.target.value)}
+                                            className="w-full resize-none rounded-lg border border-gray-300 p-3 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
                                         />
                                     </div>
                                 </div>
@@ -135,32 +163,36 @@ export default function GalleryStore({ gallery }) {
 
                             {/* Français Form */}
                             {tab === 'Français' && (
-                                <div className="flex flex-col items-center w-[100%] gap-5">
-                                    <div className="flex flex-col w-[100%] gap-1">
-                                        <label htmlFor="title_fr">Titre</label>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label htmlFor="title_fr" className="mb-2 block text-sm font-medium text-[#212529]">
+                                            Titre *
+                                        </label>
                                         <Input
-                                            placeholder="Enter le Titre"
-                                            required
-                                            className="w-[100%] border-[2px] border-black rounded-[10px]"
-                                            type="text"
-                                            name="title[fr]"
                                             id="title_fr"
-                                            onChange={(e) => { setData('title_fr', e.target.value) }}
+                                            name="title[fr]"
+                                            type="text"
+                                            placeholder="Entrez le titre de la galerie"
+                                            required
                                             value={data.title_fr}
+                                            onChange={(e) => setData('title_fr', e.target.value)}
+                                            className="w-full rounded-lg border-gray-300 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
                                         />
                                     </div>
 
-                                    <div className="flex flex-col w-[100%] gap-1">
-                                        <label htmlFor="description_fr">Description</label>
+                                    <div>
+                                        <label htmlFor="description_fr" className="mb-2 block text-sm font-medium text-[#212529]">
+                                            Description *
+                                        </label>
                                         <textarea
-                                            placeholder="Enter la description"
-                                            required
-                                            rows="5"
-                                            className="w-[100%] border-[2px] border-black rounded-[10px]"
-                                            name="description[fr]"
                                             id="description_fr"
-                                            onChange={(e) => { setData('description_fr', e.target.value) }}
+                                            name="description[fr]"
+                                            placeholder="Entrez la description de la galerie"
+                                            required
+                                            rows={4}
                                             value={data.description_fr}
+                                            onChange={(e) => setData('description_fr', e.target.value)}
+                                            className="w-full resize-none rounded-lg border border-gray-300 p-3 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
                                         />
                                     </div>
                                 </div>
@@ -168,136 +200,127 @@ export default function GalleryStore({ gallery }) {
 
                             {/* Arabic Form */}
                             {tab === 'العربية' && (
-                                <div className="flex flex-col items-center w-[100%] gap-5">
-                                    <div className="flex flex-col w-[100%] text-end gap-1">
-                                        <label htmlFor="title_ar">العنوان</label>
+                                <div className="space-y-4 text-right" dir="rtl">
+                                    <div>
+                                        <label htmlFor="title_ar" className="mb-2 block text-sm font-medium text-[#212529]">
+                                            العنوان *
+                                        </label>
                                         <Input
-                                            placeholder="أدخل العنوان"
-                                            required
-                                            className="w-[100%] border-[2px] border-black rounded-[10px]"
-                                            type="text"
-                                            name="title[ar]"
                                             id="title_ar"
-                                            onChange={(e) => { setData('title_ar', e.target.value) }}
+                                            name="title[ar]"
+                                            type="text"
+                                            placeholder="أدخل عنوان المعرض"
+                                            required
                                             value={data.title_ar}
+                                            onChange={(e) => setData('title_ar', e.target.value)}
+                                            className="w-full rounded-lg border-gray-300 text-right transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
                                         />
                                     </div>
 
-                                    <div className="flex flex-col w-[100%] text-end gap-1">
-                                        <label htmlFor="description_ar">وصف النص</label>
+                                    <div>
+                                        <label htmlFor="description_ar" className="mb-2 block text-sm font-medium text-[#212529]">
+                                            الوصف *
+                                        </label>
                                         <textarea
-                                            placeholder="أدخل الوصف"
-                                            required
-                                            rows="5"
-                                            className="w-[100%] border-[2px] border-black rounded-[10px]"
-                                            name="description[ar]"
                                             id="description_ar"
-                                            onChange={(e) => { setData('description_ar', e.target.value) }}
+                                            name="description[ar]"
+                                            placeholder="أدخل وصف المعرض"
+                                            required
+                                            rows={4}
                                             value={data.description_ar}
+                                            onChange={(e) => setData('description_ar', e.target.value)}
+                                            className="w-full resize-none rounded-lg border border-gray-300 p-3 text-right transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
                                         />
                                     </div>
                                 </div>
                             )}
 
-
-                            <div className="flex flex-col gap-1 my-1">
-                                <div>
-                                    {tab === 'English' && <p>Cover</p>}
-                                    {tab === 'Français' && <p>Couverture</p>}
-                                    {tab === 'العربية' && <p className="text-end">الغطاء</p>}
-                                </div>
-
+                            {/* Cover Image Upload */}
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-[#212529]">
+                                    {tab === 'English' && 'Cover Image *'}
+                                    {tab === 'Français' && 'Image de Couverture *'}
+                                    {tab === 'العربية' && 'صورة الغلاف *'}
+                                </label>
                                 <label
                                     htmlFor="image"
-                                    className="p-[0.75rem] cursor-pointer flex gap-2 items-center border-[2px] border-black rounded-[10px]"
+                                    className="group flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-4 transition-all duration-200 hover:border-[#212529]"
                                 >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        className="size-6 flex-shrink-0"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-                                        />
-                                    </svg>
-                                    <span id="imagesPlaceholder" className="text-base text-gray-500">
-                                        Upload Cover
-                                    </span>
+                                    <div className="rounded-lg bg-gray-100 p-2 transition-all duration-200 group-hover:bg-[#212529] group-hover:text-white">
+                                        <Upload className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <p className="font-medium text-[#212529]">
+                                            {data.couverture ? 'Cover image selected' : 'Upload cover image'}
+                                        </p>
+                                        <p className="text-sm text-gray-500">PNG, JPG or JPEG (Max 10MB)</p>
+                                    </div>
                                 </label>
-
                                 <Input
-                                    onChange={handleFileChange}
-                                    className="hidden"
-                                    required={!gallery}
-                                    type="file"
-                                    placeholder="image"
-                                    accept="image/png, image/jpg, image/jpeg"
-                                    name="couverture"
                                     id="image"
+                                    name="couverture"
+                                    type="file"
+                                    accept="image/png,image/jpg,image/jpeg"
+                                    onChange={handleFileChange}
+                                    required={!gallery}
+                                    className="hidden"
                                 />
                             </div>
 
-
-
-                            <div className="flex flex-col gap-1">
-                                <div>
-                                    {tab === 'English' && <p>Gallery</p>}
-                                    {tab === 'Français' && <p>Galerie</p>}
-                                    {tab === 'العربية' && <p className="text-end">الصور</p>}
-                                </div>
-
+                            {/* Gallery Images Upload */}
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-[#212529]">
+                                    {tab === 'English' && 'Gallery Images *'}
+                                    {tab === 'Français' && 'Images de la Galerie *'}
+                                    {tab === 'العربية' && 'صور المعرض *'}
+                                </label>
                                 <label
                                     htmlFor="images"
-                                    className="p-[0.75rem] cursor-pointer flex gap-2 items-center border-[2px] border-black rounded-[10px]"
+                                    className="group flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-4 transition-all duration-200 hover:border-[#212529]"
                                 >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        className="size-6 flex-shrink-0"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-                                        />
-                                    </svg>
-                                    <span id="imagesPlaceholder" className="text-base text-gray-500">
-                                        {data?.gallery?.length > 0 ? 'image Uploaded' : 'Upload Images'}
-                                    </span>
+                                    <div className="rounded-lg bg-gray-100 p-2 transition-all duration-200 group-hover:bg-[#212529] group-hover:text-white">
+                                        <Images className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <p className="font-medium text-[#212529]">
+                                            {data.images?.length > 0 ? `${data.images.length} images selected` : 'Upload gallery images'}
+                                        </p>
+                                        <p className="text-sm text-gray-500">Multiple files allowed - PNG, JPG or JPEG</p>
+                                    </div>
                                 </label>
-
                                 <Input
-                                    onChange={handleFileChange}
-                                    className="hidden"
-                                    required={!gallery}
-                                    type="file"
-                                    placeholder="image"
-                                    multiple
-                                    accept="image/png, image/jpg, image/jpeg"
-                                    name="images"
                                     id="images"
+                                    name="images"
+                                    type="file"
+                                    accept="image/png,image/jpg,image/jpeg"
+                                    onChange={handleFileChange}
+                                    required={!gallery}
+                                    multiple
+                                    className="hidden"
                                 />
                             </div>
 
-
-                            <Button
-                                type="submit"
-                                className="mt-2 w-full hover:bg-alpha hover:text-black transition-all duration-150 ">
-                                Submit
-                            </Button>
+                            {/* Action Buttons */}
+                            <div className="flex gap-3 pt-4">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setIsOpen(false)}
+                                    className="flex-1 border-gray-300 text-gray-700 transition-all duration-300 ease-in-out hover:bg-gray-100"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    className="flex-1 transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+                                >
+                                    {gallery ? 'Update Gallery' : 'Create Gallery'}
+                                </Button>
+                            </div>
                         </form>
                     </div>
-
                 </DialogContent>
             </Dialog>
         </>
-    )
+    );
 }

@@ -37,6 +37,17 @@ class GalleryController extends Controller
     }
 
     /**
+     * Display the specified resource (admin view).
+     */
+    public function show(Gallery $gallery)
+    {
+        $gal = Gallery::where('id', $gallery->id)->with('images')->first();
+        return Inertia::render('admin/gallery/[id]', [
+            'gallery' => $gal
+        ]);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
