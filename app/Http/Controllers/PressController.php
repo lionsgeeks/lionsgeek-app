@@ -13,7 +13,7 @@ class PressController extends Controller
     {
         $presses = Press::all();
 
-        return Inertia::render('admin/press/press', [
+        return Inertia::render('admin/press/index', [
             'presses' => $presses
         ]);
     }

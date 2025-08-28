@@ -4,7 +4,7 @@ import AppLayout from "@/layouts/app-layout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { X, Newspaper, Upload, Image as ImageIcon, Plus, Images } from "lucide-react";
+import { X, Newspaper, Upload, Image as ImageIcon, Plus, Images, Trash2 } from "lucide-react";
 import GalleryStore from "../gallery/partials/galleryStore";
 
 const breadcrumbs = [{ title: "Press", href: "/admin/press" }];
@@ -61,25 +61,38 @@ export default function Press() {
             },
         });
     };
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const [selectedPress, setSelectedPress] = useState(null);
+    const handleDelete = (press) => {
+        setSelectedPress(press);
+        setIsDeleteOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (selectedPress) {
+            onDeletePress(selectedPress.id);
+        }
+        setIsDeleteOpen(false);
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Press" />
 
             <div className="min-h-screen bg-white ">
-                
-                    <div className="bg-[#212529] py-8 text-white">
-                        <div className="flex items-center justify-between px-6">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3">
-                                    <Newspaper className="h-8 w-8 text-[#212529]" />
-                                </div>
-                                <div>
-                                    <h1 className="text-3xl font-bold">Press Releases</h1>
-                                    <p className="mt-1 text-gray-300">Manage and showcase all your press coverage and media mentions</p>
-                                </div>
+
+                <div className="bg-[#212529] py-8 text-white">
+                    <div className="flex items-center justify-between px-6">
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-[#fee819] p-3">
+                                <Newspaper className="h-8 w-8 text-[#212529]" />
                             </div>
-                            
+                            <div>
+                                <h1 className="text-3xl font-bold">Press Releases</h1>
+                                <p className="mt-1 text-gray-300">Manage and showcase all your press coverage and media mentions</p>
+                            </div>
+                        </div>
+                        {/* Modal Add press*/}
                         <Dialog open={isOpen} onOpenChange={setIsOpen}>
                             <DialogTrigger asChild>
                                 <Button className="transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
@@ -348,7 +361,7 @@ export default function Press() {
                                                         className="hidden"
                                                         onChange={handleFileChange("logo")}
                                                     />
-                                                
+
                                                 </div>
                                                 <div className="space-y-2">
                                                     <label className="block text-sm font-medium text-[#212529]">
@@ -504,44 +517,84 @@ export default function Press() {
                                 </div>
                             </DialogContent>
                         </Dialog>
-                        </div>
                     </div>
+                </div>
 
-                    {/* Press List */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-                        {presses.map((press) => (
-                            <div
-                                key={press.id}
-                                className="border rounded-lg shadow hover:shadow-xl transition-transform duration-300 hover:-translate-y-2 p-3 flex flex-col justify-between bg-gray-50 text-[#212529]"
-                            >
-                                <div className="h-48 overflow-hidden">
+                {/* Press List */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                    {presses.map((press) => (
+                        <div
+                            key={press.id}
+                            className="border rounded-lg shadow hover:shadow-xl transition-transform duration-300 hover:-translate-y-2 p-3 flex flex-col bg-gray-50 text-[#212529]"
+                        >
+                            <div className="h-48 overflow-hidden">
+                                <img
+                                    src={`/storage/images/press/${press.cover}`}
+                                    alt={press.name.fr}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+
+                            
+                            <div className="p-4 flex flex-col flex-1 justify-between">
+                                
+                                <div className="flex items-start gap-3 min-h-[80px]">
                                     <img
-                                        src={`/storage/images/press/${press.cover}`}
-                                        alt={press.name.fr}
-                                        className="w-full h-full object-cover"
+                                        src={`/storage/images/press/${press.logo}`}
+                                        alt={`Logo ${press.name.fr}`}
+                                        className="w-10 h-10 object-contain rounded-full"
                                     />
+                                    <h3 className="font-bold text-lg leading-snug">
+                                        {press.name.fr}
+                                    </h3>
                                 </div>
-                                <div className="p-4">
-                                    <div className="flex items-center mb-3">
-                                        <img
-                                            src={`/storage/images/press/${press.logo}`}
-                                            alt={`Logo ${press.name.fr}`}
-                                            className="w-10 h-10 object-contain mr-3 rounded-full"
-                                        />
-                                        <h3 className="font-bold text-lg">{press.name.fr}</h3>
-                                    </div>
+
+                            
+                                <div className="mt-4 flex items-center justify-between">
                                     <a
                                         href={route("press.show", press.id)}
                                         className="inline-block bg-beta text-white font-bold rounded-2xl px-4 py-1.5 hover:bg-alpha hover:text-beta transition"
                                     >
                                         See press
                                     </a>
+                                    <button
+                                        onClick={() => handleDelete(press)}
+                                        className=" flex items-center text-red-600 hover:text-red-800"
+                                    >
+                                        <Trash2 className="h-5 w-5 " />
+                                    </button>
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    ))}
                 </div>
-            
+
+
+                {/* Modal Delete*/}
+                <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+                    <DialogContent>
+                        <DialogTitle>
+                            Are you sure you want to delete this press?
+                        </DialogTitle>
+
+                        <div className="flex justify-end gap-3 mt-4">
+                            <button
+                                className="px-3 py-1 rounded border"
+                                onClick={() => setIsDeleteOpen(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="px-3 py-1 bg-red-600 text-white rounded"
+                                onClick={confirmDelete}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </div>
+
         </AppLayout>
     );
 }
