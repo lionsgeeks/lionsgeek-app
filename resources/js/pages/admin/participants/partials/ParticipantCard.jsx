@@ -65,6 +65,8 @@ const ParticipantCard = ({ participant }) => {
                         <Badge className={`${getStepBadge(participant?.current_step)} rounded-lg text-xs font-medium w-fit`}>
                             {participant?.current_step?.replaceAll('_', ' ') || 'Unknown'}
                         </Badge>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
                         {(participant?.current_step === 'jungle' || participant?.current_step?.includes('school')) && (
                             <Badge
                                 className={`${getConfirmationStatus(participant) 
@@ -97,28 +99,28 @@ const ParticipantCard = ({ participant }) => {
                     </div>
                 </div>
 
-                            {/* Action Buttons - Always same height */}
-            <div className="mt-4 pt-3 border-t min-h-[44px] flex items-center" onClick={(e) => e.stopPropagation()}>
-                {participant?.current_step !== 'info_session' && !participant?.current_step?.includes('school') ? (
-                    <div className="flex gap-2 w-full">
-                        <Button 
-                            onClick={() => changeStep(participant?.current_step === 'interview' ? 'daz' : 'next')} 
-                            className="flex-1 bg-[#51b04f] text-white hover:bg-[#459942] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-                            size="sm"
-                        >
-                            <ArrowRight className="h-4 w-4 mr-1" />
-                            Next Step
-                        </Button>
-                        <Button 
-                            onClick={() => changeStep('deny')} 
-                            variant="outline"
-                            className="border-[#ff7376] text-[#ff7376] hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-                            size="sm"
-                        >
-                            <X className="h-4 w-4 mr-1" />
-                            Deny
-                        </Button>
-                    </div>
+                {/* Action Buttons - Always same height */}
+                <div className="mt-4 pt-3 border-t min-h-[44px] flex items-center" onClick={(e) => e.stopPropagation()}>
+                    {participant?.current_step !== 'info_session' && !participant?.current_step?.includes('school') ? (
+                        <div className="flex gap-2 w-full">
+                            <Button 
+                                onClick={() => changeStep(participant?.current_step === 'interview' ? 'daz' : 'next')} 
+                                className="flex-1 bg-[#51b04f] text-white hover:bg-[#459942] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                                size="sm"
+                            >
+                                <ArrowRight className="h-4 w-4 mr-1" />
+                                Next Step
+                            </Button>
+                            <Button 
+                                onClick={() => changeStep('deny')} 
+                                variant="outline"
+                                className="border-[#ff7376] text-[#ff7376] hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                                size="sm"
+                            >
+                                <X className="h-4 w-4 mr-1" />
+                                Deny
+                            </Button>
+                        </div>
                     ) : participant?.current_step?.includes('school') ? (
                         <div className="w-full text-center">
                             <Badge className="bg-[#212529] text-white rounded-lg px-3 py-1">

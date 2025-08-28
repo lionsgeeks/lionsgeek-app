@@ -20,7 +20,8 @@ import {
     TrendingUp,
     Star,
     Award,
-    BookOpen
+    BookOpen,
+    Edit
 } from 'lucide-react';
 import { AdminNotesSection } from './partials/admin-notes-section';
 import { FrequentQuestionsSection } from './partials/frequent-questions-section';
@@ -39,7 +40,7 @@ export default function ParticipantProfilePage() {
                         <h1 className="mb-4 text-2xl font-bold text-[#212529]">Participant Not Found</h1>
                         <p className="mb-6 text-gray-600">The participant you're looking for doesn't exist.</p>
                         <Button 
-                            onClick={() => router.push('/admin/participants')}
+                            onClick={() => router.visit('/admin/participants')}
                             className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -104,14 +105,25 @@ export default function ParticipantProfilePage() {
                 {/* Header Banner */}
                 <div className="bg-[#212529] text-white">
                     <div className="p-6">
-                        <Button 
-                            onClick={() => router.push('/admin/participants')}
-                            variant="ghost"
-                            className="mb-4 text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
-                        >
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Back to Participants
-                        </Button>
+                        <div className="flex items-center justify-between mb-4">
+                            <Button 
+                                onClick={() => router.visit('/admin/participants')}
+                                variant="ghost"
+                                className="text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
+                            >
+                                <ArrowLeft className="mr-2 h-4 w-4" />
+                                Back to Participants
+                            </Button>
+                            
+                            <Button 
+                                onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)}
+                                variant="ghost"
+                                className="text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
+                            >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit Profile
+                            </Button>
+                        </div>
 
                         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
                             {/* Profile Image & Basic Info */}

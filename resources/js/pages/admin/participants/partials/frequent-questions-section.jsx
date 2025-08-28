@@ -4,10 +4,25 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from '@inertiajs/react';
+import { ChevronDown } from 'lucide-react';
+import { useState } from 'react';
 // import { useToast } from "@/hooks/use-toast"
 
 export function FrequentQuestionsSection({ participant }) {
     //   const { toast } = useToast()
+    const [openSections, setOpenSections] = useState({
+        background: false,
+        interest: false,
+        additional: false
+    });
+
+    const toggleSection = (section) => {
+        setOpenSections(prev => ({
+            ...prev,
+            [section]: !prev[section]
+        }));
+    };
+
     const { data, setData, processing, post } = useForm({
         participant_id: participant.id,
         mode_of_transportation: participant.questions.mode_of_transportation,
@@ -46,9 +61,12 @@ export function FrequentQuestionsSection({ participant }) {
             </CardHeader>
             <CardContent className="space-y-6">
                 {/* Background Section */}
-                <Collapsible>
-                    <CollapsibleTrigger>
-                        <h3 className="mb-4 cursor-pointer pb-2 text-lg font-semibold">Background</h3>
+                <Collapsible open={openSections.background} onOpenChange={() => toggleSection('background')}>
+                    <CollapsibleTrigger className="w-full">
+                        <div className="flex items-center justify-between w-full mb-4 cursor-pointer pb-2 text-lg font-semibold hover:text-[#fee819] transition-colors duration-200">
+                            <h3>Background</h3>
+                            <ChevronDown className={`h-5 w-5 text-[#212529] transition-transform duration-200 ${openSections.background ? 'rotate-180' : ''}`} />
+                        </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                         <div className="">
@@ -115,9 +133,12 @@ export function FrequentQuestionsSection({ participant }) {
                     </CollapsibleContent>
                 </Collapsible>
                 {/* Interest Section */}
-                <Collapsible>
-                    <CollapsibleTrigger>
-                        <h3 className="mb-4 cursor-pointer text-lg font-semibold">Interest</h3>
+                <Collapsible open={openSections.interest} onOpenChange={() => toggleSection('interest')}>
+                    <CollapsibleTrigger className="w-full">
+                        <div className="flex items-center justify-between w-full mb-4 cursor-pointer text-lg font-semibold hover:text-[#fee819] transition-colors duration-200">
+                            <h3>Interest</h3>
+                            <ChevronDown className={`h-5 w-5 text-[#212529] transition-transform duration-200 ${openSections.interest ? 'rotate-180' : ''}`} />
+                        </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                         <div>
@@ -172,9 +193,12 @@ export function FrequentQuestionsSection({ participant }) {
                     </CollapsibleContent>
                 </Collapsible>
                 {/* Additional Section */}
-                <Collapsible>
-                    <CollapsibleTrigger>
-                        <h3 className="mb-4 cursor-pointer text-lg font-semibold">Additional</h3>
+                <Collapsible open={openSections.additional} onOpenChange={() => toggleSection('additional')}>
+                    <CollapsibleTrigger className="w-full">
+                        <div className="flex items-center justify-between w-full mb-4 cursor-pointer text-lg font-semibold hover:text-[#fee819] transition-colors duration-200">
+                            <h3>Additional</h3>
+                            <ChevronDown className={`h-5 w-5 text-[#212529] transition-transform duration-200 ${openSections.additional ? 'rotate-180' : ''}`} />
+                        </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                         <div>
