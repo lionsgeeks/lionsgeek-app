@@ -4,6 +4,7 @@ import NewsLetter from './partials/NewsLetter';
 import StatisticCards from './partials/StatisticCards';
 import UnreadMessages from './partials/UnreadMessages';
 import UpcomingEvents from './partials/UpcomingEvents';
+import UpcomingSessions from './partials/UpcomingSessions';
 import Chart from './partials/charts/Charts';
 
 import { useState } from 'react';
@@ -85,6 +86,8 @@ const DashboardMain = () => {
                 <StatisticCards />
                 {/* session analysing chart */}
                 <Chart />
+                {/* Upcoming Session */}
+                <UpcomingSessions />
                 <div className="flex w-full gap-5">
                     {/* News Letter */}
                     <NewsLetter />
@@ -93,15 +96,17 @@ const DashboardMain = () => {
                 </div>
                 {/* Cowoeking request */}
                 <CoworkingRequests />
+                {/* Upcoming Events */}
+                <UpcomingEvents />
 
                 {/* Sessions
-                <div className="">
-                    {sessions.length > 0 && (
-                        <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4 shadow-md">
+                <div className=""> */}
+                {/* {sessions.length > 0 && ( */}
+                {/* <div className="flex flex-col gap-y-4 rounded-lg bg-white p-4 shadow-md">
                             <h1 className="text-xl font-semibold text-black">Upcoming Info Sessions</h1>
                             <div className="mt-2 grid gap-y-8 md:grid-cols-2 md:gap-x-4 lg:grid-cols-4 lg:gap-x-2">
-                                {sessions.map((session) => {
-                                    const startDate = new Date(session.start_date);
+                                {/* {sessions.map((session) => { */}
+                {/* const startDate = new Date(session.start_date);
                                     const month = startDate.toLocaleString('default', { month: 'short' });
                                     const day = startDate.getDate();
 
@@ -125,13 +130,12 @@ const DashboardMain = () => {
                                     );
                                 })}
                             </div>
-                        </div>
-                    )}
-                </div>
+                        </div> */}
+                {/* )} */}
+                {/* // </div> */}
 
-                {/* Upcoming Events */}
-                <UpcomingEvents />
-                
+
+
             </div>
         </div>
     );

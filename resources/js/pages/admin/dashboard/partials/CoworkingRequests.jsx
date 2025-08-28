@@ -1,6 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import dayjs from 'dayjs';
-import { Briefcase, UserCheck } from 'lucide-react';
+import { Briefcase } from 'lucide-react';
 
 const CoworkingRequests = () => {
     const { coworkingsRequest } = usePage().props;

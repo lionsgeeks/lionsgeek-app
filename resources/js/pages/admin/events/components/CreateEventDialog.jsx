@@ -11,7 +11,6 @@ export default function CreateEventDialog({ onSuccess, events }) {
         setIsOpen(false);
         onSuccess?.();
     };
-    console.log(events);
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
