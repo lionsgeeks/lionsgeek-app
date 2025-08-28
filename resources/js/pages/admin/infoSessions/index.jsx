@@ -1,9 +1,10 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, usePage } from '@inertiajs/react';
-import { Ban, Calendar, CheckCircle, Edit, Plus, Users, GraduationCap, Clock, Calendar as CalendarIcon, Code2, Palette } from 'lucide-react';
+import { Ban, Calendar, CheckCircle, Edit, Plus, Users, GraduationCap, Clock, Calendar as CalendarIcon, Code2, Palette, Filter, Search, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 import { CreateSessionModal } from './partials/create-session-modal';
 import { EditSessionModal } from './partials/edit-session-modal';
@@ -13,6 +14,7 @@ export default function InfoSessions() {
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedSession, setSelectedSession] = useState(null);
+    const [search, setSearch] = useState('');
 
     const breadcrumbs = [
         {
@@ -41,50 +43,58 @@ export default function InfoSessions() {
             <Palette className="h-6 w-6" />;
     };
 
+    // Filter sessions based on search
+    const filteredSessions = infosessions.filter((session) =>
+        session?.name?.toLowerCase().includes(search?.toLowerCase()) ||
+        session?.formation?.toLowerCase().includes(search?.toLowerCase())
+    );
+
     // Calculate statistics with safe access
     const totalSessions = infosessions?.length || 0;
     const availableSessions = infosessions?.filter(s => s?.isAvailable)?.length || 0;
     const completedSessions = infosessions?.filter(s => s?.isFinish)?.length || 0;
     const codingSessions = infosessions?.filter(s => s?.formation === 'Coding')?.length || 0;
+    const hasSearch = search.length > 0;
 
     // Empty state
     if (!infosessions || infosessions.length === 0) {
         return (
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Info Sessions" />
-                            <div className="p-6 bg-white min-h-screen">
-                    <div className="mb-8">
-                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
-                        <div>
-                                <h1 className="text-3xl font-bold text-gray-900 mb-2">Info Sessions</h1>
-                                <p className="text-gray-600">Manage informational sessions about your training programs</p>
+                <div className="min-h-screen bg-white">
+                    {/* Header Section */}
+                    <div className="bg-[#212529] py-8 text-white">
+                        <div className="mx-auto max-w-7xl px-6">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-lg bg-[#fee819] p-3">
+                                        <GraduationCap className="h-8 w-8 text-[#212529]" />
+                                    </div>
+                                    <div>
+                                        <h1 className="text-3xl font-bold">Info Sessions Management</h1>
+                                        <p className="mt-1 text-gray-300">Manage informational sessions and training programs</p>
+                                    </div>
+                                </div>
+                                <CreateSessionModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
                             </div>
-                            <Button 
-                                onClick={() => setCreateModalOpen(true)}
-                                className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-                            >
-                                <Plus className="h-4 w-4 mr-2" />
-                                Create Info Session
-                            </Button>
                         </div>
                     </div>
-                    
-                    <div className="flex items-center justify-center h-[50vh]">
-                        <div className="text-center p-8">
-                            <GraduationCap className="h-24 w-24 text-gray-300 mx-auto mb-6" />
-                            <h3 className="text-2xl font-bold text-gray-900 mb-3">No Info Sessions Yet</h3>
-                            <p className="text-gray-600 text-lg mb-8">Start by creating your first informational session to engage with potential participants.</p>
-                            <Button 
-                                onClick={() => setCreateModalOpen(true)}
-                                className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-                            >
-                                <Plus className="h-4 w-4 mr-2" />
-                                Create Your First Session
-                            </Button>
-                        </div>
+
+                    {/* Empty State */}
+                    <div className="mx-auto max-w-7xl px-6 py-16">
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-12 text-center">
+                                <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
+                                    <GraduationCap className="h-12 w-12 text-gray-400" />
+                                </div>
+                                <h2 className="mb-3 text-2xl font-bold text-[#212529]">No Info Sessions Available</h2>
+                                <p className="mx-auto mb-6 max-w-md text-gray-600">
+                                    Get started by creating your first informational session to engage with potential participants.
+                                </p>
+                                <CreateSessionModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+                            </CardContent>
+                        </Card>
                     </div>
-                    
-                    <CreateSessionModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
                 </div>
             </AppLayout>
         );
@@ -93,76 +103,80 @@ export default function InfoSessions() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Info Sessions" />
-            <div className="p-6 bg-white min-h-screen">
+
+            <div className="min-h-screen bg-white">
                 {/* Header Section */}
-                <div className="mb-8">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-                        <div>
-                            <h1 className="text-2xl font-bold text-beta mb-2">Info Sessions</h1>
-                            <p className="text-gray-600">Manage informational sessions about your training programs</p>
+                <div className="bg-[#212529] py-8 text-white">
+                    <div className="mx-auto max-w-7xl px-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-lg bg-[#fee819] p-3">
+                                    <GraduationCap className="h-8 w-8 text-[#212529]" />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-bold">Info Sessions Management</h1>
+                                    <p className="mt-1 text-gray-300">Manage informational sessions and training programs</p>
+                                </div>
+                            </div>
+                            <CreateSessionModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
                         </div>
-                        <Button 
-                            onClick={() => setCreateModalOpen(true)}
-                            className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-                        >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Create Info Session
-                        </Button>
                     </div>
+                </div>
 
-                    {/* Statistics Overview */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                        <Card className="border rounded-lg hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1">
-                            <CardContent className="p-4">
+                {/* Statistics Cards */}
+                <div className="mx-auto -mt-4 max-w-7xl px-6">
+                    <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-gray-600 mb-1">Total</p>
-                                        <p className="text-xl font-bold text-[#212529]">{totalSessions}</p>
+                                        <p className="text-sm font-medium text-gray-600">Total Sessions</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{totalSessions}</p>
                                     </div>
-                                    <div className="p-2 bg-gray-100 rounded-lg">
-                                        <GraduationCap className="h-5 w-5 text-[#212529]" />
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <GraduationCap className="h-6 w-6 text-[#212529]" />
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        <Card className="border rounded-lg hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1">
-                            <CardContent className="p-4">
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-gray-600 mb-1">Available</p>
-                                        <p className="text-xl font-bold text-[#212529]">{availableSessions}</p>
+                                        <p className="text-sm font-medium text-gray-600">Available</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{availableSessions}</p>
                                     </div>
-                                    <div className="p-2 bg-gray-100 rounded-lg">
-                                        <CheckCircle className="h-5 w-5 text-[#212529]" />
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <CheckCircle className="h-6 w-6 text-[#212529]" />
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        <Card className="border rounded-lg hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1">
-                            <CardContent className="p-4">
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-gray-600 mb-1">Completed</p>
-                                        <p className="text-xl font-bold text-[#212529]">{completedSessions}</p>
+                                        <p className="text-sm font-medium text-gray-600">Completed</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{completedSessions}</p>
                                     </div>
-                                    <div className="p-2 bg-gray-100 rounded-lg">
-                                        <Clock className="h-5 w-5 text-[#212529]" />
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <Clock className="h-6 w-6 text-[#212529]" />
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        <Card className="border rounded-lg hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1">
-                            <CardContent className="p-4">
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
                                 <div className="flex items-center justify-between">
-                    <div>
-                                        <p className="text-sm text-gray-600 mb-1">Coding</p>
-                                        <p className="text-xl font-bold text-[#212529]">{codingSessions}</p>
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Search Results</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{filteredSessions.length}</p>
                                     </div>
-                                    <div className="p-2 bg-gray-100 rounded-lg">
-                                        <Code2 className="h-5 w-5 text-[#212529]" />
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <Search className="h-6 w-6 text-[#212529]" />
                                     </div>
                                 </div>
                             </CardContent>
@@ -170,102 +184,182 @@ export default function InfoSessions() {
                     </div>
                 </div>
 
-                {/* Sessions List */}
-                <div className="mb-4">
-                    <h2 className="text-lg font-semibold text-[#212529]">All Sessions ({totalSessions})</h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {infosessions.map((session, index) => (
-                                            <Card 
-                        key={session.id} 
-                        className="border rounded-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 hover:scale-[1.02] bg-white h-full flex flex-col overflow-hidden p-0 cursor-pointer"
-                        onClick={() => router.visit(`/admin/infosessions/${session.id}`)}
-                    >
-                            {/* Header */}
-                            <div className="bg-gray-50 p-4 text-[#212529] rounded-t-lg">
-                                <div className="flex items-start justify-between mb-3">
-                                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                                        <div className="flex-shrink-0 text-[#212529]">{getFormationIcon(session.formation)}</div>
-                                        <div className="min-w-0 flex-1">
-                                            <h3 className="text-lg font-semibold capitalize truncate">{session.name}</h3>
-                                            <Badge className="bg-[#fee819] text-[#212529] rounded-lg text-xs mt-1 w-fit">
-                                                {session.formation}
-                                            </Badge>
-                                        </div>
-                                    </div>
-                                    <div className="flex gap-2 flex-shrink-0 ml-2" onClick={(e) => e.stopPropagation()}>
-                                        <button 
-                                            onClick={() => {
-                                                setSelectedSession(session);
-                                                setEditModalOpen(true);
-                                            }}
-                                            className="p-2 bg-white rounded-lg hover:bg-gray-100 transition-all duration-200 ease-in-out transform hover:scale-110 border"
-                                        >
-                                            <Edit className="h-4 w-4" />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Status */}
+                {/* Filter Section */}
+                <div className="mx-auto mb-8 max-w-7xl px-6">
+                    <Card className="border-0 bg-gray-50">
+                        <CardContent className="p-6">
+                            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                                 <div className="flex items-center gap-2">
-                                    {session.isAvailable ? (
-                                        <CheckCircle className="h-4 w-4 text-[#51b04f]" />
-                                    ) : (
-                                        <Ban className="h-4 w-4 text-[#ff7376]" />
+                                    <Filter className="h-5 w-5 text-[#212529]" />
+                                    <h3 className="text-lg font-semibold text-[#212529]">Filter Info Sessions</h3>
+                                    {hasSearch && (
+                                        <Badge variant="secondary" className="bg-gray-100 px-2 py-1 text-[#212529]">
+                                            {filteredSessions.length} result{filteredSessions.length !== 1 ? 's' : ''}
+                                        </Badge>
                                     )}
-                                    <span className="text-sm">
-                                        {session.isAvailable ? 'Open for Registration' : 'Registration Closed'}
-                                    </span>
                                 </div>
-                            </div>
-
-                            {/* Content */}
-                            <CardContent className="p-4 flex-1 flex flex-col">
-                                <div className="flex-1 space-y-3">
-                                    <div className="flex items-center gap-3 text-gray-600">
-                                        <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
-                                            <CalendarIcon className="h-4 w-4" />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-sm text-gray-500">Start Date</p>
-                                            <p className="font-medium text-[#212529]">{session.start_date}</p>
-                                        </div>
-                                </div>
-                                    
-                                    <div className="flex items-center gap-3 text-gray-600">
-                                        <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
-                                    <Users className="h-4 w-4" />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-sm text-gray-500">Capacity</p>
-                                            <p className="font-medium text-[#212529]">{session.places} participants</p>
-                                        </div>
+                                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                                    <div className="relative">
+                                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-500" />
+                                        <Input
+                                            type="text"
+                                            placeholder="Search sessions..."
+                                            value={search}
+                                            onChange={(e) => setSearch(e.target.value)}
+                                            className="w-full pl-10 transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20 sm:w-80"
+                                        />
                                     </div>
+                                    {hasSearch && (
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setSearch('')}
+                                            className="border-gray-300 text-gray-700 transition-all duration-200 ease-in-out hover:bg-gray-100"
+                                        >
+                                            <RotateCcw className="mr-2 h-4 w-4" />
+                                            Reset
+                                        </Button>
+                                    )}
                                 </div>
-
-                                                                                        {/* Action buttons */}
-                            <div className="pt-3 border-t mt-4" onClick={(e) => e.stopPropagation()}>
-                                <Button
-                                    onClick={() => changeAvailabilty(session.id)}
-                                    variant={session.isAvailable ? "outline" : "default"}
-                                    size="sm"
-                                    className={`w-full rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 ${
-                                        session.isAvailable 
-                                            ? 'border-[#ff7376] text-[#ff7376] hover:bg-[#ff7376] hover:text-white' 
-                                            : 'bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]'
-                                    }`}
-                                >
-                                    {session.isAvailable ? 'Close' : 'Open'}
-                                </Button>
                             </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Sessions Grid */}
+                <div className="mx-auto max-w-7xl px-6 pb-8">
+                    {filteredSessions.length === 0 ? (
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-12 text-center">
+                                <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
+                                    <Search className="h-12 w-12 text-gray-400" />
+                                </div>
+                                <h2 className="mb-3 text-2xl font-bold text-[#212529]">No Results Found</h2>
+                                <p className="mb-6 text-gray-600">No sessions match your search criteria. Try adjusting your search terms.</p>
+                                <Button variant="outline" onClick={() => setSearch('')} className="border-gray-300 text-gray-700 hover:bg-gray-100">
+                                    <RotateCcw className="mr-2 h-4 w-4" />
+                                    Clear Search
+                                </Button>
                             </CardContent>
                         </Card>
-                    ))}
+                    ) : (
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            {filteredSessions.map((session, index) => (
+                                <Card
+                                    key={index}
+                                    className="flex h-full transform cursor-pointer flex-col overflow-hidden border-0 bg-white p-0 shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl"
+                                    onClick={() => router.visit(`/admin/infosessions/${session.id}`)}
+                                >
+                                    <div className="relative bg-gray-50 p-4">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                <div className="flex-shrink-0 text-[#212529]">{getFormationIcon(session.formation)}</div>
+                                                <div className="min-w-0 flex-1">
+                                                    <h3 className="text-lg font-semibold capitalize truncate text-[#212529]">{session.name}</h3>
+                                                    <Badge className="bg-[#fee819] text-[#212529] text-xs mt-1 w-fit">
+                                                        {session.formation}
+                                                    </Badge>
+                                                </div>
+                                            </div>
+                                            {/* Edit Icon - Top Right */}
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedSession(session);
+                                                    setEditModalOpen(true);
+                                                }}
+                                                className="transform text-[#212529] transition-all duration-300 ease-in-out hover:scale-110 hover:bg-gray-100"
+                                            >
+                                                <Edit className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+
+                                        {/* Status */}
+                                        <div className="flex items-center gap-2">
+                                            {session.isFinish ? (
+                                                <CheckCircle className="h-4 w-4 text-[#51b04f]" />
+                                            ) : session.isAvailable ? (
+                                                <CheckCircle className="h-4 w-4 text-[#51b04f]" />
+                                            ) : (
+                                                <Ban className="h-4 w-4 text-[#ff7376]" />
+                                            )}
+                                            <span className="text-sm text-gray-600">
+                                                {session.isFinish ? 'Completed' : session.isAvailable ? 'Available' : 'Not Available'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <CardContent className="flex-1 p-4">
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                                                    <CalendarIcon className="h-4 w-4 text-[#212529]" />
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-sm text-gray-500">Start Date</p>
+                                                    <p className="font-medium text-[#212529]">
+                                                        {session.start_date?.includes('T') 
+                                                            ? session.start_date.replace('T', ' ') 
+                                                            : session.start_date
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-3">
+                                                <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                                                    <Users className="h-4 w-4 text-[#212529]" />
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-sm text-gray-500">Places</p>
+                                                    <p className="font-medium text-[#212529]">{session.participants_count || 0} / {session.places}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+
+                                                                        <CardFooter className="p-4 pt-0">
+                                        <div className={`flex w-full items-center gap-2 ${session.isFinish ? 'justify-center' : 'justify-between'}`}>
+                                            {/* Available/Unavailable Button - Only show if NOT completed */}
+                                            {!session.isFinish && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        changeAvailabilty(session.id);
+                                                    }}
+                                                    className="transform text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
+                                                >
+                                                    {session.isAvailable ? 'Make Unavailable' : 'Make Available'}
+                                                </Button>
+                                            )}
+                                            
+                                            {/* Mark Complete Button */}
+                                            <Button
+                                                size="sm"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    changeStatus(session.id);
+                                                }}
+                                                className={`transform transition-all duration-300 ease-in-out hover:scale-110 ${
+                                                    session.isFinish
+                                                        ? 'bg-gray-300 text-gray-500 hover:bg-gray-400'
+                                                        : 'bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]'
+                                                }`}
+                                            >
+                                                {session.isFinish ? 'Completed' : 'Mark Complete'}
+                                            </Button>
+                                        </div>
+                                    </CardFooter>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
             
-            <CreateSessionModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
             <EditSessionModal open={editModalOpen} onOpenChange={setEditModalOpen} session={selectedSession} />
         </AppLayout>
     );
