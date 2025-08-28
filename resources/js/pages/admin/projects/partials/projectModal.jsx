@@ -5,18 +5,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from '@inertiajs/react';
-import { Pen, PenLine, PlusIcon } from 'lucide-react';
+import { Edit, FolderOpen, Plus, Upload, X } from 'lucide-react';
 
 export default function ProjectModal({ project }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [tab, setTab] = useState('English');
+    const languages = ['English', 'Français', 'العربية'];
     const { data, setData, post } = useForm({
         name: project ? project.name : '',
-        description_en: project ? project.description.en : '',
-        description_fr: project ? project.description.fr : '',
-        description_ar: project ? project.description.ar : '',
+        description_en: project ? project.description?.en : '',
+        description_fr: project ? project.description?.fr : '',
+        description_ar: project ? project.description?.ar : '',
         logo: project ? project.logo : '',
         preview: project ? project.preview : '',
     })
+
+    const handleFileChange = (event) => {
+        if (event.target.name === 'logo') {
+            setData('logo', event.target.files[0]);
+        }
+        if (event.target.name === 'preview') {
+            setData('preview', event.target.files[0]);
+        }
+    };
 
     const onFormSubmit = (e) => {
         e.preventDefault();
@@ -36,7 +47,6 @@ export default function ProjectModal({ project }) {
         } else {
             post(route('projects.store'), {
                 onSuccess: () => {
-                    setIsOpen(false);
                     setData({
                         name: '',
                         description_en: '',
@@ -45,6 +55,7 @@ export default function ProjectModal({ project }) {
                         logo: '',
                         preview: '',
                     });
+                    setIsOpen(false);
                 }
             })
         }
@@ -54,151 +65,220 @@ export default function ProjectModal({ project }) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
+                {project ? (
+                    <div className="cursor-pointer">
+                        <Edit className="h-4 w-4" />
+                    </div>
+                ) : (
+                    <Button className="transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create Project
+                    </Button>
+                )}
+            </DialogTrigger>
+            <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto p-0 sm:max-w-[700px] [&>button]:hidden">
+                {/* Header */}
+                <div className="relative rounded-t-lg bg-[#212529] p-6 text-white">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-[#fee819] p-2">
+                                <FolderOpen className="h-6 w-6 text-[#212529]" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-xl font-bold text-white">
+                                    {project ? 'Edit Project' : 'Create New Project'}
+                                </DialogTitle>
+                                <p className="mt-1 text-sm text-gray-300">
+                                    {project ? 'Update project information and images' : 'Add a new project with logo and preview'}
+                                </p>
+                            </div>
+                        </div>
+                   
+                        <button
+                            onClick={() => setIsOpen(false)}
+                            className="rounded-lg p-2 text-white transition-colors duration-200 hover:bg-white/10 hover:text-[#fee819]"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                    </div>
+                </div>
 
+                <div className="p-6">
+                    <form onSubmit={onFormSubmit} className="space-y-6">
+                     
+                        <div>
+                            <label htmlFor="name" className="mb-2 block text-sm font-medium text-[#212529]">
+                                Project Name *
+                            </label>
+                            <Input
+                                id="name"
+                                name="name"
+                                type="text"
+                                placeholder="Enter project name"
+                                required
+                                value={data.name}
+                                onChange={(e) => setData('name', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
+                            />
+                        </div>
 
-                <div className='cursor-pointer'>
-                    {
-                        project ? <PenLine /> :
-                            <div className='flex items-center justify-center h-full group w-full border-dashed border-1 border-black rounded-lg'>
-                                <div className='flex flex-col gap-2 items-center group-hover:scale-110 transition-all duration-150'>
-                                    <PlusIcon size={40} />
-                                    <p className='text-lg '>Create Project</p>
+                    
+                        <div className="flex items-center justify-center gap-1 rounded-lg bg-gray-100 p-1">
+                            {languages.map((language) => (
+                                <button
+                                    key={language}
+                                    onClick={() => setTab(language)}
+                                    className={`flex-1 rounded-md px-3 py-2 font-medium transition-all duration-200 ${
+                                        tab === language ? 'bg-[#212529] text-white shadow-sm' : 'bg-transparent text-gray-600 hover:bg-gray-200'
+                                    }`}
+                                    type="button"
+                                >
+                                    {language}
+                                </button>
+                            ))}
+                        </div>
+
+                
+                        {tab === 'English' && (
+                            <div className="space-y-4">
+                                <div>
+                                    <label htmlFor="description_en" className="mb-2 block text-sm font-medium text-[#212529]">
+                                        Description *
+                                    </label>
+                                    <textarea
+                                        id="description_en"
+                                        name="description_en"
+                                        placeholder="Enter project description"
+                                        required
+                                        rows={4}
+                                        value={data.description_en}
+                                        onChange={(e) => setData('description_en', e.target.value)}
+                                        className="w-full resize-none rounded-lg border border-gray-300 p-3 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
+                                    />
                                 </div>
                             </div>
-                    }
+                        )}
+
+                     
+                        {tab === 'Français' && (
+                            <div className="space-y-4">
+                                <div>
+                                    <label htmlFor="description_fr" className="mb-2 block text-sm font-medium text-[#212529]">
+                                        Description *
+                                    </label>
+                                    <textarea
+                                        id="description_fr"
+                                        name="description_fr"
+                                        placeholder="Entrez la description du projet"
+                                        required
+                                        rows={4}
+                                        value={data.description_fr}
+                                        onChange={(e) => setData('description_fr', e.target.value)}
+                                        className="w-full resize-none rounded-lg border border-gray-300 p-3 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                       
+                        {tab === 'العربية' && (
+                            <div className="space-y-4 text-right" dir="rtl">
+                                <div>
+                                    <label htmlFor="description_ar" className="mb-2 block text-sm font-medium text-[#212529]">
+                                        الوصف *
+                                    </label>
+                                    <textarea
+                                        id="description_ar"
+                                        name="description_ar"
+                                        placeholder="أدخل وصف المشروع"
+                                        required
+                                        rows={4}
+                                        value={data.description_ar}
+                                        onChange={(e) => setData('description_ar', e.target.value)}
+                                        className="w-full resize-none rounded-lg border border-gray-300 p-3 text-right transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                     
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-[#212529]">
+                                Project Logo *
+                            </label>
+                            <label
+                                htmlFor="logo"
+                                className="group flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-4 transition-all duration-200 hover:border-[#212529]"
+                            >
+                                <div className="rounded-lg bg-gray-100 p-2 transition-all duration-200 group-hover:bg-[#212529] group-hover:text-white">
+                                    <Upload className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <p className="font-medium text-[#212529]">
+                                        {data.logo ? 'Logo selected' : 'Upload project logo'}
+                                    </p>
+                                    <p className="text-sm text-gray-500">PNG, JPG or JPEG (Max 10MB)</p>
+                                </div>
+                            </label>
+                            <Input
+                                id="logo"
+                                name="logo"
+                                type="file"
+                                accept="image/png,image/jpg,image/jpeg"
+                                onChange={handleFileChange}
+                                required={!project}
+                                className="hidden"
+                            />
+                        </div>
+
+                       
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-[#212529]">
+                                Project Preview (Optional)
+                            </label>
+                            <label
+                                htmlFor="preview"
+                                className="group flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-4 transition-all duration-200 hover:border-[#212529]"
+                            >
+                                <div className="rounded-lg bg-gray-100 p-2 transition-all duration-200 group-hover:bg-[#212529] group-hover:text-white">
+                                    <FolderOpen className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <p className="font-medium text-[#212529]">
+                                        {data.preview ? 'Preview selected' : 'Upload project preview'}
+                                    </p>
+                                    <p className="text-sm text-gray-500">PNG, JPG or JPEG (Optional)</p>
+                                </div>
+                            </label>
+                            <Input
+                                id="preview"
+                                name="preview"
+                                type="file"
+                                accept="image/png,image/jpg,image/jpeg"
+                                onChange={handleFileChange}
+                                className="hidden"
+                            />
+                        </div>
+
+                        
+                        <div className="flex gap-3 pt-4">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setIsOpen(false)}
+                                className="flex-1 border-gray-300 text-gray-700 transition-all duration-300 ease-in-out hover:bg-gray-100"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                className="flex-1 transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+                            >
+                                {project ? 'Update Project' : 'Create Project'}
+                            </Button>
+                        </div>
+                    </form>
                 </div>
-            </DialogTrigger>
-            <DialogContent className="min-w-[40vw]">
-                <DialogTitle>Add a Project</DialogTitle>
-
-                <form onSubmit={onFormSubmit}
-                    className='space-y-3'
-                >
-
-                    <div>
-                        <Label htmlFor="name">Name: </Label>
-                        <Input type="text" name="name"
-                            onChange={(e) => { setData('name', e.target.value) }}
-                            value={data.name} placeholder="Project Name"
-                        />
-                    </div>
-
-
-                    <div className='flex flex-col gap-2'>
-                        <Label htmlFor="description_en">
-                            Description (English)
-                        </Label>
-                        <Textarea name='description_en'
-                            onChange={(e) => { setData('description_en', e.target.value) }}
-                            value={data.description_en} placeholder="Description in English"
-                        />
-                    </div>
-
-                    <div className='flex flex-col gap-2'>
-                        <Label htmlFor="description_fr">
-                            Description (Français)
-                        </Label>
-                        <Textarea name='description_fr'
-                            onChange={(e) => { setData('description_fr', e.target.value) }}
-                            value={data.description_fr} placeholder="Description en Français"
-                        />
-                    </div>
-
-                    <div className='flex flex-col gap-2'>
-                        <Label htmlFor="description_ar" className="text-end">
-                            الوصف بالعربية
-                        </Label>
-                        <Textarea name='description_ar' className="text-end"
-                            onChange={(e) => { setData('description_ar', e.target.value) }}
-                            value={data.description_ar} placeholder="وصف بالعربية"
-                        />
-                    </div>
-
-
-                    <div className="flex flex-col gap-1 my-1">
-                        <p>Logo</p>
-
-                        <label
-                            htmlFor="logo"
-                            className="p-[0.75rem] cursor-pointer flex gap-2 items-center border-[2px] border-black rounded-[10px]"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="size-6 flex-shrink-0"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-                                />
-                            </svg>
-                            <span className="text-base text-gray-500">
-                                Upload Logo
-                            </span>
-                        </label>
-
-                        <Input
-                            onChange={(e) => { setData('logo', e.target.files[0]) }}
-                            className="hidden"
-                            required={!project}
-                            type="file"
-                            placeholder="logo"
-                            accept="image/png, image/jpg, image/jpeg"
-                            name="logo"
-                            id="logo"
-                        />
-                    </div>
-
-
-
-                    <div className="flex flex-col gap-1 my-1">
-                        <p>Preview (optional)</p>
-
-                        <label
-                            htmlFor="preview"
-                            className="p-[0.75rem] cursor-pointer flex gap-2 items-center border-[2px] border-black rounded-[10px]"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="size-6 flex-shrink-0"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-                                />
-                            </svg>
-                            <span id="imagesPlaceholder" className="text-base text-gray-500">
-                                Upload preview
-                            </span>
-                        </label>
-
-                        <Input
-                            onChange={(e) => (setData('preview', e.target.files[0]))}
-                            className="hidden"
-                            type="file"
-                            placeholder="preview"
-                            accept="image/png, image/jpg, image/jpeg"
-                            name="preview"
-                            id="preview"
-                        />
-                    </div>
-
-                    <Button
-                        type="submit"
-                        className="mt-2 w-full hover:bg-alpha hover:text-black transition-all duration-150 ">
-                        Submit
-                    </Button>
-                </form>
-
             </DialogContent>
         </Dialog>
     )
