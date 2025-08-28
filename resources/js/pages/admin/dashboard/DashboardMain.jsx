@@ -3,6 +3,7 @@ import CoworkingRequests from './partials/CoworkingRequests';
 import NewsLetter from './partials/NewsLetter';
 import StatisticCards from './partials/StatisticCards';
 import UnreadMessages from './partials/UnreadMessages';
+import Chart from './partials/charts/Charts';
 
 import { useState } from 'react';
 
@@ -81,6 +82,7 @@ const DashboardMain = () => {
             <div className="min-h-[80vh] space-y-6">
                 {/* statistique cards */}
                 <StatisticCards />
+                <Chart />
                 <CoworkingRequests />
                 {/* Unread Messages */}
                 <div className="flex w-full gap-5">
