@@ -4,7 +4,8 @@ import AppLayout from "@/layouts/app-layout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { X, Newspaper, Upload, Image as ImageIcon, Plus } from "lucide-react";
+import { X, Newspaper, Upload, Image as ImageIcon, Plus, Images } from "lucide-react";
+import GalleryStore from "../gallery/partials/galleryStore";
 
 const breadcrumbs = [{ title: "Press", href: "/admin/press" }];
 
@@ -65,10 +66,20 @@ export default function Press() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Press" />
 
-            <div className="min-h-screen bg-gray-50 p-6">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-2xl font-bold text-gray-900">Press</h1>
+            <div className="min-h-screen bg-white ">
+                
+                    <div className="bg-[#212529] py-8 text-white">
+                        <div className="flex items-center justify-between px-6">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-lg bg-[#fee819] p-3">
+                                    <Newspaper className="h-8 w-8 text-[#212529]" />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-bold">Press Releases</h1>
+                                    <p className="mt-1 text-gray-300">Manage and showcase all your press coverage and media mentions</p>
+                                </div>
+                            </div>
+                            
                         <Dialog open={isOpen} onOpenChange={setIsOpen}>
                             <DialogTrigger asChild>
                                 <Button className="transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
@@ -493,14 +504,15 @@ export default function Press() {
                                 </div>
                             </DialogContent>
                         </Dialog>
+                        </div>
                     </div>
 
                     {/* Press List */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
                         {presses.map((press) => (
                             <div
                                 key={press.id}
-                                className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden"
+                                className="border rounded-lg shadow hover:shadow-xl transition-transform duration-300 hover:-translate-y-2 p-3 flex flex-col justify-between bg-gray-50 text-[#212529]"
                             >
                                 <div className="h-48 overflow-hidden">
                                     <img
@@ -520,7 +532,7 @@ export default function Press() {
                                     </div>
                                     <a
                                         href={route("press.show", press.id)}
-                                        className="inline-block bg-[#fee819] text-[#212529] font-bold rounded-2xl px-4 py-1.5 hover:bg-[#212529] hover:text-white transition"
+                                        className="inline-block bg-beta text-white font-bold rounded-2xl px-4 py-1.5 hover:bg-alpha hover:text-beta transition"
                                     >
                                         See press
                                     </a>
@@ -529,7 +541,7 @@ export default function Press() {
                         ))}
                     </div>
                 </div>
-            </div>
+            
         </AppLayout>
     );
 }
