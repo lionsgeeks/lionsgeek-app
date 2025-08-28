@@ -50,18 +50,9 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
     return (
         <div className="space-y-4">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Filter className="h-5 w-5 text-[#212529]" />
-                    <h3 className="text-lg font-semibold text-[#212529]">Filters</h3>
-                    {hasActiveFilters && (
-                        <Badge className="bg-[#fee819] text-[#212529] rounded-lg px-2 py-1">
-                            Active
-                        </Badge>
-                    )}
-                </div>
-                {hasActiveFilters && (
+            {/* Reset Button */}
+            {hasActiveFilters && (
+                <div className="flex justify-end">
                     <Button
                         variant="ghost"
                         size="sm"
@@ -71,8 +62,8 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                         <RotateCcw className="h-4 w-4 mr-1" />
                         Reset
                     </Button>
-                )}
-            </div>
+                </div>
+            )}
 
             {/* Filter Controls */}
             <div className="flex flex-wrap items-center gap-3">

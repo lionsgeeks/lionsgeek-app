@@ -13,7 +13,7 @@ class InfosessionController extends Controller
      */
     public function index()
     {
-        $infosessions = InfoSession::all();
+        $infosessions = InfoSession::withCount('participants')->get();
         return Inertia::render('admin/infoSessions/index', [
             'infosessions' => $infosessions
         ]);

@@ -28,7 +28,7 @@ export default function EventForm({ event = null, onClose, onSuccess }) {
     });
 
     const [activeTab, setActiveTab] = useState("en");
-    const [previewImage, setPreviewImage] = useState(event?.cover ? `${appUrl}/storage/${event.cover}` : null);
+    const [previewImage, setPreviewImage] = useState(event?.cover ? `${appUrl}/storage/images/events/${event.cover}` : null);
 
     const handleSubmit = (e) => {
         e.preventDefault();

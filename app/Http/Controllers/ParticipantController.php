@@ -160,17 +160,82 @@ class ParticipantController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Participant $participant)
     {
-        //
+        $sessions = InfoSession::all();
+        return Inertia::render('admin/participants/partials/participants-edit', [
+            'participant' => $participant->load('infoSession'),
+            'sessions' => $sessions
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Participant $participant)
     {
-        //
+        $messages = [
+            'email.unique' => 'This email already exists',
+        ];
+        
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:participants,email,' . $participant->id,
+            'birthday' => 'required|date',
+            'phone' => 'required|string|max:20',
+            'city' => 'required|string|max:255',
+            'prefecture' => 'required|string|max:255',
+            'session' => 'required|exists:info_sessions,id',
+            'step' => 'required|string|in:info_session,interview,interview_pending,interview_failed,jungle,jungle_failed,coding_school,media_school',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], $messages);
+
+        try {
+            $updateData = [
+                'full_name' => $request->full_name,
+                'email' => $request->email,
+                'birthday' => $request->birthday,
+                'phone' => $request->phone,
+                'city' => $request->city,
+                'prefecture' => $request->prefecture,
+                'info_session_id' => $request->session,
+                'current_step' => $request->step,
+            ];
+
+            // Calculate age from birthday
+            $birthObj = new \DateTime($request->birthday);
+            $currentDay = new \DateTime();
+            $age = $birthObj->diff($currentDay)->y;
+            $updateData['age'] = $age;
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($participant->image && file_exists(public_path('storage/images/participants/' . $participant->image))) {
+                    unlink(public_path('storage/images/participants/' . $participant->image));
+                }
+                
+                $image = $request->file('image');
+                $imageName = time() . '_' . $participant->id . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('storage/images/participants'), $imageName);
+                $updateData['image'] = $imageName;
+            }
+
+            $participant->update($updateData);
+
+            flash()
+                ->option('position', 'bottom-right')
+                ->success('Participant updated successfully!');
+
+            return redirect()->route('participants.show', $participant->id);
+
+        } catch (\Throwable $th) {
+            flash()
+                ->option('position', 'bottom-right')
+                ->error('Something went wrong while updating the participant!');
+            
+            return back()->withInput();
+        }
     }
 
     /**

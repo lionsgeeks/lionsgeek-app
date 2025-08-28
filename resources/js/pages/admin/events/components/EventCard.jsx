@@ -27,12 +27,11 @@ export default function EventCard({ event, onEdit, onDelete }) {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
+            day: 'numeric',
             weekday: 'long',
             year: 'numeric',
             month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+
         });
     };
 
@@ -74,7 +73,7 @@ export default function EventCard({ event, onEdit, onDelete }) {
 
     return (
         <>
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200 h-68 p-0">
+            <Card onClick={handleView} className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200 h-68 p-0">
                 <div className="relative h-full">
                     <img
                         src={`${appUrl}/storage/images/events/${event.cover}`}
@@ -126,17 +125,17 @@ export default function EventCard({ event, onEdit, onDelete }) {
                             {getDisplayDescription(event.description)}
                         </p>
                         <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-sm">
-                                <Users className="h-4 w-4" />
-                                <span>{event.capacity} capacity</span>
-                            </div>
-                            <Button
+                                <div className="flex items-center gap-2 text-sm">
+                                    <Users className="h-4 w-4" />
+                                    <span>{event.capacity} capacity</span>
+                                </div>
+                            {/* <Button
                                 size="sm"
                                 variant="secondary"
                                 onClick={handleView}
                             >
                                 View Details
-                            </Button>
+                            </Button> */}
                         </div>
                     </div>
                 </div>

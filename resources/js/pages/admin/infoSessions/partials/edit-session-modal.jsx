@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { router, useForm } from '@inertiajs/react';
-import { Calendar, Loader2, Users, GraduationCap, Code2, Palette } from 'lucide-react';
+import { Calendar, Loader2, Users, GraduationCap, Code2, Palette, X } from 'lucide-react';
 import { useEffect } from 'react';
 
 export function EditSessionModal({ open, onOpenChange, session, loading = false }) {
@@ -45,22 +45,35 @@ export function EditSessionModal({ open, onOpenChange, session, loading = false 
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[500px] rounded-lg">
+            <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto p-0 sm:max-w-[700px] [&>button]:hidden">
                 {/* Header */}
-                <div className="bg-[#212529] p-5 text-white rounded-t-lg -m-6 mb-6">
-                    <DialogHeader>
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 bg-[#fee819] rounded-lg">
-                                <GraduationCap className="h-5 w-5 text-[#212529]" />
+                <div className="relative rounded-t-lg bg-[#212529] p-6 text-white">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-[#fee819] p-2">
+                                <GraduationCap className="h-6 w-6 text-[#212529]" />
                             </div>
-                            <DialogTitle className="text-xl font-semibold">Edit Info Session</DialogTitle>
+                            <div>
+                                <DialogTitle className="text-xl font-bold text-white">
+                                    Edit Info Session
+                                </DialogTitle>
+                                <p className="mt-1 text-sm text-gray-300">
+                                    Update the details of this informational session
+                                </p>
+                            </div>
                         </div>
-                        <DialogDescription className="text-white/90">
-                            Update the details of this informational session.
-                        </DialogDescription>
-                    </DialogHeader>
+                        {/* Custom close button */}
+                        <button
+                            onClick={() => onOpenChange(false)}
+                            className="rounded-lg p-2 text-white transition-colors duration-200 hover:bg-white/10 hover:text-[#fee819]"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                    </div>
                 </div>
-                <form onSubmit={handleSubmit} className="space-y-5">
+
+                <div className="p-6">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Session Title */}
                     <div className="space-y-2">
                         <Label htmlFor="edit-title" className="text-sm font-medium text-[#212529]">
@@ -158,17 +171,28 @@ export function EditSessionModal({ open, onOpenChange, session, loading = false 
                         </div>
                     </div>
 
-                    {/* Actions */}
-                    <DialogFooter className="flex gap-3 pt-4 border-t">
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading} className="text-[#212529] hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">
-                            Cancel
-                        </Button>
-                        <Button type="submit" disabled={loading} className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">
-                            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Update Session
-                        </Button>
-                    </DialogFooter>
-                </form>
+                        {/* Action Buttons */}
+                        <div className="flex gap-3 pt-4">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => onOpenChange(false)}
+                                disabled={loading}
+                                className="flex-1 border-gray-300 text-gray-700 transition-all duration-300 ease-in-out hover:bg-gray-100"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={loading}
+                                className="flex-1 transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+                            >
+                                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                Update Session
+                            </Button>
+                        </div>
+                    </form>
+                </div>
             </DialogContent>
         </Dialog>
     );

@@ -89,7 +89,9 @@ class EventController extends Controller
      * Display the specified resource for clients.
      */
     public function show(Event $event)
+
     {
+        $event->load('bookings');
         return Inertia::render('client/EventDetails/eventdetail', [
             'event' => $event
 
