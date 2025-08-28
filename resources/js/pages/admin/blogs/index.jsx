@@ -3,7 +3,7 @@ import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { CalendarIcon, Delete, Edit, Plus, Trash2 } from "lucide-react";
+import { BookOpen, CalendarIcon, Delete, Edit, Images, Plus, Trash2 } from "lucide-react";
 
 
 const breadcrumbs = [
@@ -37,24 +37,34 @@ export default function BlogAdmin() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Blogs" />
-            <div className="p-6">
-
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Blogs</h1>
-                        <p className="text-gray-600">Manage blog posts created and published on your platform</p>
+            <div className="min-h-screen bg-white">
+                <div className="bg-[#212529] py-8 text-white">
+                    <div className="mx-auto max-w-7xl px-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-lg bg-[#fee819] p-3">
+                                    <BookOpen  className="h-8 w-8 text-[#212529]" />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-bold">Blogs</h1>
+                                    <p className="mt-1 text-gray-300">Manage blog posts created and published on your platform</p>
+                                </div>
+                            </div>
+                            <a href="/admin/blogs/create">
+                                <Button
+                                    className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                                >
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Write a New Blog
+                                </Button>
+                            </a>
+                        </div>
                     </div>
-                    <a href="/admin/blogs/create">
-                        <Button
-                            className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-                        >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Write a New Blog
-                        </Button>
-                    </a>
                 </div>
+                
+                <div className="mx-auto max-w-7xl px-6 pt-8">
 
-                <div className="mb-4">
+                <div className="mb-4 ">
                     <h2 className="text-lg font-semibold text-[#212529]">All Blogs ({totalBlogs}) </h2>
                 </div>
                 <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -121,6 +131,7 @@ export default function BlogAdmin() {
                             </div>
                         </DialogContent>
                     </Dialog>
+                </div>
                 </div>
 
             </div>
