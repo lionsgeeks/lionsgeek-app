@@ -114,7 +114,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                             </button>
 
                             {open && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg py-1">
+                                <div className="absolute right-0 z-10 mt-2 w-48 bg-white border rounded-lg shadow-lg py-1">
                                     <Link
                                         href="/profile"
                                         className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
