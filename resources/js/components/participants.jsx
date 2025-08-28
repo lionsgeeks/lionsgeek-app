@@ -46,7 +46,7 @@ function Participants({ bookings, tab }) {
   };
 
   return (
-    <Card>
+    <Card className="hidden md:block">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">

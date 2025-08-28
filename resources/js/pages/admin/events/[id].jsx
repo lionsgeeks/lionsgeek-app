@@ -100,8 +100,8 @@ export default function AdminEventShow() {
             <div className="flex-1 flex flex-col overflow-hidden">
                 <main className="flex-1 overflow-y-auto p-6">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-4">
+                    <div className="flex items-center md:justify-between justify-end mb-6">
+                        <div className="md:flex items-center gap-4 hidden ">
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -112,7 +112,7 @@ export default function AdminEventShow() {
                             </Button>
                             <h1 className="text-2xl font-bold">Event Details</h1>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex   gap-2">
                             <Button onClick={handleEdit}>
                                 <Edit className="h-4 w-4 mr-2" />
                                 Edit
