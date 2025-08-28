@@ -1,11 +1,12 @@
-import AppLayout from "@/layouts/app-layout"
-import { Head, useForm, usePage } from "@inertiajs/react";
-import ProjectModal from "./partials/projectModal";
-import { useState } from "react";
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from "@/components/ui/input";
-import { Search, Trash } from "lucide-react";
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import AppLayout from '@/layouts/app-layout';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Filter, FolderOpen, Search, RotateCcw, Trash, Pen } from 'lucide-react';
+import { useState } from 'react';
+import ProjectModal from './partials/projectModal';
 
 const breadcrumbs = [
     {
@@ -14,116 +15,231 @@ const breadcrumbs = [
     },
 ];
 export default function ProjectsAdmin() {
-    const { projects } = usePage().props;
+    const { projects = [] } = usePage().props;
     const { delete: destroy } = useForm();
-    const [isOpen, setIsOpen] = useState(false);
-    const [projectID, setProjectID] = useState(null);
-
     const [search, setSearch] = useState('');
 
-    const filteredProj = projects.filter((pro) =>
-        pro?.name?.toLowerCase().includes(search?.toLowerCase())
+    const filteredProjects = projects.filter((project) =>
+        project?.name?.toLowerCase().includes(search?.toLowerCase()) ||
+        project?.description?.en?.toLowerCase().includes(search?.toLowerCase()) ||
+        project?.description?.fr?.toLowerCase().includes(search?.toLowerCase()) ||
+        project?.description?.ar?.toLowerCase().includes(search?.toLowerCase())
     );
 
-    const onDeleteProject = () => {
-        destroy(route('projects.destroy', projectID), {
-            onSuccess: () => {
-                setIsOpen(false);
-            }
-        })
-    }
+    const onDeleteProject = (projectID) => {
+        destroy(route('projects.destroy', projectID));
+    };
 
-    const onConfirmDelete = (projectID) => {
-        setProjectID(projectID);
-        setIsOpen(true);
-    }
+    const hasSearch = search.length > 0;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Projects" />
-            <div className="p-6">
-                <div className="relative w-[300px]">
-                    <Input
-                        type="text"
-                        placeholder="Search Project"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                    <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+
+            <div className="min-h-screen bg-white">
+                {/* Header Section */}
+                <div className="bg-[#212529] py-8 text-white">
+                    <div className="mx-auto max-w-7xl px-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-lg bg-[#fee819] p-3">
+                                    <FolderOpen className="h-8 w-8 text-[#212529]" />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-bold">Project Management</h1>
+                                    <p className="mt-1 text-gray-300">Manage your projects and portfolios</p>
+                                </div>
+                            </div>
+                            <ProjectModal />
+                        </div>
+                    </div>
                 </div>
 
-                <div className="mt-4">
-
-                    <div className="w-full grid grid-cols-3 gap-2 min-h-[40vh]">
-                        <ProjectModal />
-
-                        {filteredProj.map((project) => (
-                            <div
-                                key={project.id}
-                                className="
-                                border-t-black border-t-4
-                                shadow-l bg-[#fafafa] border border-gray-500/50 rounded-lg p-5"
-                            >
-                                <div className="py-2 flex items-center justify-between">
-                                    <div className="flex items-center gap-x-3">
-                                        <img
-                                            className="w-14 h-14 rounded-full object-cover"
-                                            src={`/storage/images/projects/${project.logo}`}
-                                            alt=""
-                                        />
-                                        <h1 className="font-bold lg:text-lg">
-                                            {project.name.length > 10 ? project.name.slice(0, 15) + '...' : project.name}
-                                        </h1>
+                {/* Statistics Cards */}
+                <div className="mx-auto -mt-4 max-w-7xl px-6">
+                    <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Total Projects</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{projects.length}</p>
                                     </div>
-
-                                    <div className="relative flex items-center gap-x-3">
-                                        <ProjectModal project={project} />
-
-                                        <button
-                                            onClick={() => { onConfirmDelete(project.id) }}
-                                        >
-                                            <Trash color="red" />
-                                        </button>
-
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <FolderOpen className="h-6 w-6 text-[#212529]" />
                                     </div>
                                 </div>
+                            </CardContent>
+                        </Card>
 
-                                <div className="py-3">
-                                    <img
-                                        className="w-full shadow-l h-[12rem] rounded-lg object-cover"
-                                        src={`/storage/images/projects/${project.preview || project.logo}`}
-                                        alt=""
-                                    />
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Active Projects</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{projects.length}</p>
+                                    </div>
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <FolderOpen className="h-6 w-6 text-[#212529]" />
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Search Results</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{filteredProjects.length}</p>
+                                    </div>
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <Search className="h-6 w-6 text-[#212529]" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
+                </div>
 
-                    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                        <DialogContent>
-                            <DialogTitle>
-                                Are You Sure You Want To Delete This Project ?
-                            </DialogTitle>
-                            <p>
-                                You Will Lost All The Information and Images Related to This Project.
-                            </p>
-
-                            <div className="flex items-center justify-end gap-2">
-                                <Button
-                                    onClick={() => { setIsOpen(false) }}
-                                >
-                                    Cancel
-                                </Button>
-
-                                <Button
-                                    variant="destructive"
-                                    onClick={() => onDeleteProject()}
-                                >
-                                    Delete
-                                </Button>
+              
+                <div className="mx-auto mb-8 max-w-7xl px-6">
+                    <Card className="border-0 bg-gray-50">
+                        <CardContent className="p-6">
+                            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                                <div className="flex items-center gap-2">
+                                    <Filter className="h-5 w-5 text-[#212529]" />
+                                    <h3 className="text-lg font-semibold text-[#212529]">Filter Projects</h3>
+                                    {hasSearch && (
+                                        <Badge variant="secondary" className="bg-gray-100 px-2 py-1 text-[#212529]">
+                                            {filteredProjects.length} result{filteredProjects.length !== 1 ? 's' : ''}
+                                        </Badge>
+                                    )}
+                                </div>
+                                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                                    <div className="relative">
+                                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-500" />
+                                        <Input
+                                            type="text"
+                                            placeholder="Search projects..."
+                                            value={search}
+                                            onChange={(e) => setSearch(e.target.value)}
+                                            className="w-full pl-10 transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20 sm:w-80"
+                                        />
+                                    </div>
+                                    {hasSearch && (
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setSearch('')}
+                                            className="border-gray-300 text-gray-700 transition-all duration-200 ease-in-out hover:bg-gray-100"
+                                        >
+                                            <RotateCcw className="mr-2 h-4 w-4" />
+                                            Reset
+                                        </Button>
+                                    )}
+                                </div>
                             </div>
-                        </DialogContent>
-                    </Dialog>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="mx-auto max-w-7xl px-6 pb-8">
+                    {projects.length === 0 ? (
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-12 text-center">
+                                <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
+                                    <FolderOpen className="h-12 w-12 text-gray-400" />
+                                </div>
+                                <h2 className="mb-3 text-2xl font-bold text-[#212529]">No Projects Available</h2>
+                                <p className="mx-auto mb-6 max-w-md text-gray-600">
+                                    Get started by creating your first project. Showcase your work and organize your portfolio.
+                                </p>
+                                <ProjectModal />
+                            </CardContent>
+                        </Card>
+                    ) : filteredProjects.length === 0 ? (
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-12 text-center">
+                                <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
+                                    <Search className="h-12 w-12 text-gray-400" />
+                                </div>
+                                <h2 className="mb-3 text-2xl font-bold text-[#212529]">No Results Found</h2>
+                                <p className="mb-6 text-gray-600">No projects match your search criteria. Try adjusting your search terms.</p>
+                                <Button variant="outline" onClick={() => setSearch('')} className="border-gray-300 text-gray-700 hover:bg-gray-100">
+                                    <RotateCcw className="mr-2 h-4 w-4" />
+                                    Clear Search
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                            {filteredProjects.map((project, index) => (
+                                <Card
+                                    key={index}
+                                    className="flex h-full transform cursor-pointer flex-col overflow-hidden border-0 bg-white p-0 shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl"
+                                >
+                                    <div className="relative">
+                                        <img
+                                            className="h-48 w-full object-cover"
+                                            src={`/storage/images/projects/${project.preview || project.logo}`}
+                                            alt={project.name || 'Project preview'}
+                                            onError={(e) => {
+                                                e.target.src =
+                                                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjZjJmMmYyIi8+CjxwYXRoIGQ9Ik0xMiA5QzEwLjM0IDkgOSAxMC4zNCA5IDEyUzEwLjM0IDE1IDEyIDE1IDE1IDEzLjY2IDE1IDEyIDEzLjY2IDkgMTIgOVoiIGZpbGw9IiM5Y2E0YWYiLz4KPC9zdmc+';
+                                            }}
+                                        />
+                                        <div className="absolute top-3 right-3">
+                                            <img
+                                                className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-lg"
+                                                src={`/storage/images/projects/${project.logo}`}
+                                                alt={project.name}
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <CardContent className="flex-1 p-4">
+                                        <h3 className="mb-2 line-clamp-2 text-lg font-semibold text-[#212529]">
+                                            {project.name || 'Untitled Project'}
+                                        </h3>
+                                        <p className="line-clamp-2 min-h-[20px] text-sm text-gray-600">
+                                            {project.description?.en || project.description?.fr || project.description?.ar || 'No description available'}
+                                        </p>
+                                    </CardContent>
+
+                                    <CardFooter className="p-4 pt-0">
+                                        <div className="flex w-full items-center justify-between gap-2">
+                                            <div className="flex gap-2">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                    }}
+                                                    className="transform text-[#212529] transition-all duration-300 ease-in-out hover:scale-110 hover:bg-gray-100"
+                                                >
+                                                    <ProjectModal project={project} />
+                                                </Button>
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onDeleteProject(project.id);
+                                                }}
+                                                className="transform text-[#ff7376] transition-all duration-300 ease-in-out hover:scale-110 hover:bg-[#ff7376]/10"
+                                            >
+                                                <Trash className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </CardFooter>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </AppLayout>
