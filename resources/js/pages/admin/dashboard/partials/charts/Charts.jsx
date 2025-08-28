@@ -1,12 +1,81 @@
-import React from 'react';
-import BarChart from './partials/BarChart'
+import React, { useEffect, useState } from "react"
+import BarChart from "./components/BarChart.js"
+import { DonutChart } from "./components/PieChart.js"
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardContent,
+} from "@/components/ui/card"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { BarChart2 } from "lucide-react"
+import { useForm, usePage } from "@inertiajs/react"
 
-const charts = () => {
+const Chart = () => {
+
+    const { get } = useForm()
+    const { allsessions } = usePage().props;
+    // for remove private session
+    const sessions = allsessions.filter(session => session.name.toLowerCase() != 'private session'.toLowerCase())
+    // for selected session
+    const defaultSessionID = sessions[sessions.length - 1].id
+
+    const [selectedSession, setSelectedSession] = useState(defaultSessionID)
+    const [barChart, setBarChart] = useState([])
+
+
+    useEffect(() => {
+        if (!selectedSession) return
+
+        fetch(`/admin/getChartData/${selectedSession}`)
+            .then((res) => res.json())
+            .then((data) => {
+                setBarChart(data.BarChart)
+                
+            })
+            .catch((err) => console.error("Error fetching chart data:", err))
+
+
+    }, [selectedSession])
+
     return (
-        <>
-            <BarChart />
-        </>
-    );
-};
+        <Card className="w-full">
+            {/* Header with title + select */}
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <BarChart2 color="#ffc803" className="h-6 w-6" />
+                    <CardTitle className="text-xl font-semibold">Analyse</CardTitle>
+                </div>
 
-export default charts;
+                <Select value={selectedSession} onValueChange={(value) => setSelectedSession(value)}>
+                    <SelectTrigger className="w-[20%]">
+                        <SelectValue placeholder="Select Session" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {sessions?.map((session) => (
+                            <SelectItem key={session.id} value={session.id}>
+                                {session.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </CardHeader>
+
+            {/* Content with charts */}
+            <CardContent>
+                <div className="flex flex-row-reverse gap-5">
+                    <DonutChart />
+                    <BarChart  barChart={barChart} />
+                </div>
+            </CardContent>
+        </Card>
+    )
+}
+
+export default Chart
