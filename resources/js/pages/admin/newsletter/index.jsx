@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Mail, Send, Users, History, Calendar, MessageSquare } from "lucide-react";
 
 const breadcrumbs = [
     {
@@ -15,7 +17,7 @@ const breadcrumbs = [
 
 
 export default function NewsletterAdmin() {
-    const { subscribers, lastnews } = usePage().props;
+    const { subscribers = [], lastnews = [] } = usePage().props;
     const { data, setData, post } = useForm({
         subject: '',
         content: '',
@@ -25,97 +27,208 @@ export default function NewsletterAdmin() {
         e.preventDefault();
         post(route('newsletter.store'))
     };
+
+    // Format date function
+    const formatDate = (dateString) => {
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (error) {
+            return dateString;
+        }
+    };
+
+    // Calculate statistics
+    const totalSubscribers = subscribers?.length || 0;
+    const totalNewsletters = lastnews?.length || 0;
+    const recentNewsletters = lastnews?.slice(0, 5) || [];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Newsletter" />
-            <div className="p-6">
-                <div className="flex md:flex-row flex-col gap-2 p-4 rounded-lg">
-                    {/* Newsletter Form */}
-                    <form
-                        className="md:w-1/2 p-3 flex flex-col gap-3 shadow-lg rounded"
-                        onSubmit={handleSendNewsletter}
-                    >
-                        <div>
-                            <h1 className="text-xl font-bold">Send Newsletter</h1>
-                            <p>Compose and send a newsletter to all subscribers</p>
-                        </div>
 
-                        <div className="flex flex-col gap-2">
-                            <Label className="font-bold">Subject</Label>
-                            <Input
-                                name="subject"
-                                className="rounded-sm"
-                                type="text"
-                                placeholder="Newsletter subject"
-                                value={data.subject} required
-                                onChange={(e) => setData('subject', e.target.value)}
-                            />
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <Label className="font-bold">Content</Label>
-                            <Textarea
-                                name="content"
-                                className="rounded-sm"
-                                cols="30"
-                                rows="7"
-                                placeholder="Write your newsletter content here ..."
-                                value={data.content} required
-                                onChange={(e) => setData('content', e.target.value)}
-                            />
-                        </div>
-
-                        <Button
-                            type="submit"
-                            className="hover:bg-alpha hover:text-black transition-all duration-150"
-                        >
-                            Send Newsletter
-                        </Button>
-                    </form>
-
-                    {/* Sidebar */}
-                    <div className="md:w-1/2 flex flex-col gap-3 shadow-lg rounded">
-                        <div className="text-xl bg-white p-4 flex flex-col gap-4">
-                            <h1 className="font-bold">Total Subscribers</h1>
-                            <p className="font-medium">{subscribers.length}</p>
-                        </div>
-
-                        <div className="bg-white p-6">
-                            <div>
-                                <h1 className="text-xl font-bold">Newsletter History</h1>
-                                <p>Recent newsletters sent to subscribers</p>
-                            </div>
-
-                            {lastnews.length > 0 ? (
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className="border-b">
-                                            <th className="py-3 text-start">Subject</th>
-                                            <th className="py-3 text-start">Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {lastnews.map((item, index) => (
-                                            <tr key={index} className="border-b">
-                                                <td className="py-3 text-start">
-                                                    {item.subject.length > 35
-                                                        ? item.subject.slice(0, 35) + '...'
-                                                        : item.subject}
-                                                </td>
-                                                <td className="py-3 text-start">
-                                                    {item.created_at}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            ) : (
-                                <div className="flex flex-col items-center justify-center min-h-[40vh] text-black/50">
-                                    <h1 className="text-xl font-bold">Not Available</h1>
-                                    <p>It looks like you haven't sent any newsletters yet.</p>
+            <div className="min-h-screen bg-white">
+                {/* Header Section */}
+                <div className="bg-[#212529] py-8 text-white">
+                    <div className="mx-auto max-w-7xl px-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-lg bg-[#fee819] p-3">
+                                    <Mail className="h-8 w-8 text-[#212529]" />
                                 </div>
-                            )}
+                                <div>
+                                    <h1 className="text-3xl font-bold">Newsletter Management</h1>
+                                    <p className="mt-1 text-gray-300">Compose and send newsletters to subscribers</p>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Statistics Cards */}
+                <div className="mx-auto -mt-4 max-w-7xl px-6">
+                    <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Total Subscribers</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{totalSubscribers}</p>
+                                    </div>
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <Users className="h-6 w-6 text-[#212529]" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Newsletters Sent</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{totalNewsletters}</p>
+                                    </div>
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <Send className="h-6 w-6 text-[#212529]" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Recent Activity</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{recentNewsletters.length}</p>
+                                    </div>
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <History className="h-6 w-6 text-[#212529]" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+
+                {/* Main Content */}
+                <div className="mx-auto max-w-7xl px-6 pb-8">
+                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                        {/* Newsletter Form */}
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="mb-6 flex items-center gap-3">
+                                    <div className="rounded-lg bg-[#fee819] p-2">
+                                        <MessageSquare className="h-6 w-6 text-[#212529]" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-bold text-[#212529]">Compose Newsletter</h2>
+                                        <p className="text-gray-600">Create and send a newsletter to all subscribers</p>
+                                    </div>
+                                </div>
+
+                                <form onSubmit={handleSendNewsletter} className="space-y-6">
+                                    <div>
+                                        <Label className="text-sm font-medium text-gray-700">Subject Line</Label>
+                                        <Input
+                                            name="subject"
+                                            type="text"
+                                            placeholder="Enter newsletter subject..."
+                                            value={data.subject}
+                                            required
+                                            onChange={(e) => setData('subject', e.target.value)}
+                                            className="mt-2 transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label className="text-sm font-medium text-gray-700">Content</Label>
+                                        <Textarea
+                                            name="content"
+                                            rows="8"
+                                            placeholder="Write your newsletter content here..."
+                                            value={data.content}
+                                            required
+                                            onChange={(e) => setData('content', e.target.value)}
+                                            className="mt-2 transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20"
+                                        />
+                                    </div>
+
+                                    <Button
+                                        type="submit"
+                                        className="w-full transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+                                    >
+                                        <Send className="mr-2 h-4 w-4" />
+                                        Send Newsletter to {totalSubscribers} Subscriber{totalSubscribers !== 1 ? 's' : ''}
+                                    </Button>
+                                </form>
+                            </CardContent>
+                        </Card>
+
+                        {/* Newsletter History */}
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="mb-6 flex items-center gap-3">
+                                    <div className="rounded-lg bg-gray-100 p-2">
+                                        <History className="h-6 w-6 text-[#212529]" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-bold text-[#212529]">Newsletter History</h2>
+                                        <p className="text-gray-600">Recent newsletters sent to subscribers</p>
+                                    </div>
+                                </div>
+
+                                {lastnews.length > 0 ? (
+                                    <div className="space-y-4">
+                                        {recentNewsletters.map((newsletter, index) => (
+                                            <div key={index} className="rounded-lg border border-gray-200 p-4 transition-all duration-200 hover:bg-gray-50">
+                                                <div className="flex items-start justify-between">
+                                                    <div className="flex-1">
+                                                        <h3 className="font-semibold text-[#212529] line-clamp-1">
+                                                            {newsletter.subject}
+                                                        </h3>
+                                                        <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+                                                            <Calendar className="h-4 w-4" />
+                                                            <span>{formatDate(newsletter.created_at)}</span>
+                                                        </div>
+                                                        {newsletter.content && (
+                                                            <p className="mt-2 text-sm text-gray-500 line-clamp-2">
+                                                                {newsletter.content.length > 100 
+                                                                    ? newsletter.content.substring(0, 100) + '...'
+                                                                    : newsletter.content
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {lastnews.length > 5 && (
+                                            <div className="text-center">
+                                                <p className="text-sm text-gray-500">
+                                                    Showing {recentNewsletters.length} of {totalNewsletters} newsletters
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                                            <Mail className="h-8 w-8 text-gray-400" />
+                                        </div>
+                                        <h3 className="mb-2 text-lg font-semibold text-[#212529]">No Newsletters Yet</h3>
+                                        <p className="text-gray-600">You haven't sent any newsletters yet. Create your first one!</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </div>
