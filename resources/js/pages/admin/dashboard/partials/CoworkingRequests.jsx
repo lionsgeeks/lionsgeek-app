@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import dayjs from 'dayjs';
+import { Briefcase, UserCheck } from 'lucide-react';
 
 const CoworkingRequests = () => {
     const { coworkingsRequest } = usePage().props;
@@ -7,7 +8,7 @@ const CoworkingRequests = () => {
     return (
         <div className="rounded-xl bg-white p-5 shadow-md">
             <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold">Coworking Requests</h2>
+                <h2 className="text-xl font-bold flex items-center gap-x-5"><Briefcase color='#ffc803' />Coworking Requests</h2>
                 <Link href="/admin/coworking" className="rounded bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black">
                     View All
                 </Link>{' '}
@@ -34,13 +35,12 @@ const CoworkingRequests = () => {
                                     <td className="px-4 py-3 text-gray-600">{request.email}</td>
                                     <td className="px-4 py-3">
                                         <span
-                                            className={`rounded-full px-2 py-1 text-xs font-medium ${
-                                                request.needs?.toLowerCase().includes('studio')
+                                            className={`rounded-full px-2 py-1 text-xs font-medium ${request.needs?.toLowerCase().includes('studio')
                                                     ? 'bg-blue-100 text-blue-700'
                                                     : request.needs?.toLowerCase().includes('workstation')
-                                                      ? 'bg-purple-100 text-purple-700'
-                                                      : 'bg-gray-100 text-gray-700'
-                                            }`}
+                                                        ? 'bg-purple-100 text-purple-700'
+                                                        : 'bg-gray-100 text-gray-700'
+                                                }`}
                                         >
                                             {request.needs || '-'}
                                         </span>

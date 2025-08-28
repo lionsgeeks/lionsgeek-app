@@ -65,7 +65,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
 
-    Route::get('/getChartData/{id?}', function (Request $request, $id = null) {
+    Route::get('/getChartData/{id?}', function ($id = null) {
         // If no id is provided, fallback to the latest session
         $session = $id
             ? InfoSession::findOrFail($id)
@@ -127,25 +127,25 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
         $PieChart = [
             [
                 'step' => 'Info Session',
-                'total'=> $successInfoSession + $absenceInfoSession,
+                'total' => $successInfoSession + $absenceInfoSession,
                 'female' => $infoSessionFemale,
                 'male' => $successInfoSession - $infoSessionFemale
             ],
             [
                 'step' => 'Interview',
-                'total'=> $successInterview + $absenceInterview + $failedInterview,
+                'total' => $successInterview + $absenceInterview + $failedInterview,
                 'female' => $interviewFemale,
                 'male' => $successInterview - $interviewFemale,
             ],
             [
                 'step' => 'Jungle',
-                'total'=> $successJungle + $absenceJungle + $failedJungle,
+                'total' => $successJungle + $absenceJungle + $failedJungle,
                 'female' => $jungleFemale,
                 'male' => $successJungle - $jungleFemale,
             ],
             [
                 'step' => 'School',
-                'total'=> ($successJungle - $confirmedSchool) + $confirmedSchool,
+                'total' => ($successJungle - $confirmedSchool) + $confirmedSchool,
                 'female' => $schoolFemale,
                 'male' => $successJungle - $schoolFemale,
             ],
