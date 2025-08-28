@@ -100,7 +100,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 });
 
 Route::post('/add-admin', [UserController::class, 'AddAdmin'])->name('add.admin');
-
+Route::fallback(function () {
+    return Inertia::render('errors/NotFound')->toResponse(request())->setStatusCode(404);
+});
 
 Route::get('/policy', function () {
     return Inertia::render('policy/policy');
