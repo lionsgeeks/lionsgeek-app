@@ -3,6 +3,7 @@ import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { BookOpen, CalendarIcon, Delete, Edit, Images, Plus, Trash2 } from "lucide-react";
 
 
 const breadcrumbs = [
@@ -18,7 +19,7 @@ export default function BlogAdmin() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedBlog, setSelectedBlog] = useState('');
 
-
+    const totalBlogs = blogs?.length || 0;
     const onDelete = () => {
         destroy(route('blogs.destroy', selectedBlog), {
             onSuccess: () => {
@@ -36,81 +37,103 @@ export default function BlogAdmin() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Blogs" />
-            <div className="p-6">
-                <div className="flex justify-end">
-                    <a href="/admin/blogs/create">
-                        <Button className="hover:bg-alpha hover:text-black transition-all duration-150">
-                            Create Blog
-                        </Button>
-                    </a>
+            <div className="min-h-screen bg-white">
+                <div className="bg-[#212529] py-8 text-white">
+                    <div className="mx-auto max-w-7xl px-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-lg bg-[#fee819] p-3">
+                                    <BookOpen  className="h-8 w-8 text-[#212529]" />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-bold">Blogs</h1>
+                                    <p className="mt-1 text-gray-300">Manage blog posts created and published on your platform</p>
+                                </div>
+                            </div>
+                            <a href="/admin/blogs/create">
+                                <Button
+                                    className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                                >
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Write a New Blog
+                                </Button>
+                            </a>
+                        </div>
+                    </div>
                 </div>
+                
+                <div className="mx-auto max-w-7xl px-6 pt-8">
 
-                <div className="mt-5">
-                    <table className="w-full">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Title</th>
-                                <th>Creation Date</th>
-                                <th>Edit Blog</th>
-                                <th>Delete Blog</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {blogs.slice().reverse().map((blog) => (
-                                <tr key={blog.id} className="text-center hover:opacity-75">
-                                    <td className="flex py-2 items-center justify-center">
-                                        <img
-                                            className="w-32 h-20 border shadow object-cover rounded"
-                                            src={`/storage/images/blog/${blog.image}`}
-                                            alt=""
-                                        />
-                                    </td>
-                                    <td>{blog.title?.en}</td>
-                                    <td>{new Date(blog.created_at).toLocaleString()}</td>
-                                    <td>
-                                        <a href={`blogs/${blog.id}`}>
-                                            <button className="cursor-pointer">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                    viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
-                                                    className="size-6">
-                                                    <path strokeLinecap="round" strokeLinejoin="round"
-                                                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                                                </svg>
-                                            </button>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <button className="text-red-600 cursor-pointer" onClick={() => onConfirmDelete(blog.id)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
-                                                className="size-6">
-                                                <path strokeLinecap="round" strokeLinejoin="round"
-                                                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                            </svg>
+                <div className="mb-4 ">
+                    <h2 className="text-lg font-semibold text-[#212529]">All Blogs ({totalBlogs}) </h2>
+                </div>
+                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {blogs.slice().reverse().map((blog) => (
+                        <div
+                            key={blog.id}
+                            className="border rounded-lg shadow hover:shadow-xl transition-transform duration-300 hover:-translate-y-2 p-3 flex flex-col justify-between bg-gray-50 text-[#212529]"
+                        >
+                            <div className="w-full h-40 overflow-hidden rounded-md">
+                                <img
+                                    className="w-full h-full object-cover"
+                                    src={`/storage/images/blog/${blog.image}`}
+                                    alt=""
+                                />
+                            </div>
+                            <h3 className="mt-3 font-semibold text-lg">
+                                {blog.title?.en}
+                            </h3>
+                            <div className="mt-4 flex items-center justify-between text-sm">
+                                <div className="flex items-center gap-3 text-gray-600">
+                                    <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                                        <CalendarIcon className="h-4 w-4" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-sm text-gray-500">Creation Date</p>
+                                        <p className="font-medium text-[#212529]">{new Date(blog.created_at).toLocaleDateString()}</p>
+                                    </div>
+
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <a href={`blogs/${blog.id}`}>
+                                        <button className="p-2 bg-white rounded-lg hover:bg-gray-100 transition-all duration-200 ease-in-out transform hover:scale-110 border">
+                                            <Edit className="h-4 w-4" />
                                         </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-
-
+                                    </a>
+                                    <button
+                                        className="text-red-600 hover:text-red-800 cursor-pointer p-2 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-110 border"
+                                        onClick={() => onConfirmDelete(blog.id)}
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
 
                     <Dialog open={isOpen} onOpenChange={setIsOpen}>
                         <DialogContent>
                             <DialogTitle>Are you sure you want to delete this blog?</DialogTitle>
 
-                            <div>
-                                <button>cancel</button>
+                            <div className="flex justify-end gap-3 mt-4">
                                 <button
+                                    className="px-3 py-1 rounded border"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    className="px-3 py-1 bg-red-600 text-white rounded"
                                     onClick={onDelete}
-                                >Delete</button>
+                                >
+                                    Delete
+                                </button>
                             </div>
-
                         </DialogContent>
                     </Dialog>
                 </div>
+                </div>
+
             </div>
         </AppLayout>
     )

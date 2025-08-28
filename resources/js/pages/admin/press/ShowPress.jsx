@@ -80,34 +80,34 @@ const ShowPress = () => {
         }
     };
 
+
     return (
         <AppLayout>
             <div className="w-full mx-auto p-8 bg-white shadow rounded-lg">
                 <div className="flex items-center justify-between pt-4">
                     <h1 className="text-2xl font-bold mb-6 text-center">Edit Press</h1>
-                    <div className=''>
+                    <div className='flex justify-end gap-2'>
+                        <div >
+                            <select
+                                value={activeTab}
+                                onChange={(e) => setActiveTab(e.target.value)}
+                                className="w-full cursor-pointer border border-black text-black rounded-lg py-2 px-3"
+                            >
+                                <option value="en">English</option>
+                                <option value="fr">Français</option>
+                                <option value="ar">العربية</option>
+                            </select>
+                        </div>
+                        
                         <button
-                            type="button"
-                            onClick={handleDelete}
-                            className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 ml-2"
+                            type="submit"
+                            disabled={processing}
+                            className="bg-beta text-white hover:bg-alpha hover:text-beta px-6 py-2 rounded-lg  disabled:opacity-70"
                         >
-                            Delete
+                            Save
                         </button>
+
                     </div>
-                </div>
-                <div className="flex border-b mb-6">
-                    {['en', 'fr', 'ar'].map((lang) => (
-                        <button
-                            key={lang}
-                            className={`flex-1 py-3 font-medium ${activeTab === lang
-                                ? 'text-blue-600 border-b-2 border-blue-600'
-                                : 'text-gray-500'
-                                }`}
-                            onClick={() => setActiveTab(lang)}
-                        >
-                            {lang === 'en' ? 'English' : lang === 'fr' ? 'Français' : 'العربية'}
-                        </button>
-                    ))}
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -141,11 +141,11 @@ const ShowPress = () => {
                             {translations[activeTab].cover}
                         </label>
                         {coverPreview && (
-                            <div className="relative mb-2">
+                            <div className="relative mb-2 h-fit ">
                                 <img
                                     src={coverPreview}
                                     alt="Cover"
-                                    className="h-40 w-full object-cover rounded"
+                                    className="h-100 w-full object-cover rounded"
                                 />
                                 <label className="absolute inset-0 bg-black/30 text-white flex items-center justify-center rounded cursor-pointer text-lg font-semibold">
                                     + Update Cover
@@ -166,18 +166,26 @@ const ShowPress = () => {
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">{translations[activeTab].logo}</label>
-                        {logoPreview && <img src={logoPreview} alt="Logo" className="h-20 mb-2" />}
-                        <input type="file" onChange={handleFileChange('logo')} />
+                        {logoPreview && 
+                        <div className="relative mb-2 h- w-fit "> 
+
+                            <img src={logoPreview} alt="Logo" className="h-20 mb-2" />
+                            <label className="absolute inset-0 bg-black/30 text-white flex items-center justify-center rounded cursor-pointer text-lg font-semibold">
+                                    + Update Logo
+                                    <input
+                                        type="file"
+                                        onChange={handleFileChange('logo')}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
+                                </label>
+                        </div>
+                        }
+                        
                         {errors.logo && <p className="text-sm text-red-600">{errors.logo}</p>}
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={processing}
-                        className="bg-alpha px-6 py-2 rounded-lg  disabled:opacity-70"
-                    >
-                        Save
-                    </button>
+
                 </form>
             </div>
         </AppLayout>
