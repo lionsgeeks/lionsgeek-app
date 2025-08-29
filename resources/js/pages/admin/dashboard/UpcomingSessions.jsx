@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { usePage } from "@inertiajs/react";
-import { CreateSessionModal } from "../../infoSessions/partials/create-session-modal";
+import { CreateSessionModal } from "../infoSessions/partials/create-session-modal";
 
 const UpcomingSessions = () => {
     const { sessions } = usePage().props;

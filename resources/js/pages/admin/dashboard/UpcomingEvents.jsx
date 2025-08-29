@@ -4,7 +4,6 @@ import { Calendar } from 'lucide-react';
 
 const UpcomingEvents = () => {
     const { upcomingEvents } = usePage().props
-    console.log(upcomingEvents);
 
 
     return (
@@ -13,7 +12,7 @@ const UpcomingEvents = () => {
                 <h2 className="text-xl font-bold flex items-center gap-x-5"><Calendar color='#ffc803' />Upcoming Events</h2>
                 <Link
                     href="/admin/events"
-                    className="rounded bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black"
+                    className="rounded-lg bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black"
                 >
                     View All
                 </Link>
@@ -45,7 +44,7 @@ const UpcomingEvents = () => {
                                     <td className="px-4 py-3 text-gray-600">
                                         <Link
                                             href={`/admin/events/${event.id}`}
-                                            className="rounded bg-beta px-5 py-2 text-white hover:bg-alpha hover:text-black"
+                                            className="rounded-lg bg-beta px-5 py-2 text-white hover:bg-alpha hover:text-black"
                                         >
                                             Details
                                         </Link>

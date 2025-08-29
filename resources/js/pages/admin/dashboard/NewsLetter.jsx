@@ -18,7 +18,7 @@ const NewsLetter = () => {
                     </svg>
                     <h2 className="text-xl font-bold">Recent Newsletters</h2>
                 </div>
-                <Link href="/admin/newsletter" className="rounded bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black">
+                <Link href="/admin/newsletter" className="rounded-lg bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black">
                     View All
                 </Link>
             </div>
