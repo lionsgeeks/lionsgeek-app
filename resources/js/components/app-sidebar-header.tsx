@@ -6,7 +6,7 @@ import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { Link, usePage, router } from "@inertiajs/react";
 import { Bell, User, Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
-export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
+export function     AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     // const page = usePage();
     // const isAdminPage = page.url.startsWith('/admin');
     const { props } = usePage();
@@ -53,9 +53,9 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                                 }}
                                 className="relative p-2 text-gray-600 hover:text-gray-800"
                             >
-                                <Bell className="h-6 w-6" />
+                                <Bell  className="h-6 w-6  text-black " />
                                 {notifications.length > 0 ? (
-                                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center p-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-5 h-5  text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                                         {notifications.length}
                                     </span>) : <span className="absolute -top-1 -right-1 inline-flex items-center justify-center p-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                                     0
@@ -105,12 +105,12 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                         </div>
 
 
-                        <div className="relative">
+                        <div className="relative bg-beta rounded-full">
                             <button
                                 onClick={() => setOpen(!open)}
-                                className="flex items-center p-2 rounded-full hover:bg-gray-100"
+                                className="flex items-center p-2 rounded-full hover:bg-yellow-500 hover:text-black"
                             >
-                                <User className="h-7 w-7 text-gray-700" />
+                                <User className="h-6 w-6 text-white hover:text-black" />
                             </button>
 
                             {open && (
