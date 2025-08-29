@@ -62,8 +62,8 @@ export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
                             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
                             <ChartLegend content={<ChartLegendContent />} />
                             <Bar dataKey="success" stackId="a" fill="#104e64" radius={[0, 0, 4, 4]} />
-                            <Bar dataKey="failed" stackId="a" fill="#f54a00" radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="absence" stackId="a" fill="#ffc107" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="failed" stackId="a" fill="#ff0000" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="absence" stackId="a" fill="#bcbcbc" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ChartContainer>
                 </CardContent>

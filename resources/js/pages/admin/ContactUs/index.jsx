@@ -8,18 +8,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-    Trash2, 
-    Mail, 
-    User, 
-    Users, 
-    TypeOutline, 
-    FileMinus, 
-    MessageCircle, 
-    CheckCircle2, 
-    Clock, 
-    Send, 
-    Download, 
+import {
+    Trash2,
+    Mail,
+    User,
+    Users,
+    TypeOutline,
+    FileMinus,
+    MessageCircle,
+    CheckCircle2,
+    Clock,
+    Send,
+    Download,
     Filter,
     Search,
     Plus,
@@ -139,10 +139,10 @@ export default function Index() {
                                     <p className="mt-1 text-gray-300">Manage customer inquiries and communications</p>
                                 </div>
                             </div>
-                            <div className="flex gap-3">
-                                <Button 
+                            <div className="flex flex-row-reverse gap-3">
+                                <Button
                                     onClick={handleComposeClick}
-                                    className="transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+                                    className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
                                 >
                                     <Plus className="mr-2 h-4 w-4" />
                                     Compose
@@ -233,7 +233,7 @@ export default function Index() {
                                             <Inbox className="h-5 w-5 text-[#212529]" />
                                             <h2 className="text-lg font-semibold text-[#212529]">Inbox</h2>
                                         </div>
-                                        
+
                                         {/* Filter Buttons */}
                                         <div className="flex gap-2">
                                             <Button
@@ -324,7 +324,7 @@ export default function Index() {
                                                         <User className="h-4 w-4" />
                                                         Sender
                                                     </label>
-                                                    <Select value={emailData.sender} onValueChange={(value) => setEmailData(prev => ({...prev, sender: value}))}>
+                                                    <Select value={emailData.sender} onValueChange={(value) => setEmailData(prev => ({ ...prev, sender: value }))}>
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Select sender email" />
                                                         </SelectTrigger>
@@ -493,15 +493,15 @@ export default function Index() {
                                             <div className="space-y-4">
                                                 <div className="flex items-center justify-between text-sm text-gray-600">
                                                     <span>From: <span className="font-medium text-[#212529]">{selectedMessage.email}</span></span>
-                                                    <span>{new Date(selectedMessage.created_at).toLocaleString('en-US', { 
-                                                        month: 'short', 
+                                                    <span>{new Date(selectedMessage.created_at).toLocaleString('en-US', {
+                                                        month: 'short',
                                                         day: 'numeric',
                                                         year: 'numeric',
-                                                        hour: '2-digit', 
-                                                        minute: '2-digit' 
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
                                                     })}</span>
                                                 </div>
-                                                
+
                                                 <div className="rounded-lg bg-gray-50 p-4">
                                                     <p className="text-gray-800 whitespace-pre-wrap">{selectedMessage.message}</p>
                                                 </div>

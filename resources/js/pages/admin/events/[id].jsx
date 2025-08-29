@@ -25,7 +25,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import EditEventDialog from "./components/EditEventDialog";
+import EditEventDialog from "./partials/EditEventDialog";
 
 import Participants from '../../../components/participants';
 import logo from "../../../../assets/images/logolionsgeek.png"

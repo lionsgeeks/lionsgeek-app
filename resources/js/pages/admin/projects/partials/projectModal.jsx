@@ -70,7 +70,7 @@ export default function ProjectModal({ project }) {
                         <Edit className="h-4 w-4" />
                     </div>
                 ) : (
-                    <Button className="transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
+                    <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
                         <Plus className="mr-2 h-4 w-4" />
                         Create Project
                     </Button>
@@ -93,7 +93,7 @@ export default function ProjectModal({ project }) {
                                 </p>
                             </div>
                         </div>
-                   
+
                         <button
                             onClick={() => setIsOpen(false)}
                             className="rounded-lg p-2 text-white transition-colors duration-200 hover:bg-white/10 hover:text-[#fee819]"
@@ -105,7 +105,7 @@ export default function ProjectModal({ project }) {
 
                 <div className="p-6">
                     <form onSubmit={onFormSubmit} className="space-y-6">
-                     
+
                         <div>
                             <label htmlFor="name" className="mb-2 block text-sm font-medium text-[#212529]">
                                 Project Name *
@@ -122,15 +122,14 @@ export default function ProjectModal({ project }) {
                             />
                         </div>
 
-                    
+
                         <div className="flex items-center justify-center gap-1 rounded-lg bg-gray-100 p-1">
                             {languages.map((language) => (
                                 <button
                                     key={language}
                                     onClick={() => setTab(language)}
-                                    className={`flex-1 rounded-md px-3 py-2 font-medium transition-all duration-200 ${
-                                        tab === language ? 'bg-[#212529] text-white shadow-sm' : 'bg-transparent text-gray-600 hover:bg-gray-200'
-                                    }`}
+                                    className={`flex-1 rounded-md px-3 py-2 font-medium transition-all duration-200 ${tab === language ? 'bg-[#212529] text-white shadow-sm' : 'bg-transparent text-gray-600 hover:bg-gray-200'
+                                        }`}
                                     type="button"
                                 >
                                     {language}
@@ -138,7 +137,7 @@ export default function ProjectModal({ project }) {
                             ))}
                         </div>
 
-                
+
                         {tab === 'English' && (
                             <div className="space-y-4">
                                 <div>
@@ -159,7 +158,7 @@ export default function ProjectModal({ project }) {
                             </div>
                         )}
 
-                     
+
                         {tab === 'Français' && (
                             <div className="space-y-4">
                                 <div>
@@ -180,7 +179,7 @@ export default function ProjectModal({ project }) {
                             </div>
                         )}
 
-                       
+
                         {tab === 'العربية' && (
                             <div className="space-y-4 text-right" dir="rtl">
                                 <div>
@@ -201,7 +200,7 @@ export default function ProjectModal({ project }) {
                             </div>
                         )}
 
-                     
+
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-[#212529]">
                                 Project Logo *
@@ -231,7 +230,7 @@ export default function ProjectModal({ project }) {
                             />
                         </div>
 
-                       
+
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-[#212529]">
                                 Project Preview (Optional)
@@ -260,7 +259,7 @@ export default function ProjectModal({ project }) {
                             />
                         </div>
 
-                        
+
                         <div className="flex gap-3 pt-4">
                             <Button
                                 type="button"

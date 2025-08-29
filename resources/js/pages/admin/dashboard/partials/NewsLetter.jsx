@@ -19,10 +19,10 @@ const NewsLetter = () => {
                         <h2 className="text-lg font-semibold text-[#212529]">Recent Newsletters</h2>
                     </div>
                     <Link href="/admin/newsletter">
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             size="sm"
-                            className="border-[#212529] text-[#212529] hover:bg-[#212529] hover:text-white"
+                            className="text-white bg-beta hover:bg-alpha hover:text-beta"
                         >
                             View All
                         </Button>
@@ -41,7 +41,7 @@ const NewsLetter = () => {
                         <Link
                             key={item.id}
                             href={`/admin/newsletter`}
-                            className="block rounded-lg border border-gray-100 p-4 transition-all hover:border-[#212529] hover:shadow-md"
+                            className="block rounded-lg border-b-2 p-4 hover:bg-gray-200 transition-all duration-300"
                         >
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1 min-w-0">
