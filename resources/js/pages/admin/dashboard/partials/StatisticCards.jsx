@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { Calendar, Mail, MousePointerClick, Users } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 const StatisticCards = () => {
     const { totalContacts, members, upcomingEvents, views } = usePage().props;
@@ -7,41 +8,50 @@ const StatisticCards = () => {
     const cards = [
         {
             title: 'Total Contacts',
-            value: totalContacts > 0 ? totalContacts : null,
+            value: totalContacts > 0 ? totalContacts : 0,
             fallback: 'No Messages Received',
-            icon: <Mail color='#ffc803' />,
+            icon: Mail,
         },
         {
             title: 'Events',
-            value: upcomingEvents && upcomingEvents.length > 0 ? upcomingEvents.length : null,
+            value: upcomingEvents && upcomingEvents.length > 0 ? upcomingEvents.length : 0,
             fallback: 'No upcoming event',
-            icon: <Calendar color='#ffc803' />,
+            icon: Calendar,
         },
         {
             title: 'Subscribers',
-            value: members > 0 ? members : null,
+            value: members > 0 ? members : 0,
             fallback: 'News letter is empty',
-            icon: <Users color='#ffc803' />,
+            icon: Users,
         },
         {
             title: 'Website visits',
             value: views?.views ?? 0,
             fallback: null,
-            icon: <MousePointerClick color='#ffc803' />,
+            icon: MousePointerClick,
         },
     ];
 
     return (
-        <div className="grid w-full grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 md:gap-y-2 lg:grid-cols-4 lg:gap-y-0">
-            {cards.map((card, index) => (
-                <div key={index} className="flex items-start justify-around gap-x-5 rounded-lg py-6 ps-4 shadow-md">
-                    <div className="flex flex-col justify-center gap-y-2">
-                        <span className="text-[18px] font-bold">{card.title}</span>
-                        {card.value !== null ? <p className="text-xl font-black">{card.value}</p> : card.fallback && <p>{card.fallback}</p>}
-                    </div>
-                    {card.icon}
-                </div>
-            ))}
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+            {cards.map((card, index) => {
+                const IconComponent = card.icon;
+                return (
+                    <Card key={index} className="border-0 bg-white shadow-lg">
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-600">{card.title}</p>
+                                    <p className="text-3xl font-bold text-[#212529]">{card.value}</p>
+                                </div>
+                                <div className="rounded-lg bg-gray-100 p-3">
+                                    <IconComponent className="h-6 w-6 text-[#212529]" />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                );
+            })}
         </div>
     );
 };
