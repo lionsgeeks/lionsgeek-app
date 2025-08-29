@@ -98,31 +98,45 @@ export default function AdminEventShow() {
     return (
         <AppLayout>
             <div className="flex-1 flex flex-col overflow-hidden">
-                <main className="flex-1 overflow-y-auto p-6">
-                    {/* Header */}
-                    <div className="flex items-center md:justify-between justify-end mb-6">
-                        <div className="md:flex items-center gap-4 hidden ">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => router.visit(route("admin.events.index"))}
-                            >
-                                <ArrowLeft className="h-4 w-4 mr-2" />
-                                Back to Events
-                            </Button>
-                            <h1 className="text-2xl font-bold">Event Details</h1>
-                        </div>
-                        <div className="flex   gap-2">
-                            <Button onClick={handleEdit}>
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit
-                            </Button>
-                            <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                            </Button>
+                <div className="bg-[#212529] py-8 text-white">
+                    <div className="mx-auto max-w-7xl px-6">
+                        <Button
+                            onClick={() => router.visit('/admin/events')}
+                            variant="ghost"
+                            className="mb-6 text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
+                        >
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Back to events
+                        </Button>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-lg bg-[#fee819] p-3">
+                                    <Calendar className="h-8 w-8 text-[#212529]" />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-bold">Events Details</h1>
+                                    <p className="mt-1 text-gray-300">Manage event details</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center md:justify-between justify-end mb-6">
+
+                                <div className="flex   gap-2">
+                                    <Button onClick={handleEdit}>
+                                        <Edit className="h-4 w-4 mr-2" />
+                                        Edit
+                                    </Button>
+                                    <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
+                                        <Trash2 className="h-4 w-4 mr-2" />
+                                        Delete
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <main className="flex-1 overflow-y-auto p-6">
+                    {/* Header */}
+
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 space-y-6">
@@ -185,7 +199,7 @@ export default function AdminEventShow() {
                                         <div>
                                             <p className="font-medium">Duration</p>
                                             <p className="text-sm text-muted-foreground">
-                                               90 minutes
+                                                90 minutes
                                             </p>
                                         </div>
                                     </div>
