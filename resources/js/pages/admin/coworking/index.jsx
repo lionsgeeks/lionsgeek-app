@@ -3,6 +3,10 @@ import { Head, useForm, usePage } from "@inertiajs/react";
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useState } from "react";
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Briefcase, Users, Clock, CheckCircle2, XCircle, Search, Download, Filter } from 'lucide-react';
 
 const breadcrumbs = [
     {
@@ -45,58 +49,161 @@ export default function CoworkingAdmin() {
         );
     });
 
+    // Calculate statistics
+    const totalRequests = coworkings?.length || 0;
+    const approvedRequests = coworkings?.filter(cow => cow.status === 1)?.length || 0;
+    const rejectedRequests = coworkings?.filter(cow => cow.status === 2)?.length || 0;
+    const pendingRequests = coworkings?.filter(cow => !cow.status || cow.status === 0)?.length || 0;
+    const hasSearch = searchQuery.length > 0;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Coworking Requests" />
 
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 px-7 pt-2">
-                {/* Search Input */}
-                <div className="w-[86vw] md:w-1/3  flex items-center  bg-gray-100 border border-gray-300 rounded-md px-3 py-1.5 shadow-sm transition">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                        className="w-5 h-5 text-gray-500"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                    <input
+            <div className="min-h-screen bg-white">
+                {/* Header Section */}
+                <div className="bg-[#212529] py-8 text-white">
+                    <div className="mx-auto max-w-7xl px-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-lg bg-[#fee819] p-3">
+                                    <Briefcase className="h-8 w-8 text-[#212529]" />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-bold">Coworking Management</h1>
+                                    <p className="mt-1 text-gray-300">Manage coworking space requests and applications</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3">
+                                <Button className="transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
+                                    <Download className="mr-2 h-4 w-4" />
+                                    Export Excel
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Statistics Cards */}
+                <div className="mx-auto -mt-4 max-w-7xl px-6">
+                    <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Total Requests</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{totalRequests}</p>
+                                    </div>
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <Users className="h-6 w-6 text-[#212529]" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Pending</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{pendingRequests}</p>
+                                    </div>
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <Clock className="h-6 w-6 text-[#212529]" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Approved</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{approvedRequests}</p>
+                                    </div>
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <CheckCircle2 className="h-6 w-6 text-[#212529]" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">Rejected</p>
+                                        <p className="text-3xl font-bold text-[#212529]">{rejectedRequests}</p>
+                                    </div>
+                                    <div className="rounded-lg bg-gray-100 p-3">
+                                        <XCircle className="h-6 w-6 text-[#212529]" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+
+                {/* Search Section */}
+                <div className="mx-auto mb-8 max-w-7xl px-6">
+                    <Card className="border-0 bg-gray-50">
+                        <CardContent className="p-6">
+                            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                                <div className="flex items-center gap-2">
+                                    <Filter className="h-5 w-5 text-[#212529]" />
+                                    <h3 className="text-lg font-semibold text-[#212529]">Filter Requests</h3>
+                                    {hasSearch && (
+                                        <Badge variant="secondary" className="bg-gray-100 px-2 py-1 text-[#212529]">
+                                            {filteredCoworkings.length} result{filteredCoworkings.length !== 1 ? 's' : ''}
+                                        </Badge>
+                                    )}
+                                </div>
+                                <div className="relative w-full sm:w-auto">
+                                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                    <Input
                         type="search"
-                        name="search"
-                        id="search"
                         placeholder="Search by name, email or phone"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="ml-3 w-full bg-transparent border-0 outline-0 text-sm text-gray-700 placeholder-gray-400"
+                                        className="w-full pl-10 sm:w-80"
                     />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
-                {/* Export Button */}
-                <form action="{{ route('coworking.export') }}" method="post" className="w-full md:w-auto text-right">
-                    {/* @csrf */}
-                    <button className="bg-beta/95 hover:bg-alpha hover:text-beta transition text-white px-4 py-2 rounded-lg mt-1 md:mt-0 md:block hidden ">
-                        Export Excel
-                    </button>
-                </form>
+                {/* Requests Table */}
+                <div className="mx-auto max-w-7xl px-6 pb-8">
+                    {filteredCoworkings?.length === 0 ? (
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-12 text-center">
+                                <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
+                                    <Briefcase className="h-12 w-12 text-gray-400" />
             </div>
-
-
-            <div className="p-6">
-
-                <div className=" shadow-md overflow-hidden rounded-lg">
-                    <table className="w-full border border-gray-300">
-                        <thead className="bg-beta/95">
-                            <tr className="border-b border-gray-300">
-                                <th className="border-r border-gray-300 px-3 py-2 text-center text-white">Name</th>
-                                <th className="sm:table-cell hidden border-r border-gray-300 px-3 py-2 text-center text-white">Phone</th>
-                                <th className="sm:table-cell hidden border-r border-gray-300 px-3 py-2 text-center text-white">Email</th>
-                                <th className="sm:table-cell hidden border-r border-gray-300 px-3 py-2 text-center text-white">Date</th>
-
-                                <th className="px-3 py-2 text-center text-white">Action</th>
+                                <h2 className="mb-3 text-2xl font-bold text-[#212529]">No Requests Found</h2>
+                                <p className="mb-6 text-gray-600">
+                                    {hasSearch 
+                                        ? "No coworking requests match your search criteria. Try adjusting your search terms."
+                                        : "No coworking requests have been submitted yet."
+                                    }
+                                </p>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <Card className="border-0 bg-white shadow-lg">
+                            <CardContent className="p-0">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead>
+                                            <tr className="border-b border-gray-200 bg-gray-50">
+                                                <th className="px-6 py-4 text-left text-sm font-semibold text-[#212529]">Name</th>
+                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">Phone</th>
+                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">Email</th>
+                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">Date</th>
+                                                <th className="px-6 py-4 text-center text-sm font-semibold text-[#212529]">Status</th>
+                                                <th className="px-6 py-4 text-center text-sm font-semibold text-[#212529]">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -104,81 +211,69 @@ export default function CoworkingAdmin() {
                                 <tr
                                     key={cow.id}
                                     onClick={() => window.location.href = `/admin/coworking/${cow.id}`}
-                                    className=" group cursor-pointer w-full text-center h-[7vh] align-middle border-b border-gray-200"
-                                >
-                                    <td className="border-r  border-gray-200 px-3 py-2 group-hover:bg-gray-100/60 transition  ">{cow.full_name}</td>
-                                    <td className="sm:table-cell hidden border-r  border-gray-200 px-3 py-2 group-hover:bg-gray-100/60 transition  ">{cow.phone}</td>
-                                    <td className="sm:table-cell hidden border-r  border-gray-200 px-3 py-2 group-hover:bg-gray-100/60 transition  ">{cow.email}</td>
-                                    <td className="sm:table-cell hidden border-r  border-gray-200 px-3 py-2 group-hover:bg-gray-100/60 transition  ">
-                                        {new Date(cow.created_at).toLocaleDateString()}
-                                    </td>
-                                    <td onClick={(e) => {
-                                        e.stopPropagation();
-
-
-                                    }} className="px-3 py-2 group-hover:bg-gray-100/60  transition ">
-                                        <div className="flex justify-center">
-                                            {!cow.status && (
-                                                <div
-                                                    className=" flex items-center justify-center gap-x-2 mt-2"
+                                                    className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
                                                 >
-                                                    <button
-                                                        onClick={() => { onActionClick('reject', cow.id) }}
-                                                        className="  lg:px-1.5 p-1 white rounded-md border border-red-600 "
+                                                    <td className="px-6 py-4">
+                                                        <div className="font-medium text-[#212529]">{cow.full_name}</div>
+                                                    </td>
+                                                    <td className="hidden px-6 py-4 text-sm text-gray-600 sm:table-cell">{cow.phone}</td>
+                                                    <td className="hidden px-6 py-4 text-sm text-gray-600 sm:table-cell">{cow.email}</td>
+                                                    <td className="hidden px-6 py-4 text-sm text-gray-600 sm:table-cell">
+                                                        {new Date(cow.created_at).toLocaleDateString()}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        {cow.status === 1 && (
+                                                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                                                                <CheckCircle2 className="mr-1 h-3 w-3" />
+                                                                Approved
+                                                            </Badge>
+                                                        )}
+                                                        {cow.status === 2 && (
+                                                            <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
+                                                                <XCircle className="mr-1 h-3 w-3" />
+                                                                Rejected
+                                                            </Badge>
+                                                        )}
+                                                        {(!cow.status || cow.status === 0) && (
+                                                            <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
+                                                                <Clock className="mr-1 h-3 w-3" />
+                                                                Pending
+                                                            </Badge>
+                                                        )}
+                                                    </td>
+                                                    <td 
+                                                        onClick={(e) => e.stopPropagation()} 
+                                                        className="px-6 py-4 text-center"
                                                     >
-                                                        {/* X Icon */}
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" className="bi bi-x-lg text-red-600 " viewBox="0 0 16 16">
-                                                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
-                                                        </svg>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => { onActionClick('approve', cow.id) }}
-                                                        className="bg-green-600 text-white rounded hover:bg-green-700 transition lg:px-2 p-1"
-                                                    >
-                                                        <span className="lg:block hidden"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
-                                                            <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z" />
-                                                        </svg></span>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            fill="currentColor" className="bi bi-check-circle text-white lg:hidden block" viewBox="0 0 16 16">
-                                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                                                            <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05" />
-                                                        </svg>
-                                                    </button>
+                                                        {(!cow.status || cow.status === 0) && (
+                                                            <div className="flex justify-center gap-2">
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    onClick={() => onActionClick('reject', cow.id)}
+                                                                    className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+                                                                >
+                                                                    <XCircle className="h-4 w-4" />
+                                                                </Button>
+                                                                <Button
+                                                                    size="sm"
+                                                                    onClick={() => onActionClick('approve', cow.id)}
+                                                                    className="bg-green-600 text-white hover:bg-green-700"
+                                                                >
+                                                                    <CheckCircle2 className="h-4 w-4" />
+                                                                </Button>
                                                 </div>
                                             )}
-                                            {cow.status === 1 && (
-                                                <button className=" cursor-none text-black lg:rounded-full flex items-center gap-x-2 lg:px-2 lg:py-0.5 lg:border border-green-900">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                        fill="currentColor" className="bi bi-check-circle text-green-900" viewBox="0 0 16 16">
-                                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                                                        <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05" />
-                                                    </svg>
-                                                    <span className="lg:block hidden">Approved</span>
-                                                </button>
-                                            )}
-                                            {cow.status === 2 && (
-                                                <button className="bg-[#fef8f5] cursor-none text-black rounded-full flex items-center gap-x-2 lg:px-2 lg:py-0.5 lg:border border-red-500">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                        fill="currentColor" className="bi bi-x-circle text-red-500" viewBox="0 0 16 16">
-                                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-                                                    </svg>
-                                                    <span className="lg:block hidden">Rejected</span>
-                                                </button>
-                                            )}
-
-                                        </div>
                                     </td>
                                 </tr>
-
                             ))}
                         </tbody>
-
                     </table>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
-
-
             </div>
 
 
