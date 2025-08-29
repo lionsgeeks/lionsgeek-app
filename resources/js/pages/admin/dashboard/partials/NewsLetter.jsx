@@ -1,50 +1,62 @@
 import { Link, usePage } from '@inertiajs/react';
 import dayjs from 'dayjs';
+import { Card, CardContent } from '@/components/ui/card';
+import { Mail } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const NewsLetter = () => {
     const { newsLetter } = usePage().props;
 
     return (
-        <div className="w-full rounded-lg bg-white p-5 shadow-lg lg:w-1/2">
-            {/* Header */}
-            <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#ffc803" className="h-6 w-6">
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                    </svg>
-                    <h2 className="text-xl font-bold">Recent Newsletters</h2>
-                </div>
-                <Link href="/admin/newsletter" className="rounded bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black">
-                    View All
-                </Link>
-            </div>
-
-            {/* Newsletter List */}
-            <div className="flex flex-col gap-4">
-                {newsLetter.length === 0 && <p className="py-4 text-center text-gray-500">No newsletters available</p>}
-                {newsLetter?.map((item) => (
-                    <Link
-                        key={item.id}
-                        href={`/admin/newsletter`}
-                        className="flex cursor-pointer items-start justify-between gap-4 rounded-lg border-b border-gray-200 p-2 pb-3 transition last:border-b-0 hover:bg-gray-200"
-                    >
-                        <div className="flex flex-col gap-3">
-                            <span className="font-semibold text-gray-800">{item.subject}</span>
-                            <span className="line-clamp-2 text-gray-600">{item.content}</span>
+        <Card className="border-0 bg-white shadow-lg">
+            <CardContent className="p-6">
+                {/* Header */}
+                <div className="mb-6 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-gray-100 p-2">
+                            <Mail className="h-5 w-5 text-[#212529]" />
                         </div>
-
-                        {/* Date */}
-                        <div className="flex flex-col items-end gap-1 text-sm whitespace-nowrap text-gray-400">
-                            <span>{dayjs(item.created_at).format('YYYY-MM-DD')}</span>
-                        </div>
+                        <h2 className="text-lg font-semibold text-[#212529]">Recent Newsletters</h2>
+                    </div>
+                    <Link href="/admin/newsletter">
+                        <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="border-[#212529] text-[#212529] hover:bg-[#212529] hover:text-white"
+                        >
+                            View All
+                        </Button>
                     </Link>
-                ))}
-            </div>
-        </div>
+                </div>
+
+                {/* Newsletter List */}
+                <div className="space-y-4">
+                    {newsLetter.length === 0 && (
+                        <div className="py-8 text-center">
+                            <Mail className="mx-auto mb-3 h-12 w-12 text-gray-400" />
+                            <p className="text-gray-500">No newsletters available</p>
+                        </div>
+                    )}
+                    {newsLetter?.map((item) => (
+                        <Link
+                            key={item.id}
+                            href={`/admin/newsletter`}
+                            className="block rounded-lg border border-gray-100 p-4 transition-all hover:border-[#212529] hover:shadow-md"
+                        >
+                            <div className="flex items-start justify-between gap-4">
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-semibold text-[#212529] truncate">{item.subject}</h3>
+                                    <p className="mt-1 text-sm text-gray-600 line-clamp-2">{item.content}</p>
+                                </div>
+                                <div className="flex-shrink-0 text-xs text-gray-400">
+                                    {dayjs(item.created_at).format('YYYY-MM-DD')}
+                                </div>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
     );
 };
 
