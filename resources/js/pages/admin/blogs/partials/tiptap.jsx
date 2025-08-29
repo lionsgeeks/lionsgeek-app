@@ -5,9 +5,12 @@ import TextAlign from '@tiptap/extension-text-align'
 import { FaBold, FaItalic, FaStrikethrough, FaListOl, FaListUl, FaQuoteLeft, FaRedo, FaUndo, FaAlignLeft, FaAlignCenter, FaAlignJustify, FaAlignRight, FaMinus } from 'react-icons/fa'
 import { Listbox, } from '@headlessui/react';
 import { useState } from 'react';
+import Document from '@tiptap/extension-document'
+import Paragraph from '@tiptap/extension-paragraph'
+import Text from '@tiptap/extension-text'
 
 const buttonConfigs = [
-     {
+    {
         action: (editor) => editor.chain().focus().undo().run(),
         icon: <FaUndo />,
         disabled: (editor) => !editor.can().chain().focus().undo().run(),
@@ -49,7 +52,7 @@ const buttonConfigs = [
         action: (editor) => editor.chain().focus().setHorizontalRule().run(),
         icon: <FaMinus />,
     },
-   
+
 
 ];
 
@@ -64,6 +67,9 @@ const headingConfigs = [1, 2, 3, 4].map(level => ({
     isActive: (editor) => editor.isActive('heading', { level }),
     icon: `H${level}`,
 }));
+
+
+
 
 
 
@@ -133,7 +139,7 @@ const MenuBar = ({ editor }) => {
             </Listbox>
 
 
-            
+
 
 
         </div>
@@ -149,26 +155,26 @@ const Tiptap = (props) => {
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
             }),
+            
         ],
         content: props.content,
         onUpdate({ editor }) {
-            props.setData(props.lang == 'English' ? 'content_en' : props.lang == 'العربية' ? 'content_ar' : 'content_fr', editor.getHTML());
+            props.setData(props.lang == 'English' ? 'description_en' : props.lang == 'العربية' ? 'description_ar' : 'description_fr', editor.getHTML());
         },
         editorProps: {
             attributes: {
-                class: '',
+                class: 'reset-tw',
             },
         },
     })
     return (
-        <div >
+        <div>
             <MenuBar editor={editor} />
-            <div className='border h-[40vh]' >
-            <EditorContent
-                // className='prose-lg dangerous mt-4 w-full'
-                className={`reset-tw  `}
-                editor={editor}
-            />
+            <div className="border min-h-[200px] max-h-[40vh] overflow-y-auto">
+                <EditorContent
+                    className="reset-tw w-full p-2"
+                    editor={editor}
+                />
             </div>
         </div>
     )
