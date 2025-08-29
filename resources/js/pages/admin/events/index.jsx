@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Head, usePage } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
-import CreateEventDialog from "./components/CreateEventDialog";
-import EditEventDialog from "./components/EditEventDialog";
-import EventCard from "./components/EventCard";
+import CreateEventDialog from "./partials/CreateEventDialog";
+import EditEventDialog from "./partials/EditEventDialog";
+import EventCard from "./partials/EventCard";
 import { Calendar } from "lucide-react";
 
 

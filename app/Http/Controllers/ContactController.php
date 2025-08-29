@@ -24,7 +24,7 @@ class ContactController extends Controller
         if ($request->has('id')) {
             $selected = Contact::find($request->id);
         }
-        return Inertia::render('admin/ContactUs/contactus', [
+        return Inertia::render('admin/ContactUs/index', [
             'messages' => $messages,
             'selected' => $selected,
 
