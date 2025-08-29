@@ -95,7 +95,7 @@ export default function Press() {
                         {/* Modal Add press*/}
                         <Dialog open={isOpen} onOpenChange={setIsOpen}>
                             <DialogTrigger asChild>
-                                <Button className="transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
+                                <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819] flex p-2 rounded-lg items-center cursor-pointer text-sm font-medium">
                                     <Plus className="mr-2 h-4 w-4" />
                                     Add Press
                                 </Button>
@@ -535,9 +535,9 @@ export default function Press() {
                                 />
                             </div>
 
-                            
+
                             <div className="p-4 flex flex-col flex-1 justify-between">
-                                
+
                                 <div className="flex items-start gap-3 min-h-[80px]">
                                     <img
                                         src={`/storage/images/press/${press.logo}`}
@@ -549,7 +549,7 @@ export default function Press() {
                                     </h3>
                                 </div>
 
-                            
+
                                 <div className="mt-4 flex items-center justify-between">
                                     <a
                                         href={route("press.show", press.id)}

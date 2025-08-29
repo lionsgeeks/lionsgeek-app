@@ -3,8 +3,9 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import EventForm from "./EventForm";
+import { Button } from "@headlessui/react";
 
-export default function CreateEventDialog({ onSuccess, events }) {
+export default function CreateEventDialog({ onSuccess }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleSuccess = () => {
@@ -15,8 +16,10 @@ export default function CreateEventDialog({ onSuccess, events }) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-
-                    <button className="text-sm text-white rounded-lg mt-2 cursor-pointer p-2 bg-beta ">Click to add a new event</button>
+                <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819] flex p-2 rounded-lg items-center cursor-pointer text-sm font-medium">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Event
+                </Button>
                 {/* {events.length == 0 ? (
                 ) : (
                     <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors cursor-pointer p-0">

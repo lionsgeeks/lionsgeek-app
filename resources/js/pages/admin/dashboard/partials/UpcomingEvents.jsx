@@ -9,7 +9,13 @@ const UpcomingEvents = () => {
     return (
         <div className="rounded-xl bg-white p-5 shadow-md">
             <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold flex items-center gap-x-5"><Calendar color='#ffc803' />Upcoming Events</h2>
+                {/* <h2 className="text-xl font-bold flex items-center gap-x-5"><Calendar color='#ffc803' />Upcoming Events</h2> */}
+                <div className="flex items-center gap-3">
+                    <div className="rounded-lg bg-gray-100 p-2">
+                        <Calendar className="h-5 w-5 text-[#212529]" />
+                    </div>
+                    <h2 className="text-lg font-semibold text-[#212529]">Upcoming Events</h2>
+                </div>
                 <Link
                     href="/admin/events"
                     className="rounded-lg bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black"

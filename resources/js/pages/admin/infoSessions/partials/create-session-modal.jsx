@@ -38,15 +38,15 @@ export function CreateSessionModal({ open, onOpenChange }) {
     };
 
     const getFormationColor = (formation) => {
-        return formation === 'Coding' 
-            ? 'text-blue-600 bg-blue-50 border-blue-200' 
+        return formation === 'Coding'
+            ? 'text-blue-600 bg-blue-50 border-blue-200'
             : 'text-purple-600 bg-purple-50 border-purple-200';
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
-                <Button className="transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
+                <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
                     <Plus className="mr-2 h-4 w-4" />
                     Create Info Session
                 </Button>
@@ -81,120 +81,120 @@ export function CreateSessionModal({ open, onOpenChange }) {
                 <div className="p-6">
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Session Title */}
-                    <div className="space-y-2">
-                        <Label htmlFor="title" className="text-sm font-medium text-[#212529]">
-                            Session Title <span className="text-[#ff7376]">*</span>
-                        </Label>
-                        <Input
-                            id="title"
-                            value={data.name}
-                            onChange={(e) => handleChange('name', e.target.value)}
-                            placeholder="e.g., Web Development Program Overview"
-                            required
-                            disabled={processing}
-                            className="rounded-lg border focus:border-[#212529] transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20"
-                        />
-                        {errors.name && (
-                            <p className="text-[#ff7376] text-sm">{errors.name}</p>
-                        )}
-                    </div>
-
-                    {/* Program Type */}
-                    <div className="space-y-2">
-                        <Label htmlFor="type" className="text-sm font-medium text-[#212529]">
-                            Program Type <span className="text-[#ff7376]">*</span>
-                        </Label>
-                        <Select 
-                            value={data.formation} 
-                            onValueChange={(value) => handleChange('formation', value)} 
-                            disabled={processing}
-                        >
-                            <SelectTrigger className="rounded-lg border focus:border-[#212529]">
-                                <SelectValue placeholder="Choose program type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Coding">
-                                    <div className="flex items-center gap-2">
-                                        <Code2 className="h-4 w-4" />
-                                        <span>Coding Program</span>
-                                    </div>
-                                </SelectItem>
-                                <SelectItem value="Media">
-                                    <div className="flex items-center gap-2">
-                                        <Palette className="h-4 w-4" />
-                                        <span>Media Program</span>
-                                    </div>
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        {errors.formation && (
-                            <p className="text-[#ff7376] text-sm">{errors.formation}</p>
-                        )}
-                    </div>
-
-                    {/* Date and Capacity */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Session Title */}
                         <div className="space-y-2">
-                            <Label htmlFor="date" className="text-sm font-medium text-[#212529]">
-                                Start Date <span className="text-[#ff7376]">*</span>
+                            <Label htmlFor="title" className="text-sm font-medium text-[#212529]">
+                                Session Title <span className="text-[#ff7376]">*</span>
                             </Label>
-                            <div className="relative">
-                                <Calendar className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-                                <Input
-                                    id="date"
-                                    type="date"
-                                    value={data.start_date}
-                                    onChange={(e) => handleChange('start_date', e.target.value)}
-                                                                    className="pl-10 rounded-lg border focus:border-[#212529]"
-                                required
-                                disabled={processing}
-                                min={new Date().toISOString().split('T')[0]}
-                            />
-                        </div>
-                        {errors.start_date && (
-                            <p className="text-[#ff7376] text-sm">{errors.start_date}</p>
-                        )}
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="capacity" className="text-sm font-medium text-[#212529]">
-                            Capacity <span className="text-[#ff7376]">*</span>
-                        </Label>
-                        <div className="relative">
-                            <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                             <Input
-                                id="capacity"
-                                type="number"
-                                value={data.places}
-                                onChange={(e) => handleChange('places', e.target.value)}
-                                placeholder="50"
-                                className="pl-10 rounded-lg border focus:border-[#212529]"
+                                id="title"
+                                value={data.name}
+                                onChange={(e) => handleChange('name', e.target.value)}
+                                placeholder="e.g., Web Development Program Overview"
                                 required
-                                min="1"
-                                max="500"
                                 disabled={processing}
+                                className="rounded-lg border focus:border-[#212529] transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20"
                             />
+                            {errors.name && (
+                                <p className="text-[#ff7376] text-sm">{errors.name}</p>
+                            )}
                         </div>
-                        {errors.places && (
-                            <p className="text-[#ff7376] text-sm">{errors.places}</p>
-                        )}
-                        </div>
-                    </div>
 
-                    {/* Preview */}
-                    {data.formation && data.name && (
-                        <div className="p-4 bg-[#f2f2f2] rounded-lg border">
-                            <p className="text-sm font-medium text-[#212529] mb-2">Preview</p>
-                            <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
-                                <div className="text-[#212529]">{data.formation === 'Coding' ? <Code2 className="h-5 w-5" /> : <Palette className="h-5 w-5" />}</div>
-                                <div>
-                                    <div className="font-medium text-[#212529]">{data.name}</div>
-                                    <div className="text-sm text-gray-500">{data.formation} Program</div>
+                        {/* Program Type */}
+                        <div className="space-y-2">
+                            <Label htmlFor="type" className="text-sm font-medium text-[#212529]">
+                                Program Type <span className="text-[#ff7376]">*</span>
+                            </Label>
+                            <Select
+                                value={data.formation}
+                                onValueChange={(value) => handleChange('formation', value)}
+                                disabled={processing}
+                            >
+                                <SelectTrigger className="rounded-lg border focus:border-[#212529]">
+                                    <SelectValue placeholder="Choose program type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Coding">
+                                        <div className="flex items-center gap-2">
+                                            <Code2 className="h-4 w-4" />
+                                            <span>Coding Program</span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="Media">
+                                        <div className="flex items-center gap-2">
+                                            <Palette className="h-4 w-4" />
+                                            <span>Media Program</span>
+                                        </div>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            {errors.formation && (
+                                <p className="text-[#ff7376] text-sm">{errors.formation}</p>
+                            )}
+                        </div>
+
+                        {/* Date and Capacity */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="date" className="text-sm font-medium text-[#212529]">
+                                    Start Date <span className="text-[#ff7376]">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <Calendar className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                                    <Input
+                                        id="date"
+                                        type="date"
+                                        value={data.start_date}
+                                        onChange={(e) => handleChange('start_date', e.target.value)}
+                                        className="pl-10 rounded-lg border focus:border-[#212529]"
+                                        required
+                                        disabled={processing}
+                                        min={new Date().toISOString().split('T')[0]}
+                                    />
                                 </div>
+                                {errors.start_date && (
+                                    <p className="text-[#ff7376] text-sm">{errors.start_date}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="capacity" className="text-sm font-medium text-[#212529]">
+                                    Capacity <span className="text-[#ff7376]">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                                    <Input
+                                        id="capacity"
+                                        type="number"
+                                        value={data.places}
+                                        onChange={(e) => handleChange('places', e.target.value)}
+                                        placeholder="50"
+                                        className="pl-10 rounded-lg border focus:border-[#212529]"
+                                        required
+                                        min="1"
+                                        max="500"
+                                        disabled={processing}
+                                    />
+                                </div>
+                                {errors.places && (
+                                    <p className="text-[#ff7376] text-sm">{errors.places}</p>
+                                )}
                             </div>
                         </div>
-                    )}
+
+                        {/* Preview */}
+                        {data.formation && data.name && (
+                            <div className="p-4 bg-[#f2f2f2] rounded-lg border">
+                                <p className="text-sm font-medium text-[#212529] mb-2">Preview</p>
+                                <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                                    <div className="text-[#212529]">{data.formation === 'Coding' ? <Code2 className="h-5 w-5" /> : <Palette className="h-5 w-5" />}</div>
+                                    <div>
+                                        <div className="font-medium text-[#212529]">{data.name}</div>
+                                        <div className="text-sm text-gray-500">{data.formation} Program</div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Action Buttons */}
                         <div className="flex gap-3 pt-4">

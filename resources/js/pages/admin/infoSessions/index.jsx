@@ -75,7 +75,7 @@ export default function InfoSessions() {
                                         <p className="mt-1 text-gray-300">Manage informational sessions and training programs</p>
                                     </div>
                                 </div>
-                                <CreateSessionModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+                                <CreateSessionModal  open={createModalOpen} onOpenChange={setCreateModalOpen} />
                             </div>
                         </div>
                     </div>

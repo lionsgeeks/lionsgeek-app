@@ -50,8 +50,14 @@ const Chart = () => {
         <Card className="w-full">
             {/* Header with title + select */}
             <CardHeader className="flex flex-row items-center justify-between">
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                     <BarChart2 color="#ffc803" className="h-6 w-6" />
+                    </div> */}
+                <div className="flex items-center gap-3">
+                    <div className="rounded-lg bg-gray-100 p-2">
+                        <BarChart2 className="h-5 w-5 text-[#212529]" />
+                    </div>
+                    {/* <h2 className="text-lg font-semibold text-[#212529]">Recent Newsletters</h2> */}
                     <CardTitle className="text-xl font-semibold">Analyse</CardTitle>
                 </div>
 

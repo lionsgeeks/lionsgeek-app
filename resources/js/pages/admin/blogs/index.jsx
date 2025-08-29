@@ -52,7 +52,7 @@ export default function BlogAdmin() {
                             </div>
                             <a href="/admin/blogs/create">
                                 <Button
-                                    className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                                    className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
                                 >
                                     <Plus className="h-4 w-4 mr-2" />
                                     Write a New Blog

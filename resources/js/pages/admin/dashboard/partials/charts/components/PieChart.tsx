@@ -45,8 +45,8 @@ export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
     const genderData = React.useMemo(() => {
         if (!selectedStep) return []
         return [
-            { name: "Male", value: selectedStep.male ?? 0, fill: "var(--chart-1)" },
-            { name: "Female", value: selectedStep.female ?? 0, fill: "var(--chart-2)" },
+            { name: "Male", value: selectedStep.male ?? 0, fill: "#16537e" },
+            { name: "Female", value: selectedStep.female ?? 0, fill: "#c22673" },
         ]
     }, [selectedStep])
 

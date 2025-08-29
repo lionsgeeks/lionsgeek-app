@@ -8,7 +8,12 @@ const CoworkingRequests = () => {
     return (
         <div className="rounded-xl bg-white p-5 shadow-md">
             <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold flex items-center gap-x-5"><Briefcase color='#ffc803' />Coworking Requests</h2>
+                <div className="flex items-center gap-3">
+                    <div className="rounded-lg bg-gray-100 p-2">
+                        <Briefcase className="h-5 w-5 text-[#212529]" />
+                    </div>
+                    <h2 className="text-lg font-semibold text-[#212529]">Coworking Requests</h2>
+                </div>
                 <Link href="/admin/coworking" className="rounded-lg bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black">
                     View All
                 </Link>{' '}
@@ -36,10 +41,10 @@ const CoworkingRequests = () => {
                                     <td className="px-4 py-3">
                                         <span
                                             className={`rounded-full px-2 py-1 text-xs font-medium ${request.needs?.toLowerCase().includes('studio')
-                                                    ? 'bg-blue-100 text-blue-700'
-                                                    : request.needs?.toLowerCase().includes('workstation')
-                                                        ? 'bg-purple-100 text-purple-700'
-                                                        : 'bg-gray-100 text-gray-700'
+                                                ? 'bg-blue-100 text-blue-700'
+                                                : request.needs?.toLowerCase().includes('workstation')
+                                                    ? 'bg-purple-100 text-purple-700'
+                                                    : 'bg-gray-100 text-gray-700'
                                                 }`}
                                         >
                                             {request.needs || '-'}

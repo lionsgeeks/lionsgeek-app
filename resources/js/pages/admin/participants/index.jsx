@@ -13,7 +13,7 @@ export default function Participants() {
     const { participants = [], infosessions = [] } = usePage().props;
     const [filtredParticipants, setFiltredParticipants] = useState(participants);
     const [search, setSearch] = useState('');
-    
+
     const breadcrumbs = [
         {
             title: 'Participants',
@@ -51,7 +51,7 @@ export default function Participants() {
                             </div>
                             <div className="flex gap-3">
                                 <a href="/admin/questions/export">
-                                    <Button className="transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
+                                    <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
                                         <Download className="h-4 w-4 mr-2" />
                                         Export Questions
                                     </Button>
@@ -144,10 +144,10 @@ export default function Participants() {
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <FilterHeader 
-                                    participants={participants} 
-                                    infosessions={infosessions} 
-                                    setFiltredParticipants={setFiltredParticipants} 
+                                <FilterHeader
+                                    participants={participants}
+                                    infosessions={infosessions}
+                                    setFiltredParticipants={setFiltredParticipants}
                                 />
                             </div>
                         </CardContent>
