@@ -65,7 +65,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
 
-    Route::get('/getChartData/{id?}', function (Request $request, $id = null) {
+    Route::get('/getChartData/{id?}', function ($id = null) {
         // If no id is provided, fallback to the latest session
         $session = $id
             ? InfoSession::findOrFail($id)
@@ -82,17 +82,32 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
         $confirmedSchool = $session->participants()->whereHas('confirmation', function ($query) {
             $query->where('school', true);
         })->count();
+        $infoSessionFemale = $session->participants()
+            ->where('gender', 'female')
+            ->where('current_step', 'info_session')
+            ->count();
+        $interviewFemale = $session->participants()
+            ->where('gender', 'female')
+            ->whereNotIn('current_step', ['info_session', 'interview', 'interview_failed'])
+            ->count();
+        $jungleFemale = $session->participants()
+            ->where('gender', 'female')
+            ->where('current_step', 'like', '%school%')
+            ->count();
+        $schoolFemale = $session->participants()
+            ->where('gender', 'female')
+            ->whereHas('confirmation', function ($query) {
+                $query->where('school', true);
+            })->count();
 
         $BarChart = [
             [
                 'step' => 'Info Session',
-                'total' => $successInfoSession + $absenceInfoSession,
                 'success' => $successInfoSession,
                 'absence' => $absenceInfoSession,
             ],
             [
                 'step' => 'Interview',
-                'total' => $successInterview + $failedInterview + $absenceInterview,
                 'success' => $successInterview,
                 'failed' => $failedInterview,
                 'absence' => $absenceInterview,
@@ -109,10 +124,36 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
                 'absence' => $successJungle - $confirmedSchool,
             ],
         ];
-
+        $PieChart = [
+            [
+                'step' => 'Info Session',
+                'total' => $successInfoSession + $absenceInfoSession,
+                'female' => $infoSessionFemale,
+                'male' => $successInfoSession - $infoSessionFemale
+            ],
+            [
+                'step' => 'Interview',
+                'total' => $successInterview + $absenceInterview + $failedInterview,
+                'female' => $interviewFemale,
+                'male' => $successInterview - $interviewFemale,
+            ],
+            [
+                'step' => 'Jungle',
+                'total' => $successJungle + $absenceJungle + $failedJungle,
+                'female' => $jungleFemale,
+                'male' => $successJungle - $jungleFemale,
+            ],
+            [
+                'step' => 'School',
+                'total' => ($successJungle - $confirmedSchool) + $confirmedSchool,
+                'female' => $schoolFemale,
+                'male' => $successJungle - $schoolFemale,
+            ],
+        ];
         return response()->json([
             'sessionId' => $session->id, // send back which session was used
             'BarChart'  => $BarChart,
+            'PieChart'  => $PieChart,
         ]);
     });
 });

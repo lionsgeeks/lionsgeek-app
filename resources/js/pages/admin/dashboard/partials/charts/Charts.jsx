@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useState } from "react"
 import BarChart from "./components/BarChart.js"
 import { DonutChart } from "./components/PieChart.js"
@@ -15,20 +17,22 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { BarChart2 } from "lucide-react"
-import { useForm, usePage } from "@inertiajs/react"
+import { usePage } from "@inertiajs/react"
 
 const Chart = () => {
+    const { allsessions } = usePage().props
 
-    const { get } = useForm()
-    const { allsessions } = usePage().props;
-    // for remove private session
-    const sessions = allsessions.filter(session => session.name.toLowerCase() != 'private session'.toLowerCase())
-    // for selected session
-    const defaultSessionID = sessions[sessions.length - 1].id
+    // remove private sessions
+    const sessions = allsessions.filter(
+        (session) => session.name.toLowerCase() !== "private session"
+    )
+
+    // default session is the last one
+    const defaultSessionID = sessions[sessions.length - 1]?.id || null
 
     const [selectedSession, setSelectedSession] = useState(defaultSessionID)
     const [barChart, setBarChart] = useState([])
-
+    const [pieChart, setPieChart] = useState([])
 
     useEffect(() => {
         if (!selectedSession) return
@@ -36,12 +40,10 @@ const Chart = () => {
         fetch(`/admin/getChartData/${selectedSession}`)
             .then((res) => res.json())
             .then((data) => {
-                setBarChart(data.BarChart)
-                
+                setBarChart(data.BarChart || [])
+                setPieChart(data.PieChart || [])
             })
             .catch((err) => console.error("Error fetching chart data:", err))
-
-
     }, [selectedSession])
 
     return (
@@ -53,12 +55,15 @@ const Chart = () => {
                     <CardTitle className="text-xl font-semibold">Analyse</CardTitle>
                 </div>
 
-                <Select value={selectedSession} onValueChange={(value) => setSelectedSession(value)}>
+                <Select
+                    value={selectedSession}
+                    onValueChange={(value) => setSelectedSession(value)}
+                >
                     <SelectTrigger className="w-[20%]">
                         <SelectValue placeholder="Select Session" />
                     </SelectTrigger>
                     <SelectContent>
-                        {sessions?.map((session) => (
+                        {sessions.map((session) => (
                             <SelectItem key={session.id} value={session.id}>
                                 {session.name}
                             </SelectItem>
@@ -70,8 +75,8 @@ const Chart = () => {
             {/* Content with charts */}
             <CardContent>
                 <div className="flex flex-row-reverse gap-5">
-                    <DonutChart />
-                    <BarChart  barChart={barChart} />
+                    <DonutChart pieChart={pieChart} id={selectedSession} />
+                    <BarChart barChart={barChart} />
                 </div>
             </CardContent>
         </Card>

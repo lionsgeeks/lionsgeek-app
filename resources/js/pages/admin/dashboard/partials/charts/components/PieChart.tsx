@@ -1,83 +1,72 @@
 "use client"
 
 import * as React from "react"
-import { TrendingUp } from "lucide-react"
 import { Label, Pie, PieChart } from "recharts"
 
-import {
-    Card,
-    CardContent,
-    CardFooter,
-} from "@/components/ui/card"
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 export const description = "A donut chart with text"
 
-const chartData = [
-    { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-    { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-    { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-    { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-    { browser: "other", visitors: 190, fill: "var(--color-other)" },
-]
+interface PieStep {
+    step: string
+    total: number
+    male: number
+    female: number
+}
 
-const chartConfig = {
-    visitors: {
-        label: "Visitors",
-    },
-    chrome: {
-        label: "Chrome",
+interface DonutChartProps {
+    pieChart: PieStep[]
+    id: number | string
+}
+
+const chartConfig: ChartConfig = {
+    male: {
+        label: "Male",
         color: "var(--chart-1)",
     },
-    safari: {
-        label: "Safari",
+    female: {
+        label: "Female",
         color: "var(--chart-2)",
     },
-    firefox: {
-        label: "Firefox",
-        color: "var(--chart-3)",
-    },
-    edge: {
-        label: "Edge",
-        color: "var(--chart-4)",
-    },
-    other: {
-        label: "Other",
-        color: "var(--chart-5)",
-    },
-} satisfies ChartConfig
+}
 
-export function DonutChart() {
-    const totalVisitors = React.useMemo(() => {
-        return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
-    }, [])
+export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
+    const [selectedStep, setSelectedStep] = React.useState<PieStep | null>(null)
+
+    // Reset selected step whenever pieChart changes
+    React.useEffect(() => {
+        if (!pieChart || pieChart.length === 0) return
+        const infoStep = pieChart.find((step) => step.step.trim() === "Info Session")
+        setSelectedStep(infoStep || pieChart[0])
+    }, [pieChart])
+
+    // Prepare male/female dataset
+    const genderData = React.useMemo(() => {
+        if (!selectedStep) return []
+        return [
+            { name: "Male", value: selectedStep.male ?? 0, fill: "var(--chart-1)" },
+            { name: "Female", value: selectedStep.female ?? 0, fill: "var(--chart-2)" },
+        ]
+    }, [selectedStep])
+
+    const totalVisitors = selectedStep?.total ?? 0
+
+    if (!pieChart || pieChart.length === 0) {
+        return <p>No data available</p>
+    }
 
     return (
         <div className="w-1/2">
             <Card className="flex flex-col">
-                {/* <CardHeader className="items-center pb-0">
-                    <CardTitle>Pie Chart - Donut with Text</CardTitle>
-                    <CardDescription>January - June 2024</CardDescription>
-                </CardHeader> */}
                 <CardContent className="flex-1 pb-0">
-                    <ChartContainer
-                        config={chartConfig}
-                        className="mx-auto aspect-square max-h-[250px]"
-                    >
+                    <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
                         <PieChart>
-                            <ChartTooltip
-                                cursor={false}
-                                content={<ChartTooltipContent hideLabel />}
-                            />
+                            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                             <Pie
-                                data={chartData}
-                                dataKey="visitors"
-                                nameKey="browser"
+                                data={genderData}
+                                dataKey="value"
+                                nameKey="name"
                                 innerRadius={60}
                                 strokeWidth={5}
                             >
@@ -96,27 +85,43 @@ export function DonutChart() {
                                                         y={viewBox.cy}
                                                         className="fill-foreground text-3xl font-bold"
                                                     >
-                                                        {totalVisitors.toLocaleString()}
+                                                        {totalVisitors}
                                                     </tspan>
                                                     <tspan
                                                         x={viewBox.cx}
                                                         y={(viewBox.cy || 0) + 24}
                                                         className="fill-muted-foreground"
                                                     >
-                                                        Visitors
+                                                        Participants
                                                     </tspan>
                                                 </text>
                                             )
                                         }
+                                        return null
                                     }}
                                 />
                             </Pie>
                         </PieChart>
                     </ChartContainer>
                 </CardContent>
-                <CardFooter className="flex-col gap-2 text-sm">
-                    <div className="flex items-center gap-2 leading-none font-medium">
-                        Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+
+                {/* Step selection radios */}
+                <CardFooter className="flex-col gap-5 text-sm">
+                    <div className="flex items-center gap-10">
+                        {pieChart.map((step) => (
+                            <div key={step.step} className="flex items-center gap-x-1">
+                                <input
+                                    type="radio"
+                                    name="inputs"
+                                    id={step.step}
+                                    checked={selectedStep?.step === step.step}
+                                    onChange={() => setSelectedStep(step)}
+                                />
+                                <label htmlFor={step.step} className="text-sm">
+                                    {step.step}
+                                </label>
+                            </div>
+                        ))}
                     </div>
                 </CardFooter>
             </Card>

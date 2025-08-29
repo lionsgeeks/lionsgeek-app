@@ -9,25 +9,25 @@ const StatisticCards = () => {
             title: 'Total Contacts',
             value: totalContacts > 0 ? totalContacts : null,
             fallback: 'No Messages Received',
-            icon: <Mail color='#ffc803'/>,
+            icon: <Mail color='#ffc803' />,
         },
         {
             title: 'Events',
             value: upcomingEvents && upcomingEvents.length > 0 ? upcomingEvents.length : null,
             fallback: 'No upcoming event',
-            icon: <Calendar color='#ffc803'/>,
+            icon: <Calendar color='#ffc803' />,
         },
         {
             title: 'Subscribers',
             value: members > 0 ? members : null,
             fallback: 'News letter is empty',
-            icon: <Users color='#ffc803'/>,
+            icon: <Users color='#ffc803' />,
         },
         {
             title: 'Website visits',
             value: views?.views ?? 0,
             fallback: null,
-            icon: <MousePointerClick color='#ffc803'/>,
+            icon: <MousePointerClick color='#ffc803' />,
         },
     ];
 
