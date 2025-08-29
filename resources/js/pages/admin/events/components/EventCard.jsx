@@ -98,12 +98,20 @@ export default function EventCard({ event, onEdit, onDelete }) {
                                     <Eye className="mr-2 h-4 w-4" />
                                     View Details
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => onEdit(event)}>
+                                <DropdownMenuItem
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEdit(event)
+                                    }}
+                                >
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                    onClick={() => setShowDeleteDialog(true)}
+                                    onClick={(e) =>
+                                   {  e.stopPropagation();
+                                    setShowDeleteDialog(true)}
+                                    }
                                     className="text-red-600 focus:text-red-600"
                                 >
                                     <Trash2 className="mr-2 h-4 w-4" />
@@ -125,10 +133,10 @@ export default function EventCard({ event, onEdit, onDelete }) {
                             {getDisplayDescription(event.description)}
                         </p>
                         <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-sm">
-                                    <Users className="h-4 w-4" />
-                                    <span>{event.capacity} capacity</span>
-                                </div>
+                            <div className="flex items-center gap-2 text-sm">
+                                <Users className="h-4 w-4" />
+                                <span>{event.capacity} capacity</span>
+                            </div>
                             {/* <Button
                                 size="sm"
                                 variant="secondary"

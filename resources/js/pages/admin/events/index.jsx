@@ -4,7 +4,7 @@ import AppLayout from "@/layouts/app-layout";
 import CreateEventDialog from "./components/CreateEventDialog";
 import EditEventDialog from "./components/EditEventDialog";
 import EventCard from "./components/EventCard";
-
+import { Calendar } from "lucide-react";
 
 
 const breadcrumbs = [
@@ -39,6 +39,22 @@ export default function AdminEvents() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Events" />
             <div className="flex-1 flex flex-col overflow-hidden">
+             <div className="bg-[#212529] py-8 text-white">
+                                    <div className="mx-auto max-w-7xl px-6">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="rounded-lg bg-[#fee819] p-3">
+                                                    <Calendar className="h-8 w-8 text-[#212529]" />
+                                                </div>
+                                                <div>
+                                                    <h1 className="text-3xl font-bold">Events Management</h1>
+                                                    <p className="mt-1 text-gray-300">Manage events</p>
+                                                </div>
+                                            </div>
+                                            <CreateEventDialog onSuccess={handleSuccess} events={events} />
+                                        </div>
+                                    </div>
+                                </div>
                 <main className="flex-1 overflow-y-auto p-6">
 
 
@@ -54,10 +70,7 @@ export default function AdminEvents() {
                             </div>
                         ) }
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {events.length > 0 &&(
-                        <CreateEventDialog onSuccess={handleSuccess} events={events} />
-
-                        ) }
+                   
 
                         {events.map((event) => (
                             <EventCard
