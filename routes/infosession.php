@@ -12,7 +12,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 });
 Route::get('/postuler', function () {
     return Inertia::render('client/infoSession/infoSession', [
-        'sessions' => InfoSession::where('isAvailable', true)->where('isFinish', false)->where('isFUll', false)->get()
+        'sessions' => InfoSession::where('isAvailable', true)
+            ->where('name', '!=', 'private session')
+            ->where('isFinish', false)
+            ->where('isFull', false)
+            ->get(),
     ]);
 })->name('postuler');
 Route::get('/private-session', function () {

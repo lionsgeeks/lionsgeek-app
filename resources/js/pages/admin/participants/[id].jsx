@@ -4,13 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-    ArrowLeft, 
-    User, 
-    Mail, 
-    Phone, 
-    MapPin, 
-    Calendar, 
+import {
+    ArrowLeft,
+    User,
+    Mail,
+    Phone,
+    MapPin,
+    Calendar,
     GraduationCap,
     CheckCircle2,
     Clock,
@@ -39,7 +39,7 @@ export default function ParticipantProfilePage() {
                         <User className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                         <h1 className="mb-4 text-2xl font-bold text-[#212529]">Participant Not Found</h1>
                         <p className="mb-6 text-gray-600">The participant you're looking for doesn't exist.</p>
-                        <Button 
+                        <Button
                             onClick={() => router.visit('/admin/participants')}
                             className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
                         >
@@ -96,17 +96,17 @@ export default function ParticipantProfilePage() {
         if (step?.includes('school')) return participant?.confirmation?.school;
         return false;
     }
-    
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${participant.full_name} - Participant Details`} />
-            
+
             <div className="min-h-screen bg-white">
                 {/* Header Banner */}
                 <div className="bg-[#212529] text-white">
                     <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
-                            <Button 
+                            <Button
                                 onClick={() => router.visit('/admin/participants')}
                                 variant="ghost"
                                 className="text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
@@ -114,8 +114,8 @@ export default function ParticipantProfilePage() {
                                 <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back to Participants
                             </Button>
-                            
-                            <Button 
+
+                            <Button
                                 onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)}
                                 variant="ghost"
                                 className="text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
@@ -131,10 +131,10 @@ export default function ParticipantProfilePage() {
                                 <div className="relative">
                                     <div className="w-24 h-24 rounded-xl overflow-hidden bg-white/10">
                                         {participant.image ? (
-                                            <img 
-                                                src={'/storage/images/participants/' + participant.image}   
+                                            <img
+                                                src={'/storage/images/participants/' + participant.image}
                                                 alt={participant.full_name}
-                                                className="w-full h-full object-cover" 
+                                                className="w-full h-full object-cover"
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
@@ -160,9 +160,9 @@ export default function ParticipantProfilePage() {
                                         </Badge>
                                         {(participant.current_step === 'jungle' || participant.current_step?.includes('school')) && (
                                             <Badge
-                                                className={`${getConfirmationStatus(participant) 
-                                                    ? 'bg-[#51b04f] text-white' 
-                                                    : 'bg-[#ff7376] text-white'} rounded-lg px-3 py-1 font-medium`}
+                                                className={`${getConfirmationStatus(participant)
+                                                    ? 'bg-[#51b04f] text-white'
+                                                    : 'bg-yellow-500 text-white'} rounded-lg px-3 py-1 font-medium`}
                                             >
                                                 <CheckCircle2 className="h-3 w-3 mr-1" />
                                                 {getConfirmationStatus(participant) ? 'Confirmed' : 'Pending'}
@@ -276,7 +276,7 @@ export default function ParticipantProfilePage() {
                             <div className="space-y-6">
                             <FrequentQuestionsSection participant={participant} />
                             </div>
-                            
+
                             {/* Sidebar Components with More Space */}
                             <div className="space-y-6">
                                 <MotivationSection participant={participant} />
