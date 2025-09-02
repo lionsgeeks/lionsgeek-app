@@ -107,36 +107,46 @@ class ParticipantController extends Controller
             $satisfaction = Satisfaction::create([
                 'participant_id' => $participant->id,
             ]);
-            $data['full_name'] = $participant->full_name;
-            $data['email'] = $participant->email;
-            $data['code'] = $participant->code;
-            $data['infosession'] = $participant->infoSession->name;
-            $data['formation'] = $participant->infoSession->formation;
-            $data['time'] = $participant->infoSession->start_date;
-            $data['created_at'] = $participant->created_at;
-            $jsonData = json_encode([
-                'email' => $data['email'],
-                'code' => $data['code']
-            ]);
-            ob_start();
-            QRCode::text($jsonData)
-                ->setErrorCorrectionLevel('H')
-                ->png();
-            $qrImage = ob_get_clean();
-            $image = base64_encode($qrImage);
-            $pdf = Pdf::loadView('pdf.code', compact(['image', 'data']));
-            $data['pdf'] = $pdf;
-            Mail::to($participant->email)->send(new CodeMail($data, $image));
+            // Gate access to the game right away (regardless of email delivery issues)
+            session(['can_play_game' => true]);
+
+            // Prepare and try to send email/QR/PDF, but don't block the flow if it fails
+            try {
+                $data['full_name'] = $participant->full_name;
+                $data['email'] = $participant->email;
+                $data['code'] = $participant->code;
+                $data['infosession'] = $participant->infoSession->name;
+                $data['formation'] = $participant->infoSession->formation;
+                $data['time'] = $participant->infoSession->start_date;
+                $data['created_at'] = $participant->created_at;
+                $jsonData = json_encode([
+                    'email' => $data['email'],
+                    'code' => $data['code']
+                ]);
+                ob_start();
+                QRCode::text($jsonData)
+                    ->setErrorCorrectionLevel('H')
+                    ->png();
+                $qrImage = ob_get_clean();
+                $image = base64_encode($qrImage);
+                $pdf = Pdf::loadView('pdf.code', compact(['image', 'data']));
+                $data['pdf'] = $pdf;
+                Mail::to($participant->email)->send(new CodeMail($data, $image));
+            } catch (\Throwable $mailEx) {
+                // Log but don't surface a blocking error to the user
+                report($mailEx);
+            }
             if ($parts + 1 == $infosession->places) {
                 $infosession->update([
                     'isFull' => true
                 ]);
             }
+            return redirect()->route('game.intro');
         } catch (\Throwable $th) {
-            flash()
-                ->option('position', 'bottom-right')
-                ->error('Something went wrong!');
-            return back();
+            report($th);
+            // Fallback: allow the user to proceed to the intro even if non-critical errors occur
+            session(['can_play_game' => true]);
+            return redirect()->route('game.intro');
         }
     }
 

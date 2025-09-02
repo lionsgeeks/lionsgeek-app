@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Modal from '../../../components/Modal';
 import { useAppContext } from '@/context/appContext';
 import AppLayout from '@/layouts/app-layout';
-import { useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage, router } from '@inertiajs/react';
 import { TransText } from '../../../components/TransText';
 import LoadingPage from '../../../components/loadingPage';
 
@@ -77,20 +77,7 @@ const InfoSession = () => {
         e.preventDefault();
         post(route('participants.store'), {
             onSuccess: () => {
-                setConfirmation(true);
-                setValidate(true);
-                setData({
-                    full_name: '',
-                    email: '',
-                    birthday: '',
-                    phone: '',
-                    city: '',
-                    prefecture: '',
-                    info_session_id: '',
-                    gender: '',
-                    motivation: '',
-                    source: '',
-                });
+                // Server will redirect to game and set session flag; do nothing here
             },
             onError: (errors) => {
                 setValidate(false);
@@ -168,13 +155,14 @@ const InfoSession = () => {
                                             <select
                                                 className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
                                                 name="formation"
+                                                value={formation}
                                                 required
                                                 onChange={(e) => {
                                                     setFormation(e.target.value);
                                                     setChosenSession('');
                                                 }}
                                             >
-                                                <option disabled selected value="" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
+                                                <option disabled value="" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Choose Formation" fr="Choisir la formation" ar="اختر التكوين" />
                                                 </option>
                                                 <option value="coding" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
@@ -196,7 +184,7 @@ const InfoSession = () => {
                                                 className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
                                                 required
                                             >
-                                                <option disabled selected value="" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
+                                                <option disabled value="" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Choose a Session" fr="Choisir une session" ar="اختر جلسة" />
                                                 </option>
                                                 {sessions
@@ -226,8 +214,8 @@ const InfoSession = () => {
                                                     type={field.type}
                                                     id={field.name}
                                                     name={field.name}
-                                                    min={minDateString}
-                                                    max={maxDateString}
+                                                    min={field.type === 'date' ? minDateString : undefined}
+                                                    max={field.type === 'date' ? maxDateString : undefined}
                                                     placeholder={field.label[selectedLanguage]}
                                                     value={data[field.name]}
                                                     onChange={handleChange}
@@ -322,11 +310,12 @@ const InfoSession = () => {
                                             <select
                                                 name="gender"
                                                 id="gender"
+                                                value={data.gender}
                                                 onChange={handleChange}
                                                 className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
                                                 required
                                             >
-                                                <option value="" selected disabled className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
+                                                <option value="" disabled className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="Gender" fr="Genre" ar="الجنس" />
                                                 </option>
                                                 <option value="male" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
@@ -394,7 +383,7 @@ const InfoSession = () => {
                                             className={`w-full rounded-md bg-alpha px-4 py-2 font-semibold ${darkMode ? 'hover:bg-[#2d343a]' : 'hover:bg-[#212529]'
                                                 } hover:text-alpha focus:outline-none`}
                                         >
-                                            <TransText en="Submit" fr="Soumettre" ar="إرسال" />
+                                            <TransText en="Next" fr="Suivant" ar="التالي" />
                                         </button>
                                     </div>
                                 </form>
