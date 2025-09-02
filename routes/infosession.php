@@ -11,8 +11,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::patch('infosessions/change-status/{id}', [InfosessionController::class, 'completeStatus'])->name('infosession.status');
 });
 Route::get('/postuler', function () {
-    return Inertia::render('client/infoSession/infoSession', [
-        'sessions' => InfoSession::where('isAvailable', true)->where('isFinish', false)->where('isFUll', false)->get()
+    return Inertia::render('client/infoSession/index', [
+        'sessions' => InfoSession::where('isAvailable', true)
+            ->where('name', '!=', 'private session')
+            ->where('isFinish', false)
+            ->where('isFull', false)
+            ->get(),
     ]);
 })->name('postuler');
 Route::get('/private-session', function () {

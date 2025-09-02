@@ -62,7 +62,7 @@ class BlogController extends Controller
             'description_en' => 'required|string',
             'description_fr' => 'required|string',
             'description_ar' => 'required|string',
-            'image' => 'required|mimes:png,jpg,jfif,webp',
+            'image' => 'required|mimes:png,jpg,jpeg,jfif,webp',
         ]);
 
         $image = $request->file('image');

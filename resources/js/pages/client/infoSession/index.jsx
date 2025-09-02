@@ -219,11 +219,10 @@ const InfoSession = () => {
                                                     placeholder={field.label[selectedLanguage]}
                                                     value={data[field.name]}
                                                     onChange={handleChange}
-                                                    className={`rounded border px-4 py-2 focus:ring-2 focus:ring-beta focus:outline-none ${
-                                                        emailError && field.name === 'email'
-                                                            ? 'border-red-500 text-red-500'
-                                                            : 'border-gray-300 text-black'
-                                                    } ${darkMode ? 'text-white placeholder:text-white'  : 'text-gray-700'}` }
+                                                    className={`rounded border px-4 py-2 focus:ring-2 focus:ring-beta focus:outline-none ${emailError && field.name === 'email'
+                                                        ? 'border-red-500 text-red-500'
+                                                        : 'border-gray-300 text-black'
+                                                        } ${darkMode ? 'text-white placeholder:text-white' : 'text-gray-700'}`}
                                                     required
                                                 />
                                                 {errors[field.name] && <span className="text-sm text-red-500">{errors[field.name]}</span>}
@@ -278,20 +277,27 @@ const InfoSession = () => {
                                                 <option value="none" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
                                                     <TransText en="None" fr="Aucun" ar="لا شيء" />
                                                 </option>
-                                                {[
-                                                    'Casablanca Anfa',
-                                                    'Sidi Bernoussi',
-                                                    'Ain Sbaa Hay Mohammedi',
-                                                    'Al Fida Mers Sultan',
-                                                    'Moulay Rachid',
-                                                    'Ain Chock',
-                                                    "Ben M'Sick Sidi Othmane",
-                                                    'Hay Hassani',
-                                                ].map((el, ind) => (
-                                                    <option key={ind} value={el.toLowerCase().replace(/ /g, '_')} className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                        {el}
-                                                    </option>
-                                                ))}
+                                                {data.city === "casablanca" && (
+                                                    [
+                                                        'Casablanca Anfa',
+                                                        'Sidi Bernoussi',
+                                                        'Ain Sbaa Hay Mohammedi',
+                                                        'Al Fida Mers Sultan',
+                                                        'Moulay Rachid',
+                                                        'Ain Chock',
+                                                        "Ben M'Sick Sidi Othmane",
+                                                        'Hay Hassani',
+                                                    ].map((el, ind) => (
+                                                        <option
+                                                            key={ind}
+                                                            value={el.toLowerCase().replace(/ /g, '_')}
+                                                            className={`${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}
+                                                        >
+                                                            {el}
+                                                        </option>
+                                                    ))
+                                                ) }
+
                                             </select>
                                             {errors.prefecture && <span className="text-sm text-red-500">{errors.prefecture}</span>}
                                         </div>
@@ -374,9 +380,8 @@ const InfoSession = () => {
                                         <button
                                             type="submit"
                                             disabled={processing}
-                                            className={`w-full rounded-md bg-alpha px-4 py-2 font-semibold ${
-                                                darkMode ? 'hover:bg-[#2d343a]' : 'hover:bg-[#212529]'
-                                            } hover:text-alpha focus:outline-none`}
+                                            className={`w-full rounded-md bg-alpha px-4 py-2 font-semibold ${darkMode ? 'hover:bg-[#2d343a]' : 'hover:bg-[#212529]'
+                                                } hover:text-alpha focus:outline-none`}
                                         >
                                             <TransText en="Next" fr="Suivant" ar="التالي" />
                                         </button>
@@ -386,9 +391,8 @@ const InfoSession = () => {
                         ) : (
                             <>
                                 <div
-                                    className={`flex h-[16rem] w-full items-center justify-center text-center text-[30px] font-bold ${
-                                        darkMode ? 'text-white' : 'text-black'
-                                    }`}
+                                    className={`flex h-[16rem] w-full items-center justify-center text-center text-[30px] font-bold ${darkMode ? 'text-white' : 'text-black'
+                                        }`}
                                 >
                                     <TransText fr="Aucune session disponible" ar="لا توجد دورات متاحة" en="No Sessions Available" />
                                 </div>
