@@ -1,10 +1,9 @@
 import { useEffect } from "react";
-import {TransText} from "../components/TransText";
-// import { useAppContext } from "../utils/contextProvider.jsx";
+import { TransText } from "../components/TransText";
+import { useAppContext } from "@/context/appContext";
 
-const Modal = ({ validate, confirm, action }) => {
-  // const {darkMode}=useAppContext();
-  const darkMode = false;
+const Modal = ({ validate, confirm, action, title, message, submessage }) => {
+  const { darkMode } = useAppContext();
   const validIcon = (
     <svg
       className="w-10 h-10 text-green-500"
@@ -54,14 +53,18 @@ const Modal = ({ validate, confirm, action }) => {
       <div className={`${darkMode ? "bg-black ":"bg-white"}  lg:w-[60%] rounded py-16 px-5 flex flex-col items-center text-center gap-3`}>
         {validate ? validIcon : notValidIcon}
         <h1 className={`text-xl font-medium  ${darkMode ? "text-white":"text-black/50"}`}>
-          {validate ? (
+          {title ? (
+            title
+          ) : validate ? (
             <TransText en="Success!" fr="Succès !" ar="نجاح" />
           ) : (
             <TransText en="Oops!" fr="Oops!" ar="عذرًا" />
           )}
         </h1>
         <p className={`${darkMode ? "text-white":"text-black/50"}`}>
-          {validate ? (
+          {message ? (
+            message
+          ) : validate ? (
             <TransText
               ar="شكراً لتسجيلك في جلسة المعلومات"
               fr="Merci de vous être inscrit(e) à la session d'information !"
@@ -76,7 +79,9 @@ const Modal = ({ validate, confirm, action }) => {
           )}
         </p>
         <p className={`${darkMode ? "text-white":"text-black/50"}`}>
-          {validate ? (
+          {submessage ? (
+            submessage
+          ) : validate ? (
             <TransText
               en="Please check your email inbox (or spam folder) for a confirmation message with all the event details."
               ar="يرجى التحقق من صندوق الوارد الخاص بك (أو مجلد الرسائل المزعجة) للعثور على رسالة تأكيد تحتوي على جميع تفاصيل الحدث"
