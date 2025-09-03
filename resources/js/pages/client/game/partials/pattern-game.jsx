@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAppContext } from '@/context/appContext';
 import Modal from '@/components/Modal';
+import { router, useForm } from '@inertiajs/react';
+
+// Inside your component, add this after your other useState hooks:
 
 const COLORS = [
     '#ef4444', '#f97316', '#f59e0b', '#eab308',
@@ -16,6 +19,8 @@ const baseContainer = 'max-w-5xl mx-auto';
 const cardBase = 'rounded-2xl border shadow-xl';
 
 export function PatternGame() {
+    const { post, processing, errors } = useForm();
+
     const { darkMode } = useAppContext();
     const [currentLevel, setCurrentLevel] = useState(0);
     const [score, setScore] = useState(0);
@@ -70,20 +75,20 @@ export function PatternGame() {
                 const color = pick(COLORS);
                 const cycle = ['circle', 'square', 'triangle', 'diamond'];
                 const start = Math.floor(rng() * cycle.length);
-                const seq = [0,1,2].map((j) => ({ shape: cycle[(start + j) % 4], color, symbol: symFor(cycle[(start + j) % 4]) }));
+                const seq = [0, 1, 2].map((j) => ({ shape: cycle[(start + j) % 4], color, symbol: symFor(cycle[(start + j) % 4]) }));
                 const nextShape = cycle[(start + 3) % 4];
                 pools.easy.push({ sequence: seq, correct: { shape: nextShape, color, symbol: symFor(nextShape) } });
             } else if (rule === 1) {
                 const shape = 'circle';
                 const start = Math.floor(rng() * (COLORS.length - 4));
-                const seq = [0,1,2].map((j) => ({ shape, color: COLORS[start + j], symbol: '●' }));
+                const seq = [0, 1, 2].map((j) => ({ shape, color: COLORS[start + j], symbol: '●' }));
                 pools.easy.push({ sequence: seq, correct: { shape, color: COLORS[start + 3], symbol: '●' } });
             } else {
                 const shape = 'square';
-                const step = [1,2,3][Math.floor(rng() * 3)];
+                const step = [1, 2, 3][Math.floor(rng() * 3)];
                 const start = Math.floor(rng() * 5) + 1;
-                const nums = [start, start + step, start + 2*step];
-                pools.easy.push({ sequence: nums.map((n) => ({ shape, color: COLORS[2], symbol: String(n) })), correct: { shape, color: COLORS[2], symbol: String(start + 3*step) } });
+                const nums = [start, start + step, start + 2 * step];
+                pools.easy.push({ sequence: nums.map((n) => ({ shape, color: COLORS[2], symbol: String(n) })), correct: { shape, color: COLORS[2], symbol: String(start + 3 * step) } });
             }
         }
 
@@ -101,26 +106,26 @@ export function PatternGame() {
                 pools.medium.push({ sequence: seq, correct: { shape: a, color, symbol: symFor(a) } });
             } else if (choose === 1) {
                 const shape = 'diamond';
-                const step = [1,2,3,4][Math.floor(rng() * 4)];
+                const step = [1, 2, 3, 4][Math.floor(rng() * 4)];
                 const start = step * (Math.floor(rng() * 6) + 5);
-                const nums = [start, start - step, start - 2*step];
-                pools.medium.push({ sequence: nums.map((n) => ({ shape, color: COLORS[9], symbol: String(n) })), correct: { shape, color: COLORS[9], symbol: String(start - 3*step) } });
+                const nums = [start, start - step, start - 2 * step];
+                pools.medium.push({ sequence: nums.map((n) => ({ shape, color: COLORS[9], symbol: String(n) })), correct: { shape, color: COLORS[9], symbol: String(start - 3 * step) } });
             } else if (choose === 2) {
                 const shape = 'square';
                 const base = Math.floor(rng() * 5) + 1;
-                const nums = [base, base+1, base+2].map((x) => x*x);
-                pools.medium.push({ sequence: nums.map((n) => ({ shape, color: COLORS[7], symbol: String(n) })), correct: { shape, color: COLORS[7], symbol: String((base+3)*(base+3)) } });
+                const nums = [base, base + 1, base + 2].map((x) => x * x);
+                pools.medium.push({ sequence: nums.map((n) => ({ shape, color: COLORS[7], symbol: String(n) })), correct: { shape, color: COLORS[7], symbol: String((base + 3) * (base + 3)) } });
             } else if (choose === 3) {
                 const shape = 'square';
-                const step = [3,4,5][Math.floor(rng() * 3)];
+                const step = [3, 4, 5][Math.floor(rng() * 3)];
                 const start = Math.floor(rng() * 10) + 5;
-                const nums = [start, start + step, start + 2*step];
-                pools.medium.push({ sequence: nums.map((n) => ({ shape, color: COLORS[4], symbol: String(n) })), correct: { shape, color: COLORS[4], symbol: String(start + 3*step) } });
+                const nums = [start, start + step, start + 2 * step];
+                pools.medium.push({ sequence: nums.map((n) => ({ shape, color: COLORS[4], symbol: String(n) })), correct: { shape, color: COLORS[4], symbol: String(start + 3 * step) } });
             } else {
                 // alternating +a then *b
                 const shape = 'circle';
                 const a = Math.floor(rng() * 6) + 2; // 2..7
-                const b = [2,3][Math.floor(rng()*2)]; // 2 or 3
+                const b = [2, 3][Math.floor(rng() * 2)]; // 2 or 3
                 const start = Math.floor(rng() * 10) + 5; // 5..14
                 const x1 = start;
                 const x2 = x1 + a;
@@ -134,27 +139,27 @@ export function PatternGame() {
             const pickRule = Math.floor(rng() * 5);
             if (pickRule === 0) {
                 const shape = 'circle';
-                const k = [3,4,5][Math.floor(rng() * 3)];
-                const start = [5,6,7,8,9][Math.floor(rng() * 5)];
-                const nums = [start, start*k, start*k*k];
-                pools.hard.push({ sequence: nums.map((n) => ({ shape, color: COLORS[8], symbol: String(n) })), correct: { shape, color: COLORS[8], symbol: String(nums[2]*k) } });
+                const k = [3, 4, 5][Math.floor(rng() * 3)];
+                const start = [5, 6, 7, 8, 9][Math.floor(rng() * 5)];
+                const nums = [start, start * k, start * k * k];
+                pools.hard.push({ sequence: nums.map((n) => ({ shape, color: COLORS[8], symbol: String(n) })), correct: { shape, color: COLORS[8], symbol: String(nums[2] * k) } });
             } else if (pickRule === 1) {
                 const shape = 'triangle';
-                const a = [13,21,34][Math.floor(rng()*3)], b = [21,34,55][Math.floor(rng()*3)];
+                const a = [13, 21, 34][Math.floor(rng() * 3)], b = [21, 34, 55][Math.floor(rng() * 3)];
                 const c = a + b, d = b + c;
-                pools.hard.push({ sequence: [a,b,c].map((n) => ({ shape, color: COLORS[6], symbol: String(n) })), correct: { shape, color: COLORS[6], symbol: String(d) } });
+                pools.hard.push({ sequence: [a, b, c].map((n) => ({ shape, color: COLORS[6], symbol: String(n) })), correct: { shape, color: COLORS[6], symbol: String(d) } });
             } else if (pickRule === 2) {
                 const colorStart = Math.floor(rng() * (COLORS.length - 4));
-                const shapes = ['circle','square','triangle'];
-                const seq = shapes.slice(0,3).map((s, i) => ({ shape: s, color: COLORS[colorStart + i], symbol: symFor(s) }));
+                const shapes = ['circle', 'square', 'triangle'];
+                const seq = shapes.slice(0, 3).map((s, i) => ({ shape: s, color: COLORS[colorStart + i], symbol: symFor(s) }));
                 pools.hard.push({ sequence: seq, correct: { shape: 'diamond', color: COLORS[colorStart + 3], symbol: symFor('diamond') } });
             } else if (pickRule === 3) {
                 // quadratic n^2 + c
                 const shape = 'square';
                 const n0 = Math.floor(rng() * 5) + 5; // 5..9
                 const c = Math.floor(rng() * 50) + 10; // 10..59
-                const nums = [n0, n0+1, n0+2].map((n) => n*n + c);
-                const next = (n0+3)*(n0+3) + c;
+                const nums = [n0, n0 + 1, n0 + 2].map((n) => n * n + c);
+                const next = (n0 + 3) * (n0 + 3) + c;
                 pools.hard.push({ sequence: nums.map((n) => ({ shape, color: COLORS[5], symbol: String(n) })), correct: { shape, color: COLORS[5], symbol: String(next) } });
             } else {
                 // second-difference constant (increasing difference)
@@ -164,8 +169,8 @@ export function PatternGame() {
                 const x1 = Math.floor(rng() * 40) + 30; // 30..69
                 const x2 = x1 + d;
                 const x3 = x2 + d + r;
-                const x4 = x3 + d + 2*r;
-                pools.hard.push({ sequence: [x1,x2,x3].map((n) => ({ shape, color: COLORS[3], symbol: String(n) })), correct: { shape, color: COLORS[3], symbol: String(x4) } });
+                const x4 = x3 + d + 2 * r;
+                pools.hard.push({ sequence: [x1, x2, x3].map((n) => ({ shape, color: COLORS[3], symbol: String(n) })), correct: { shape, color: COLORS[3], symbol: String(x4) } });
             }
         }
 
@@ -179,42 +184,42 @@ export function PatternGame() {
                 const b = a * 2;
                 const c = b * 3;
                 const d = c * 2;
-                pools.extreme.push({ sequence: [a,b,c].map((n) => ({ shape, color: COLORS[1], symbol: String(n) })), correct: { shape, color: COLORS[1], symbol: String(d) } });
+                pools.extreme.push({ sequence: [a, b, c].map((n) => ({ shape, color: COLORS[1], symbol: String(n) })), correct: { shape, color: COLORS[1], symbol: String(d) } });
             } else if (which === 1) {
                 // tribonacci with large seeds
                 const shape = 'triangle';
-                const a = Math.floor(rng()*30)+40; // 40..69
-                const b = a + Math.floor(rng()*20)+20; // +20..39
-                const c = b + Math.floor(rng()*20)+20;
+                const a = Math.floor(rng() * 30) + 40; // 40..69
+                const b = a + Math.floor(rng() * 20) + 20; // +20..39
+                const c = b + Math.floor(rng() * 20) + 20;
                 const d = a + b + c;
-                pools.extreme.push({ sequence: [a,b,c].map((n)=>({ shape, color: COLORS[0], symbol: String(n) })), correct: { shape, color: COLORS[0], symbol: String(d) } });
+                pools.extreme.push({ sequence: [a, b, c].map((n) => ({ shape, color: COLORS[0], symbol: String(n) })), correct: { shape, color: COLORS[0], symbol: String(d) } });
             } else if (which === 2) {
                 // prime squares (bigger primes)
                 const shape = 'circle';
-                const primes = [11,13,17,19,23,29,31,37,41,43,47,53];
+                const primes = [11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53];
                 const startIdx = Math.floor(rng() * (primes.length - 4));
-                const seqNums = [primes[startIdx], primes[startIdx+1], primes[startIdx+2]].map((p) => p*p);
-                const next = primes[startIdx+3] * primes[startIdx+3];
-                pools.extreme.push({ sequence: seqNums.map((n)=>({ shape, color: COLORS[2], symbol: String(n) })), correct: { shape, color: COLORS[2], symbol: String(next) } });
+                const seqNums = [primes[startIdx], primes[startIdx + 1], primes[startIdx + 2]].map((p) => p * p);
+                const next = primes[startIdx + 3] * primes[startIdx + 3];
+                pools.extreme.push({ sequence: seqNums.map((n) => ({ shape, color: COLORS[2], symbol: String(n) })), correct: { shape, color: COLORS[2], symbol: String(next) } });
             } else if (which === 3) {
                 // powers of 3 with big exponents
                 const shape = 'diamond';
-                const e = Math.floor(rng()*2) + 5; // 5..6
+                const e = Math.floor(rng() * 2) + 5; // 5..6
                 const pow = (x, y) => Math.round(Math.exp(y * Math.log(x))); // safer
-                const seqNums = [pow(3,e), pow(3,e+1), pow(3,e+2)];
-                const next = pow(3,e+3);
-                pools.extreme.push({ sequence: seqNums.map((n)=>({ shape, color: COLORS[4], symbol: String(n) })), correct: { shape, color: COLORS[4], symbol: String(next) } });
+                const seqNums = [pow(3, e), pow(3, e + 1), pow(3, e + 2)];
+                const next = pow(3, e + 3);
+                pools.extreme.push({ sequence: seqNums.map((n) => ({ shape, color: COLORS[4], symbol: String(n) })), correct: { shape, color: COLORS[4], symbol: String(next) } });
             } else {
                 // mixed: ((x + a) * b) ^ 2 pattern simplified as numbers
                 const shape = 'square';
-                const x = Math.floor(rng()*20)+10; // 10..29
-                const a = Math.floor(rng()*10)+5; // 5..14
-                const b = Math.floor(rng()*3)+2; // 2..4
+                const x = Math.floor(rng() * 20) + 10; // 10..29
+                const a = Math.floor(rng() * 10) + 5; // 5..14
+                const b = Math.floor(rng() * 3) + 2; // 2..4
                 const n1 = x;
                 const n2 = (x + a) * b;
                 const n3 = (n2 + a) * b;
                 const n4 = (n3 + a) * b;
-                pools.extreme.push({ sequence: [n1,n2,n3].map((n)=>({ shape, color: COLORS[10], symbol: String(n) })), correct: { shape, color: COLORS[10], symbol: String(n4) } });
+                pools.extreme.push({ sequence: [n1, n2, n3].map((n) => ({ shape, color: COLORS[10], symbol: String(n) })), correct: { shape, color: COLORS[10], symbol: String(n4) } });
             }
         }
 
@@ -223,7 +228,7 @@ export function PatternGame() {
 
     function createRng(seed) {
         let s = seed >>> 0;
-        return function() { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+        return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
     }
 
     function generateLevel() {
@@ -326,6 +331,109 @@ export function PatternGame() {
     const [showEnd, setShowEnd] = useState(false);
     const [completedFlag, setCompletedFlag] = useState(false);
 
+    // Handle form submission when user clicks "Postuler"
+    // const handleFormSubmission = () => {
+    //     // Check what's in sessionStorage first
+    //     const rawData = sessionStorage.getItem('formData');
+    //     console.log('🔍 Raw sessionStorage data:', rawData);
+
+    //     // Retrieve form data from sessionStorage (stored when user left the form)
+    //     const formData = JSON.parse(rawData);
+
+    //     console.log('🔍 Debug: Parsed form data:', formData);
+    //     console.log('🔍 Form data keys:', formData ? Object.keys(formData) : 'No data');
+
+    //     if (formData) {
+    //         console.log('✅ Form data found, submitting to /participants/store');
+
+    //         // Submit the form data to create participant
+    //        post('/participants/store', formData, {
+    //             onSuccess: (response) => {
+    //                 console.log('✅ Submission successful:', response);
+    //                 // Clear session storage after successful submission
+    //                 sessionStorage.removeItem('formData');
+
+    //                 // Redirect to home page
+    //                 // router.visit('/');
+    //             },
+    //             onError: (errors) => {
+    //                 console.error('❌ Submission errors:', errors);
+    //                 console.error('❌ Error details:', JSON.stringify(errors, null, 2));
+    //                 console.error('❌ Form data that failed:', formData);
+
+    //                 // Show specific validation errors
+    //                 if (errors.message) {
+    //                     console.error('❌ Error message:', errors.message);
+    //                 }
+    //                 if (errors.errors) {
+    //                     console.error('❌ Validation errors:', errors.errors);
+    //                 }
+
+    //                 // Don't redirect on error so we can see what's wrong
+    //                 alert('Form submission failed! Check console for details.');
+    //             }
+    //         });
+    //     } else {
+    //         alert('❌ No form data found in sessionStorage');
+    //         // No form data found, just redirect to home
+    //         alert('/');
+    //     }
+    // };
+
+    const handleFormSubmission = () => {
+        // Check what's in sessionStorage first
+        const rawData = sessionStorage.getItem('formData');
+        console.log('🔍 Raw sessionStorage data:', rawData);
+
+        if (!rawData) {
+            alert('❌ No form data found in sessionStorage');
+            return;
+        }
+
+        try {
+            const formData = JSON.parse(rawData);
+            console.log('🔍 Debug: Parsed form data:', formData);
+
+            if (formData && Object.keys(formData).length > 0) {
+                console.log('✅ Form data found, submitting to /participants/store');
+
+                // Prepare submission data
+                const submissionData = {
+                    ...formData,
+                    game_completed: completedFlag,
+                    final_score: score,
+                    correct_answers: correctAnswers,
+                    levels_completed: currentLevel,
+                    time_spent: Math.floor((Date.now() - startTime) / 1000)
+                };
+
+                console.log('🚀 Submitting data:', submissionData);
+
+                // Submit using useForm hook
+                post('/participants/store', submissionData, {
+                    onSuccess: (response) => {
+                        console.log('✅ Submission successful:', response);
+                        alert('Application submitted successfully!');
+                        sessionStorage.removeItem('formData');
+                        router.visit('/');
+                    },
+                    onError: (errors) => {
+                        console.error('❌ Submission errors:', errors);
+                        const errorMessages = Object.values(errors).flat().join('\n');
+                        alert(`Submission failed:\n${errorMessages}`);
+                    }
+                });
+            } else {
+                alert('❌ Form data is empty');
+            }
+        } catch (error) {
+            console.error('❌ Error:', error);
+            alert('Error processing form data');
+        }
+    };
+
+
+
     const minutes = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
     const seconds = (timeRemaining % 60).toString().padStart(2, '0');
 
@@ -410,10 +518,11 @@ export function PatternGame() {
                     message={<span>Your request has been submitted.</span>}
                     submessage={<span>We will contact you soon.</span>}
                     action={(
-                        <form method="post" action={route('game.finish')}>
-                            <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]').getAttribute('content')} />
-                            <button type="submit" className="mt-4 rounded bg-alpha px-5 py-2 font-medium">Close</button>
-                        </form>
+                        <button
+                            className="mt-4 rounded bg-alpha px-5 py-2 font-medium"
+                        >
+                            Postuler
+                        </button>
                     )}
                 />
             )}

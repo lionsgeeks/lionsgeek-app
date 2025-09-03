@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from '../../../components/Modal';
 import { useAppContext } from '@/context/appContext';
 import AppLayout from '@/layouts/app-layout';
@@ -6,404 +6,470 @@ import { useForm, usePage, router } from '@inertiajs/react';
 import { TransText } from '../../../components/TransText';
 import LoadingPage from '../../../components/loadingPage';
 
-const InfoSession = () => {
+// Import step components
+import ProgressIndicator from './partials/ProgressIndicator';
+import NavigationButtons from './partials/NavigationButtons';
+import Step1PersonalInfo from './partials/Step1PersonalInfo';
+import Step2EducationSituation from './partials/Step2EducationSituation';
+import Step3ExperienceMotivation from './partials/Step3ExperienceMotivation';
+import Step4GoalsLearning from './partials/Step4GoalsLearning';
+import Step5BackgroundAvailability from './partials/Step5BackgroundAvailability';
+import Step6CVUpload from './partials/Step6CVUpload';
+import { PatternGame } from '../game/partials/pattern-game';
+import GameIntro from '../game/intro';
+import GamePage from '../game/game';
+
+const InfoSession = ({ trainingType = 'digital' }) => {
     const { selectedLanguage, darkMode } = useAppContext();
     const { sessions } = usePage().props;
+
     const { data, setData, post, processing, errors } = useForm({
-        full_name: '',
-        email: '',
-        birthday: '',
-        phone: '',
-        city: '',
-        prefecture: '',
+        // Session and formation info
         info_session_id: '',
-        gender: '',
-        motivation: '',
-        source: '',
+        formation_field: '',
+
+        // Step 1: Personal Information
+        full_name: '',
+        birthday: '',
+        city: '',
+        region: '',
+        other_city: '',
+        email: '',
+        phone: '',
+
+        // Step 2: Education & Current Situation + Phase 2 & 3
+        education_level: '',
+        diploma_institution: '',
+        diploma_specialty: '',
+        current_situation: '',
+        other_status: '',
+        has_referring_organization: '',
+        referring_organization: '',
+        other_organization: '',
+
+        // Step 3: Training Experience & Motivation + LionsGEEK
+        has_training: '',
+        previous_training_details: '',
+        why_join_formation: '',
+        participated_lionsgeek: '',
+        lionsgeek_activity: '',
+        other_activity: '',
+
+        // Step 4: Goals & Learning + Languages
+        objectives_after_formation: '',
+        priority_learning_topics: '',
+        last_self_learned: '',
+        arabic_level: '',
+        french_level: '',
+        english_level: '',
+        other_language: '',
+        other_language_level: '',
+
+        // Step 5: Background & Availability
+        how_heard_about_formation: '',
+        current_commitments: '',
+
+        // Step 6: CV Upload (no video)
+        cv_file: null,
     });
-    const [chosenSession, setChosenSession] = useState('');
+
     const [sending, setSending] = useState(false);
     const [validate, setValidate] = useState(false);
     const [confirmation, setConfirmation] = useState(false);
-    const [emailError, setEmailError] = useState(false);
-    const [refresh, setRefresh] = useState(false);
-    // const navigate = useNavigate();
-    const dateLanguage = {
-        en: 'US',
-        fr: 'FR',
-        ar: 'AR',
-    };
+    const [validationErrors, setValidationErrors] = useState({});
 
-    // useEffect(() => {
-    //     fetchInfosession()
-    // }, [])
+    // Multi-step form state
+    const [currentStep, setCurrentStep] = useState(1);
+    const [stepValidation, setStepValidation] = useState({
+        1: false, 2: false, 3: false, 4: false, 5: false, 6: false
+    });
 
-    const formFields = [
-        {
-            name: 'full_name',
-            label: { en: 'Full Name', fr: 'Nom Complet', ar: 'الاسم الكامل' },
-            type: 'text',
-        },
-        {
-            name: 'email',
-            label: { en: 'Email', fr: 'Email', ar: 'البريد الإلكتروني' },
-            type: 'email',
-        },
-        {
-            name: 'birthday',
-            label: { en: 'Birthday', fr: 'Date de Naissance', ar: 'تاريخ الميلاد' },
-            type: 'date',
-        },
-        {
-            name: 'phone',
-            label: { en: 'Phone', fr: 'Téléphone', ar: 'رقم الهاتف' },
-            type: 'tel',
-        },
-    ];
-
-    const initialState = formFields.reduce((acc, field) => {
-        acc[field.name] = '';
-        return acc;
-    }, {});
-
+    // Handle form field changes
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        if (name === 'email') {
-            setEmailError(false);
+        const { name, value, type, files } = e.target;
+
+        if (type === 'file') {
+            setData(prevData => ({
+                ...prevData,
+                [name]: files[0] || null
+            }));
+        } else {
+            setData(prevData => ({
+                ...prevData,
+                [name]: value
+            }));
         }
-        setData({ ...data, [name]: value });
+
+        // Extract formation field from selected session
+        if (name === 'info_session_id' && value) {
+            const selectedSession = sessions.find(session => session.id == value);
+            if (selectedSession && selectedSession.formation) {
+                // Use the formation field directly from the session
+                const formationType = selectedSession.formation.toLowerCase();
+
+                setData(prevData => ({
+                    ...prevData,
+                    formation_field: formationType
+                }));
+            }
+        }
+
+        // Clear conditional fields when parent field changes
+        if (name === 'city' && value !== 'casablanca') {
+            setData(prevData => ({ ...prevData, region: '' }));
+        }
+
+        if (name === 'city' && value !== 'other') {
+            setData(prevData => ({ ...prevData, other_city: '' }));
+        }
+
+        if (name === 'has_referring_organization' && value === 'no') {
+            setData(prevData => ({
+                ...prevData,
+                referring_organization: '',
+                other_organization: ''
+            }));
+        }
+
+        if (name === 'referring_organization' && (value !== 'autre_plateforme' && value !== 'autre_association')) {
+            setData(prevData => ({ ...prevData, other_organization: '' }));
+        }
+
+        if (name === 'education_level' && value !== 'other') {
+            setData(prevData => ({
+                ...prevData,
+                diploma_institution: '',
+                diploma_specialty: ''
+            }));
+        }
+
+        if (name === 'participated_lionsgeek' && value === 'no') {
+            setData(prevData => ({
+                ...prevData,
+                lionsgeek_activity: '',
+                other_activity: ''
+            }));
+        }
+
+        if (name === 'lionsgeek_activity' && value !== 'other') {
+            setData(prevData => ({ ...prevData, other_activity: '' }));
+        }
+
+        if (name === 'other_language' && !value) {
+            setData(prevData => ({ ...prevData, other_language_level: '' }));
+        }
+
+        if (name === 'current_situation' && value !== 'other') {
+            setData(prevData => ({ ...prevData, other_status: '' }));
+        }
+
+        if (name === 'has_training' && value === 'no') {
+            setData(prevData => ({ ...prevData, previous_training_details: '' }));
+        }
     };
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        post(route('participants.store'), {
-            onSuccess: () => {
-                // Server will redirect to game and set session flag; do nothing here
-            },
-            onError: (errors) => {
-                setValidate(false);
-                // setSending(false);
-                setConfirmation(true);
-            },
-        });
+
+    // No longer needed - using single selects instead of multi-select
+
+    // Navigation functions
+    const nextStep = () => {
+        if (currentStep < 8) {
+            setCurrentStep(prev => prev + 1);
+        }
     };
 
-    const Required = () => {
-        return <span className="text-lg font-bold text-red-500">*</span>;
+    const prevStep = () => {
+        if (currentStep > 1) {
+            setCurrentStep(prev => prev - 1);
+        }
     };
 
-    function formatDate(dateString) {
-        const date = new Date(dateString);
+    // Game redirect function
+    const handleGameRedirect = () => {
+        console.log('🎮 handleGameRedirect called from main form component');
+        console.log('🎮 Current form data:', data);
 
-        // Get formatted date: Monday 20 novembre 2024
-        const formattedDate = date.toLocaleDateString(`en-${dateLanguage['en']}`, {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-        });
+        // Create a copy of data without the file (files can't be serialized)
+        const dataToStore = { ...data };
+        if (dataToStore.cv_file && typeof dataToStore.cv_file === 'object') {
+            // Store file info but not the actual file object
+            dataToStore.cv_file = null; // We'll handle file upload separately if needed
+        }
 
-        // Get formatted time: 16:49
-        const formattedTime = date.toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+        console.log('🎮 Data to store in sessionStorage:', dataToStore);
 
-        return `${formattedDate} ${formattedTime}`;
-    }
+        // Store form data in session storage for later submission
+        sessionStorage.setItem('formData', JSON.stringify(dataToStore));
 
-    // prevent l user mn anah idir copy past hehehe  nihahahahaha
-    const handlePaste = (event) => {
-        const messages = {
-            en: 'Pasting is disabled. Please type your input 🙂.',
-            fr: 'Le collage est désactivé. Veuillez saisir votre texte 🙂.',
-            ar: 'لصق النص غير مسموح. يرجى كتابة النص 🙂.',
-        };
-        event.preventDefault();
-        alert(messages[selectedLanguage] || messages.en);
+        // Verify data was stored
+        const storedData = sessionStorage.getItem('formData');
+        console.log('✅ Data stored in sessionStorage:', storedData ? 'Yes' : 'No');
+        console.log('✅ Stored data preview:', storedData ? storedData.substring(0, 100) + '...' : 'None');
+
+        // Redirect to game
+        console.log('🎮 Redirecting to game...');
+        router.visit('/game/intro');
     };
 
-    const today = chosenSession ? new Date(sessions?.find((s) => s.id == chosenSession)?.start_date) : new Date();
-    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-    const minDate = new Date(today.getFullYear() - 30, today.getMonth(), today.getDate());
-    // Format dates as YYYY-MM-DD
-    const maxDateString = maxDate.toISOString().split('T')[0];
-    const minDateString = minDate.toISOString().split('T')[0];
+    // Validation for each step
+    const validateCurrentStep = () => {
+        const newErrors = {};
 
-    const [formation, setFormation] = useState('');
+        switch (currentStep) {
+            case 1:
+                // Personal Information validation
+                if (!data.formation_field) newErrors.info_session_field = 'Please select a training session';
+                if (!data.full_name.trim()) newErrors.full_name = 'Full name is required';
+                if (!data.birthday) {
+                    newErrors.birthday = 'Date of birth is required';
+                } else {
+                    const age = Math.floor((new Date() - new Date(data.birthday)) / (365.25 * 24 * 60 * 60 * 1000));
+                    if (age < 18) newErrors.birthday = 'You must be at least 18 years old';
+                    if (age > 65) newErrors.birthday = 'Age must be 65 or younger';
+                }
+                if (!data.city) newErrors.city = 'City is required';
+                if (data.city === 'casablanca' && !data.region) newErrors.region = 'Region is required for Casablanca';
+                if (data.city === 'other' && !data.other_city.trim()) newErrors.other_city = 'Please specify your city';
+                if (!data.email.trim()) newErrors.email = 'Email is required';
+                if (!data.phone.trim()) newErrors.phone = 'Phone number is required';
+
+                setValidationErrors(newErrors);
+                const step1Valid = Object.keys(newErrors).length === 0;
+                setStepValidation(prev => ({ ...prev, 1: step1Valid }));
+                return step1Valid;
+            case 2:
+                // Education & Current Situation + Phase 2 & 3 validation
+                const educationValid = data.education_level;
+                const institutionValid = data.education_level !== 'other' ||
+                    (data.education_level === 'other' && data.diploma_institution.trim());
+                const specialtyValid = data.education_level !== 'other' ||
+                    (data.education_level === 'other' && data.diploma_specialty.trim());
+                const situationValid = data.current_situation;
+                const statusValid = data.current_situation !== 'other' ||
+                    (data.current_situation === 'other' && data.other_status.trim());
+                const hasOrgValid = data.has_referring_organization;
+                const organizationValid = data.has_referring_organization === 'no' ||
+                    (data.has_referring_organization === 'yes' && data.referring_organization);
+                const orgDetailsValid = data.has_referring_organization === 'no' ||
+                    (data.referring_organization !== 'autre_plateforme' && data.referring_organization !== 'autre_association') ||
+                    ((data.referring_organization === 'autre_plateforme' || data.referring_organization === 'autre_association') && data.other_organization.trim());
+
+                const step2Valid = educationValid && institutionValid && specialtyValid && situationValid && statusValid && hasOrgValid && organizationValid && orgDetailsValid;
+                setStepValidation(prev => ({ ...prev, 2: step2Valid }));
+                return step2Valid;
+            case 3:
+                // Training Experience & Motivation + LionsGEEK validation
+                const hasTrainingValid = data.has_training;
+                const trainingDetailsValid = data.has_training === 'no' ||
+                    (data.has_training === 'yes' && data.previous_training_details.trim());
+                const motivationValid = data.why_join_formation.trim() && data.why_join_formation.length >= 100;
+                const lionsgeekValid = data.participated_lionsgeek;
+                const activityValid = data.participated_lionsgeek === 'no' ||
+                    (data.participated_lionsgeek === 'yes' && data.lionsgeek_activity);
+                const otherActivityValid = data.lionsgeek_activity !== 'other' ||
+                    (data.lionsgeek_activity === 'other' && data.other_activity.trim());
+
+                const step3Valid = hasTrainingValid && trainingDetailsValid && motivationValid && lionsgeekValid && activityValid && otherActivityValid;
+                setStepValidation(prev => ({ ...prev, 3: step3Valid }));
+                return step3Valid;
+            case 4:
+                // Goals & Learning + Languages validation
+                const objectivesValid = data.objectives_after_formation;
+                const priorityValid = data.priority_learning_topics;
+                const selfLearnedValid = data.last_self_learned.trim();
+                const arabicValid = data.arabic_level;
+                const frenchValid = data.french_level;
+                const englishValid = data.english_level;
+                const otherLangValid = !data.other_language ||
+                    (data.other_language && data.other_language_level);
+
+                const step4Valid = objectivesValid && priorityValid && selfLearnedValid && arabicValid && frenchValid && englishValid && otherLangValid;
+                setStepValidation(prev => ({ ...prev, 4: step4Valid }));
+                return step4Valid;
+            case 5:
+                // Background & Availability validation
+                const step5Valid = data.how_heard_about_formation && data.current_commitments;
+                setStepValidation(prev => ({ ...prev, 5: step5Valid }));
+                return step5Valid;
+            case 6:
+                // CV Upload validation (optional)
+                const step6Valid = true;
+                console.log('Step 6 validation result:', step6Valid);
+                setStepValidation(prev => ({ ...prev, 6: step6Valid }));
+                console.log("ghatbda  o  l function ta3 l game")
+                return step6Valid;
+            case 7:
+
+                const step7Valid = true;
+
+                setStepValidation(prev => ({ ...prev, 7: step7Valid }));
+
+                if (step7Valid) {
+                    console.table(data)
+                    // Removed automatic form submission - now handled by game modal
+                    console.log("Step 6 validation passed - ready for game redirect")
+                }
+                console.log("salina  o  l function ta3 l game +  khas  post ikon hna")
+
+                return step7Valid;
+            default:
+                return false;
+        }
+    };
+
+    // Form submission is now handled by the game modal after completion
+
+    // Determine if it's digital marketing or coding
+    const isDigitalMarketing = trainingType === 'digital' || trainingType === 'media';
 
     return (
         <AppLayout>
             <div
-                className={`overflow-hidden px-4 pt-24 lg:px-16 lg:pt-28 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-white'}`}
+                className={`min-h-screen px-4 pt-24 lg:px-16 lg:pt-28 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-gray-50'}`}
                 dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}
             >
                 {!processing ? (
-                    <>
-                        {sessions[0] && sessions?.every((e) => e.isFull) == false ? (
-                            <>
-                                <form
-                                    onSubmit={handleSubmit}
-                                    className={`mx-auto space-y-4 rounded-lg p-6 shadow-md ${darkMode ? 'bg-[#212529]' : 'bg-white'}`}
-                                >
-                                    <div className={`flex flex-col space-y-2`}>
-                                        <label htmlFor="sessions" className={` ${darkMode ? 'text-white' : 'text-gray-700'} `}>
-                                            <TransText en="Choose a Session" fr="Choisir une session" ar="اختر جلسة" />
-                                            : <Required />
-                                        </label>
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-8">
+                            <h1 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                <TransText
+                                    en={isDigitalMarketing ? "Digital Marketing Training Application" : "Coding Training Application"}
+                                    fr={isDigitalMarketing ? "Candidature Formation Marketing Digital" : "Candidature Formation Programmation"}
+                                    ar={isDigitalMarketing ? "طلب التسجيل في تكوين التسويق الرقمي" : "طلب التسجيل في تكوين البرمجة"}
+                                />
+                            </h1>
+                            <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                <TransText
+                                    en="Complete your application in 6 simple steps"
+                                    fr="Complétez votre candidature en 6 étapes simples"
+                                    ar="أكمل طلبك في 6 خطوات بسيطة"
+                                />
+                            </p>
+                        </div>
 
-                                        <div className="flex flex-col gap-y-4 md:flex-row lg:items-center lg:gap-2">
-                                            <select
-                                                className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
-                                                name="formation"
-                                                value={formation}
-                                                required
-                                                onChange={(e) => {
-                                                    setFormation(e.target.value);
-                                                    setChosenSession('');
-                                                }}
-                                            >
-                                                <option disabled value="" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Choose Formation" fr="Choisir la formation" ar="اختر التكوين" />
-                                                </option>
-                                                <option value="coding" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Coding" fr="Codage" ar="البرمجة" />
-                                                </option>
-                                                <option value="media" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Digital" fr="Média" ar="صانع محتوى" />
-                                                </option>
-                                            </select>
-                                            <label htmlFor="info_session_id" className={` ${darkMode ? 'text-white' : 'text-gray-700'} lg:hidden`}>
-                                                <TransText en="Choose a Session Date" fr="Choisissez une date de session" ar="اختر تاريخ الجلسة" />
-                                                : <Required />
-                                            </label>
-                                            <select
-                                                name="info_session_id"
-                                                id="info_session_id"
-                                                value={data.info_session_id}
-                                                onChange={handleChange}
-                                                className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
-                                                required
-                                            >
-                                                <option disabled value="" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Choose a Session" fr="Choisir une session" ar="اختر جلسة" />
-                                                </option>
-                                                {sessions
-                                                    .filter(
-                                                        (ses) =>
-                                                            ses.formation == formation.charAt(0).toUpperCase() + formation.slice(1).toLowerCase(),
-                                                    )
-                                                    .map(
-                                                        (opt, ind) =>
-                                                            opt.isAvailable && (
-                                                                <option key={ind} className={`text-lg ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`} value={opt.id}>
-                                                                    {formatDate(opt.start_date)}
-                                                                </option>
-                                                            ),
-                                                    )}
-                                            </select>
-                                        </div>
-                                    </div>
+                        <ProgressIndicator
+                            currentStep={currentStep}
+                            darkMode={darkMode}
+                            selectedLanguage={selectedLanguage}
+                        />
 
-                                    <div className="flex flex-wrap gap-1">
-                                        {formFields.map((field, index) => (
-                                            <div key={index} className="flex w-full flex-col space-y-2 sm:w-[49.7%]">
-                                                <label htmlFor={field.name} className={`${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                                                    <TransText {...field.label} /> : <Required />
-                                                </label>
-                                                <input
-                                                    type={field.type}
-                                                    id={field.name}
-                                                    name={field.name}
-                                                    min={field.type === 'date' ? minDateString : undefined}
-                                                    max={field.type === 'date' ? maxDateString : undefined}
-                                                    placeholder={field.label[selectedLanguage]}
-                                                    value={data[field.name]}
-                                                    onChange={handleChange}
-                                                    className={`rounded border px-4 py-2 focus:ring-2 focus:ring-beta focus:outline-none ${emailError && field.name === 'email'
-                                                        ? 'border-red-500 text-red-500'
-                                                        : 'border-gray-300 text-black'
-                                                        } ${darkMode ? 'text-white placeholder:text-white' : 'text-gray-700'}`}
-                                                    required
+                        <div className={`rounded-xl p-8 shadow-lg transition-all duration-300 ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
+                            }`}>
+                            <form
+                                autoComplete="off"
+                                className="space-y-6"
+                            >
+                                {/* Step Content */}
+                                <div className="step-content">
+                                    {currentStep === 1 && (
+                                        <Step1PersonalInfo
+                                            data={data}
+                                            handleChange={handleChange}
+                                            errors={{ ...errors, ...validationErrors }}
+                                            darkMode={darkMode}
+                                            selectedLanguage={selectedLanguage}
+                                            sessions={sessions}
+                                        />
+                                    )}
+
+                                    {currentStep === 2 && (
+                                        <Step2EducationSituation
+                                            data={data}
+                                            handleChange={handleChange}
+                                            errors={errors}
+                                            darkMode={darkMode}
+                                            selectedLanguage={selectedLanguage}
+                                        />
+                                    )}
+
+                                    {currentStep === 3 && (
+                                        <Step3ExperienceMotivation
+                                            data={data}
+                                            handleChange={handleChange}
+                                            errors={errors}
+                                            darkMode={darkMode}
+                                            selectedLanguage={selectedLanguage}
+                                            trainingType={trainingType}
+                                        />
+                                    )}
+
+                                    {currentStep === 4 && (
+                                        <Step4GoalsLearning
+                                            data={data}
+                                            handleChange={handleChange}
+                                            errors={errors}
+                                            darkMode={darkMode}
+                                            selectedLanguage={selectedLanguage}
+                                            trainingType={trainingType}
+                                        />
+                                    )}
+
+                                    {currentStep === 5 && (
+                                        <Step5BackgroundAvailability
+                                            data={data}
+                                            handleChange={handleChange}
+                                            errors={errors}
+                                            darkMode={darkMode}
+                                            selectedLanguage={selectedLanguage}
+                                        />
+                                    )}
+
+                                    {currentStep === 6 && (
+                                        <Step6CVUpload
+                                            data={data}
+                                            handleChange={handleChange}
+                                            errors={errors}
+                                            darkMode={darkMode}
+                                            selectedLanguage={selectedLanguage}
+                                            setData={setData}
+                                        />
+                                    )}
+                                    {currentStep === 7 && (
+                                        <GameIntro
+                                            setCurrentStep={setCurrentStep}
+                                        // data={data}
+                                        // handleChange={handleChange}
+                                        // errors={errors}
+                                        // darkMode={darkMode}
+                                        // selectedLanguage={selectedLanguage}
+                                        // setData={setData}
+                                        />
+                                    )}
+                                    {
+                                        currentStep === 8 && (
+                                            <>
+                                                <GamePage
+                                                    data={data}
+                                                    handleChange={handleChange}
+                                                    errors={errors}
+                                                    darkMode={darkMode}
+                                                    selectedLanguage={selectedLanguage}
+
+                                                    setData={setData}
                                                 />
-                                                {errors[field.name] && <span className="text-sm text-red-500">{errors[field.name]}</span>}
-                                            </div>
-                                        ))}
+                                            </>
 
-                                        <div className="flex w-full flex-col space-y-2 sm:w-[49.7%]">
-                                            <label htmlFor="city" className={` ${darkMode ? 'text-white' : 'text-gray-700'} `}>
-                                                <TransText en="City" fr="Ville" ar="مدينة" />
-                                                : <Required />
-                                            </label>
-                                            <select
-                                                name="city"
-                                                id="city"
-                                                onChange={handleChange}
-                                                value={data.city}
-                                                className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
-                                                required
-                                            >
-                                                <option value="" disabled className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="City" fr="Ville" ar="مدينة" />
-                                                </option>
-                                                <option value="casablanca" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Casablanca" fr="Casablanca" ar="الدار البيضاء" />
-                                                </option>
-                                                <option value="mohammedia" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Mohammedia" fr="Mohammedia" ar="المحمدية" />
-                                                </option>
-                                                <option value="other" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Other" fr="Autres" ar="اخر" />
-                                                </option>
-                                            </select>
-                                            {errors.city && <span className="text-sm text-red-500">{errors.city}</span>}
-                                        </div>
-
-                                        <div className="flex w-full flex-col space-y-2 sm:w-[49.7%]">
-                                            <label htmlFor="prefecture" className={` ${darkMode ? 'text-white' : 'text-gray-700'} `}>
-                                                <TransText en="Prefecture" fr="Préfecture" ar="العمالة" />
-                                                : <Required />
-                                            </label>
-                                            <select
-                                                name="prefecture"
-                                                value={data.prefecture}
-                                                id="prefecture"
-                                                onChange={handleChange}
-                                                className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
-                                                required
-                                            >
-                                                <option value="" disabled className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Prefecture" fr="Préfecture" ar="العمالة" />
-                                                </option>
-                                                <option value="none" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="None" fr="Aucun" ar="لا شيء" />
-                                                </option>
-                                                {data.city === "casablanca" && (
-                                                    [
-                                                        'Casablanca Anfa',
-                                                        'Sidi Bernoussi',
-                                                        'Ain Sbaa Hay Mohammedi',
-                                                        'Al Fida Mers Sultan',
-                                                        'Moulay Rachid',
-                                                        'Ain Chock',
-                                                        "Ben M'Sick Sidi Othmane",
-                                                        'Hay Hassani',
-                                                    ].map((el, ind) => (
-                                                        <option
-                                                            key={ind}
-                                                            value={el.toLowerCase().replace(/ /g, '_')}
-                                                            className={`${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}
-                                                        >
-                                                            {el}
-                                                        </option>
-                                                    ))
-                                                ) }
-
-                                            </select>
-                                            {errors.prefecture && <span className="text-sm text-red-500">{errors.prefecture}</span>}
-                                        </div>
-
-                                        <div className="flex w-full flex-col space-y-2 sm:w-[49.7%]">
-                                            <label htmlFor="gender" className={` ${darkMode ? 'text-white' : 'text-gray-700'} `}>
-                                                <TransText en="Gender" fr="Genre" ar="الجنس" />
-                                                <Required />
-                                            </label>
-                                            <select
-                                                name="gender"
-                                                id="gender"
-                                                value={data.gender}
-                                                onChange={handleChange}
-                                                className={`w-full appearance-none rounded border border-gray-300 px-4 py-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}
-                                                required
-                                            >
-                                                <option value="" disabled className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Gender" fr="Genre" ar="الجنس" />
-                                                </option>
-                                                <option value="male" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Male" fr="Homme" ar="ذكر" />
-                                                </option>
-                                                <option value="female" className={` ${darkMode ? 'text-white bg-[#212529]' : 'text-gray-700'}`}>
-                                                    <TransText en="Female" fr="Female" ar="أنثى" />
-                                                </option>
-                                            </select>
-                                            {errors.gender && <span className="text-sm text-red-500">{errors.gender}</span>}
-                                        </div>
-
-                                        <div className="flex w-full flex-col space-y-2 sm:w-[49.7%]">
-                                            <label htmlFor="source" className={`${darkMode ? 'text-white' : 'text-black'} `}>
-                                                <TransText
-                                                    en="Where Have you Heard of LionsGeek"
-                                                    fr="Où avez-vous entendu parler de LionsGeek"
-                                                    ar="أين سمعت عن LionsGeek"
-                                                />
-                                                : <Required />
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={data.source}
-                                                name="source"
-                                                id="source"
-                                                placeholder={selectedLanguage == 'en' ? 'Source' : selectedLanguage == 'fr' ? 'Source' : 'مصدر'}
-                                                onChange={handleChange}
-                                                className={`rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-beta focus:outline-none ${darkMode ? 'text-white placeholder:text-white' : 'text-gray-700'}`}
-                                                required
-                                            />
-                                            {errors.source && <span className="text-sm text-red-500">{errors.source}</span>}
-                                        </div>
-
-                                        <div className="flex w-full flex-col space-y-2">
-                                            <label htmlFor="motivation" className={`${darkMode ? 'text-white' : 'text-black'} `}>
-                                                <TransText en="Motivation" fr="Motivation" ar="الدافع" />
-                                                :
-                                                <Required />
-                                                <span className={`text-sm ${data.motivation.length < 150 ? 'text-red-600' : 'text-green-500'} `}>
-                                                    {' '}
-                                                    {data.motivation.length}/150
-                                                </span>
-                                            </label>
-                                            <textarea
-                                                name="motivation"
-                                                id="motivation"
-                                                // bach mankhalich l user idir copy past  l l motivation
-                                                onPaste={handlePaste}
-                                                className={`rounded border border-gray-400 p-[6px] ${darkMode ? 'text-white placeholder:text-white' : 'text-gray-700'}`}
-                                                onChange={handleChange}
-                                                placeholder={
-                                                    selectedLanguage == 'en' ? 'Motivation' : selectedLanguage == 'fr' ? 'Motivation' : 'دافع'
-                                                }
-                                                value={data.motivation}
-                                                required
-                                            ></textarea>
-                                            {errors.motivation && <span className="text-sm text-red-500">{errors.motivation}</span>}
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <button
-                                            type="submit"
-                                            disabled={processing}
-                                            className={`w-full rounded-md bg-alpha px-4 py-2 font-semibold ${darkMode ? 'hover:bg-[#2d343a]' : 'hover:bg-[#212529]'
-                                                } hover:text-alpha focus:outline-none`}
-                                        >
-                                            <TransText en="Next" fr="Suivant" ar="التالي" />
-                                        </button>
-                                    </div>
-                                </form>
-                            </>
-                        ) : (
-                            <>
-                                <div
-                                    className={`flex h-[16rem] w-full items-center justify-center text-center text-[30px] font-bold ${darkMode ? 'text-white' : 'text-black'
-                                        }`}
-                                >
-                                    <TransText fr="Aucune session disponible" ar="لا توجد دورات متاحة" en="No Sessions Available" />
+                                        )}
                                 </div>
-                            </>
-                        )}
-                    </>
+                                {/* Navigation Buttons */}
+                                {
+                                    currentStep < 7 &&
+                                    <NavigationButtons
+                                        currentStep={currentStep}
+                                        darkMode={darkMode}
+                                        prevStep={prevStep}
+                                        nextStep={nextStep}
+                                        validateCurrentStep={validateCurrentStep}
+                                        errors={{ ...errors, ...validationErrors }}
+                                        onGameRedirect={handleGameRedirect}
+                                    />
+                                }
+                            </form>
+                        </div>
+                    </div>
                 ) : (
-                    <>
-                        <LoadingPage />
-                    </>
+                    <LoadingPage />
                 )}
+
                 {!sending && confirmation && (
                     <Modal
                         validate={validate}
@@ -412,14 +478,13 @@ const InfoSession = () => {
                             <button
                                 onClick={() => {
                                     setConfirmation(false);
-                                    if (validate && refresh) {
-                                        window.location.reload();
-                                        // navigate(-1);
-                                    }
+                                    setValidate(false);
                                 }}
-                                className="rounded bg-alpha px-5 py-2 font-medium"
+                                className={`rounded px-4 py-2 text-white transition-colors duration-300 ${darkMode ? 'bg-beta' : 'bg-beta'
+                                    } ${darkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-600'
+                                    } hover:text-alpha focus:outline-none`}
                             >
-                                Close
+                                <TransText en="Close" fr="Fermer" ar="إغلاق" />
                             </button>
                         }
                     />
