@@ -117,11 +117,25 @@ class InfosessionController extends Controller
     {
         try {
             $infosession = InfoSession::where('id', $id)->first();
+
+
+
+            $newFinishStatus = !$infosession->isFinish;
+
             $infosession->update([
-                'isAvailable' => $infosession->isAvailable ? false : $infosession->isAvailable,
-                'isFinish' => !$infosession->isFinish
+                'isAvailable' => $newFinishStatus ? false : $infosession->isAvailable,
+                'isFinish' => $newFinishStatus
             ]);
-            return back()->with($infosession->isFinish ? 'success' : 'info', 'Session ' . ($infosession->isFinish ? 'is completed' : 'is not completed'));
+
+            $infosession->refresh();
+
+            $message = $infosession->isFinish
+                ? 'Session has been marked as completed'
+                : 'Session has been marked as incomplete';
+
+            $messageType = $infosession->isFinish ? 'success' : 'info';
+
+            return back()->with($messageType, $message);
         } catch (\Throwable $th) {
             //throw $th;
             return back()->with('error', 'Something went wrong');
