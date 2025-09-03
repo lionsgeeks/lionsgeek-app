@@ -9,16 +9,14 @@ const breadcrumbs = [
     { title: 'Game', href: '/game' },
 ];
 
-export default function GamePage() {
+export default function GamePage({data}) {
     const { darkMode } = useAppContext();
-
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Game" />
+       
             <div className={`px-4 pt-24 lg:px-16 lg:pt-28 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-white'}`}>
-                <PatternGame />
+                <PatternGame data={data} />
             </div>
-        </AppLayout>
+       
     );
 }
 

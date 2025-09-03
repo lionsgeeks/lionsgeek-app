@@ -55,47 +55,124 @@ class ParticipantController extends Controller
      */
     public function store(Request $request)
     {
+        // Debug: Log the incoming request data
+        // \Log::info('Form submission data:', $request->all());
+
         $messages = [
             'email.unique' => 'This email already exist',
-            'motivation.min' => 'Your motivation must be at least 150 characters long.',
+            'why_join_formation.min' => 'Your motivation must be at least 50 characters long.',
         ];
         $request->validate([
-            'full_name' => 'required|string',
-            'email' => 'required|string|email|unique:participants',
-            'birthday' => 'required|string',
-            'phone' => 'required|string',
-            'city' => 'required|string',
-            'prefecture' => 'required|string',
-            'info_session_id' => 'required',
-            'gender' => 'required|string',
-            'motivation' => 'required|string|min:150',
-            'source' => 'required|string',
+            'full_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:participants',
+            'birthday' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d') . '|after_or_equal:' . now()->subYears(65)->format('Y-m-d'),
+            'phone' => 'required|string|max:20',
+            'city' => 'required|string|max:100',
+            'region' => 'nullable|string|max:100',
+            'other_city' => 'nullable|string|max:100',
+            'info_session_id' => 'nullable|integer|exists:info_sessions,id',
+
+            // New form fields validation - made more flexible
+            'education_level' => 'required|string|max:100',
+            'diploma_institution' => 'nullable|string|max:255',
+            'diploma_specialty' => 'nullable|string|max:255',
+            'current_situation' => 'required|string|max:100',
+            'other_status' => 'nullable|string|max:255',
+            'has_referring_organization' => 'required|string|in:yes,no',
+            'referring_organization' => 'nullable|string|max:255',
+            'other_organization' => 'nullable|string|max:255',
+            'has_training' => 'required|string|in:yes,no',
+            'previous_training_details' => 'nullable|string|max:1000',
+            'why_join_formation' => 'required|string|min:50|max:2000', // Reduced from 100 to 50
+            'participated_lionsgeek' => 'required|string|in:yes,no',
+            'lionsgeek_activity' => 'nullable|string|max:255',
+            'other_activity' => 'nullable|string|max:255',
+            'objectives_after_formation' => 'required|string|max:255',
+            'priority_learning_topics' => 'required|string|max:255',
+            'last_self_learned' => 'required|string|max:1000',
+            'arabic_level' => 'required|string|in:beginner,intermediate,advanced,fluent',
+            'french_level' => 'required|string|in:beginner,intermediate,advanced,fluent',
+            'english_level' => 'required|string|in:beginner,intermediate,advanced,fluent',
+            'other_language' => 'nullable|string|max:100',
+            'other_language_level' => 'nullable|string|in:beginner,intermediate,advanced,fluent',
+            'how_heard_about_formation' => 'required|string|max:255',
+            'current_commitments' => 'required|string|max:255',
+            'cv_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120', // 5MB max
         ], $messages);
         try {
+            // Handle CV file upload
+            $cvFileName = null;
+            if ($request->hasFile('cv_file')) {
+                $cvFile = $request->file('cv_file');
+                $cvFileName = time() . '_' . $cvFile->getClientOriginalName();
+                $cvFile->storeAs('public/cvs', $cvFileName);
+            }
+
+            // Check if session has available places
             $parts = Participant::where('info_session_id', $request->info_session_id)->count();
             $infosession = InfoSession::where('id', $request->info_session_id)->first();
             if ($parts + 1 > $infosession->places) {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Sorry, places are full for this session.'
+                    ], 422);
+                }
                 return back()->with('error', 'Sorry places are full');
             }
+
             $time = Carbon::now();
             $code = $request->full_name . $time->format('h:i:s');
+
+            // Calculate age from birthday
             $birthObj = new DateTime($request->birthday);
             $currentDay = new DateTime();
             $age = $birthObj->diff($currentDay)->y;
+
             // create the participant
             $participant = Participant::create([
                 'info_session_id' => $request->info_session_id,
+                'formation_field' => $request->formation_field,
                 'full_name' => $request->full_name,
                 'email' => $request->email,
                 'birthday' => $request->birthday,
                 'age' => $age,
                 'phone' => $request->phone,
                 'city' => $request->city,
-                'prefecture' => $request->prefecture,
-                'gender' => $request->gender,
-                'source' => $request->source,
-                'motivation' => $request->motivation,
-                'code' => $code
+                'region' => $request->region,
+                'other_city' => $request->other_city,
+                'prefecture' => $request->prefecture ?? '',
+                'gender' => $request->gender ?? '',
+                'source' => $request->source ?? $request->how_heard_about_formation,
+                'motivation' => $request->motivation ?? $request->why_join_formation,
+                'code' => $code,
+
+                // New detailed form fields - use null for empty values
+                'education_level' => $request->education_level,
+                'diploma_institution' => $request->diploma_institution ?: null,
+                'diploma_specialty' => $request->diploma_specialty ?: null,
+                'current_situation' => $request->current_situation,
+                'other_status' => $request->other_status ?: null,
+                'has_referring_organization' => $request->has_referring_organization,
+                'referring_organization' => $request->referring_organization ?: null,
+                'other_organization' => $request->other_organization ?: null,
+                'has_training' => $request->has_training,
+                'previous_training_details' => $request->previous_training_details ?: null,
+                'why_join_formation' => $request->why_join_formation,
+                'participated_lionsgeek' => $request->participated_lionsgeek,
+                'lionsgeek_activity' => $request->lionsgeek_activity ?: null,
+                'other_activity' => $request->other_activity ?: null,
+                'objectives_after_formation' => $request->objectives_after_formation,
+                'priority_learning_topics' => $request->priority_learning_topics,
+                'last_self_learned' => $request->last_self_learned,
+                'arabic_level' => $request->arabic_level,
+                'french_level' => $request->french_level,
+                'english_level' => $request->english_level,
+                'other_language' => $request->other_language ?: null,
+                'other_language_level' => $request->other_language_level ?: null,
+                'how_heard_about_formation' => $request->how_heard_about_formation,
+                'current_commitments' => $request->current_commitments,
+                'cv_file' => $cvFileName,
             ]);
             // one to one relationships
             ParticipantConfirmation::create([
@@ -107,45 +184,61 @@ class ParticipantController extends Controller
             $satisfaction = Satisfaction::create([
                 'participant_id' => $participant->id,
             ]);
-            // Gate access to the game right away (regardless of email delivery issues)
-            session(['can_play_game' => true]);
+            $data['full_name'] = $participant->full_name;
+            $data['email'] = $participant->email;
+            $data['code'] = $participant->code;
 
-            // Prepare and try to send email/QR/PDF, but don't block the flow if it fails
-            try {
-                $data['full_name'] = $participant->full_name;
-                $data['email'] = $participant->email;
-                $data['code'] = $participant->code;
-                $data['infosession'] = $participant->infoSession->name;
-                $data['formation'] = $participant->infoSession->formation;
-                $data['time'] = $participant->infoSession->start_date;
-                $data['created_at'] = $participant->created_at;
-                $jsonData = json_encode([
-                    'email' => $data['email'],
-                    'code' => $data['code']
-                ]);
-                ob_start();
-                QRCode::text($jsonData)
-                    ->setErrorCorrectionLevel('H')
-                    ->png();
-                $qrImage = ob_get_clean();
-                $image = base64_encode($qrImage);
-                $pdf = Pdf::loadView('pdf.code', compact(['image', 'data']));
-                $data['pdf'] = $pdf;
-                Mail::to($participant->email)->send(new CodeMail($data, $image));
-            } catch (\Throwable $mailEx) {
-                // Log but don't surface a blocking error to the user
-                report($mailEx);
-            }
-            if ($parts + 1 == $infosession->places) {
+            // Send email with session data
+            $data['infosession'] = $participant->infoSession->name;
+            $data['formation'] = $participant->infoSession->formation;
+            $data['time'] = $participant->infoSession->start_date;
+            $data['created_at'] = $participant->created_at;
+            $jsonData = json_encode([
+                'email' => $data['email'],
+                'code' => $data['code']
+            ]);
+            ob_start();
+            QRCode::text($jsonData)
+                ->setErrorCorrectionLevel('H')
+                ->png();
+            $qrImage = ob_get_clean();
+            $image = base64_encode($qrImage);
+            $pdf = Pdf::loadView('pdf.code', compact(['image', 'data']));
+            $data['pdf'] = $pdf;
+            Mail::to($participant->email)->send(new CodeMail($data, $image));
+
+            // Check if session is full after adding this participant
+            $currentParts = Participant::where('info_session_id', $participant->info_session_id)->count();
+            if ($currentParts >= $infosession->places) {
                 $infosession->update([
                     'isFull' => true
                 ]);
             }
+
+            // Return JSON response for AJAX requests
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Participant created successfully!',
+                    'participant' => $participant
+                ], 201);
+            }
+            session(['can_play_game' => true]);
             return redirect()->route('game.intro');
         } catch (\Throwable $th) {
-            report($th);
-            // Fallback: allow the user to proceed to the intro even if non-critical errors occur
-            session(['can_play_game' => true]);
+            // \Log::error('Error creating participant:', ['error' => $th->getMessage(), 'data' => $request->all()]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Something went wrong!',
+                    'error' => $th->getMessage()
+                ], 500);
+            }
+
+            flash()
+                ->option('position', 'bottom-right')
+                ->error('Something went wrong!');
             return redirect()->route('game.intro');
         }
     }
@@ -187,7 +280,7 @@ class ParticipantController extends Controller
         $messages = [
             'email.unique' => 'This email already exists',
         ];
-        
+
         $request->validate([
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|unique:participants,email,' . $participant->id,
@@ -224,7 +317,7 @@ class ParticipantController extends Controller
                 if ($participant->image && file_exists(public_path('storage/images/participants/' . $participant->image))) {
                     unlink(public_path('storage/images/participants/' . $participant->image));
                 }
-                
+
                 $image = $request->file('image');
                 $imageName = time() . '_' . $participant->id . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path('storage/images/participants'), $imageName);
@@ -238,12 +331,11 @@ class ParticipantController extends Controller
                 ->success('Participant updated successfully!');
 
             return redirect()->route('participants.show', $participant->id);
-
         } catch (\Throwable $th) {
             flash()
                 ->option('position', 'bottom-right')
                 ->error('Something went wrong while updating the participant!');
-            
+
             return back()->withInput();
         }
     }

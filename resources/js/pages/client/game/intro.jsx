@@ -11,8 +11,6 @@ const breadcrumbs = [
 export default function GameIntro() {
     const { darkMode } = useAppContext();
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Game Intro" />
             <div className={`px-4 pt-24 lg:px-16 lg:pt-28 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-white'}`}>
                 <div className={`mx-auto max-w-3xl rounded-2xl border p-8 ${darkMode ? 'bg-[#1e1e1e] border-white/10 text-white' : 'bg-white border-black/10 text-black'}`}>
                     <h1 className="text-2xl font-bold text-beta">Before you start</h1>
@@ -32,7 +30,6 @@ export default function GameIntro() {
                     </div>
                 </div>
             </div>
-        </AppLayout>
     );
 }
 
