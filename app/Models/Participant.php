@@ -54,6 +54,10 @@ class Participant extends Model
         'cv_file',
     ];
 
+    protected $casts = [
+        'game_progress_data' => 'array',
+    ];
+
     public function infoSession()
     {
         return  $this->belongsTo(InfoSession::class);
