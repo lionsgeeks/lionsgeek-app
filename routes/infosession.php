@@ -25,17 +25,17 @@ Route::get('/private-session', function () {
 
 // Intro page before the game
 Route::get('/game/intro', function () {
-    if (!session('can_play_game')) {
-        return redirect('/');
-    }
+    // if (!session('can_play_game')) {
+    //     return redirect('/');
+    // }
     return Inertia::render('client/game/intro');
 })->name('game.intro');
 
 // Game route for post-submission flow
 Route::get('/game', function () {
-    if (!session('can_play_game')) {
-        return redirect('/');
-    }
+    // if (!session('can_play_game')) {
+    //     return redirect('/');
+    // }
     return Inertia::render('client/game/game');
 })->name('game');
 
