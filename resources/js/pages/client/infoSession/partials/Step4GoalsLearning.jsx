@@ -3,7 +3,8 @@ import { TransText } from '../../../../components/TransText';
 const Required = () => <span className="text-red-500 ml-1">*</span>;
 
 const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLanguage, trainingType }) => {
-    const isDigitalMarketing = trainingType === 'digital' || trainingType === 'media';
+    const selectedTrack = (data?.formation_field || trainingType || '').toLowerCase();
+    const isMedia = selectedTrack === 'media';
 
     return (
         <div className="space-y-6">
@@ -38,9 +39,9 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                         </option>
                         <option value="find_job" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
                             <TransText
-                                en={isDigitalMarketing ? "Find a job in digital marketing" : "Find a job in programming"}
-                                fr={isDigitalMarketing ? "Trouver un emploi en marketing digital" : "Trouver un emploi en programmation"}
-                                ar={isDigitalMarketing ? "العثور على وظيفة في التسويق الرقمي" : "العثور على وظيفة في البرمجة"}
+                                en={isMedia ? "Find a job in digital marketing" : "Find a job in programming"}
+                                fr={isMedia ? "Trouver un emploi en marketing digital" : "Trouver un emploi en programmation"}
+                                ar={isMedia ? "العثور على وظيفة في التسويق الرقمي" : "العثور على وظيفة في البرمجة"}
                             />
                         </option>
                         <option value="start_business" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
@@ -62,7 +63,8 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                     {errors.objectives_after_formation && <span className="text-sm text-red-500 mt-1">{errors.objectives_after_formation}</span>}
                 </div>
 
-                {/* Learning priorities */}
+                {/* Learning priorities (only for Media) */}
+                {isMedia && (
                 <div>
                     <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="What would you like to learn as a priority in this training?" fr="Qu'aimeriez-vous apprendre en priorité dans cette formation ?" ar="ما الذي تود تعلمه كأولوية في هذا التدريب؟" />
@@ -81,16 +83,16 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                         <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
                             <TransText en="Select your priority" fr="Sélectionnez votre priorité" ar="اختر أولويتك" />
                         </option>
-                        {isDigitalMarketing ? (
+                        {isMedia ? (
                             <>
-                                <option value="social_media" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
-                                    <TransText en="Social Media Marketing" fr="Marketing des réseaux sociaux" ar="تسويق وسائل التواصل الاجتماعي" />
+                                <option value="marketing_digital" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                    Marketing Digital
                                 </option>
-                                <option value="content_marketing" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
-                                    <TransText en="Content Marketing" fr="Marketing de contenu" ar="تسويق المحتوى" />
+                                <option value="adobe_suite" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                    Adobe (Premiere Pro, Photoshop, Illustrator, After Effects)
                                 </option>
-                                <option value="paid_advertising" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
-                                    <TransText en="Paid Advertising (Google Ads, Facebook Ads)" fr="Publicité payante (Google Ads, Facebook Ads)" ar="الإعلانات المدفوعة" />
+                                <option value="audiovisuel" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                    AudioVisuel (Camera, Son, Éclairage, Journalisme)
                                 </option>
                             </>
                         ) : (
@@ -112,6 +114,7 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                     </select>
                     {errors.priority_learning_topics && <span className="text-sm text-red-500 mt-1">{errors.priority_learning_topics}</span>}
                 </div>
+                )}
 
                 {/* Last self-learned thing */}
                 <div>
@@ -300,4 +303,4 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
     );
 };
 
-export default Step4GoalsLearning;
+export default Step4GoalsLearning

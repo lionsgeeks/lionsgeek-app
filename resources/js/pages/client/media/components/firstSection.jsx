@@ -4,7 +4,7 @@ import { Button } from '../../../../components/Button';
 import { TransText } from '../../../../components/TransText';
 
 import { useAppContext } from '@/context/appContext';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import gsap from 'gsap';
 
 export const FirstSection = () => {
@@ -179,11 +179,9 @@ export const FirstSection = () => {
                                 />
                             </div>
                         ) : (
-                            <Link href={'/postuler'}>
-                                <Button>
-                                    <TransText fr="Postuler" en="Apply" ar="تقدم بطلب" />
-                                </Button>
-                            </Link>
+                            <Button onClick={() => router.visit('/postuler')}>
+                                <TransText fr="Postuler" en="Apply" ar="تقدم بطلب" />
+                            </Button>
                         )
                     }
                 </div>

@@ -52,11 +52,36 @@ class Participant extends Model
         'how_heard_about_formation',
         'current_commitments',
         'cv_file',
+
+        // Game metrics
+        'game_completed',
+        'final_score',
+        'correct_answers',
+        'levels_completed',
+        'total_attempts',
+        'wrong_attempts',
+        'time_spent',
+        'time_spent_formatted',
+
+        // Approval workflow
+        'status',
+        'approved_by',
+        'approved_at',
     ];
+
+    // Status constants
+    const STATUS_PENDING = 'pending';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_REJECTED = 'rejected';
 
     public function infoSession()
     {
         return  $this->belongsTo(InfoSession::class);
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function notes()
@@ -77,5 +102,37 @@ class Participant extends Model
     public function confirmation()
     {
         return $this->hasOne(ParticipantConfirmation::class);
+    }
+
+    // Scope methods
+    public function scopeApproved($query)
+    {
+        return $query->where('status', self::STATUS_APPROVED);
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', self::STATUS_PENDING);
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('status', self::STATUS_REJECTED);
+    }
+
+    // Helper methods
+    public function isPending()
+    {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    public function isApproved()
+    {
+        return $this->status === self::STATUS_APPROVED;
+    }
+
+    public function isRejected()
+    {
+        return $this->status === self::STATUS_REJECTED;
     }
 }

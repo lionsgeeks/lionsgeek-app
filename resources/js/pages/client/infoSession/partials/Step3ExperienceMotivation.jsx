@@ -96,6 +96,7 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                         name="why_join_formation"
                         value={data.why_join_formation}
                         onChange={handleChange}
+                        onPaste={(e) => e.preventDefault()}
                         rows={5}
                         className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
                             darkMode 

@@ -8,28 +8,41 @@ const breadcrumbs = [
     { title: 'Game', href: '/game/intro' },
 ];
 
-export default function GameIntro() {
+export default function GameIntro({ setCurrentStep }) {
     const { darkMode } = useAppContext();
     return (
-            <div className={`px-4 pt-24 lg:px-16 lg:pt-28 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-white'}`}>
-                <div className={`mx-auto max-w-3xl rounded-2xl border p-8 ${darkMode ? 'bg-[#1e1e1e] border-white/10 text-white' : 'bg-white border-black/10 text-black'}`}>
-                    <h1 className="text-2xl font-bold text-beta">Before you start</h1>
-                    <p className="mt-4">You will play a short pattern recognition game.</p>
-                    <ul className="mt-3 list-disc pl-6">
-                        <li>The game is timed. The timer is hidden.</li>
-                        <li>Keep answering until you finish or time is up.</li>
-                    </ul>
-                    <div className="mt-8">
-                        <button
-                            type="button"
-                            className="rounded-md bg-beta px-4 py-2 font-medium text-white hover:opacity-90"
-                            onClick={() => router.visit('/game')}
-                        >
-                            Start the game
-                        </button>
-                    </div>
-                </div>
+        <div className="space-y-6 text-center">
+            <div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-beta">Before you start</h1>
+                <p className={`mt-2 text-sm sm:text-base opacity-90 ${darkMode ? 'text-white' : 'text-black'}`}>
+                    You will play a short pattern recognition game. Read the notes below, then start.
+                </p>
             </div>
+
+            <div className={`text-left ${darkMode ? 'text-white' : 'text-black'}`}>
+                <ul className="list-disc pl-5 text-sm sm:text-base space-y-1">
+                    <li>The timer is hidden.</li>
+                    <li>Finish all levels or just keep answering until the end.</li>
+                    <li>Submission happens automatically at the end.</li>
+                </ul>
+            </div>
+
+            <div className="flex justify-center">
+                <button
+                    type="button"
+                    className="rounded-md bg-beta px-5 py-2.5 font-semibold text-white hover:opacity-90"
+                    onClick={() => {
+                        if (typeof setCurrentStep === 'function') {
+                            setCurrentStep(8);
+                        } else {
+                            router.visit('/game');
+                        }
+                    }}
+                >
+                    Start the game
+                </button>
+            </div>
+        </div>
     );
 }
 

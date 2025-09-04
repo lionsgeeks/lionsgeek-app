@@ -1,8 +1,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Link, router } from '@inertiajs/react';
-import { MapPin, Mail, User, ArrowRight, X, CheckCircle2 } from 'lucide-react';
+import { Link, router, useForm } from '@inertiajs/react';
+import { MapPin, Mail, User, ArrowRight, X, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { useState } from 'react';
 import logo from '../../../../../assets/images/lionsgeek_logo_2.png';
 
 const ParticipantCard = ({ participant }) => {
@@ -10,9 +11,38 @@ const ParticipantCard = ({ participant }) => {
         return null;
     }
 
+    const { post } = useForm();
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const changeStep = (action) => {
         router.patch(`/admin/participant/current-step/${participant.id}`, {
             action: action,
+        });
+    };
+
+    const handleApprove = (e) => {
+        e.stopPropagation(); // Prevent card click
+        setIsProcessing(true);
+        post(route('participants.approve', participant.id), {
+            onSuccess: () => {
+                window.location.reload();
+            },
+            onError: () => {
+                setIsProcessing(false);
+            }
+        });
+    };
+
+    const handleReject = (e) => {
+        e.stopPropagation(); // Prevent card click
+        setIsProcessing(true);
+        post(route('participants.reject', participant.id), {
+            onSuccess: () => {
+                window.location.reload();
+            },
+            onError: () => {
+                setIsProcessing(false);
+            }
         });
     };
 
@@ -65,13 +95,33 @@ const ParticipantCard = ({ participant }) => {
                         <Badge className={`${getStepBadge(participant?.current_step)} rounded-lg text-xs font-medium w-fit`}>
                             {participant?.current_step?.replaceAll('_', ' ') || 'Unknown'}
                         </Badge>
+
+                        {/* Status Badge */}
+                        {participant?.status === 'pending' && (
+                            <Badge className="bg-orange-600 text-white rounded-lg text-xs font-medium">
+                                <Clock className="h-3 w-3 mr-1" />
+                                Pending Approval
+                            </Badge>
+                        )}
+                        {participant?.status === 'rejected' && (
+                            <Badge className="bg-[#ff7376] text-white rounded-lg text-xs font-medium">
+                                <XCircle className="h-3 w-3 mr-1" />
+                                Rejected
+                            </Badge>
+                        )}
+                        {participant?.status === 'approved' && (
+                            <Badge className="bg-[#51b04f] text-white rounded-lg text-xs font-medium">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Approved
+                            </Badge>
+                        )}
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                         {(participant?.current_step === 'jungle' || participant?.current_step?.includes('school')) && (
                             <Badge
                                 className={`${getConfirmationStatus(participant)
                                     ? 'bg-[#51b04f] text-white'
-                                    : 'bg-yellow-700  text-white'} rounded-lg text-xs font-medium w-fit`}
+                                    : 'bg-[#ff7376] text-white'} rounded-lg text-xs font-medium w-fit`}
                             >
                                 <CheckCircle2 className="h-3 w-3 mr-1" />
                                 {getConfirmationStatus(participant) ? 'Confirmed' : 'Pending'}
@@ -100,20 +150,39 @@ const ParticipantCard = ({ participant }) => {
                 </div>
 
                 {/* Action Buttons - Always same height */}
-                <div
-                    className="mt-4 pt-3 border-t min-h-[44px] flex items-center"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    {participant?.current_step !== "info_session" &&
-                        !participant?.current_step?.includes("school") &&
-                        !participant?.current_step?.includes("failed") ? (
+                <div className="mt-4 pt-3 border-t min-h-[44px] flex items-center" onClick={(e) => e.stopPropagation()}>
+                    {participant?.status === 'pending' ? (
                         <div className="flex gap-2 w-full">
                             <Button
-                                onClick={() =>
-                                    changeStep(
-                                        participant?.current_step === "interview" ? "daz" : "next"
-                                    )
-                                }
+                                onClick={handleApprove}
+                                disabled={isProcessing}
+                                className="flex-1 bg-[#51b04f] text-white hover:bg-[#459942] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                                size="sm"
+                            >
+                                <CheckCircle2 className="h-4 w-4 mr-1" />
+                                {isProcessing ? 'Approving...' : 'Approve'}
+                            </Button>
+                            <Button
+                                onClick={handleReject}
+                                disabled={isProcessing}
+                                variant="outline"
+                                className="border-[#ff7376] text-[#ff7376] hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                                size="sm"
+                            >
+                                <XCircle className="h-4 w-4 mr-1" />
+                                {isProcessing ? 'Rejecting...' : 'Reject'}
+                            </Button>
+                        </div>
+                    ) : participant?.status === 'rejected' ? (
+                        <div className="w-full text-center">
+                            <Badge className="bg-[#ff7376] text-white rounded-lg px-3 py-1">
+                                Rejected
+                            </Badge>
+                        </div>
+                    ) : participant?.current_step !== 'info_session' && !participant?.current_step?.includes('school') && !participant?.current_step?.includes('failed') ? (
+                        <div className="flex gap-2 w-full">
+                            <Button
+                                onClick={() => changeStep(participant?.current_step === 'interview' ? 'daz' : 'next')}
                                 className="flex-1 bg-[#51b04f] text-white hover:bg-[#459942] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
                                 size="sm"
                             >
@@ -121,7 +190,7 @@ const ParticipantCard = ({ participant }) => {
                                 Next Step
                             </Button>
                             <Button
-                                onClick={() => changeStep("deny")}
+                                onClick={() => changeStep('deny')}
                                 variant="outline"
                                 className="border-[#ff7376] text-[#ff7376] hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
                                 size="sm"
@@ -138,13 +207,12 @@ const ParticipantCard = ({ participant }) => {
                         </div>
                     ) : participant?.current_step?.includes("failed") ? (
                         <div className="w-full text-center">
-                        <p className="  text-red-500 rounded-lg font-bold px-5 py-1">
-                            {participant?.current_step
-                                ?.replaceAll("_", " ")
-                                .replace(/^\w/, (c) => c.toUpperCase())}
-                        </p>
+                            <p className="text-red-500 rounded-lg font-bold px-5 py-1">
+                                {participant?.current_step
+                                    ?.replaceAll("_", " ")
+                                    .replace(/^\w/, (c) => c.toUpperCase())}
+                            </p>
                         </div>
-
                     ) : (
                         <div className="w-full text-center text-sm text-gray-500">
                             Awaiting Info Session

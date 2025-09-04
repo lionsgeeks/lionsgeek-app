@@ -62,9 +62,6 @@ const Step5BackgroundAvailability = ({ data, handleChange, errors, darkMode, sel
                     <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="Do you currently have any commitments that could prevent you from being 100% present?" fr="Avez-vous actuellement un engagement qui pourrait vous empêcher d'être présent à 100 % ?" ar="هل لديك حالياً أي التزامات قد تمنعك من الحضور بنسبة 100%؟" />
                         <Required />
-                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {' '}(<TransText en="Trick question" fr="Question piège" ar="سؤال خادع" />)
-                        </span>
                     </label>
                     <select
                         name="current_commitments"
