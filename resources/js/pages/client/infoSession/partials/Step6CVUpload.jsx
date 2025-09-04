@@ -9,7 +9,7 @@ const Step6CVUpload = ({ data, handleChange, errors, darkMode, selectedLanguage,
                     <TransText en="CV Upload" fr="Téléchargement CV" ar="رفع السيرة الذاتية" />
                 </h2>
                 <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    <TransText en="Upload your CV (optional)" fr="Téléchargez votre CV (optionnel)" ar="ارفع سيرتك الذاتية (اختياري)" />
+                    <TransText en="Upload your CV (Required)" fr="Téléchargez votre CV (Obligatoire)" ar="ارفع سيرتك الذاتية (مطلوب)" />
                 </p>
             </div>
 
@@ -18,9 +18,7 @@ const Step6CVUpload = ({ data, handleChange, errors, darkMode, selectedLanguage,
                 <div>
                     <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="Upload your CV" fr="Téléchargez votre CV" ar="ارفع سيرتك الذاتية" />
-                        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {' '}(<TransText en="Optional" fr="Optionnel" ar="اختياري" />)
-                        </span>
+                        <span className="text-red-500 ml-1">*</span>
                     </label>
                     <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200 hover:border-alpha ${
                         darkMode 

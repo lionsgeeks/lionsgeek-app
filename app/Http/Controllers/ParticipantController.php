@@ -113,7 +113,7 @@ class ParticipantController extends Controller
             'other_language_level' => 'nullable|string|in:beginner,intermediate,advanced,fluent',
             'how_heard_about_formation' => 'required|string',
             'current_commitments' => 'required|string',
-            'cv_file' => 'nullable|file|mimes:pdf,doc,docx', // 5MB max
+            'cv_file' => 'required|file|mimes:pdf,doc,docx', // 5MB max
         ], $messages);
         try {
             // Handle CV file upload

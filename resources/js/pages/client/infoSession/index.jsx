@@ -274,7 +274,9 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                 setStepValidation(prev => ({ ...prev, 5: step5Valid }));
                 return step5Valid;
             case 6:
-                // CV Upload validation (optional)
+                // CV Upload validation (required)
+                if (!data.cv_file) newErrors.cv_file = 'CV file is required';
+
                 setValidationErrors(newErrors);
                 const step6Valid = Object.keys(newErrors).length === 0;
                 setStepValidation(prev => ({ ...prev, 6: step6Valid }));

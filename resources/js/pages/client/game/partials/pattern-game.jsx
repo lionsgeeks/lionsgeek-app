@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAppContext } from '@/context/appContext';
 import Modal from '@/components/Modal';
 import { router, useForm } from '@inertiajs/react';
+import { TransText } from '../../../../components/TransText';
 
 // Inside your component, add this after your other useState hooks:
 
@@ -32,6 +33,12 @@ export function PatternGame({ data: formDataProp }) {
     const [startTime, setStartTime] = useState(Date.now());
     const [feedback, setFeedback] = useState("");
     const [feedbackType, setFeedbackType] = useState(null); // 'success' | 'error'
+
+    // Modal states for success/error feedback
+    const [showModal, setShowModal] = useState(false);
+    const [modalType, setModalType] = useState('success'); // 'success' | 'error'
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const timerRef = useRef(null);
 
     const questionPools = useMemo(() => buildQuestionPools(72, 123456), []);
@@ -413,30 +420,33 @@ export function PatternGame({ data: formDataProp }) {
                 };
 
                 console.log('🚀 Submitting data:', submissionData);
+                setIsSubmitting(true);
 
                 // Use router.post and force multipart to ensure File objects (cv_file) are sent
                 router.post('/participants/store', submissionData, {
                     forceFormData: true,
                     onSuccess: () => {
                         sessionStorage.removeItem('formData');
-                        router.visit('/');
+                        setIsSubmitting(false);
+                        setModalType('success');
+                        setShowModal(true);
                     },
                     onError: (errs) => {
                         console.error('❌ Submission errors:', errs);
-                        try {
-                            const errorMessages = Object.values(errs).flat().join('\n');
-                            alert(`Submission failed:\n${errorMessages}`);
-                        } catch (e) {
-                            alert('Submission failed. Please verify your information and try again.');
-                        }
+                        setIsSubmitting(false);
+                        setModalType('error');
+                        setShowModal(true);
                     }
                 });
             } else {
-                alert('❌ Form data is empty');
+                setModalType('error');
+                setShowModal(true);
             }
         } catch (error) {
             console.error('❌ Error:', error);
-            alert('Error processing form data');
+            setIsSubmitting(false);
+            setModalType('error');
+            setShowModal(true);
         }
     };
 
@@ -510,6 +520,57 @@ export function PatternGame({ data: formDataProp }) {
                         </div>
                     )}
                 </div>
+            )}
+
+            {/* Show loading state when submitting */}
+            {showEnd && isSubmitting && (
+                <div className="text-center space-y-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-beta mx-auto"></div>
+                    <p className={`${darkMode ? 'text-white' : 'text-black'}`}>
+                        <TransText en="Submitting your application..." fr="Soumission de votre candidature..." ar="جاري إرسال طلبك..." />
+                    </p>
+                </div>
+            )}
+
+            {/* Success/Error Modal - Always visible when showModal is true */}
+            {showModal && (
+                <Modal
+                    validate={modalType === 'success'}
+                    confirm={showModal}
+                    title={modalType === 'success' ?
+                        <TransText en="Registration Successful!" fr="Inscription réussie !" ar="تم التسجيل بنجاح!" /> :
+                        <TransText en="Registration Failed" fr="Échec de l'inscription" ar="فشل التسجيل" />
+                    }
+                    message={modalType === 'success' ?
+                        <TransText
+                            en="Thank you for completing your application! We have received your information and will contact you soon."
+                            fr="Merci d'avoir complété votre candidature ! Nous avons reçu vos informations et vous contacterons bientôt."
+                            ar="شكراً لك على إكمال طلبك! لقد تلقينا معلوماتك وسنتواصل معك قريباً."
+                        /> :
+                        <TransText
+                            en="There was an error processing your application. Please try again or contact support if the problem persists."
+                            fr="Il y a eu une erreur lors du traitement de votre candidature. Veuillez réessayer ou contacter le support si le problème persiste."
+                            ar="حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى أو الاتصال بالدعم إذا استمر المشكلة."
+                        />
+                    }
+                    action={
+                        <button
+                            onClick={() => {
+                                setShowModal(false);
+                                if (modalType === 'success') {
+                                    router.visit('/');
+                                }
+                            }}
+                            className="rounded px-4 py-2 text-white bg-beta hover:bg-beta/90 transition-colors duration-300 focus:outline-none"
+                            disabled={isSubmitting}
+                        >
+                            {modalType === 'success' ?
+                                <TransText en="Go to Home" fr="Aller à l'accueil" ar="الذهاب للرئيسية" /> :
+                                <TransText en="Try Again" fr="Réessayer" ar="حاول مرة أخرى" />
+                            }
+                        </button>
+                    }
+                />
             )}
         </div>
     );
