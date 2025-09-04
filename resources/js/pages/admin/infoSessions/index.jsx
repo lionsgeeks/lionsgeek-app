@@ -22,24 +22,24 @@ export default function InfoSessions() {
             href: '/admin/infosessions',
         },
     ];
-    
+
     const changeAvailabilty = (id) => {
         router.patch(`infosessions/change-availabilty/${id}`);
     };
-    
+
     const changeStatus = (id) => {
         router.patch(`infosessions/change-status/${id}`);
     };
 
     const getFormationColor = (formation) => {
-        return formation === 'Coding' 
-            ? 'bg-blue-100 text-blue-700 border-blue-200' 
+        return formation === 'Coding'
+            ? 'bg-blue-100 text-blue-700 border-blue-200'
             : 'bg-purple-100 text-purple-700 border-purple-200';
     };
 
     const getFormationIcon = (formation) => {
-        return formation === 'Coding' ? 
-            <Code2 className="h-6 w-6" /> : 
+        return formation === 'Coding' ?
+            <Code2 className="h-6 w-6" /> :
             <Palette className="h-6 w-6" />;
     };
 
@@ -98,8 +98,8 @@ export default function InfoSessions() {
                 </div>
             </AppLayout>
         );
-    }   
-    
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Info Sessions" />
@@ -299,14 +299,14 @@ export default function InfoSessions() {
                                                 <div className="min-w-0 flex-1">
                                                     <p className="text-sm text-gray-500">Start Date</p>
                                                     <p className="font-medium text-[#212529]">
-                                                        {session.start_date?.includes('T') 
-                                                            ? session.start_date.replace('T', ' ') 
+                                                        {session.start_date?.includes('T')
+                                                            ? session.start_date.replace('T', ' ')
                                                             : session.start_date
                                                         }
                                                     </p>
                                                 </div>
                                             </div>
-                                            
+
                                             <div className="flex items-center gap-3">
                                                 <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
                                                     <Users className="h-4 w-4 text-[#212529]" />
@@ -335,7 +335,7 @@ export default function InfoSessions() {
                                                     {session.isAvailable ? 'Make Unavailable' : 'Make Available'}
                                                 </Button>
                                             )}
-                                            
+
                                             {/* Mark Complete Button */}
                                             <Button
                                                 size="sm"
@@ -343,13 +343,10 @@ export default function InfoSessions() {
                                                     e.stopPropagation();
                                                     changeStatus(session.id);
                                                 }}
-                                                className={`transform transition-all duration-300 ease-in-out hover:scale-110 ${
-                                                    session.isFinish
-                                                        ? 'bg-gray-300 text-gray-500 hover:bg-gray-400'
-                                                        : 'bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]'
+                                                className={`transform transition-all duration-300 ease-in-out hover:scale-110  'bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]'
                                                 }`}
                                             >
-                                                {session.isFinish ? 'Completed' : 'Mark Complete'}
+                                                {session.isFinish ? 'Reopen Session' : 'Mark Complete'}
                                             </Button>
                                         </div>
                                     </CardFooter>
@@ -359,7 +356,7 @@ export default function InfoSessions() {
                     )}
                 </div>
             </div>
-            
+
             <EditSessionModal open={editModalOpen} onOpenChange={setEditModalOpen} session={selectedSession} />
         </AppLayout>
     );
