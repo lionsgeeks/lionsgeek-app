@@ -17,7 +17,7 @@ import Step5BackgroundAvailability from './partials/Step5BackgroundAvailability'
 import Step6CVUpload from './partials/Step6CVUpload';
 import { PatternGame } from '../game/partials/pattern-game';
 import GameIntro from '../game/intro';
-import GamePage from '../game/game';
+
 
 const InfoSession = ({ trainingType = 'digital' }) => {
     const { selectedLanguage, darkMode } = useAppContext();
@@ -36,6 +36,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
         other_city: '',
         email: '',
         phone: '',
+        gender: '',
 
         // Step 2: Education & Current Situation + Phase 2 & 3
         education_level: '',
@@ -104,12 +105,15 @@ const InfoSession = ({ trainingType = 'digital' }) => {
         if (name === 'info_session_id' && value) {
             const selectedSession = sessions.find(session => session.id == value);
             if (selectedSession && selectedSession.formation) {
-                // Use the formation field directly from the session
                 const formationType = selectedSession.formation.toLowerCase();
-
                 setData(prevData => ({
                     ...prevData,
                     formation_field: formationType
+                }));
+            } else {
+                setData(prevData => ({
+                    ...prevData,
+                    formation_field: ''
                 }));
             }
         }
@@ -172,7 +176,8 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
     // Navigation functions
     const nextStep = () => {
-        if (currentStep < 8) {
+        const isValid = validateCurrentStep();
+        if (isValid && currentStep < 8) {
             setCurrentStep(prev => prev + 1);
         }
     };
@@ -185,29 +190,8 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
     // Game redirect function
     const handleGameRedirect = () => {
-        console.log('🎮 handleGameRedirect called from main form component');
-        console.log('🎮 Current form data:', data);
-
-        // Create a copy of data without the file (files can't be serialized)
-        const dataToStore = { ...data };
-        if (dataToStore.cv_file && typeof dataToStore.cv_file === 'object') {
-            // Store file info but not the actual file object
-            dataToStore.cv_file = null; // We'll handle file upload separately if needed
-        }
-
-        console.log('🎮 Data to store in sessionStorage:', dataToStore);
-
-        // Store form data in session storage for later submission
-        sessionStorage.setItem('formData', JSON.stringify(dataToStore));
-
-        // Verify data was stored
-        const storedData = sessionStorage.getItem('formData');
-        console.log('✅ Data stored in sessionStorage:', storedData ? 'Yes' : 'No');
-        console.log('✅ Stored data preview:', storedData ? storedData.substring(0, 100) + '...' : 'None');
-
-        // Redirect to game
-        console.log('🎮 Redirecting to game...');
-        router.visit('/game/intro');
+        // Stay on the same page and proceed to the embedded game to retain the uploaded CV file
+        setCurrentStep(7);
     };
 
     // Validation for each step
@@ -217,14 +201,14 @@ const InfoSession = ({ trainingType = 'digital' }) => {
         switch (currentStep) {
             case 1:
                 // Personal Information validation
-                if (!data.formation_field) newErrors.info_session_field = 'Please select a training session';
+                if (!data.formation_field) newErrors.formation_field = 'Please select a training type';
                 if (!data.full_name.trim()) newErrors.full_name = 'Full name is required';
                 if (!data.birthday) {
                     newErrors.birthday = 'Date of birth is required';
                 } else {
                     const age = Math.floor((new Date() - new Date(data.birthday)) / (365.25 * 24 * 60 * 60 * 1000));
                     if (age < 18) newErrors.birthday = 'You must be at least 18 years old';
-                    if (age > 65) newErrors.birthday = 'Age must be 65 or younger';
+                    if (age > 30) newErrors.birthday = 'Age must be 30 or younger';
                 }
                 if (!data.city) newErrors.city = 'City is required';
                 if (data.city === 'casablanca' && !data.region) newErrors.region = 'Region is required for Casablanca';
@@ -238,64 +222,64 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                 return step1Valid;
             case 2:
                 // Education & Current Situation + Phase 2 & 3 validation
-                const educationValid = data.education_level;
-                const institutionValid = data.education_level !== 'other' ||
-                    (data.education_level === 'other' && data.diploma_institution.trim());
-                const specialtyValid = data.education_level !== 'other' ||
-                    (data.education_level === 'other' && data.diploma_specialty.trim());
-                const situationValid = data.current_situation;
-                const statusValid = data.current_situation !== 'other' ||
-                    (data.current_situation === 'other' && data.other_status.trim());
-                const hasOrgValid = data.has_referring_organization;
-                const organizationValid = data.has_referring_organization === 'no' ||
-                    (data.has_referring_organization === 'yes' && data.referring_organization);
-                const orgDetailsValid = data.has_referring_organization === 'no' ||
-                    (data.referring_organization !== 'autre_plateforme' && data.referring_organization !== 'autre_association') ||
-                    ((data.referring_organization === 'autre_plateforme' || data.referring_organization === 'autre_association') && data.other_organization.trim());
+                if (!data.education_level) newErrors.education_level = 'Education level is required';
+                if (data.education_level === 'other' && !data.diploma_institution.trim()) newErrors.diploma_institution = 'Institution is required';
+                if (data.education_level === 'other' && !data.diploma_specialty.trim()) newErrors.diploma_specialty = 'Specialty is required';
+                if (!data.current_situation) newErrors.current_situation = 'Current situation is required';
+                if (data.current_situation === 'other' && !data.other_status.trim()) newErrors.other_status = 'Please specify your status';
+                if (!data.has_referring_organization) newErrors.has_referring_organization = 'Please select if you have a referring organization';
+                if (data.has_referring_organization === 'yes' && !data.referring_organization) newErrors.referring_organization = 'Please select your referring organization';
+                if ((data.referring_organization === 'autre_plateforme' || data.referring_organization === 'autre_association') && !data.other_organization.trim()) newErrors.other_organization = 'Please specify the organization';
 
-                const step2Valid = educationValid && institutionValid && specialtyValid && situationValid && statusValid && hasOrgValid && organizationValid && orgDetailsValid;
+                setValidationErrors(newErrors);
+                const step2Valid = Object.keys(newErrors).length === 0;
                 setStepValidation(prev => ({ ...prev, 2: step2Valid }));
                 return step2Valid;
             case 3:
                 // Training Experience & Motivation + LionsGEEK validation
-                const hasTrainingValid = data.has_training;
-                const trainingDetailsValid = data.has_training === 'no' ||
-                    (data.has_training === 'yes' && data.previous_training_details.trim());
-                const motivationValid = data.why_join_formation.trim() && data.why_join_formation.length >= 100;
-                const lionsgeekValid = data.participated_lionsgeek;
-                const activityValid = data.participated_lionsgeek === 'no' ||
-                    (data.participated_lionsgeek === 'yes' && data.lionsgeek_activity);
-                const otherActivityValid = data.lionsgeek_activity !== 'other' ||
-                    (data.lionsgeek_activity === 'other' && data.other_activity.trim());
+                if (!data.has_training) newErrors.has_training = 'Please select if you have previous training';
+                if (data.has_training === 'yes' && !data.previous_training_details.trim()) newErrors.previous_training_details = 'Please provide training details';
+                if (!data.why_join_formation.trim()) newErrors.why_join_formation = 'Motivation is required';
+                if (data.why_join_formation.length < 100) newErrors.why_join_formation = 'Motivation must be at least 100 characters';
+                if (!data.participated_lionsgeek) newErrors.participated_lionsgeek = 'Please select if you participated in LionsGEEK';
+                if (data.participated_lionsgeek === 'yes' && !data.lionsgeek_activity) newErrors.lionsgeek_activity = 'Please select your LionsGEEK activity';
+                if (data.lionsgeek_activity === 'other' && !data.other_activity.trim()) newErrors.other_activity = 'Please specify the activity';
 
-                const step3Valid = hasTrainingValid && trainingDetailsValid && motivationValid && lionsgeekValid && activityValid && otherActivityValid;
+                setValidationErrors(newErrors);
+                const step3Valid = Object.keys(newErrors).length === 0;
                 setStepValidation(prev => ({ ...prev, 3: step3Valid }));
                 return step3Valid;
             case 4:
                 // Goals & Learning + Languages validation
-                const objectivesValid = data.objectives_after_formation;
-                const priorityValid = data.priority_learning_topics;
-                const selfLearnedValid = data.last_self_learned.trim();
-                const arabicValid = data.arabic_level;
-                const frenchValid = data.french_level;
-                const englishValid = data.english_level;
-                const otherLangValid = !data.other_language ||
-                    (data.other_language && data.other_language_level);
+                const isMedia = (data.formation_field || '').toLowerCase() === 'media';
+                if (!data.objectives_after_formation) newErrors.objectives_after_formation = 'Please select your objectives';
+                if (isMedia && !data.priority_learning_topics) newErrors.priority_learning_topics = 'Please select priority learning topics';
+                if (!data.last_self_learned.trim()) newErrors.last_self_learned = 'Please describe what you last learned';
+                if (!data.arabic_level) newErrors.arabic_level = 'Arabic level is required';
+                if (!data.french_level) newErrors.french_level = 'French level is required';
+                if (!data.english_level) newErrors.english_level = 'English level is required';
+                if (data.other_language && !data.other_language_level) newErrors.other_language_level = 'Please specify the level for other language';
 
-                const step4Valid = objectivesValid && priorityValid && selfLearnedValid && arabicValid && frenchValid && englishValid && otherLangValid;
+                setValidationErrors(newErrors);
+                const step4Valid = Object.keys(newErrors).length === 0;
                 setStepValidation(prev => ({ ...prev, 4: step4Valid }));
                 return step4Valid;
             case 5:
                 // Background & Availability validation
-                const step5Valid = data.how_heard_about_formation && data.current_commitments;
+                if (!data.how_heard_about_formation) newErrors.how_heard_about_formation = 'Please select how you heard about the formation';
+                if (!data.current_commitments) newErrors.current_commitments = 'Please describe your current commitments';
+
+                setValidationErrors(newErrors);
+                const step5Valid = Object.keys(newErrors).length === 0;
                 setStepValidation(prev => ({ ...prev, 5: step5Valid }));
                 return step5Valid;
             case 6:
-                // CV Upload validation (optional)
-                const step6Valid = true;
-                console.log('Step 6 validation result:', step6Valid);
+                // CV Upload validation (required)
+                if (!data.cv_file) newErrors.cv_file = 'CV file is required';
+
+                setValidationErrors(newErrors);
+                const step6Valid = Object.keys(newErrors).length === 0;
                 setStepValidation(prev => ({ ...prev, 6: step6Valid }));
-                console.log("ghatbda  o  l function ta3 l game")
                 return step6Valid;
             case 7:
 
@@ -332,9 +316,9 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                         <div className="text-center mb-8">
                             <h1 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                                 <TransText
-                                    en={isDigitalMarketing ? "Digital Marketing Training Application" : "Coding Training Application"}
-                                    fr={isDigitalMarketing ? "Candidature Formation Marketing Digital" : "Candidature Formation Programmation"}
-                                    ar={isDigitalMarketing ? "طلب التسجيل في تكوين التسويق الرقمي" : "طلب التسجيل في تكوين البرمجة"}
+                                    en={"Training Application"}
+                                    fr={"Candidature Formation"}
+                                    ar={"طلب التسجيل في تكوين"}
                                 />
                             </h1>
                             <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -346,11 +330,13 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                             </p>
                         </div>
 
-                        <ProgressIndicator
-                            currentStep={currentStep}
-                            darkMode={darkMode}
-                            selectedLanguage={selectedLanguage}
-                        />
+                        {currentStep <= 6 && (
+                            <ProgressIndicator
+                                currentStep={currentStep}
+                                darkMode={darkMode}
+                                selectedLanguage={selectedLanguage}
+                            />
+                        )}
 
                         <div className={`rounded-xl p-8 shadow-lg transition-all duration-300 ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
                             }`}>
@@ -375,7 +361,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                         <Step2EducationSituation
                                             data={data}
                                             handleChange={handleChange}
-                                            errors={errors}
+                                            errors={{ ...errors, ...validationErrors }}
                                             darkMode={darkMode}
                                             selectedLanguage={selectedLanguage}
                                         />
@@ -385,7 +371,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                         <Step3ExperienceMotivation
                                             data={data}
                                             handleChange={handleChange}
-                                            errors={errors}
+                                            errors={{ ...errors, ...validationErrors }}
                                             darkMode={darkMode}
                                             selectedLanguage={selectedLanguage}
                                             trainingType={trainingType}
@@ -396,7 +382,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                         <Step4GoalsLearning
                                             data={data}
                                             handleChange={handleChange}
-                                            errors={errors}
+                                            errors={{ ...errors, ...validationErrors }}
                                             darkMode={darkMode}
                                             selectedLanguage={selectedLanguage}
                                             trainingType={trainingType}
@@ -407,7 +393,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                         <Step5BackgroundAvailability
                                             data={data}
                                             handleChange={handleChange}
-                                            errors={errors}
+                                            errors={{ ...errors, ...validationErrors }}
                                             darkMode={darkMode}
                                             selectedLanguage={selectedLanguage}
                                         />
@@ -417,38 +403,18 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                         <Step6CVUpload
                                             data={data}
                                             handleChange={handleChange}
-                                            errors={errors}
+                                            errors={{ ...errors, ...validationErrors }}
                                             darkMode={darkMode}
                                             selectedLanguage={selectedLanguage}
                                             setData={setData}
                                         />
                                     )}
                                     {currentStep === 7 && (
-                                        <GameIntro
-                                            setCurrentStep={setCurrentStep}
-                                        // data={data}
-                                        // handleChange={handleChange}
-                                        // errors={errors}
-                                        // darkMode={darkMode}
-                                        // selectedLanguage={selectedLanguage}
-                                        // setData={setData}
-                                        />
+                                        <GameIntro setCurrentStep={setCurrentStep} />
                                     )}
-                                    {
-                                        currentStep === 8 && (
-                                            <>
-                                                <GamePage
-                                                    data={data}
-                                                    handleChange={handleChange}
-                                                    errors={errors}
-                                                    darkMode={darkMode}
-                                                    selectedLanguage={selectedLanguage}
-
-                                                    setData={setData}
-                                                />
-                                            </>
-
-                                        )}
+                                    {currentStep === 8 && (
+                                        <PatternGame data={data} />
+                                    )}
                                 </div>
                                 {/* Navigation Buttons */}
                                 {

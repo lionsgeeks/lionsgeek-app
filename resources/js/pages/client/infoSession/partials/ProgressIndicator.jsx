@@ -17,16 +17,16 @@ const ProgressIndicator = ({ currentStep, darkMode, selectedLanguage }) => {
             <div className="md:hidden">
                 <div className="flex justify-between items-center mb-2">
                     <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                        <TransText en="Step" fr="Étape" ar="خطوة" /> {currentStep} <TransText en="of" fr="de" ar="من" /> 6
+                        <TransText en="Step" fr="Étape" ar="خطوة" /> {Math.min(currentStep, 6)} <TransText en="of" fr="de" ar="من" /> 6
                     </span>
                     <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                        {Math.round((currentStep / 6) * 100)}%
+                        {Math.round((Math.min(currentStep, 6) / 6) * 100)}%
                     </span>
                 </div>
                 <div className={`w-full bg-gray-200 rounded-full h-2 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
-                    <div 
+                    <div
                         className="h-2 bg-alpha rounded-full transition-all duration-500 ease-out"
-                        style={{ width: `${(currentStep / 6) * 100}%` }}
+                        style={{ width: `${(Math.min(currentStep, 6) / 6) * 100}%` }}
                     />
                 </div>
             </div>

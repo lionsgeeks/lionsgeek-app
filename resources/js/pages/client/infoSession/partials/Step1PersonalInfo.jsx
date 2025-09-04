@@ -2,7 +2,7 @@ import { TransText } from '../../../../components/TransText';
 
 const Required = () => <span className="text-red-500 ml-1">*</span>;
 
-const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLanguage }) => {
+const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLanguage, sessions = [] }) => {
     return (
         <div className="space-y-6">
             <div className="text-center">
@@ -15,10 +15,10 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Session Selection */}
+                {/* Training Type (Coding or Media) */}
                 <div className="md:col-span-2">
                     <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                        <TransText en="Select Training Session" fr="Sélectionner la session de formation" ar="اختر جلسة التدريب" />
+                        <TransText en="Select Training" fr="Sélectionnez la formation" ar="اختر التكوين" />
                         <Required />
                     </label>
                     <select
@@ -33,13 +33,13 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         autoComplete="off"
                     >
                         <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
-                            <TransText en="Choose a session" fr="Choisissez une session" ar="اختر جلسة" />
+                            <TransText en="Choose Coding or Media" fr="Choisissez Coding ou Media" ar="اختر البرمجة أو الميديا" />
                         </option>
-                        <option value='media' className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="coding" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            Coding
+                        </option>
+                        <option value="media" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
                             Media
-                        </option>
-                        <option value='coding' className={darkMode ? 'bg-gray-700' : 'bg-white'}>
-                            coding
                         </option>
                     </select>
                     {errors.formation_field && <span className="text-sm text-red-500 mt-1">{errors.formation_field}</span>}
@@ -79,7 +79,7 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         value={data.birthday}
                         onChange={handleChange}
                         max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
-                        min={new Date(new Date().setFullYear(new Date().getFullYear() - 65)).toISOString().split('T')[0]}
+                        min={new Date(new Date().setFullYear(new Date().getFullYear() - 30)).toISOString().split('T')[0]}
                         className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
                                 ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                                 : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
@@ -290,6 +290,33 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         autoComplete="off"
                     />
                     {errors.phone && <span className="text-sm text-red-500 mt-1">{errors.phone}</span>}
+                </div>
+
+                {/* Gender */}
+                <div>
+                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <TransText en="Gender" fr="Genre" ar="الجنس" />
+                    </label>
+                    <select
+                        name="gender"
+                        value={data.gender}
+                        onChange={handleChange}
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
+                                ? 'bg-gray-700 border-gray-600 text-white'
+                                : 'bg-white border-gray-300 text-gray-900'
+                            }`}
+                        autoComplete="off"
+                    >
+                        <option value="" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <TransText en="Select gender" fr="Sélectionnez le genre" ar="اختر الجنس" />
+                        </option>
+                        <option value="male" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <TransText en="Male" fr="Homme" ar="ذكر" />
+                        </option>
+                        <option value="female" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <TransText en="Female" fr="Femme" ar="أنثى" />
+                        </option>
+                    </select>
                 </div>
             </div>
         </div>

@@ -15,6 +15,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/invite/interview', action: [ParticipantController::class, 'toInterview'])->name('invite.interview');
     Route::post('/invite/jungle', action: [ParticipantController::class, 'toJungle'])->name('invite.jungle');
     Route::post('/invite/school', action: [ParticipantController::class, 'toSchool'])->name('invite.school');
+
+    // Approval routes
+    Route::post('/participants/{participant}/approve', [ParticipantController::class, 'approve'])->name('participants.approve');
+    Route::post('/participants/{participant}/reject', [ParticipantController::class, 'reject'])->name('participants.reject');
+
     Route::resource('participants', ParticipantController::class)->except(['store']);
 });;
 Route::post('/participants/store', [ParticipantController::class, 'store'])->name('participants.store');

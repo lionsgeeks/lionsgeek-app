@@ -12,12 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('participants', function (Blueprint $table) {
-            // Add formation_field column to store coding/media
-            $table->string('formation_field')->nullable()->after('info_session_id');
-
-            // Make info_session_id nullable
-            $table->unsignedBigInteger('info_session_id')->nullable()->change();
+            // Add formation_field column to store coding/media (only if missing)
+            if (!Schema::hasColumn('participants', 'formation_field')) {
+                $table->string('formation_field')->nullable()->after('info_session_id');
+            }
         });
+
+        // Make info_session_id nullable where supported (skip on sqlite)
+        $driver = config('database.default');
+        $isSqlite = $driver === 'sqlite';
+        if (!$isSqlite) {
+            Schema::table('participants', function (Blueprint $table) {
+                try {
+                    $table->unsignedBigInteger('info_session_id')->nullable()->change();
+                } catch (\Throwable $e) {
+                    // If the platform does not support change(), skip silently
+                }
+            });
+        }
     }
 
     /**

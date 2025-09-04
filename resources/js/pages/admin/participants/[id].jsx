@@ -21,7 +21,8 @@ import {
     Star,
     Award,
     BookOpen,
-    Edit
+    Edit,
+    XCircle
 } from 'lucide-react';
 import { AdminNotesSection } from './partials/admin-notes-section';
 import { FrequentQuestionsSection } from './partials/frequent-questions-section';
@@ -155,9 +156,15 @@ export default function ParticipantProfilePage() {
                                         <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1 font-medium`}>
                                             {participant.current_step.replaceAll('_', ' ')}
                                         </Badge>
-                                        <Badge className="bg-[#fee819] text-[#212529] rounded-lg px-3 py-1 font-medium">
-                                            {participant.info_session.formation}
-                                        </Badge>
+                                        {participant.info_session ? (
+                                            <Badge className="bg-[#fee819] text-[#212529] rounded-lg px-3 py-1 font-medium">
+                                                {participant.info_session.formation}
+                                            </Badge>
+                                        ) : (
+                                            <Badge className="bg-gray-500 text-white rounded-lg px-3 py-1 font-medium">
+                                                {participant.formation_field || 'No Session'}
+                                            </Badge>
+                                        )}
                                         {(participant.current_step === 'jungle' || participant.current_step?.includes('school')) && (
                                             <Badge
                                                 className={`${getConfirmationStatus(participant)
@@ -169,7 +176,7 @@ export default function ParticipantProfilePage() {
                                             </Badge>
                                         )}
                                     </div>
-                                    <p className="text-white/80">{participant.info_session.name}</p>
+                                    <p className="text-white/80">{participant.info_session?.name || 'No session assigned'}</p>
                                 </div>
                             </div>
 
@@ -177,7 +184,7 @@ export default function ParticipantProfilePage() {
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:ml-auto">
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <Calendar className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
-                                    <div className="text-sm text-white/80">Joined</div>
+                                    <div className="text-sm text-white/80">Birthday</div>
                                     <div className="text-sm font-medium">{formatDate(participant.birthday)}</div>
                                 </div>
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
@@ -193,7 +200,7 @@ export default function ParticipantProfilePage() {
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <GraduationCap className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Program</div>
-                                    <div className="text-sm font-medium">{participant.info_session.formation}</div>
+                                    <div className="text-sm font-medium">{participant.info_session?.formation || participant.formation_field || 'Not assigned'}</div>
                                 </div>
                             </div>
                         </div>
@@ -202,87 +209,314 @@ export default function ParticipantProfilePage() {
 
                 {/* Main Content */}
                 <div className="p-6 pb-3">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {/* Contact & Personal Info */}
-                        <div className="lg:col-span-1 space-y-6">
-                            <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                        <Mail className="w-5 h-5" />
-                                        Contact Information
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                        <Mail className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                        <div className="min-w-0 flex-1">
-                                            <div className="text-xs text-gray-500 mb-1">Email</div>
-                                            <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
-                                        </div>
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <Mail className="w-5 h-5" />
+                                    Contact Information
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <Mail className="w-4 h-4 text-[#212529] flex-shrink-0" />
+                                    <div className="min-w-0 flex-1">
+                                        <div className="text-xs text-gray-500 mb-1">Email</div>
+                                        <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
                                     </div>
-                                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                        <Phone className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                        <div className="min-w-0 flex-1">
-                                            <div className="text-xs text-gray-500 mb-1">Phone</div>
-                                            <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
-                                        </div>
+                                </div>
+                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <Phone className="w-4 h-4 text-[#212529] flex-shrink-0" />
+                                    <div className="min-w-0 flex-1">
+                                        <div className="text-xs text-gray-500 mb-1">Phone</div>
+                                        <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
                                     </div>
-                                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                        <MapPin className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                        <div className="min-w-0 flex-1">
-                                            <div className="text-xs text-gray-500 mb-1">Address</div>
-                                            <div className="text-sm font-medium text-[#212529] capitalize">{participant.city}, {participant.prefecture?.replaceAll('_', ' ')}</div>
-                                        </div>
+                                </div>
+                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <MapPin className="w-4 h-4 text-[#212529] flex-shrink-0" />
+                                    <div className="min-w-0 flex-1">
+                                        <div className="text-xs text-gray-500 mb-1">Address</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.city}, {participant.prefecture?.replaceAll('_', ' ')}</div>
                                     </div>
-                                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                        <Calendar className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                        <div className="min-w-0 flex-1">
-                                            <div className="text-xs text-gray-500 mb-1">Birthday</div>
-                                            <div className="text-sm font-medium text-[#212529]">{formatDate(participant.birthday)}</div>
-                                        </div>
+                                </div>
+                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <Calendar className="w-4 h-4 text-[#212529] flex-shrink-0" />
+                                    <div className="min-w-0 flex-1">
+                                        <div className="text-xs text-gray-500 mb-1">Birthday</div>
+                                        <div className="text-sm font-medium text-[#212529]">{formatDate(participant.birthday)}</div>
                                     </div>
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </CardContent>
+                        </Card>
 
-                            <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                        <BookOpen className="w-5 h-5" />
-                                        Session Details
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-3">
-                                    <div>
-                                        <div className="text-xs text-gray-500 mb-1">Session Name</div>
-                                        <div className="text-sm font-medium text-[#212529]">{participant.info_session.name}</div>
+                        {/* Session Details */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <BookOpen className="w-5 h-5" />
+                                    Session Details
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                {participant.info_session ? (
+                                    <>
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Session Name</div>
+                                            <div className="text-sm font-medium text-[#212529]">{participant.info_session.name}</div>
+                                        </div>
+                                        <Separator />
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Start Date</div>
+                                            <div className="text-sm font-medium text-[#212529]">{participant.info_session.start_date}</div>
+                                        </div>
+                                        <Separator />
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Formation Type</div>
+                                            <div className="text-sm font-medium text-[#212529]">{participant.info_session.formation}</div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="text-center py-4">
+                                        <div className="text-sm text-gray-500 mb-2">No session assigned yet</div>
+                                        <div className="text-xs text-gray-400">
+                                            {participant.formation_field && `Applied for: ${participant.formation_field}`}
+                                        </div>
                                     </div>
-                                    <Separator />
-                                    <div>
-                                        <div className="text-xs text-gray-500 mb-1">Start Date</div>
-                                        <div className="text-sm font-medium text-[#212529]">{participant.info_session.start_date}</div>
-                                    </div>
-                                    <Separator />
-                                    <div>
-                                        <div className="text-xs text-gray-500 mb-1">Formation Type</div>
-                                        <div className="text-sm font-medium text-[#212529]">{participant.info_session.formation}</div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
+                                )}
+                            </CardContent>
+                        </Card>
 
-                        {/* Right Sidebar - More Space */}
-                        <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Main Content Area */}
-                            <div className="space-y-6">
-                            <FrequentQuestionsSection participant={participant} />
-                            </div>
+                        {/* Application Details */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <FileText className="w-5 h-5" />
+                                    Application Details
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Formation Field</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.formation_field || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Region</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.region?.replaceAll('_', ' ') || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Other City</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.other_city || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Gender</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.gender || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Source</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.source || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">CV</div>
+                                    <div className="text-sm font-medium text-[#212529]">
+                                        {participant.cv_file ? (
+                                            <a
+                                                href={`/storage/${participant.cv_file}`}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="text-[#212529] underline hover:text-[#fee819]"
+                                            >
+                                                View CV
+                                            </a>
+                                        ) : (
+                                            '-'
+                                        )}
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
 
-                            {/* Sidebar Components with More Space */}
-                            <div className="space-y-6">
-                                <MotivationSection participant={participant} />
-                                <AdminNotesSection participant={participant} />
-                            </div>
-                        </div>
+                        {/* Education & Situation */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <GraduationCap className="w-5 h-5" />
+                                    Education & Situation
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Education Level</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.education_level || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Institution</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.diploma_institution || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Specialty</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.diploma_specialty || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Current Situation</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.current_situation || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Other Status</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.other_status || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Referring Organization</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.has_referring_organization ? `${participant.has_referring_organization} - ${participant.referring_organization || '-'}` : '-'}</div>
+                                </div>
+                                <div className="md:col-span-2">
+                                    <div className="text-xs text-gray-500 mb-1">Other Organization</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.other_organization || '-'}</div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Game Results */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <Star className="w-5 h-5" />
+                                    Game Results
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Completed</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.game_completed ? 'Yes' : 'No'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Final Score</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.final_score ?? '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Correct Answers</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.correct_answers ?? '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Levels Completed</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.levels_completed ?? '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Total Attempts</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.total_attempts ?? '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Wrong Attempts</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.wrong_attempts ?? '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Time Spent</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.time_spent_formatted || (participant.time_spent ? `${participant.time_spent}s` : '-')}</div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Languages */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <MessageSquare className="w-5 h-5" />
+                                    Languages
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Arabic</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.arabic_level || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">French</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.french_level || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">English</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.english_level || '-'}</div>
+                                </div>
+                                <div className="col-span-2">
+                                    <div className="text-xs text-gray-500 mb-1">Other Language</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.other_language ? `${participant.other_language} (${participant.other_language_level || '-'})` : '-'}</div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Background & Availability */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <Clock className="w-5 h-5" />
+                                    Background & Availability
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">How heard about formation</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.how_heard_about_formation || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Current Commitments</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.current_commitments || '-'}</div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Training & Experience */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <TrendingUp className="w-5 h-5" />
+                                    Training & Experience
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <div className="text-xs text-gray-500 mb-1">Has Training</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.has_training || '-'}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.participated_lionsgeek || '-'}</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Previous Training Details</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.previous_training_details || '-'}</div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
+                                        <div className="text-sm font-medium text-[#212529]">{participant.lionsgeek_activity || '-'}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-xs text-gray-500 mb-1">Other Activity</div>
+                                        <div className="text-sm font-medium text-[#212529]">{participant.other_activity || '-'}</div>
+                                    </div>
+                                </div>
+                                <Separator />
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Objectives After Formation</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.objectives_after_formation || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Priority Learning Topics</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.priority_learning_topics || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Last Self Learned</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.last_self_learned || '-'}</div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Questions, Motivation, Notes */}
+                        <FrequentQuestionsSection participant={participant} />
+                        <MotivationSection participant={participant} />
+                        <AdminNotesSection participant={participant} />
                     </div>
                 </div>
 

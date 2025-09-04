@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAppContext } from '@/context/appContext';
 import Modal from '@/components/Modal';
 import { router, useForm } from '@inertiajs/react';
+import { TransText } from '../../../../components/TransText';
 
 // Inside your component, add this after your other useState hooks:
 
@@ -15,17 +16,15 @@ const COLORS = [
 const SHAPES = ['square', 'circle', 'triangle', 'diamond'];
 const SYMBOLS = ['●', '■', '▲', '♦', '★', '◆', '◇', '♠', '♥', '♣'];
 
-const baseContainer = 'max-w-5xl mx-auto';
-const cardBase = 'rounded-2xl border shadow-xl';
 
-export function PatternGame() {
+
+export function PatternGame({ data: formDataProp }) {
     const { post, processing, errors } = useForm();
 
     const { darkMode } = useAppContext();
     const [currentLevel, setCurrentLevel] = useState(0);
-    const [score, setScore] = useState(0);
     const [attempts, setAttempts] = useState(0);
-    const [timeRemaining, setTimeRemaining] = useState(600);
+    const [timeRemaining, setTimeRemaining] = useState(240);
     const [selectedChoice, setSelectedChoice] = useState(null);
     const [gameCompleted, setGameCompleted] = useState(false);
     const [currentPuzzle, setCurrentPuzzle] = useState(null);
@@ -34,6 +33,12 @@ export function PatternGame() {
     const [startTime, setStartTime] = useState(Date.now());
     const [feedback, setFeedback] = useState("");
     const [feedbackType, setFeedbackType] = useState(null); // 'success' | 'error'
+
+    // Modal states for success/error feedback
+    const [showModal, setShowModal] = useState(false);
+    const [modalType, setModalType] = useState('success'); // 'success' | 'error'
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const timerRef = useRef(null);
 
     const questionPools = useMemo(() => buildQuestionPools(72, 123456), []);
@@ -46,7 +51,7 @@ export function PatternGame() {
             setTimeRemaining((t) => {
                 if (t <= 1) {
                     clearInterval(timerRef.current);
-                    endGame(false);
+                    setTimeOver(true);
                     return 0;
                 }
                 return t - 1;
@@ -305,7 +310,6 @@ export function PatternGame() {
                 return next;
             });
             setCorrectAnswers((c) => c + 1);
-            setScore((s) => s + (currentLevel + 1) * 10);
             setFeedback('Correct! Moving to next level...');
             setFeedbackType('success');
             setTimeout(() => setCurrentLevel((l) => l + 1), 800);
@@ -330,6 +334,17 @@ export function PatternGame() {
 
     const [showEnd, setShowEnd] = useState(false);
     const [completedFlag, setCompletedFlag] = useState(false);
+    const [timeOver, setTimeOver] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+
+    // Auto-submit once finished (all levels) or when time is over
+    useEffect(() => {
+        if ((showEnd || timeOver) && !submitted) {
+            setSubmitted(true);
+            handleFormSubmission();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showEnd, timeOver]);
 
     // Handle form submission when user clicks "Postuler"
     // const handleFormSubmission = () => {
@@ -381,54 +396,57 @@ export function PatternGame() {
     // };
 
     const handleFormSubmission = () => {
-        // Check what's in sessionStorage first
-        const rawData = sessionStorage.getItem('formData');
-        console.log('🔍 Raw sessionStorage data:', rawData);
-
-        if (!rawData) {
-            alert('❌ No form data found in sessionStorage');
-            return;
-        }
-
         try {
-            const formData = JSON.parse(rawData);
-            console.log('🔍 Debug: Parsed form data:', formData);
+            // Prefer in-memory data; fallback to sessionStorage if user refreshed
+            const fallbackRaw = sessionStorage.getItem('formData');
+            const fallback = fallbackRaw ? JSON.parse(fallbackRaw) : null;
+            const formData = (formDataProp && Object.keys(formDataProp).length ? formDataProp : null) || fallback;
+            console.log('🔍 Debug: Using submission form data:', formData);
 
-            if (formData && Object.keys(formData).length > 0) {
+            if (formData) {
                 console.log('✅ Form data found, submitting to /participants/store');
 
-                // Prepare submission data
+                const elapsedMs = Date.now() - startTime;
                 const submissionData = {
                     ...formData,
+                    // Game metrics
                     game_completed: completedFlag,
-                    final_score: score,
                     correct_answers: correctAnswers,
                     levels_completed: currentLevel,
-                    time_spent: Math.floor((Date.now() - startTime) / 1000)
+                    total_attempts: attempts,
+                    wrong_attempts: Math.max(0, attempts - correctAnswers),
+                    time_spent: Math.floor(elapsedMs / 1000),
+                    time_spent_formatted: formatElapsed(elapsedMs),
                 };
 
                 console.log('🚀 Submitting data:', submissionData);
+                setIsSubmitting(true);
 
-                // Submit using useForm hook
-                post('/participants/store', submissionData, {
-                    onSuccess: (response) => {
-                        console.log('✅ Submission successful:', response);
-                        alert('Application submitted successfully!');
+                // Use router.post and force multipart to ensure File objects (cv_file) are sent
+                router.post('/participants/store', submissionData, {
+                    forceFormData: true,
+                    onSuccess: () => {
                         sessionStorage.removeItem('formData');
-                        router.visit('/');
+                        setIsSubmitting(false);
+                        setModalType('success');
+                        setShowModal(true);
                     },
-                    onError: (errors) => {
-                        console.error('❌ Submission errors:', errors);
-                        const errorMessages = Object.values(errors).flat().join('\n');
-                        alert(`Submission failed:\n${errorMessages}`);
+                    onError: (errs) => {
+                        console.error('❌ Submission errors:', errs);
+                        setIsSubmitting(false);
+                        setModalType('error');
+                        setShowModal(true);
                     }
                 });
             } else {
-                alert('❌ Form data is empty');
+                setModalType('error');
+                setShowModal(true);
             }
         } catch (error) {
             console.error('❌ Error:', error);
-            alert('Error processing form data');
+            setIsSubmitting(false);
+            setModalType('error');
+            setShowModal(true);
         }
     };
 
@@ -458,36 +476,34 @@ export function PatternGame() {
     const choices = useMemo(() => generateChoices(), [currentPuzzle]);
 
     return (
-        <div className={`${baseContainer} pb-16`}>
-            <div className={`mb-6 flex items-center justify-between rounded-xl border px-4 py-3 ${darkMode ? 'bg-[#0f0f0f] border-white/10 text-white' : 'bg-white border-black/10 text-black'}`}>
-                <div className="text-lg font-bold text-beta">Pattern Master</div>
-                {/* Stats hidden from student: timer/score/attempts intentionally not shown */}
-                <div />
+        <div className="space-y-6">
+            <div className="text-center">
+                <h1 className="text-2xl font-extrabold text-beta mb-2">Pattern Master</h1>
+                <h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-black'}`}>Find the Pattern</h2>
             </div>
 
             {!showEnd && (
-                <div className={`${cardBase} ${darkMode ? 'bg-[#1e1e1e] border-white/10' : 'bg-white border-black/10'} p-6 relative z-0`}>
-                    <h2 className={`mb-4 text-lg font-semibold ${darkMode ? 'text-white' : 'text-black'}`}>Find the Pattern</h2>
+                <div className="space-y-6">
 
-                    <p className={`${darkMode ? 'text-white' : 'text-black'} text-center`}>Study the sequence and determine what comes next</p>
+                    <p className={`${darkMode ? 'text-white' : 'text-black'} text-center mb-6`}>Study the sequence and determine what comes next</p>
 
-                    <div className="my-8 flex min-h-[120px] flex-wrap items-center justify-center gap-4">
+                    <div className="flex min-h-[120px] flex-wrap items-center justify-center gap-4 mb-6">
                         {currentPuzzle?.sequence?.map((item, i) => (
                             <PatternItem key={i} item={item} />
                         ))}
                         <div className={`grid h-20 w-20 place-items-center rounded-xl border-2 border-dashed ${darkMode ? 'border-beta/50 text-white/60' : 'border-beta text-black/60'}`}>?</div>
                     </div>
 
-                    <div className="mt-6">
-                        <div className={`mb-4 text-center font-medium ${darkMode ? 'text-white' : 'text-black'}`}>Choose the next item:</div>
-                        <div className="flex flex-wrap items-center justify-center gap-3">
+                    <div className="space-y-4">
+                        <div className={`text-center font-medium ${darkMode ? 'text-white' : 'text-black'}`}>Choose the next item:</div>
+                        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-3">
                             {choices.map((choice, idx) => (
                                 <ChoiceItem key={idx} item={choice} selected={isEqual(selectedChoice || {}, choice)} onClick={() => setSelectedChoice(choice)} />
                             ))}
                         </div>
                     </div>
 
-                    <div className="mt-8 flex items-center justify-center gap-3">
+                    <div className="flex items-center justify-center gap-3 flex-wrap mt-6">
                         <button
                             type="button"
                             className={`rounded-md px-4 py-2 font-medium text-white pointer-events-auto ${selectedChoice ? 'bg-beta hover:opacity-90' : 'bg-beta/50 cursor-not-allowed'}`}
@@ -496,34 +512,64 @@ export function PatternGame() {
                         >
                             Submit Answer
                         </button>
-                        <button
-                            type="button"
-                            className={`${darkMode ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-black/5 hover:bg-black/10 text-black'} rounded-md px-4 py-2 pointer-events-auto`}
-                            onClick={restart}
-                        >
-                            Restart
-                        </button>
                     </div>
-                    <div className={`mt-4 text-center text-sm ${feedbackType === 'success' ? 'text-green-500' : feedbackType === 'error' ? 'text-red-500' : darkMode ? 'text-white' : 'text-black'}`}>
-                        {feedback}
-                    </div>
+
+                    {feedback && (
+                        <div className={`text-center text-sm mt-4 ${feedbackType === 'success' ? 'text-green-500' : feedbackType === 'error' ? 'text-red-500' : darkMode ? 'text-white' : 'text-black'}`}>
+                            {feedback}
+                        </div>
+                    )}
                 </div>
             )}
 
-            {showEnd && (
+            {/* Show loading state when submitting */}
+            {showEnd && isSubmitting && (
+                <div className="text-center space-y-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-beta mx-auto"></div>
+                    <p className={`${darkMode ? 'text-white' : 'text-black'}`}>
+                        <TransText en="Submitting your application..." fr="Soumission de votre candidature..." ar="جاري إرسال طلبك..." />
+                    </p>
+                </div>
+            )}
+
+            {/* Success/Error Modal - Always visible when showModal is true */}
+            {showModal && (
                 <Modal
-                    validate={true}
-                    confirm={true}
-                    title={<span>{completedFlag ? 'Game finished' : "Time's up"}</span>}
-                    message={<span>Your request has been submitted.</span>}
-                    submessage={<span>We will contact you soon.</span>}
-                    action={(
+                    validate={modalType === 'success'}
+                    confirm={showModal}
+                    title={modalType === 'success' ?
+                        <TransText en="Registration Successful!" fr="Inscription réussie !" ar="تم التسجيل بنجاح!" /> :
+                        <TransText en="Registration Failed" fr="Échec de l'inscription" ar="فشل التسجيل" />
+                    }
+                    message={modalType === 'success' ?
+                        <TransText
+                            en="Thank you for completing your application! We have received your information and will contact you soon."
+                            fr="Merci d'avoir complété votre candidature ! Nous avons reçu vos informations et vous contacterons bientôt."
+                            ar="شكراً لك على إكمال طلبك! لقد تلقينا معلوماتك وسنتواصل معك قريباً."
+                        /> :
+                        <TransText
+                            en="There was an error processing your application. Please try again or contact support if the problem persists."
+                            fr="Il y a eu une erreur lors du traitement de votre candidature. Veuillez réessayer ou contacter le support si le problème persiste."
+                            ar="حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى أو الاتصال بالدعم إذا استمر المشكلة."
+                        />
+                    }
+                    action={
                         <button
-                            className="mt-4 rounded bg-alpha px-5 py-2 font-medium"
+                            onClick={() => {
+                                setShowModal(false);
+                                if (modalType === 'success') {
+                                    router.visit('/');
+                                }
+                            }}
+                            className="rounded px-4 py-2 text-white bg-beta hover:bg-beta/90 transition-colors duration-300 focus:outline-none"
+                            disabled={isSubmitting}
                         >
-                            Postuler
+                            {modalType === 'success' ?
+                                <TransText en="Go to Home" fr="Aller à l'accueil" ar="الذهاب للرئيسية" /> :
+                                <TransText en="Try Again" fr="Réessayer" ar="حاول مرة أخرى" />
+                            }
                         </button>
-                    )}
+                    }
                 />
             )}
         </div>

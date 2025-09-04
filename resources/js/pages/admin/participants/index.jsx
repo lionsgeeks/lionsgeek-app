@@ -2,17 +2,19 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
-import { useState } from 'react';
-import { Users, Download, Clock, CheckCircle2, Presentation, Filter, Search, RotateCcw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, Download, Clock, CheckCircle2, Presentation, Filter, Search, RotateCcw, XCircle } from 'lucide-react';
 import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from './partials/ParticipantCard';
 
 export default function Participants() {
-    const { participants = [], infosessions = [] } = usePage().props;
+    const { participants = [], infosessions = [], statusCounts = {} } = usePage().props;
     const [filtredParticipants, setFiltredParticipants] = useState(participants);
     const [search, setSearch] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState('approved');
 
     const breadcrumbs = [
         {
@@ -21,15 +23,43 @@ export default function Participants() {
         },
     ];
 
+    // Filter participants based on selected status
+    const getFilteredParticipants = (status) => {
+        switch (status) {
+            case 'pending':
+                return participants.filter(p => p.status === 'pending');
+            case 'rejected':
+                return participants.filter(p => p.status === 'rejected');
+            case 'approved':
+                return participants.filter(p => p.status === 'approved');
+            case 'all':
+            default:
+                return participants;
+        }
+    };
+
+    // Calculate current participants based on status
+    const currentParticipants = getFilteredParticipants(selectedStatus);
+
+    // Update filtered participants when status changes
+    useEffect(() => {
+        setFiltredParticipants(currentParticipants);
+    }, [selectedStatus, participants]);
+
     // Calculate statistics with safe access
-    const totalParticipants = participants?.length || 0;
+    const totalParticipants = currentParticipants?.length || 0;
     const stepsCount = {
-        info_session: participants?.filter(p => p?.current_step === 'info_session')?.length || 0,
-        interview: participants?.filter(p => p?.current_step === 'interview')?.length || 0,
-        jungle: participants?.filter(p => p?.current_step === 'jungle')?.length || 0,
-        school: participants?.filter(p => p?.current_step?.includes('school'))?.length || 0,
+        info_session: currentParticipants?.filter(p => p?.current_step === 'info_session')?.length || 0,
+        interview: currentParticipants?.filter(p => p?.current_step === 'interview')?.length || 0,
+        jungle: currentParticipants?.filter(p => p?.current_step === 'jungle')?.length || 0,
+        school: currentParticipants?.filter(p => p?.current_step?.includes('school'))?.length || 0,
     };
     const hasSearch = search.length > 0;
+
+    // Handle status change without page refresh
+    const handleStatusChange = (newStatus) => {
+        setSelectedStatus(newStatus);
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -133,9 +163,44 @@ export default function Participants() {
                     <Card className="border-0 bg-gray-50">
                         <CardContent className="p-6">
                             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-                                <div className="flex items-center gap-2">
-                                    <Filter className="h-5 w-5 text-[#212529]" />
-                                    <h3 className="text-lg font-semibold text-[#212529]">Filter Participants</h3>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2">
+                                        <Filter className="h-5 w-5 text-[#212529]" />
+                                        <h3 className="text-lg font-semibold text-[#212529]">Filter Participants</h3>
+                                    </div>
+
+                                    <Select value={selectedStatus} onValueChange={handleStatusChange}>
+                                        <SelectTrigger className="w-48">
+                                            <SelectValue placeholder="Select status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="approved">
+                                                <div className="flex items-center gap-2">
+                                                    <CheckCircle2 className="h-4 w-4" style={{color: '#51b04f'}} />
+                                                    Approved ({statusCounts.approved || 0})
+                                                </div>
+                                            </SelectItem>
+                                            <SelectItem value="pending">
+                                                <div className="flex items-center gap-2">
+                                                    <Clock className="h-4 w-4 text-orange-600" />
+                                                    Pending ({statusCounts.pending || 0})
+                                                </div>
+                                            </SelectItem>
+                                            <SelectItem value="rejected">
+                                                <div className="flex items-center gap-2">
+                                                    <XCircle className="h-4 w-4" style={{color: '#ff7376'}} />
+                                                    Rejected ({statusCounts.rejected || 0})
+                                                </div>
+                                            </SelectItem>
+                                            <SelectItem value="all">
+                                                <div className="flex items-center gap-2">
+                                                    <Users className="h-4 w-4 text-gray-600" />
+                                                    All ({statusCounts.all || 0})
+                                                </div>
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+
                                     {filtredParticipants?.length !== totalParticipants && (
                                         <Badge variant="secondary" className="bg-gray-100 px-2 py-1 text-[#212529]">
                                             {filtredParticipants?.length} of {totalParticipants}
@@ -145,7 +210,7 @@ export default function Participants() {
                             </div>
                             <div className="mt-4">
                                 <FilterHeader
-                                    participants={participants}
+                                    participants={currentParticipants}
                                     infosessions={infosessions}
                                     setFiltredParticipants={setFiltredParticipants}
                                 />
