@@ -20,7 +20,7 @@ class PressController extends Controller
 
     public function show(Press $press)
     {
-        return Inertia::render('admin/press/ShowPress', [
+        return Inertia::render('admin/press/[id]', [
             'press' => $press
         ]);
     }
