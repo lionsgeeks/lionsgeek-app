@@ -401,11 +401,8 @@ export function PatternGame({ data: formDataProp }) {
             const fallbackRaw = sessionStorage.getItem('formData');
             const fallback = fallbackRaw ? JSON.parse(fallbackRaw) : null;
             const formData = (formDataProp && Object.keys(formDataProp).length ? formDataProp : null) || fallback;
-            console.log('🔍 Debug: Using submission form data:', formData);
 
             if (formData) {
-                console.log('✅ Form data found, submitting to /participants/store');
-
                 const elapsedMs = Date.now() - startTime;
                 const submissionData = {
                     ...formData,
@@ -419,7 +416,6 @@ export function PatternGame({ data: formDataProp }) {
                     time_spent_formatted: formatElapsed(elapsedMs),
                 };
 
-                console.log('🚀 Submitting data:', submissionData);
                 setIsSubmitting(true);
 
                 // Use router.post and force multipart to ensure File objects (cv_file) are sent
@@ -432,7 +428,6 @@ export function PatternGame({ data: formDataProp }) {
                         setShowModal(true);
                     },
                     onError: (errs) => {
-                        console.error('❌ Submission errors:', errs);
                         setIsSubmitting(false);
                         setModalType('error');
                         setShowModal(true);
@@ -443,7 +438,6 @@ export function PatternGame({ data: formDataProp }) {
                 setShowModal(true);
             }
         } catch (error) {
-            console.error('❌ Error:', error);
             setIsSubmitting(false);
             setModalType('error');
             setShowModal(true);
@@ -477,45 +471,58 @@ export function PatternGame({ data: formDataProp }) {
 
     return (
         <div className="space-y-6">
-            <div className="text-center">
-                <h1 className="text-2xl font-extrabold text-beta mb-2">Pattern Master</h1>
-                <h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-black'}`}>Find the Pattern</h2>
-            </div>
+            {/* Only show game header if game is active */}
+            {!showEnd && !timeOver && (
+                <div className="text-center">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-beta mb-2">Pattern Master</h1>
+                    <h2 className={`text-base sm:text-lg font-semibold ${darkMode ? 'text-white' : 'text-black'}`}>Find the Pattern</h2>
+                </div>
+            )}
 
-            {!showEnd && (
+            {!showEnd && !timeOver && (
                 <div className="space-y-6">
 
-                    <p className={`${darkMode ? 'text-white' : 'text-black'} text-center mb-6`}>Study the sequence and determine what comes next</p>
+                    <p className={`${darkMode ? 'text-white' : 'text-black'} text-center mb-4 sm:mb-6 text-sm sm:text-base`}>Study the sequence and determine what comes next</p>
 
-                    <div className="flex min-h-[120px] flex-wrap items-center justify-center gap-4 mb-6">
+                    <div className="flex min-h-[100px] sm:min-h-[120px] flex-wrap items-center justify-center gap-2 sm:gap-4 mb-4 sm:mb-6">
                         {currentPuzzle?.sequence?.map((item, i) => (
                             <PatternItem key={i} item={item} />
                         ))}
-                        <div className={`grid h-20 w-20 place-items-center rounded-xl border-2 border-dashed ${darkMode ? 'border-beta/50 text-white/60' : 'border-beta text-black/60'}`}>?</div>
+                        <div className={`grid h-16 w-16 sm:h-20 sm:w-20 place-items-center rounded-xl border-2 border-dashed ${darkMode ? 'border-beta/50 text-white/60' : 'border-beta text-black/60'}`}>?</div>
                     </div>
 
-                    <div className="space-y-4">
-                        <div className={`text-center font-medium ${darkMode ? 'text-white' : 'text-black'}`}>Choose the next item:</div>
-                        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-3">
+                    <div className="space-y-4 sm:space-y-6">
+                        <div className={`text-center font-medium text-sm sm:text-base ${darkMode ? 'text-white' : 'text-black'}`}>Choose the next item:</div>
+                        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                             {choices.map((choice, idx) => (
                                 <ChoiceItem key={idx} item={choice} selected={isEqual(selectedChoice || {}, choice)} onClick={() => setSelectedChoice(choice)} />
                             ))}
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-center gap-3 flex-wrap mt-6">
+                    <div className="flex items-center justify-center gap-3 flex-wrap mt-6 sm:mt-8">
                         <button
                             type="button"
-                            className={`rounded-md px-4 py-2 font-medium text-white pointer-events-auto ${selectedChoice ? 'bg-beta hover:opacity-90' : 'bg-beta/50 cursor-not-allowed'}`}
+                            className={`rounded-lg px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold transition-all duration-200 shadow-lg w-full sm:w-auto ${
+                                selectedChoice 
+                                    ? 'bg-alpha text-beta hover:bg-alpha/90 hover:shadow-xl transform hover:scale-105' 
+                                    : 'bg-gray-400 text-gray-200 cursor-not-allowed shadow-gray-400/30'
+                            } ${darkMode && !selectedChoice ? 'bg-gray-600 text-gray-400' : ''}`}
                             onClick={submitAnswer}
                             disabled={!selectedChoice}
                         >
-                            Submit Answer
+                            <TransText en="Submit Answer" fr="Soumettre la réponse" ar="إرسال الإجابة" />
                         </button>
                     </div>
 
                     {feedback && (
-                        <div className={`text-center text-sm mt-4 ${feedbackType === 'success' ? 'text-green-500' : feedbackType === 'error' ? 'text-red-500' : darkMode ? 'text-white' : 'text-black'}`}>
+                        <div className={`text-center font-medium mt-4 px-4 py-2 rounded-lg transition-all duration-300 ${
+                            feedbackType === 'success' 
+                                ? 'text-green-600 bg-green-100 border border-green-200' + (darkMode ? ' !text-green-400 !bg-green-900/30 !border-green-800' : '')
+                                : feedbackType === 'error' 
+                                ? 'text-red-600 bg-red-100 border border-red-200' + (darkMode ? ' !text-red-400 !bg-red-900/30 !border-red-800' : '')
+                                : darkMode ? 'text-white bg-gray-800 border border-gray-700' : 'text-black bg-gray-100 border border-gray-200'
+                        }`}>
                             {feedback}
                         </div>
                     )}
@@ -542,11 +549,22 @@ export function PatternGame({ data: formDataProp }) {
                         <TransText en="Registration Failed" fr="Échec de l'inscription" ar="فشل التسجيل" />
                     }
                     message={modalType === 'success' ?
-                        <TransText
-                            en="Thank you for completing your application! We have received your information and will contact you soon."
-                            fr="Merci d'avoir complété votre candidature ! Nous avons reçu vos informations et vous contacterons bientôt."
-                            ar="شكراً لك على إكمال طلبك! لقد تلقينا معلوماتك وسنتواصل معك قريباً."
-                        /> :
+                        <div className="space-y-2">
+                            <p>
+                                <TransText
+                                    en="Thank you for completing your application! We have received your information and will contact you soon."
+                                    fr="Merci d'avoir complété votre candidature ! Nous avons reçu vos informations et vous contacterons bientôt."
+                                    ar="شكراً لك على إكمال طلبك! لقد تلقينا معلوماتك وسنتواصل معك قريباً."
+                                />
+                            </p>
+                            <p className="text-sm opacity-80">
+                                <TransText
+                                    en="Please check your email inbox (including spam folder) for a confirmation message."
+                                    fr="Veuillez vérifier votre boîte e-mail (y compris le dossier spam) pour un message de confirmation."
+                                    ar="يرجى التحقق من صندوق البريد الإلكتروني (بما في ذلك مجلد الرسائل المزعجة) للحصول على رسالة تأكيد."
+                                />
+                            </p>
+                        </div> :
                         <TransText
                             en="There was an error processing your application. Please try again or contact support if the problem persists."
                             fr="Il y a eu une erreur lors du traitement de votre candidature. Veuillez réessayer ou contacter le support si le problème persiste."
@@ -559,9 +577,16 @@ export function PatternGame({ data: formDataProp }) {
                                 setShowModal(false);
                                 if (modalType === 'success') {
                                     router.visit('/');
+                                } else {
+                                    // On error, redirect back to postuler page (step 1) to retry
+                                    router.visit('/postuler');
                                 }
                             }}
-                            className="rounded px-4 py-2 text-white bg-beta hover:bg-beta/90 transition-colors duration-300 focus:outline-none"
+                            className={`rounded-lg px-6 py-3 font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                                modalType === 'success' 
+                                    ? 'bg-alpha text-beta hover:bg-alpha/90 focus:ring-alpha' 
+                                    : 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500'
+                            } ${darkMode && modalType !== 'success' ? 'focus:ring-offset-gray-800' : 'focus:ring-offset-white'}`}
                             disabled={isSubmitting}
                         >
                             {modalType === 'success' ?
@@ -583,31 +608,41 @@ function formatElapsed(totalMs) {
 }
 
 function PatternItem({ item }) {
+    const { darkMode } = useAppContext();
     return (
-        <div className={`grid h-20 w-20 place-items-center rounded-xl border-2`} style={{ backgroundColor: item.color, borderColor: item.color }}>
-            <span className="text-xl font-bold">{item.symbol}</span>
+        <div className={`grid h-16 w-16 sm:h-20 sm:w-20 place-items-center rounded-xl border-2 shadow-md ${darkMode ? 'shadow-gray-900/50' : 'shadow-gray-200/50'}`} 
+             style={{ backgroundColor: item.color, borderColor: item.color }}>
+            <span className={`text-lg sm:text-xl font-bold drop-shadow-sm ${darkMode ? 'text-black' : 'text-black'}`}>{item.symbol}</span>
         </div>
     );
 }
 
 function ChoiceItem({ item, selected, onClick }) {
+    const { darkMode } = useAppContext();
     return (
         <button
             type="button"
             onClick={onClick}
-            className={`grid h-16 w-16 place-items-center rounded-xl border-2 transition ${selected ? 'ring-2 ring-beta' : ''}`}
+            className={`grid h-14 w-14 sm:h-16 sm:w-16 place-items-center rounded-xl border-2 transition-all duration-200 shadow-md hover:scale-105 ${
+                selected 
+                    ? 'ring-4 ring-alpha ring-offset-2 transform scale-105' + (darkMode ? ' ring-offset-gray-800' : ' ring-offset-white') 
+                    : 'hover:shadow-lg'
+            } ${darkMode ? 'shadow-gray-900/50 hover:shadow-gray-900/70' : 'shadow-gray-200/50 hover:shadow-gray-300/70'}`}
             style={{ backgroundColor: item.color, borderColor: item.color }}
         >
-            <span className="text-lg font-bold">{item.symbol}</span>
+            <span className={`text-base sm:text-lg font-bold drop-shadow-sm ${darkMode ? 'text-black' : 'text-black'}`}>{item.symbol}</span>
         </button>
     );
 }
 
 function Stat({ label, value }) {
+    const { darkMode } = useAppContext();
     return (
-        <div className="flex items-center justify-between border-b border-white/10 pb-1 last:border-b-0">
-            <span className="text-xs opacity-70">{label}</span>
-            <span className="text-sm font-semibold">{value}</span>
+        <div className={`flex items-center justify-between border-b pb-2 last:border-b-0 ${
+            darkMode ? 'border-gray-600/30' : 'border-gray-300/30'
+        }`}>
+            <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{label}</span>
+            <span className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{value}</span>
         </div>
     );
 }

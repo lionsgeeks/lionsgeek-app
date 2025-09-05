@@ -49,10 +49,12 @@ const Modal = ({ validate, confirm, action, title, message, submessage }) => {
     };
   }, [confirm]);
   return (
-    <div className="fixed z-50 inset-0 p-5  transition-shadow w-full h-screen bg-gray-600/90 flex justify-center items-center">
-      <div className={`${darkMode ? "bg-black ":"bg-white"}  lg:w-[60%] rounded py-16 px-5 flex flex-col items-center text-center gap-3`}>
+    <div className={`fixed z-50 inset-0 p-5 transition-opacity w-full h-screen flex justify-center items-center ${
+      darkMode ? 'bg-gray-900/80' : 'bg-gray-600/90'
+    }`}>
+      <div className={`${darkMode ? "bg-gray-800 border border-gray-700 shadow-gray-900/50" : "bg-white border border-gray-200 shadow-gray-300/50"} max-w-sm sm:max-w-md w-full mx-4 rounded-xl shadow-2xl py-8 sm:py-16 px-6 sm:px-8 flex flex-col items-center text-center gap-3 sm:gap-4`}>
         {validate ? validIcon : notValidIcon}
-        <h1 className={`text-xl font-medium  ${darkMode ? "text-white":"text-black/50"}`}>
+        <h1 className={`text-xl font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
           {title ? (
             title
           ) : validate ? (
@@ -61,7 +63,7 @@ const Modal = ({ validate, confirm, action, title, message, submessage }) => {
             <TransText en="Oops!" fr="Oops!" ar="عذرًا" />
           )}
         </h1>
-        <p className={`${darkMode ? "text-white":"text-black/50"}`}>
+        <p className={`${darkMode ? "text-gray-200" : "text-gray-700"}`}>
           {message ? (
             message
           ) : validate ? (
@@ -78,7 +80,7 @@ const Modal = ({ validate, confirm, action, title, message, submessage }) => {
             />
           )}
         </p>
-        <p className={`${darkMode ? "text-white":"text-black/50"}`}>
+        <p className={`${darkMode ? "text-gray-300" : "text-gray-600"}`}>
           {submessage ? (
             submessage
           ) : validate ? (

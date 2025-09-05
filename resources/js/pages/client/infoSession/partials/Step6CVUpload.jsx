@@ -35,7 +35,7 @@ const Step6CVUpload = ({ data, handleChange, errors, darkMode, selectedLanguage,
                         />
                         <label htmlFor="cv-upload" className="cursor-pointer">
                             <FileText className={`mx-auto h-12 w-12 mb-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                            <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gstepray-600'}`}>
+                            <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                                 <TransText en="Click to upload your CV" fr="Cliquez pour télécharger votre CV" ar="انقر لرفع سيرتك الذاتية" />
                             </p>
                             <p className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>

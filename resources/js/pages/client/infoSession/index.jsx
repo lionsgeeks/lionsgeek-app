@@ -188,9 +188,98 @@ const InfoSession = ({ trainingType = 'digital' }) => {
         }
     };
 
+    // Validate ALL form data before allowing game access
+    const validateAllSteps = () => {
+        const allErrors = {};
+        
+        // Step 1 validation
+        if (!data.formation_field) allErrors.formation_field = 'Please select a training type';
+        if (!data.full_name.trim()) allErrors.full_name = 'Full name is required';
+        if (!data.birthday) {
+            allErrors.birthday = 'Date of birth is required';
+        } else {
+            const age = Math.floor((new Date() - new Date(data.birthday)) / (365.25 * 24 * 60 * 60 * 1000));
+            if (age < 18) allErrors.birthday = 'You must be at least 18 years old';
+            if (age > 30) allErrors.birthday = 'Age must be 30 or younger';
+        }
+        if (!data.city) allErrors.city = 'City is required';
+        if (data.city === 'casablanca' && !data.region) allErrors.region = 'Region is required for Casablanca';
+        if (data.city === 'other' && !data.other_city.trim()) allErrors.other_city = 'Please specify your city';
+        if (!data.email.trim()) allErrors.email = 'Email is required';
+        if (!data.phone.trim()) allErrors.phone = 'Phone number is required';
+
+        // Step 2 validation
+        if (!data.education_level) allErrors.education_level = 'Education level is required';
+        if (data.education_level === 'other' && !data.diploma_institution.trim()) allErrors.diploma_institution = 'Institution is required';
+        if (data.education_level === 'other' && !data.diploma_specialty.trim()) allErrors.diploma_specialty = 'Specialty is required';
+        if (!data.current_situation) allErrors.current_situation = 'Current situation is required';
+        if (data.current_situation === 'other' && !data.other_status.trim()) allErrors.other_status = 'Please specify your status';
+        if (!data.has_referring_organization) allErrors.has_referring_organization = 'Please select if you have a referring organization';
+        if (data.has_referring_organization === 'yes' && !data.referring_organization) allErrors.referring_organization = 'Please select your referring organization';
+        if ((data.referring_organization === 'autre_plateforme' || data.referring_organization === 'autre_association') && !data.other_organization.trim()) allErrors.other_organization = 'Please specify the organization';
+
+        // Step 3 validation
+        if (!data.has_training) allErrors.has_training = 'Please select if you have previous training';
+        if (data.has_training === 'yes' && !data.previous_training_details.trim()) allErrors.previous_training_details = 'Please provide training details';
+        if (!data.why_join_formation.trim()) allErrors.why_join_formation = 'Motivation is required';
+        if (data.why_join_formation.length < 100) allErrors.why_join_formation = 'Motivation must be at least 100 characters';
+        if (!data.participated_lionsgeek) allErrors.participated_lionsgeek = 'Please select if you participated in LionsGEEK';
+        if (data.participated_lionsgeek === 'yes' && !data.lionsgeek_activity) allErrors.lionsgeek_activity = 'Please select your LionsGEEK activity';
+        if (data.lionsgeek_activity === 'other' && !data.other_activity.trim()) allErrors.other_activity = 'Please specify the activity';
+
+        // Step 4 validation
+        const isMedia = (data.formation_field || '').toLowerCase() === 'media';
+        if (!data.objectives_after_formation) allErrors.objectives_after_formation = 'Please select your objectives';
+        if (isMedia && !data.priority_learning_topics) allErrors.priority_learning_topics = 'Please select priority learning topics';
+        if (!data.last_self_learned.trim()) allErrors.last_self_learned = 'Please describe what you last learned';
+        if (!data.arabic_level) allErrors.arabic_level = 'Arabic level is required';
+        if (!data.french_level) allErrors.french_level = 'French level is required';
+        if (!data.english_level) allErrors.english_level = 'English level is required';
+        if (data.other_language && !data.other_language_level) allErrors.other_language_level = 'Please specify the level for other language';
+
+        // Step 5 validation
+        if (!data.how_heard_about_formation) allErrors.how_heard_about_formation = 'Please select how you heard about the formation';
+        if (!data.current_commitments) allErrors.current_commitments = 'Please describe your current commitments';
+
+        // Step 6 validation
+        if (!data.cv_file) allErrors.cv_file = 'CV file is required';
+
+        return allErrors;
+    };
+
     // Game redirect function
     const handleGameRedirect = () => {
-        // Stay on the same page and proceed to the embedded game to retain the uploaded CV file
+        // Validate ALL steps before allowing game access
+        const allErrors = validateAllSteps();
+        
+        if (Object.keys(allErrors).length > 0) {
+            // There are validation errors - show them and go back to first error step
+            setValidationErrors(allErrors);
+            
+            // Find the first step with errors and redirect there
+            const errorSteps = {
+                1: ['formation_field', 'full_name', 'birthday', 'city', 'region', 'other_city', 'email', 'phone'],
+                2: ['education_level', 'diploma_institution', 'diploma_specialty', 'current_situation', 'other_status', 'has_referring_organization', 'referring_organization', 'other_organization'],
+                3: ['has_training', 'previous_training_details', 'why_join_formation', 'participated_lionsgeek', 'lionsgeek_activity', 'other_activity'],
+                4: ['objectives_after_formation', 'priority_learning_topics', 'last_self_learned', 'arabic_level', 'french_level', 'english_level', 'other_language_level'],
+                5: ['how_heard_about_formation', 'current_commitments'],
+                6: ['cv_file']
+            };
+
+            // Find first step with errors
+            for (let step = 1; step <= 6; step++) {
+                const stepFields = errorSteps[step];
+                const hasErrorInStep = stepFields.some(field => allErrors[field]);
+                if (hasErrorInStep) {
+                    setCurrentStep(step);
+                    return;
+                }
+            }
+        }
+        
+        // All validation passed - proceed to game
+        // Store form data to sessionStorage as backup
+        sessionStorage.setItem('formData', JSON.stringify(data));
         setCurrentStep(7);
     };
 
@@ -287,13 +376,6 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
                 setStepValidation(prev => ({ ...prev, 7: step7Valid }));
 
-                if (step7Valid) {
-                    console.table(data)
-                    // Removed automatic form submission - now handled by game modal
-                    console.log("Step 6 validation passed - ready for game redirect")
-                }
-                console.log("salina  o  l function ta3 l game +  khas  post ikon hna")
-
                 return step7Valid;
             default:
                 return false;
@@ -308,20 +390,20 @@ const InfoSession = ({ trainingType = 'digital' }) => {
     return (
         <AppLayout>
             <div
-                className={`min-h-screen px-4 pt-24 lg:px-16 lg:pt-28 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-gray-50'}`}
+                className={`min-h-screen px-4 sm:px-6 pt-20 sm:pt-24 lg:px-16 lg:pt-28 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-gray-50'}`}
                 dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}
             >
                 {!processing ? (
                     <div className="max-w-4xl mx-auto">
-                        <div className="text-center mb-8">
-                            <h1 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                        <div className="text-center mb-6 sm:mb-8">
+                            <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                                 <TransText
                                     en={"Training Application"}
                                     fr={"Candidature Formation"}
                                     ar={"طلب التسجيل في تكوين"}
                                 />
                             </h1>
-                            <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                            <p className={`text-base sm:text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                                 <TransText
                                     en="Complete your application in 6 simple steps"
                                     fr="Complétez votre candidature en 6 étapes simples"
@@ -338,7 +420,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                             />
                         )}
 
-                        <div className={`rounded-xl p-8 shadow-lg transition-all duration-300 ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
+                        <div className={`rounded-xl p-4 sm:p-6 lg:p-8 shadow-xl transition-all duration-300 ${darkMode ? 'bg-gray-800 border border-gray-700 shadow-gray-900/20' : 'bg-white border border-gray-200 shadow-gray-200/50'
                             }`}>
                             <form
                                 autoComplete="off"
