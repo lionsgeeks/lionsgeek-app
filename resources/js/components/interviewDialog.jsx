@@ -38,7 +38,6 @@ const InterviewDialog = ({ infosession }) => {
             setIsDialogOpen(false);
             setDateSlots([Date.now()]);
         } else {
-            alert('Please select at least one valid date and time.');
         }
     };
     const getTodayDateTime = () => {

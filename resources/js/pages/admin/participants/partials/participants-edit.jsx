@@ -67,7 +67,6 @@ export default function ParticipantEdit() {
                 router.visit(`/admin/participants/${participant.id}`);
             },
             onError: (errors) => {
-                console.log('Validation errors:', errors);
             }
         });
     };
