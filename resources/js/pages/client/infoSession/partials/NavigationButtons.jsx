@@ -16,25 +16,10 @@ const NavigationButtons = ({
     };
 
     const handleGameRedirect = () => {
-        console.log('🎮 NavigationButtons: handleGameRedirect called');
         const isValid = validateCurrentStep();
-        console.log('🔍 Step 6 validation result:', isValid);
-        console.log('🔍 onGameRedirect function provided:', !!onGameRedirect);
 
         if (isValid && onGameRedirect) {
-            console.log('✅ Calling onGameRedirect function');
             onGameRedirect();
-        } else {
-            console.log('❌ Validation failed for step 6 or onGameRedirect not provided');
-            console.log('❌ isValid:', isValid, 'onGameRedirect:', !!onGameRedirect);
-
-            // Don't redirect to home on validation failure - just stay on the form
-            if (!isValid) {
-                console.log('❌ Step 6 validation failed - staying on form');
-            }
-            if (!onGameRedirect) {
-                console.log('❌ onGameRedirect function not provided');
-            }
         }
     };
 

@@ -244,58 +244,6 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                             </select>
                         </div>
 
-                        {/* Other Language */}
-                        <div>
-                            <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                                <TransText en="Other Language (optional)" fr="Autre langue (optionnel)" ar="لغة أخرى (اختياري)" />
-                            </label>
-                            <input
-                                type="text"
-                                name="other_language"
-                                value={data.other_language}
-                                onChange={handleChange}
-                                className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
-                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                                    }`}
-                                placeholder={selectedLanguage === 'en' ? 'Specify other language' : selectedLanguage === 'fr' ? 'Précisez autre langue' : 'حدد لغة أخرى'}
-                            />
-                        </div>
-
-                        {/* Other Language Level (conditional) */}
-                        {data.other_language && (
-                            <div>
-                                <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                                    <TransText en="Level in other language" fr="Niveau dans l'autre langue" ar="مستوى اللغة الأخرى" />
-                                </label>
-                                <select
-                                    name="other_language_level"
-                                    value={data.other_language_level}
-                                    onChange={handleChange}
-                                    className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
-                                        ? 'bg-gray-700 border-gray-600 text-white'
-                                        : 'bg-white border-gray-300 text-gray-900'
-                                        }`}
-                                    required
-                                >
-                                    <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
-                                        <TransText en="Select level" fr="Sélectionnez le niveau" ar="اختر المستوى" />
-                                    </option>
-                                    <option value="beginner" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
-                                        <TransText en="Beginner" fr="Débutant" ar="مبتدئ" />
-                                    </option>
-                                    <option value="intermediate" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
-                                        <TransText en="Intermediate" fr="Intermédiaire" ar="متوسط" />
-                                    </option>
-                                    <option value="advanced" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
-                                        <TransText en="Advanced" fr="Avancé" ar="متقدم" />
-                                    </option>
-                                    <option value="fluent" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
-                                        <TransText en="Fluent" fr="Courant" ar="بطلاقة" />
-                                    </option>
-                                </select>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>

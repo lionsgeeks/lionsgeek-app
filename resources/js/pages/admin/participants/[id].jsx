@@ -437,10 +437,6 @@ export default function ParticipantProfilePage() {
                                     <div className="text-xs text-gray-500 mb-1">English</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{participant.english_level || '-'}</div>
                                 </div>
-                                <div className="col-span-2">
-                                    <div className="text-xs text-gray-500 mb-1">Other Language</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.other_language ? `${participant.other_language} (${participant.other_language_level || '-'})` : '-'}</div>
-                                </div>
                             </CardContent>
                         </Card>
 

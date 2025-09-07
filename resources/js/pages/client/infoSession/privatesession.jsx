@@ -98,7 +98,6 @@ const Privatesession = () => {
       axios
         .post(URL + "participate", newForm)
         .then((res) => {
-          console.log(res);
           setSending(false);
           if (res.data.status === 69) {
             setEmailError(true);
@@ -117,7 +116,6 @@ const Privatesession = () => {
           }
         })
         .catch((err) => {
-          console.log(err);
           setError(err);
         });
     }
@@ -171,7 +169,6 @@ const Privatesession = () => {
       ar: "لصق النص غير مسموح. يرجى كتابة النص 🙂."
     };
     event.preventDefault();
-    alert(messages[selectedLanguage] || messages.en);
   };
 
   const today = chosenSession
@@ -192,7 +189,6 @@ const Privatesession = () => {
   const minDateString = minDate.toISOString().split("T")[0];
 
   const [formation, setFormation] = useState("");
-  // console.log(privatesession);
   
   return (
     <AppLayout>

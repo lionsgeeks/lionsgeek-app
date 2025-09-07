@@ -44,7 +44,6 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
             setCopy(false);
             setTimeout(() => setCopy(true), 1500);
         } else {
-            alert('No emails to copy.');
         }
     };
 

@@ -41,6 +41,7 @@ export function PatternGame({ data: formDataProp }) {
 
     const timerRef = useRef(null);
 
+
     const questionPools = useMemo(() => buildQuestionPools(72, 123456), []);
     const gamePlan = useMemo(() => (
         [...Array(8).fill('easy'), ...Array(7).fill('medium'), ...Array(4).fill('hard'), ...Array(1).fill('extreme')]
@@ -401,10 +402,9 @@ export function PatternGame({ data: formDataProp }) {
             const fallbackRaw = sessionStorage.getItem('formData');
             const fallback = fallbackRaw ? JSON.parse(fallbackRaw) : null;
             const formData = (formDataProp && Object.keys(formDataProp).length ? formDataProp : null) || fallback;
-            console.log('🔍 Debug: Using submission form data:', formData);
 
             if (formData) {
-                console.log('✅ Form data found, submitting to /participants/store');
+                // console.log('✅ Form data found, submitting to /participants/store');
 
                 const elapsedMs = Date.now() - startTime;
                 const submissionData = {
@@ -419,7 +419,6 @@ export function PatternGame({ data: formDataProp }) {
                     time_spent_formatted: formatElapsed(elapsedMs),
                 };
 
-                console.log('🚀 Submitting data:', submissionData);
                 setIsSubmitting(true);
 
                 // Use router.post and force multipart to ensure File objects (cv_file) are sent
@@ -432,7 +431,6 @@ export function PatternGame({ data: formDataProp }) {
                         setShowModal(true);
                     },
                     onError: (errs) => {
-                        console.error('❌ Submission errors:', errs);
                         setIsSubmitting(false);
                         setModalType('error');
                         setShowModal(true);
@@ -443,7 +441,6 @@ export function PatternGame({ data: formDataProp }) {
                 setShowModal(true);
             }
         } catch (error) {
-            console.error('❌ Error:', error);
             setIsSubmitting(false);
             setModalType('error');
             setShowModal(true);

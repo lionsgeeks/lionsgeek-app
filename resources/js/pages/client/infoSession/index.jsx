@@ -22,11 +22,16 @@ import GameIntro from '../game/intro';
 const InfoSession = ({ trainingType = 'digital' }) => {
     const { selectedLanguage, darkMode } = useAppContext();
     const { sessions } = usePage().props;
+    const { url } = usePage();
+    
+    // Extract formation type from URL parameter
+    const urlParams = new URLSearchParams(url.split('?')[1] || '');
+    const formationType = urlParams.get('type') || '';
 
     const { data, setData, post, processing, errors } = useForm({
         // Session and formation info
         info_session_id: '',
-        formation_field: '',
+        formation_field: formationType,
 
         // Step 1: Personal Information
         full_name: '',
@@ -63,8 +68,6 @@ const InfoSession = ({ trainingType = 'digital' }) => {
         arabic_level: '',
         french_level: '',
         english_level: '',
-        other_language: '',
-        other_language_level: '',
 
         // Step 5: Background & Availability
         how_heard_about_formation: '',
@@ -159,9 +162,6 @@ const InfoSession = ({ trainingType = 'digital' }) => {
             setData(prevData => ({ ...prevData, other_activity: '' }));
         }
 
-        if (name === 'other_language' && !value) {
-            setData(prevData => ({ ...prevData, other_language_level: '' }));
-        }
 
         if (name === 'current_situation' && value !== 'other') {
             setData(prevData => ({ ...prevData, other_status: '' }));
@@ -201,7 +201,6 @@ const InfoSession = ({ trainingType = 'digital' }) => {
         switch (currentStep) {
             case 1:
                 // Personal Information validation
-                if (!data.formation_field) newErrors.formation_field = 'Please select a training type';
                 if (!data.full_name.trim()) newErrors.full_name = 'Full name is required';
                 if (!data.birthday) {
                     newErrors.birthday = 'Date of birth is required';
@@ -258,7 +257,6 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                 if (!data.arabic_level) newErrors.arabic_level = 'Arabic level is required';
                 if (!data.french_level) newErrors.french_level = 'French level is required';
                 if (!data.english_level) newErrors.english_level = 'English level is required';
-                if (data.other_language && !data.other_language_level) newErrors.other_language_level = 'Please specify the level for other language';
 
                 setValidationErrors(newErrors);
                 const step4Valid = Object.keys(newErrors).length === 0;
@@ -288,17 +286,19 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                 setStepValidation(prev => ({ ...prev, 7: step7Valid }));
 
                 if (step7Valid) {
-                    console.table(data)
                     // Removed automatic form submission - now handled by game modal
-                    console.log("Step 6 validation passed - ready for game redirect")
                 }
-                console.log("salina  o  l function ta3 l game +  khas  post ikon hna")
 
                 return step7Valid;
             default:
                 return false;
         }
     };
+
+    // Save form data to sessionStorage for game component fallback
+    useEffect(() => {
+        sessionStorage.setItem('formData', JSON.stringify(data));
+    }, [data]);
 
     // Form submission is now handled by the game modal after completion
 

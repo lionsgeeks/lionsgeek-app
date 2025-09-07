@@ -47,8 +47,6 @@ class Participant extends Model
         'arabic_level',
         'french_level',
         'english_level',
-        'other_language',
-        'other_language_level',
         'how_heard_about_formation',
         'current_commitments',
         'cv_file',
