@@ -16,6 +16,22 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
             flasher.render(messages);
         }
     }, [messages]);
+    // Track website visit once per session
+    useEffect(() => {
+        try {
+            const sent = sessionStorage.getItem('visit_tracked');
+            if (!sent) {
+                fetch('/api/track-visit', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                })
+                    .catch(() => {})
+                    .finally(() => {
+                        sessionStorage.setItem('visit_tracked', '1');
+                    });
+            }
+        } catch {}
+    }, []);
     const currentUrl = window.location.href.toLowerCase();
     const useSidebarLayout = auth?.user && (currentUrl.includes('/admin/') || currentUrl.includes('/settings/'));
     const LayoutComponent = useSidebarLayout ? AppSidebarLayout : AppHeaderLayout;
