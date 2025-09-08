@@ -75,7 +75,8 @@ class ParticipantController extends Controller
         \Log::info('Participants.store: Processing registration request', [
             'email' => $request->email,
             'formation_field' => $request->formation_field,
-            'has_cv' => $request->hasFile('cv_file')
+            'has_cv' => $request->hasFile('cv_file'),
+            'all_request_data' => $request->all()
         ]);
 
         try {
@@ -105,6 +106,22 @@ class ParticipantController extends Controller
             // 7. Return appropriate response
             return $this->handleSuccessResponse($request, $participant);
 
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            \Log::error('Participants.store: Validation failed', [
+                'errors' => $validationException->errors(),
+                'message' => $validationException->getMessage()
+            ]);
+
+            // Return validation errors properly
+            if ($request->expectsJson() && !$request->header('X-Inertia')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validationException->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validationException->errors())->withInput();
         } catch (\Throwable $th) {
             \Log::error('Participants.store: Registration failed', [
                 'error' => $th->getMessage(),
@@ -122,15 +139,19 @@ class ParticipantController extends Controller
     {
         $messages = [
             'email.unique' => 'This email already exists',
+            'email.recent_registration' => 'This email was registered recently. Please wait 180 days before registering again.',
             'why_join_formation.min' => 'Your motivation must be at least 50 characters long.',
             'cv_file.max' => 'The CV file size must not exceed 5MB.',
             'cv_file.mimes' => 'The CV file must be a PDF, DOC, or DOCX file.',
         ];
 
+        // Custom email validation with 180-day check
+        $this->validateEmailWithTimeRestriction($request);
+
         $request->validate([
             // Personal Information
             'full_name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:participants|max:255',
+            'email' => 'required|string|email|max:255',
             'birthday' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d') . '|after_or_equal:' . now()->subYears(65)->format('Y-m-d'),
             'phone' => 'required|string|max:20',
             'city' => 'required|string|max:100',
@@ -181,6 +202,142 @@ class ParticipantController extends Controller
             'time_spent' => 'nullable|integer|min:0',
             'time_spent_formatted' => 'nullable|string|max:20',
         ], $messages);
+    }
+
+    /**
+     * Validate email with 180-day time restriction.
+     */
+    private function validateEmailWithTimeRestriction(Request $request): void
+    {
+        $email = $request->email;
+        $currentFormationField = $request->formation_field;
+        
+        \Log::info('validateEmailWithTimeRestriction called', [
+            'email' => $email,
+            'current_formation_field' => $currentFormationField,
+            'request_data' => $request->all()
+        ]);
+        
+        // Check if email already exists - get the MOST RECENT registration
+        $existingParticipant = \App\Models\Participant::where('email', $email)
+            ->orderBy('created_at', 'desc')
+            ->first();
+        
+        if ($existingParticipant) {
+            $previousFormationField = $existingParticipant->formation_field;
+            
+            // Calculate days between existing registration and today
+            $registrationDate = $existingParticipant->created_at;
+            $today = now();
+            $daysDifference = $registrationDate->diffInDays($today);
+            
+            \Log::info('Email validation check', [
+                'email' => $email,
+                'existing_participant_id' => $existingParticipant->id,
+                'previous_formation_field' => $previousFormationField,
+                'current_formation_field' => $currentFormationField,
+                'registration_date' => $registrationDate,
+                'today' => $today,
+                'days_difference' => $daysDifference
+            ]);
+            
+            // Check if formation fields are different (coding <-> media)
+            $isDifferentFormation = ($previousFormationField === 'coding' && $currentFormationField === 'media') ||
+                                  ($previousFormationField === 'media' && $currentFormationField === 'coding');
+            
+            if ($isDifferentFormation) {
+                // Allow cross-registration between coding and media regardless of time
+                \Log::info('Allowing cross-formation registration', [
+                    'email' => $email,
+                    'from' => $previousFormationField,
+                    'to' => $currentFormationField
+                ]);
+                return; // Allow registration
+            }
+            
+            // Same formation field - apply 180-day rule
+            if ($daysDifference <= 180) {
+                \Log::info('Blocking registration - same formation field registered recently', [
+                    'email' => $email,
+                    'formation_field' => $currentFormationField,
+                    'days_since_registration' => $daysDifference
+                ]);
+                
+                $validator = \Validator::make($request->all(), [
+                    'email' => 'required'
+                ], [
+                    'email.recent_registration' => "You have already registered for {$currentFormationField} recently. Please wait 180 days before registering again for the same formation."
+                ]);
+                
+                $validator->after(function ($validator) use ($currentFormationField) {
+                    $validator->errors()->add('email', "You have already registered for {$currentFormationField} recently. Please wait 180 days before registering again for the same formation.");
+                });
+                
+                if ($validator->fails()) {
+                    throw new \Illuminate\Validation\ValidationException($validator);
+                }
+            } else {
+                \Log::info('Allowing registration - same formation field but registered long ago', [
+                    'email' => $email,
+                    'formation_field' => $currentFormationField,
+                    'days_since_registration' => $daysDifference
+                ]);
+            }
+        } else {
+            \Log::info('Email not found in database - allowing registration', [
+                'email' => $email
+            ]);
+        }
+    }
+
+    /**
+     * Validate email with 180-day time restriction for updates.
+     */
+    private function validateEmailWithTimeRestrictionForUpdate(Request $request, Participant $participant): void
+    {
+        $email = $request->email;
+        $currentFormationField = $request->formation_field ?? $participant->formation_field;
+        
+        // Check if email already exists (excluding current participant) - get the MOST RECENT registration
+        $existingParticipant = \App\Models\Participant::where('email', $email)
+            ->where('id', '!=', $participant->id)
+            ->orderBy('created_at', 'desc')
+            ->first();
+        
+        if ($existingParticipant) {
+            $previousFormationField = $existingParticipant->formation_field;
+            
+            // Calculate days between existing registration and today
+            $registrationDate = $existingParticipant->created_at;
+            $today = now();
+            $daysDifference = $registrationDate->diffInDays($today);
+            
+            // Check if formation fields are different (coding <-> media)
+            $isDifferentFormation = ($previousFormationField === 'coding' && $currentFormationField === 'media') ||
+                                  ($previousFormationField === 'media' && $currentFormationField === 'coding');
+            
+            if ($isDifferentFormation) {
+                // Allow cross-registration between coding and media regardless of time
+                return; // Allow update
+            }
+            
+            // Same formation field - apply 180-day rule
+            if ($daysDifference <= 180) {
+                $validator = \Validator::make($request->all(), [
+                    'email' => 'required'
+                ], [
+                    'email.recent_registration' => "You have already registered for {$currentFormationField} recently. Please wait 180 days before registering again for the same formation."
+                ]);
+                
+                $validator->after(function ($validator) use ($currentFormationField) {
+                    $validator->errors()->add('email', "You have already registered for {$currentFormationField} recently. Please wait 180 days before registering again for the same formation.");
+                });
+                
+                if ($validator->fails()) {
+                    throw new \Illuminate\Validation\ValidationException($validator);
+                }
+            }
+        }
     }
 
     /**
@@ -427,11 +584,15 @@ class ParticipantController extends Controller
     {
         $messages = [
             'email.unique' => 'This email already exists',
+            'email.recent_registration' => 'This email was registered recently. Please wait 180 days before registering again.',
         ];
+
+        // Custom email validation with 180-day check for updates
+        $this->validateEmailWithTimeRestrictionForUpdate($request, $participant);
 
         $request->validate([
             'full_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:participants,email,' . $participant->id,
+            'email' => 'required|email',
             'birthday' => 'required|date',
             'phone' => 'required|string|',
             'city' => 'required|string|max:255',
