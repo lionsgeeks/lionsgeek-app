@@ -3,18 +3,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { Head, router, usePage } from '@inertiajs/react';
-import { Ban, Calendar, CheckCircle, Edit, Plus, Users, GraduationCap, Clock, Calendar as CalendarIcon, Code2, Palette, Filter, Search, RotateCcw } from 'lucide-react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Ban, Calendar, CheckCircle, Edit, Plus, Users, GraduationCap, Clock, Calendar as CalendarIcon, Code2, Palette, Filter, Search, RotateCcw, Trash } from 'lucide-react';
 import { useState } from 'react';
 import { CreateSessionModal } from './partials/create-session-modal';
 import { EditSessionModal } from './partials/edit-session-modal';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 export default function InfoSessions() {
     const { infosessions = [] } = usePage().props;
+    const { delete: destroy } = useForm();
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedSession, setSelectedSession] = useState(null);
     const [search, setSearch] = useState('');
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [sessionToDelete, setSessionToDelete] = useState(null);
 
     const breadcrumbs = [
         {
@@ -29,6 +33,22 @@ export default function InfoSessions() {
 
     const changeStatus = (id) => {
         router.patch(`infosessions/change-status/${id}`);
+    };
+
+    const onDeleteSession = (id) => {
+        setSessionToDelete(id);
+        setConfirmOpen(true);
+    };
+
+    const confirmDeletion = () => {
+        if (!sessionToDelete) return;
+        destroy(route('infosessions.destroy', sessionToDelete), {
+            onSuccess: () => {
+                setConfirmOpen(false);
+                setSessionToDelete(null);
+                router.reload({ only: ['infosessions'] });
+            },
+        });
     };
 
     const getFormationColor = (formation) => {
@@ -260,19 +280,32 @@ export default function InfoSessions() {
                                                     </Badge>
                                                 </div>
                                             </div>
-                                            {/* Edit Icon - Top Right */}
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setSelectedSession(session);
-                                                    setEditModalOpen(true);
-                                                }}
-                                                className="transform text-[#212529] transition-all duration-300 ease-in-out hover:scale-110 hover:bg-gray-100"
-                                            >
-                                                <Edit className="h-4 w-4" />
-                                            </Button>
+                                            {/* Edit/Delete - Top Right */}
+                                            <div className="flex items-center gap-2">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setSelectedSession(session);
+                                                        setEditModalOpen(true);
+                                                    }}
+                                                    className="transform text-[#212529] transition-all duration-300 ease-in-out hover:scale-110 hover:bg-gray-100"
+                                                >
+                                                    <Edit className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        onDeleteSession(session.id);
+                                                    }}
+                                                    className="transform text-[#ff7376] transition-all duration-300 ease-in-out hover:scale-110 hover:bg-[#ff7376]/10"
+                                                >
+                                                    <Trash className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         </div>
 
                                         {/* Status */}
@@ -358,6 +391,35 @@ export default function InfoSessions() {
             </div>
 
             <EditSessionModal open={editModalOpen} onOpenChange={setEditModalOpen} session={selectedSession} />
+
+            {/* Delete Confirmation Modal */}
+            <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogTitle>Delete info session?</DialogTitle>
+                    <div className="text-sm text-[#6b7280]">
+                        This action cannot be undone. The info session and its data will be permanently deleted.
+                    </div>
+                    <div className="mt-4 flex justify-end gap-2">
+                        <Button
+                            variant="secondary"
+                            onClick={() => {
+                                setConfirmOpen(false);
+                                setSessionToDelete(null);
+                            }}
+                            className="bg-gray-100 text-[#111827] hover:bg-gray-200"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={confirmDeletion}
+                            className="bg-[#ff7376] text-white hover:bg-[#ff5a5e]"
+                        >
+                            Delete
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

@@ -11,7 +11,8 @@ class Event extends Model
         "description",
         "date",
         "capacity",
-        "cover"
+        "cover",
+        "location",
     ] ;
 
     protected $casts = [

@@ -53,6 +53,7 @@ class EventController extends Controller
             'date' => 'required|date',
             'capacity' => 'required|integer|min:1',
             'cover' => 'required|image|mimes:jpeg,png,jpg,gif',
+            'location' => 'required|string',
         ]);
 
         if (!$request->name || !is_array($request->name) || empty(array_filter($request->name))) {
@@ -79,6 +80,7 @@ class EventController extends Controller
             'description' => $request->description,
             'date' => $request->date,
             'capacity' => $request->capacity,
+            'location' => $request->location,
             'cover' => $coverPath,
         ]);
 
@@ -121,6 +123,7 @@ class EventController extends Controller
             'date' => 'required|date',
             'capacity' => 'required|integer|min:1',
             'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'location' => 'required|string',
         ]);
 
         if (!$request->name || !is_array($request->name) || empty(array_filter($request->name))) {
@@ -136,6 +139,7 @@ class EventController extends Controller
             'description' => $request->description,
             'date' => $request->date,
             'capacity' => $request->capacity,
+            'location' => $request->location,
         ];
 
         if ($request->hasFile('cover')) {

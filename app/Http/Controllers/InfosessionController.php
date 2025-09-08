@@ -97,7 +97,22 @@ class InfosessionController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $infosession = InfoSession::where('id', $id)->first();
+            if (!$infosession) {
+                return back()->with('error', 'Info session not found');
+            }
+
+            // Delete related participants (all of them)
+            $infosession->allParticipants()->delete();
+
+            // Delete the info session
+            $infosession->delete();
+
+            return back()->with('success', 'Info session deleted successfully');
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Failed to delete the info session');
+        }
     }
     public function availabilityStatus($id)
     {
