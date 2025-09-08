@@ -31,7 +31,7 @@ const SYMBOLS = ['●', '■', '▲', '♦', '★', '◆', '◇', '♠', '♥', 
 export function PatternGame({ data: formDataProp }) {
     const { post, processing, errors } = useForm();
 
-    const { darkMode } = useAppContext();
+    const { darkMode, selectedLanguage } = useAppContext();
     const [currentLevel, setCurrentLevel] = useState(0);
     const [attempts, setAttempts] = useState(0);
     const [timeRemaining, setTimeRemaining] = useState(240);
@@ -389,7 +389,9 @@ export function PatternGame({ data: formDataProp }) {
     function endGame(completed) {
         setGameCompleted(true);
         clearInterval(timerRef.current);
-        setTimeout(() => setShowEnd(true), 0);
+        setTimeout(() => {
+            setShowEnd(true);
+        }, 0);
         setCompletedFlag(completed);
         // Persist game metrics to sessionStorage so summary can show them
         try {
@@ -414,10 +416,13 @@ export function PatternGame({ data: formDataProp }) {
     const [completedFlag, setCompletedFlag] = useState(false);
     const [timeOver, setTimeOver] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [errorDetails, setErrorDetails] = useState(null);
+    const submittedRef = useRef(false);
 
     // Auto-submit once finished (all levels) or when time is over
     useEffect(() => {
-        if ((showEnd || timeOver) && !submitted) {
+        if ((showEnd || timeOver) && !submittedRef.current) {
+            submittedRef.current = true;
             setSubmitted(true);
             handleFormSubmission();
         }
@@ -425,108 +430,57 @@ export function PatternGame({ data: formDataProp }) {
     }, [showEnd, timeOver]);
 
     // Handle form submission when user clicks "Postuler"
-    // const handleFormSubmission = () => {
-    //     // Check what's in sessionStorage first
-    //     const rawData = sessionStorage.getItem('formData');
-    //     console.log('🔍 Raw sessionStorage data:', rawData);
-
-    //     // Retrieve form data from sessionStorage (stored when user left the form)
-    //     const formData = JSON.parse(rawData);
-
-    //     console.log('🔍 Debug: Parsed form data:', formData);
-    //     console.log('🔍 Form data keys:', formData ? Object.keys(formData) : 'No data');
-
-    //     if (formData) {
-    //         console.log('✅ Form data found, submitting to /participants/store');
-
-    //         // Submit the form data to create participant
-    //        post('/participants/store', formData, {
-    //             onSuccess: (response) => {
-    //                 console.log('✅ Submission successful:', response);
-    //                 // Clear session storage after successful submission
-    //                 sessionStorage.removeItem('formData');
-
-    //                 // Redirect to home page
-    //                 // router.visit('/');
-    //             },
-    //             onError: (errors) => {
-    //                 console.error('❌ Submission errors:', errors);
-    //                 console.error('❌ Error details:', JSON.stringify(errors, null, 2));
-    //                 console.error('❌ Form data that failed:', formData);
-
-    //                 // Show specific validation errors
-    //                 if (errors.message) {
-    //                     console.error('❌ Error message:', errors.message);
-    //                 }
-    //                 if (errors.errors) {
-    //                     console.error('❌ Validation errors:', errors.errors);
-    //                 }
-
-    //                 // Don't redirect on error so we can see what's wrong
-    //                 alert('Form submission failed! Check console for details.');
-    //             }
-    //         });
-    //     } else {
-    //         alert('❌ No form data found in sessionStorage');
-    //         // No form data found, just redirect to home
-    //         alert('/');
-    //     }
-    // };
-
     const handleFormSubmission = () => {
-        try {
-            // Prefer in-memory data; fallback to sessionStorage if user refreshed
-            const fallbackRaw = sessionStorage.getItem('formData');
-            const fallback = fallbackRaw ? JSON.parse(fallbackRaw) : null;
-            const formData = (formDataProp && Object.keys(formDataProp).length ? formDataProp : null) || fallback;
+        // Get form data from sessionStorage (without cv_file)
+        const rawData = sessionStorage.getItem('formData');
+        const formData = JSON.parse(rawData);
 
-            if (formData) {
-                // console.log('✅ Form data found, submitting to /participants/store');
+        if (formData && formDataProp) {
+            // Calculate elapsed time
+            const elapsedMs = Date.now() - startTime;
+            
+            // Combine sessionStorage data with props data (which includes cv_file)
+            const submissionData = {
+                ...formData,
+                ...formDataProp, // This includes the cv_file from the form
+                // Game metrics
+                game_completed: completedFlag,
+                correct_answers: correctAnswers,
+                levels_completed: currentLevel,
+                total_attempts: attempts,
+                wrong_attempts: Math.max(0, attempts - correctAnswers),
+                time_spent: Math.floor(elapsedMs / 1000),
+                time_spent_formatted: formatElapsed(elapsedMs),
+            };
 
-                const elapsedMs = Date.now() - startTime;
-                const submissionData = {
-                    ...formData,
-                    // Game metrics
-                    game_completed: completedFlag,
-                    correct_answers: correctAnswers,
-                    levels_completed: currentLevel,
-                    total_attempts: attempts,
-                    wrong_attempts: Math.max(0, attempts - correctAnswers),
-                    time_spent: Math.floor(elapsedMs / 1000),
-                    time_spent_formatted: formatElapsed(elapsedMs),
-                };
+            // Submit the form data to create participant
+           router.post('/participants/store', submissionData, {
+                onSuccess: (response) => {
+                    // Clear session storage after successful submission
+                    sessionStorage.removeItem('formData');
 
-                setIsSubmitting(true);
-
-                // Use router.post and force multipart to ensure File objects (cv_file) are sent
-                router.post('/participants/store', submissionData, {
-                    forceFormData: true,
-                    onSuccess: () => {
-                        sessionStorage.removeItem('formData');
-                        setIsSubmitting(false);
-                        setModalType('success');
-                        setShowModal(true);
-                    },
-                    onError: (errs) => {
-                        setIsSubmitting(false);
-                        setModalType('error');
-                        setShowModal(true);
-                    },
-                });
-            } else {
-                setModalType('error');
-                setShowModal(true);
-            }
-        } catch (error) {
-            setIsSubmitting(false);
+                    // Show success modal
+                    setModalType('success');
+                    setShowModal(true);
+                },
+                onError: (errors) => {
+                    // Show error modal with details
+                    setErrorDetails(errors);
+                    setModalType('error');
+                    setShowModal(true);
+                }
+            });
+        } else {
+            setErrorDetails('No form data found. Please try again.');
             setModalType('error');
             setShowModal(true);
         }
     };
 
-    const minutes = Math.floor(timeRemaining / 60)
-        .toString()
-        .padStart(2, '0');
+
+
+
+    const minutes = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
     const seconds = (timeRemaining % 60).toString().padStart(2, '0');
 
     function restart() {
@@ -628,30 +582,30 @@ export function PatternGame({ data: formDataProp }) {
                             <TransText en="Registration Failed" fr="Échec de l'inscription" ar="فشل التسجيل" />
                         )
                     }
-                    message={
-                        modalType === 'success' ? (
-                            <TransText
-                                en="Thank you for completing your application! We have received your information and will contact you soon."
-                                fr="Merci d'avoir complété votre candidature ! Nous avons reçu vos informations et vous contacterons bientôt."
-                                ar="شكراً لك على إكمال طلبك! لقد تلقينا معلوماتك وسنتواصل معك قريباً."
-                            />
-                        ) : (
-                            <TransText
-                                en="There was an error processing your application. Please try again or contact support if the problem persists."
-                                fr="Il y a eu une erreur lors du traitement de votre candidature. Veuillez réessayer ou contacter le support si le problème persiste."
-                                ar="حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى أو الاتصال بالدعم إذا استمر المشكلة."
-                            />
-                        )
+                    message={modalType === 'success' ?
+                        <TransText
+                            en="Thank you for completing your application! We have received your information and will contact you soon."
+                            fr="Merci d'avoir complété votre candidature ! Nous avons reçu vos informations et vous contacterons bientôt."
+                            ar="شكراً لك على إكمال طلبك! لقد تلقينا معلوماتك وسنتواصل معك قريباً."
+                        /> :
+                        <TransText
+                            en="There was an error processing your application. Please review the details below and try again."
+                            fr="Il y a eu une erreur lors du traitement de votre candidature. Veuillez examiner les détails ci-dessous et réessayer."
+                            ar="حدث خطأ أثناء معالجة طلبك. يرجى مراجعة التفاصيل أدناه والمحاولة مرة أخرى."
+                        />
                     }
+                    errorDetails={modalType === 'error' ? errorDetails : null}
+                    selectedLanguage={selectedLanguage}
                     action={
                         <button
                             onClick={() => {
                                 setShowModal(false);
+                                setErrorDetails(null);
                                 if (modalType === 'success') {
                                     router.visit('/');
                                 }
                             }}
-                            className="rounded bg-beta px-4 py-2 text-white transition-colors duration-300 hover:bg-beta/90 focus:outline-none"
+                            className="rounded px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base text-white bg-beta hover:bg-beta/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-beta focus:ring-opacity-50 min-w-[120px]"
                             disabled={isSubmitting}
                         >
                             {modalType === 'success' ? (

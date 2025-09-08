@@ -29,8 +29,10 @@ const Step5BackgroundAvailability = ({ data, handleChange, errors, darkMode, sel
                         name="how_heard_about_formation"
                         value={data.how_heard_about_formation}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
+                            darkMode 
+                                ? 'bg-[#57646e] border-gray-600 text-white' 
+                                : 'bg-white border-gray-300 text-gray-900'
                         }`}
                         required
                     >
@@ -77,8 +79,10 @@ const Step5BackgroundAvailability = ({ data, handleChange, errors, darkMode, sel
                         name="current_commitments"
                         value={data.current_commitments}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
+                            darkMode 
+                                ? 'bg-[#57646e] border-gray-600 text-white' 
+                                : 'bg-white border-gray-300 text-gray-900'
                         }`}
                         required
                     >

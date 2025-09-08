@@ -23,7 +23,7 @@ const ProgressIndicator = ({ currentStep, darkMode, selectedLanguage }) => {
                         {Math.round((Math.min(currentStep, 6) / 6) * 100)}%
                     </span>
                 </div>
-                <div className={`h-2 w-full rounded-full bg-gray-200 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                <div className={`w-full rounded-full h-2 ${darkMode ? 'bg-beta' : 'bg-gray-200'}`}>
                     <div
                         className="h-2 rounded-full bg-alpha transition-all duration-500 ease-out"
                         style={{ width: `${(Math.min(currentStep, 6) / 6) * 100}%` }}
@@ -36,18 +36,16 @@ const ProgressIndicator = ({ currentStep, darkMode, selectedLanguage }) => {
                 {steps.map((step, index) => (
                     <div key={step.number} className="flex items-center">
                         <div className="flex flex-col items-center">
-                            <div
-                                className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium transition-all duration-200 ${
-                                    currentStep > step.number
-                                        ? 'bg-alpha text-beta'
-                                        : currentStep === step.number
-                                          ? 'bg-alpha text-beta'
-                                          : darkMode
-                                            ? 'bg-gray-700 text-gray-400'
-                                            : 'bg-gray-200 text-gray-500'
-                                }`}
-                            >
-                                {currentStep > step.number ? <Check className="h-5 w-5" /> : step.number}
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 ${
+                                currentStep > step.number 
+                                    ? 'bg-alpha text-beta' 
+                                    : currentStep === step.number 
+                                    ? 'bg-alpha text-beta' 
+                                    : darkMode 
+                                    ? 'bg-beta text-white' 
+                                    : 'bg-gray-200 text-gray-500'
+                            }`}>
+                                {currentStep > step.number ? <Check className="w-5 h-5" /> : step.number}
                             </div>
                             <span
                                 className={`mt-2 text-xs font-medium ${
@@ -64,9 +62,11 @@ const ProgressIndicator = ({ currentStep, darkMode, selectedLanguage }) => {
                             </span>
                         </div>
                         {index < steps.length - 1 && (
-                            <div
-                                className={`mx-4 h-0.5 flex-1 ${currentStep > step.number ? 'bg-alpha' : darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}
-                            />
+                            <div className={`flex-1 h-0.5 mx-4 ${
+                                currentStep > step.number 
+                                    ? 'bg-alpha' 
+                                    : darkMode ? 'bg-beta' : 'bg-gray-200'
+                            }`} />
                         )}
                     </div>
                 ))}
