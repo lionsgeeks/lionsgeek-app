@@ -8,11 +8,11 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
     return (
         <div className="space-y-6">
             <div className="text-center">
-                <h2 className={`mb-2 text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                    <TransText
-                        en={isDigitalMarketing ? 'Digital Marketing Experience' : 'Programming Experience'}
-                        fr={isDigitalMarketing ? 'Expérience Marketing Digital' : 'Expérience en Programmation'}
-                        ar={isDigitalMarketing ? 'خبرة التسويق الرقمي' : 'خبرة البرمجة'}
+                <h2 className={`text-2xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <TransText 
+                        en={"Digital Marketing Experience"} 
+                        fr={"Expérience"} 
+                        ar={"خبرة "} 
                     />
                 </h2>
                 <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -27,19 +27,11 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
             <div className="space-y-6">
                 {/* Training Experience */}
                 <div>
-                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                        <TransText
-                            en={
-                                isDigitalMarketing
-                                    ? 'Have you already taken digital marketing training?'
-                                    : 'Have you already taken programming training?'
-                            }
-                            fr={
-                                isDigitalMarketing
-                                    ? 'Avez-vous déjà suivi une formation marketing digital ?'
-                                    : 'Avez-vous déjà suivi une formation en programmation ?'
-                            }
-                            ar={isDigitalMarketing ? 'هل سبق لك أن تلقيت تدريباً في التسويق الرقمي؟' : 'هل سبق لك أن تلقيت تدريباً في البرمجة؟'}
+                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <TransText 
+                            en={isDigitalMarketing ? "Have you already taken training?" : "Have you already taken training?"} 
+                            fr={isDigitalMarketing ? "Avez-vous déjà suivi une formation ?" : "Avez-vous déjà suivi une formation ?"} 
+                            ar={isDigitalMarketing ? "هل سبق لك أن تلقيت تدريباً ؟" : "هل سبق لك أن تلقيت تدريباً ؟"} 
                         />
                         <Required />
                     </label>
@@ -97,23 +89,11 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
 
                 {/* Motivation */}
                 <div>
-                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                        <TransText
-                            en={
-                                isDigitalMarketing
-                                    ? 'Why do you want to join this digital marketing training at Lionsgeek?'
-                                    : 'Why do you want to join this coding training at Lionsgeek?'
-                            }
-                            fr={
-                                isDigitalMarketing
-                                    ? 'Pourquoi souhaitez-vous rejoindre cette formation en marketing digital à Lionsgeek ?'
-                                    : 'Pourquoi souhaitez-vous rejoindre cette formation en programmation à Lionsgeek ?'
-                            }
-                            ar={
-                                isDigitalMarketing
-                                    ? 'لماذا تريد الانضمام إلى هذا التدريب في التسويق الرقمي في Lionsgeek؟'
-                                    : 'لماذا تريد الانضمام إلى هذا التدريب في البرمجة في Lionsgeek؟'
-                            }
+                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <TransText 
+                            en={isDigitalMarketing ? "Why do you want to join this training at Lionsgeek?" : "Why do you want to join this training at Lionsgeek?"} 
+                            fr={isDigitalMarketing ? "Pourquoi souhaitez-vous rejoindre cette formation à Lionsgeek ?" : "Pourquoi souhaitez-vous rejoindre cette formation à Lionsgeek ?"} 
+                            ar={isDigitalMarketing ? "لماذا تريد الانضمام إلى هذا التدريب في Lionsgeek؟" : "لماذا تريد الانضمام إلى هذا التدريب في Lionsgeek؟"} 
                         />
                         <Required />
                         <span

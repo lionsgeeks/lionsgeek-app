@@ -4,20 +4,20 @@ const Required = () => <span className="ml-1 text-red-500">*</span>;
 
 const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLanguage, sessions = [] }) => {
     return (
-        <div className="space-y-6">
-            <div className="text-center">
-                <h2 className={`mb-2 text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+        <div className="space-y-4 sm:space-y-6">
+            <div className="text-center px-2">
+                <h2 className={`text-xl sm:text-2xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                     <TransText en="Personal Information" fr="Informations Personnelles" ar="المعلومات الشخصية" />
                 </h2>
-                <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                <p className={`text-sm sm:text-base ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     <TransText en="Tell us about yourself" fr="Parlez-nous de vous" ar="أخبرنا عن نفسك" />
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {/* Full Name */}
-                <div className="md:col-span-2">
-                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                <div className="sm:col-span-2">
+                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="Full Name" fr="Nom + Prénom" ar="الاسم الكامل" />
                         <Required />
                     </label>
@@ -26,22 +26,15 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         name="full_name"
                         value={data.full_name}
                         onChange={handleChange}
-                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                            darkMode
-                                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                        }`}
-                        placeholder={
-                            selectedLanguage === 'en'
-                                ? 'Enter your full name'
-                                : selectedLanguage === 'fr'
-                                  ? 'Entrez votre nom complet'
-                                  : 'أدخل اسمك الكامل'
-                        }
+                        className={`w-full rounded-lg border px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
+                                ? 'bg-[#57646e] border-gray-600 text-white placeholder-gray-400'
+                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                            }`}
+                        placeholder={selectedLanguage === 'en' ? 'Enter your full name' : selectedLanguage === 'fr' ? 'Entrez votre nom complet' : 'أدخل اسمك الكامل'}
                         required
                         autoComplete="off"
                     />
-                    {errors.full_name && <span className="mt-1 text-sm text-red-500">{errors.full_name}</span>}
+                    {errors.full_name && <span className="text-xs sm:text-sm text-red-500 mt-1 block">{errors.full_name}</span>}
                 </div>
 
                 {/* Birthday */}
@@ -57,15 +50,14 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         onChange={handleChange}
                         max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
                         min={new Date(new Date().setFullYear(new Date().getFullYear() - 30)).toISOString().split('T')[0]}
-                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                            darkMode
-                                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                        }`}
+                        className={`w-full rounded-lg border px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
+                                ? 'bg-[#57646e] border-gray-600 text-white placeholder-gray-400'
+                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                            }`}
                         required
                         autoComplete="off"
                     />
-                    {errors.birthday && <span className="mt-1 text-sm text-red-500">{errors.birthday}</span>}
+                    {errors.birthday && <span className="text-xs sm:text-sm text-red-500 mt-1 block">{errors.birthday}</span>}
                     {data.birthday && (
                         <p className={`mt-1 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                             <TransText
@@ -87,46 +79,47 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         name="city"
                         value={data.city}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
-                        }`}
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
+                                ? 'bg-[#57646e] border-gray-600 text-white'
+                                : 'bg-[#57646e] border-gray-300 text-white'
+                            }`}
                         required
                         autoComplete="off"
                     >
-                        <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Select your city" fr="Sélectionnez votre ville" ar="اختر مدينتك" />
                         </option>
-                        <option value="casablanca" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="casablanca" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Casablanca" fr="Casablanca" ar="الدار البيضاء" />
                         </option>
-                        <option value="rabat" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="rabat" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Rabat" fr="Rabat" ar="الرباط" />
                         </option>
-                        <option value="marrakech" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="marrakech" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Marrakech" fr="Marrakech" ar="مراكش" />
                         </option>
-                        <option value="fes" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="fes" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Fès" fr="Fès" ar="فاس" />
                         </option>
-                        <option value="tanger" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="tanger" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Tanger" fr="Tanger" ar="طنجة" />
                         </option>
-                        <option value="agadir" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="agadir" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Agadir" fr="Agadir" ar="أكادير" />
                         </option>
-                        <option value="meknes" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="meknes" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Meknès" fr="Meknès" ar="مكناس" />
                         </option>
-                        <option value="oujda" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="oujda" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Oujda" fr="Oujda" ar="وجدة" />
                         </option>
-                        <option value="kenitra" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="kenitra" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Kenitra" fr="Kenitra" ar="القنيطرة" />
                         </option>
-                        <option value="tetouan" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="tetouan" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Tétouan" fr="Tétouan" ar="تطوان" />
                         </option>
-                        <option value="other" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="other" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Other" fr="Autre" ar="أخرى" />
                         </option>
                     </select>
@@ -144,49 +137,50 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                             name="region"
                             value={data.region}
                             onChange={handleChange}
-                            className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                                darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
-                            }`}
+                            className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
+                                    ? 'bg-[#57646e] border-gray-600 text-white'
+                                    : 'bg-[#57646e] border-gray-300 text-white'
+                                }`}
                             required
                             autoComplete="off"
                         >
-                            <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Select your region" fr="Sélectionnez votre région" ar="اختر منطقتك" />
                             </option>
-                            <option value="ain_chock" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="ain_chock" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Aïn Chock" fr="Aïn Chock" ar="عين الشق" />
                             </option>
-                            <option value="ain_sebaa_hay_mohammadi" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="ain_sebaa_hay_mohammadi" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Aïn Sebaâ - Hay Mohammadi" fr="Aïn Sebaâ - Hay Mohammadi" ar="عين السبع - الحي المحمدي" />
                             </option>
-                            <option value="al_fida_mers_sultan" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="al_fida_mers_sultan" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Al Fida - Mers Sultan" fr="Al Fida - Mers Sultan" ar="الفداء - مرس السلطان" />
                             </option>
-                            <option value="anfa" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="anfa" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Anfa" fr="Anfa" ar="أنفا" />
                             </option>
-                            <option value="ben_msick" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="ben_msick" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Ben M'Sick" fr="Ben M'Sick" ar="بن مسيك" />
                             </option>
-                            <option value="bernoussi" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="bernoussi" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Bernoussi" fr="Bernoussi" ar="برنوصي" />
                             </option>
-                            <option value="bouskoura" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="bouskoura" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Bouskoura" fr="Bouskoura" ar="بوسكورة" />
                             </option>
-                            <option value="hay_hassani" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="hay_hassani" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Hay Hassani" fr="Hay Hassani" ar="الحي الحسني" />
                             </option>
-                            <option value="mohammedia" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="mohammedia" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Mohammedia" fr="Mohammedia" ar="المحمدية" />
                             </option>
-                            <option value="nouaceur" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="nouaceur" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Nouaceur" fr="Nouaceur" ar="النواصر" />
                             </option>
-                            <option value="sidi_bernoussi" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="sidi_bernoussi" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Sidi Bernoussi" fr="Sidi Bernoussi" ar="سيدي برنوصي" />
                             </option>
-                            <option value="sidi_othmane" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="sidi_othmane" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                                 <TransText en="Sidi Othmane" fr="Sidi Othmane" ar="سيدي عثمان" />
                             </option>
                         </select>
@@ -206,18 +200,11 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                             name="other_city"
                             value={data.other_city}
                             onChange={handleChange}
-                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                                darkMode
-                                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                                    : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                            }`}
-                            placeholder={
-                                selectedLanguage === 'en'
-                                    ? 'Enter your city name'
-                                    : selectedLanguage === 'fr'
-                                      ? 'Entrez le nom de votre ville'
-                                      : 'أدخل اسم مدينتك'
-                            }
+                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
+                                    ? 'bg-[#57646e] border-gray-600 text-white placeholder-gray-400'
+                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                                }`}
+                            placeholder={selectedLanguage === 'en' ? 'Enter your city name' : selectedLanguage === 'fr' ? 'Entrez le nom de votre ville' : 'أدخل اسم مدينتك'}
                             required
                             autoComplete="off"
                         />
@@ -240,16 +227,10 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                             errors.email
                                 ? 'border-red-500 text-red-500'
                                 : darkMode
-                                  ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                                  : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                        }`}
-                        placeholder={
-                            selectedLanguage === 'en'
-                                ? 'your.email@example.com'
-                                : selectedLanguage === 'fr'
-                                  ? 'votre.email@exemple.com'
-                                  : 'بريدك@مثال.com'
-                        }
+                                    ? 'bg-[#57646e] border-gray-600 text-white placeholder-gray-400'
+                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                            }`}
+                        placeholder={selectedLanguage === 'en' ? 'your.email@example.com' : selectedLanguage === 'fr' ? 'votre.email@exemple.com' : 'بريدك@مثال.com'}
                         required
                         autoComplete="off"
                     />
@@ -271,14 +252,11 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                             const value = e.target.value.replace(/[^0-9+\-\s()]/g, '');
                             handleChange({ target: { name: 'phone', value } });
                         }}
-                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                            darkMode
-                                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                        }`}
-                        placeholder={
-                            selectedLanguage === 'en' ? '+212 6XX XXX XXX' : selectedLanguage === 'fr' ? '+212 6XX XXX XXX' : '+212 6XX XXX XXX'
-                        }
+                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
+                                ? 'bg-[#57646e] border-gray-600 text-white placeholder-gray-400'
+                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                            }`}
+                        placeholder={selectedLanguage === 'en' ? '+212 6XX XXX XXX' : selectedLanguage === 'fr' ? '+212 6XX XXX XXX' : '+212 6XX XXX XXX'}
                         required
                         autoComplete="off"
                     />
@@ -294,18 +272,19 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         name="gender"
                         value={data.gender}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
-                        }`}
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
+                                ? 'bg-[#57646e] border-gray-600 text-white'
+                                : 'bg-[#57646e] border-gray-300 text-white'
+                            }`}
                         autoComplete="off"
                     >
-                        <option value="" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Select gender" fr="Sélectionnez le genre" ar="اختر الجنس" />
                         </option>
-                        <option value="male" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="male" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Male" fr="Homme" ar="ذكر" />
                         </option>
-                        <option value="female" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="female" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
                             <TransText en="Female" fr="Femme" ar="أنثى" />
                         </option>
                     </select>
