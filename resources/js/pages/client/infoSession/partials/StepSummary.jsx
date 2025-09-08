@@ -81,7 +81,7 @@ export default function StepSummary({ data, errors, setCurrentStep }) {
                                         Edit
                                     </button>
                                 </div>
-                                <div className="text-[#212529] break-words">{String(data[key])}</div>
+                                <div className="text-[#212529] break-words capitalize">{String(data[key]).split("_").join(" ")}</div>
                                 {errors[key] && <p className="mt-1 text-sm text-red-600">{errors[key]}</p>}
                             </div>
                             
@@ -89,7 +89,7 @@ export default function StepSummary({ data, errors, setCurrentStep }) {
                             <div className="hidden sm:flex sm:items-start sm:justify-between sm:gap-4">
                                 <div className="min-w-[200px] text-sm font-medium text-gray-600 lg:min-w-[220px]">{label}</div>
                                 <div className="flex-1">
-                                    <div className="text-[#212529] break-words">{String(data[key])}</div>
+                                    <div className="text-[#212529] break-words capitalize">{String(data[key]).split("_").join(" ")} </div>
                                     {errors[key] && <p className="mt-1 text-sm text-red-600">{errors[key]}</p>}
                                 </div>
                                 <div className="min-w-[80px] text-right">
