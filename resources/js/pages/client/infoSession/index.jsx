@@ -336,12 +336,12 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                 dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}
             >
                 {!processing ? (
-                    <div className="mx-auto max-w-4xl">
+                    <div className={`mx-auto ${currentStep === 7 ? 'max-w-6xl' : 'max-w-4xl'}`}>
                         <div className="mb-8 text-center">
-                            <h1 className={`mb-4 text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            <h1 className={`mb-4 text-2xl font-bold sm:text-3xl ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                                 <TransText en={'Training Application'} fr={'Candidature Formation'} ar={'طلب التسجيل في تكوين'} />
                             </h1>
-                            <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                            <p className={`text-base sm:text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                                 <TransText
                                     en="Complete your application in 6 simple steps"
                                     fr="Complétez votre candidature en 6 étapes simples"
@@ -353,7 +353,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                         {currentStep <= 6 && <ProgressIndicator currentStep={currentStep} darkMode={darkMode} selectedLanguage={selectedLanguage} />}
 
                         <div
-                            className={`rounded-xl p-8 shadow-lg transition-all duration-300 ${
+                            className={`rounded-xl p-4 shadow-lg transition-all duration-300 sm:p-6 lg:p-8 ${
                                 darkMode ? 'border border-gray-700 bg-gray-800' : 'border border-gray-200 bg-white'
                             }`}
                         >
