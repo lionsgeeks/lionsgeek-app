@@ -108,9 +108,9 @@ const ParticipantCard = ({ participant }) => {
                                 Rejected
                             </Badge>
                         )}
-                        {participant?.status === 'approved' && (
-                            <Badge className="rounded-lg bg-[#51b04f] text-xs font-medium text-white">
-                                <CheckCircle2 className="mr-1 h-3 w-3" />
+                        {participant?.status === 'approved' && participant?.current_step == 'info_session' &&  (
+                            <Badge className="bg-[#51b04f] text-white rounded-lg text-xs font-medium">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
                                 Approved
                             </Badge>
                         )}
