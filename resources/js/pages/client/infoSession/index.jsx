@@ -208,7 +208,10 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
     // Game redirect function
     const handleGameRedirect = () => {
-        // Move to summary before game
+        // Store form data in sessionStorage before proceeding to game (excluding cv_file)
+        const { cv_file, ...dataWithoutFile } = data;
+        sessionStorage.setItem('formData', JSON.stringify(dataWithoutFile));
+        // Stay on the same page and proceed to the embedded game to retain the uploaded CV file
         setCurrentStep(7);
     };
 
@@ -319,9 +322,10 @@ const InfoSession = ({ trainingType = 'digital' }) => {
         }
     };
 
-    // Save form data to sessionStorage for game component fallback
+    // Save form data to sessionStorage for game component fallback (excluding cv_file)
     useEffect(() => {
-        sessionStorage.setItem('formData', JSON.stringify(data));
+        const { cv_file, ...dataWithoutFile } = data;
+        sessionStorage.setItem('formData', JSON.stringify(dataWithoutFile));
     }, [data]);
 
     // Form submission is now handled by the game modal after completion
@@ -332,16 +336,20 @@ const InfoSession = ({ trainingType = 'digital' }) => {
     return (
         <AppLayout>
             <div
-                className={`min-h-screen px-4 pt-24 lg:px-16 lg:pt-28 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-gray-50'}`}
+                className={`min-h-screen px-3 sm:px-4 md:px-6 lg:px-16 pt-20 sm:pt-24 lg:pt-28 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-gray-50'}`}
                 dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}
             >
                 {!processing ? (
-                    <div className="mx-auto max-w-4xl">
-                        <div className="mb-8 text-center">
-                            <h1 className={`mb-4 text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                <TransText en={'Training Application'} fr={'Candidature Formation'} ar={'طلب التسجيل في تكوين'} />
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-6 sm:mb-8">
+                            <h1 className={`text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 px-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                <TransText
+                                    en={"Training Application"}
+                                    fr={"Candidature Formation"}
+                                    ar={"طلب التسجيل في تكوين"}
+                                />
                             </h1>
-                            <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                            <p className={`text-base sm:text-lg px-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                                 <TransText
                                     en="Complete your application in 6 simple steps"
                                     fr="Complétez votre candidature en 6 étapes simples"
@@ -350,16 +358,24 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                             </p>
                         </div>
 
-                        {currentStep <= 6 && <ProgressIndicator currentStep={currentStep} darkMode={darkMode} selectedLanguage={selectedLanguage} />}
+                        {currentStep <= 6 && (
+                            <div className="mb-6 sm:mb-8">
+                                <ProgressIndicator
+                                    currentStep={currentStep}
+                                    darkMode={darkMode}
+                                    selectedLanguage={selectedLanguage}
+                                />
+                            </div>
+                        )}
 
-                        <div
-                            className={`rounded-xl p-8 shadow-lg transition-all duration-300 ${
-                                darkMode ? 'border border-gray-700 bg-gray-800' : 'border border-gray-200 bg-white'
-                            }`}
-                        >
-                            <form autoComplete="off" className="space-y-6">
+                        <div className={`rounded-xl p-4 sm:p-6 md:p-8 shadow-lg transition-all duration-300 ${darkMode ? 'bg-beta border border-gray-600' : 'bg-white border border-gray-200'
+                            }`}>
+                            <form
+                                autoComplete="off"
+                                className="space-y-4 sm:space-y-6"
+                            >
                                 {/* Step Content */}
-                                <div className="step-content">
+                                <div className="step-content space-y-4 sm:space-y-6">
                                     {currentStep === 1 && (
                                         <Step1PersonalInfo
                                             data={data}
@@ -439,6 +455,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                         validateCurrentStep={validateCurrentStep}
                                         errors={{ ...errors, ...validationErrors }}
                                         onGameRedirect={handleGameRedirect}
+                                        selectedLanguage={selectedLanguage}
                                     />
                                 )}
                             </form>

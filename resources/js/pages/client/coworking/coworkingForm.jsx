@@ -223,7 +223,7 @@ export default function CoworkingForm() {
                                     }
                                     value={data.full_name}
                                     onChange={handleChange}
-                                    className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                    className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                                     required
                                 />
                             </div>
@@ -245,7 +245,7 @@ export default function CoworkingForm() {
                                     }
                                     value={data.email}
                                     onChange={handleChange}
-                                    className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                    className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                                     required
                                 />
                             </div>
@@ -269,7 +269,7 @@ export default function CoworkingForm() {
                                     }
                                     value={data.phone}
                                     onChange={handleChange}
-                                    className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                    className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                                     required
                                 />
                             </div>
@@ -284,7 +284,7 @@ export default function CoworkingForm() {
                                     name="birthday"
                                     value={data.birthday}
                                     onChange={handleChange}
-                                    className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                    className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                                     required
                                 />
                             </div>
@@ -312,7 +312,7 @@ export default function CoworkingForm() {
                                     }
                                     value={data.formation}
                                     onChange={handleChange}
-                                    className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                    className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                                     required
                                 />
                             </div>
@@ -413,7 +413,7 @@ export default function CoworkingForm() {
                                 }
                                 value={data.proj_name}
                                 onChange={handleChange}
-                                className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                                 required
                             />
                         </div>
@@ -433,7 +433,7 @@ export default function CoworkingForm() {
                                 }
                                 value={data.proj_desc}
                                 onChange={handleChange}
-                                className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                                 required
                             />
                         </div>
@@ -463,7 +463,7 @@ export default function CoworkingForm() {
                                     value={data.otherDomains}
                                     required
                                     onChange={(e) => setData('otherDomains', e.target.value)}
-                                    className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                    className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                                 />
                             )}
                         </fieldset>
@@ -489,7 +489,7 @@ export default function CoworkingForm() {
                                 }
                                 value={data.proj_plan}
                                 onChange={handleChange}
-                                className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                                 required
                             />
                         </div>
@@ -548,7 +548,7 @@ export default function CoworkingForm() {
                                 }
                                 value={data.prev_proj}
                                 onChange={handleChange}
-                                className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                             />
                         </div>
 
@@ -581,7 +581,7 @@ export default function CoworkingForm() {
                                     value={data.otherReasons}
                                     required
                                     onChange={(e) => setData('otherReasons', e.target.value)}
-                                    className={`fo w-full rounded border px-3 py-2 shadow focus:outline-beta ${darkMode ? 'border-gray-600 bg-[#2b3035] text-white placeholder:text-gray-300' : 'border-gray-300 bg-white text-gray-700'}`}
+                                    className={`shadow border rounded w-full py-2 px-3 ${darkMode ? 'bg-[#57646e] text-white placeholder:text-gray-300' : 'bg-white text-gray-900 placeholder:text-gray-500'} focus:outline-beta`}
                                 />
                             )}
                         </fieldset>

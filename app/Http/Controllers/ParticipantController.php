@@ -75,8 +75,7 @@ class ParticipantController extends Controller
         \Log::info('Participants.store: Processing registration request', [
             'email' => $request->email,
             'formation_field' => $request->formation_field,
-            'has_cv' => $request->hasFile('cv_file'),
-            'all_request_data' => $request->all()
+            'has_cv' => $request->hasFile('cv_file')
         ]);
 
         try {
@@ -112,13 +111,36 @@ class ParticipantController extends Controller
                 'message' => $validationException->getMessage()
             ]);
 
-            // Return validation errors properly
-            if ($request->expectsJson() && !$request->header('X-Inertia')) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validationException->errors()
-                ], 422);
+            // Check if this is an email validation error (already exists)
+            $errors = $validationException->errors();
+            $isEmailError = isset($errors['email']) && (
+                str_contains($errors['email'][0], 'already registered') ||
+                str_contains($errors['email'][0], 'recently') ||
+                str_contains($errors['email'][0], '180 days')
+            );
+
+            // For Inertia requests, return back with errors
+            if ($request->header('X-Inertia')) {
+                return back()->withErrors($validationException->errors())->withInput();
+            }
+
+            // For AJAX/JSON requests (like from the game component)
+            if ($request->expectsJson() || $request->ajax()) {
+                if ($isEmailError) {
+                    // Show specific email error message
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Validation failed',
+                        'errors' => $validationException->errors()
+                    ], 422);
+                } else {
+                    // Show generic submission failed message for other validation errors
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Submission failed. Please try again.',
+                        'errors' => ['general' => 'Submission failed. Please try again.']
+                    ], 422);
+                }
             }
 
             return back()->withErrors($validationException->errors())->withInput();
@@ -207,7 +229,7 @@ class ParticipantController extends Controller
     /**
      * Validate email with 180-day time restriction.
      */
-    private function validateEmailWithTimeRestriction(Request $request): void
+    private function validateEmailWithTimeRestriction(Request $request)
     {
         $email = $request->email;
         $currentFormationField = $request->formation_field;
@@ -521,10 +543,6 @@ class ParticipantController extends Controller
                 ], 201);
             }
 
-        flash()
-            ->option('position', 'bottom-right')
-            ->success('Registration completed successfully!');
-        
         return back();
     }
 
@@ -533,18 +551,20 @@ class ParticipantController extends Controller
      */
     private function handleErrorResponse(Request $request, \Throwable $th)
     {
-            if ($request->expectsJson() && !$request->header('X-Inertia')) {
+            // For Inertia requests, return back with error
+            if ($request->header('X-Inertia')) {
+                return back()->withErrors(['general' => 'Submission failed. Please try again.']);
+            }
+
+            // For AJAX/JSON requests (like from the game component)
+            if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Something went wrong!',
-                    'error' => $th->getMessage()
+                    'message' => 'Submission failed. Please try again.',
+                    'errors' => ['general' => 'Submission failed. Please try again.']
                 ], 500);
             }
 
-            flash()
-                ->option('position', 'bottom-right')
-                ->error('Something went wrong!');
-        
             return back();
     }
 

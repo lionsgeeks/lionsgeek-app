@@ -49,9 +49,9 @@ const Step6CVUpload = ({ data, handleChange, errors, darkMode, selectedLanguage,
                     {errors.cv_file && <span className="mt-1 text-sm text-red-500">{errors.cv_file}</span>}
                 </div>
 
-                {/* Information about next steps */}
-                <div className={`rounded-lg p-4 ${darkMode ? 'border border-alpha/20 bg-alpha/10' : 'border border-alpha/20 bg-alpha/10'}`}>
-                    <h4 className={`mb-2 font-medium ${darkMode ? 'text-white' : 'text-beta'}`}>
+                {/* Information about next steps
+                <div className={`p-4 rounded-lg ${darkMode ? 'bg-alpha/10 border border-alpha/20' : 'bg-alpha/10 border border-alpha/20'}`}>
+                    <h4 className={`font-medium mb-2 ${darkMode ? 'text-white' : 'text-beta'}`}>
                         <TransText en="Next Steps" fr="Prochaines étapes" ar="الخطوات التالية" />
                     </h4>
                     <ul className={`space-y-1 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -80,7 +80,7 @@ const Step6CVUpload = ({ data, handleChange, errors, darkMode, selectedLanguage,
                             />
                         </li>
                     </ul>
-                </div>
+                </div> */}
             </div>
         </div>
     );
