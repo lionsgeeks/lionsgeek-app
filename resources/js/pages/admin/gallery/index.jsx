@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { Filter, Image, Images, RotateCcw, Search, Trash } from 'lucide-react';
 import { useState } from 'react';
@@ -20,6 +21,8 @@ export default function GalleryAdmin() {
     const { galleries = [] } = usePage().props;
     const { delete: destroy } = useForm();
     const [search, setSearch] = useState('');
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [galleryToDelete, setGalleryToDelete] = useState(null);
 
     const filteredGallery = galleries.filter(
         (gal) =>
@@ -32,7 +35,15 @@ export default function GalleryAdmin() {
     );
 
     const onDeleteGallery = (galleryID) => {
-        destroy(route('gallery.destroy', galleryID));
+        setGalleryToDelete(galleryID);
+        setConfirmOpen(true);
+    };
+
+    const confirmDeletion = () => {
+        if (!galleryToDelete) return;
+        destroy(route('gallery.destroy', galleryToDelete));
+        setConfirmOpen(false);
+        setGalleryToDelete(null);
     };
 
     const totalImages = galleries.reduce((sum, gallery) => sum + (gallery.images?.length || 0), 0);
@@ -253,6 +264,34 @@ export default function GalleryAdmin() {
                     )}
                 </div>
             </div>
+            {/* Delete Confirmation Modal */}
+            <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogTitle>Delete gallery?</DialogTitle>
+                    <div className="text-sm text-[#6b7280]">
+                        This action cannot be undone. The gallery and its images will be permanently deleted.
+                    </div>
+                    <div className="mt-4 flex justify-end gap-2">
+                        <Button
+                            variant="secondary"
+                            onClick={() => {
+                                setConfirmOpen(false);
+                                setGalleryToDelete(null);
+                            }}
+                            className="bg-gray-100 text-[#111827] hover:bg-gray-200"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={confirmDeletion}
+                            className="bg-[#ff7376] text-white hover:bg-[#ff5a5e]"
+                        >
+                            Delete
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

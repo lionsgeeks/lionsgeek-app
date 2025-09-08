@@ -8,9 +8,19 @@ import { useState } from 'react';
 export default function GalleryShow({ gallery }) {
     const { delete: destroy, processing } = useForm();
     const [isOpen, setIsOpen] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [imageToDelete, setImageToDelete] = useState(null);
 
     const onDelete = (imageID) => {
-        destroy(route('images.destroy', imageID));
+        setImageToDelete(imageID);
+        setConfirmOpen(true);
+    };
+
+    const confirmDeletion = () => {
+        if (!imageToDelete) return;
+        destroy(route('images.destroy', imageToDelete));
+        setConfirmOpen(false);
+        setImageToDelete(null);
     };
 
     return (
@@ -123,6 +133,33 @@ export default function GalleryShow({ gallery }) {
                         <p className="text-center text-sm text-gray-500">Click on images to download or delete them</p>
                     </div>
                 </div>
+                {/* Image Delete Confirmation Modal */}
+                <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogTitle>Delete image?</DialogTitle>
+                        <div className="text-sm text-[#6b7280]">
+                            This action cannot be undone. The image will be permanently deleted.
+                        </div>
+                        <div className="mt-4 flex justify-end gap-2">
+                            <button
+                                onClick={() => {
+                                    setConfirmOpen(false);
+                                    setImageToDelete(null);
+                                }}
+                                className="rounded bg-gray-100 px-3 py-1.5 text-sm text-[#111827] hover:bg-gray-200"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                disabled={processing}
+                                onClick={confirmDeletion}
+                                className="rounded bg-[#ff7376] px-3 py-1.5 text-sm text-white hover:bg-[#ff5a5e]"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </DialogContent>
         </Dialog>
     );
