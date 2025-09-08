@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Route;
 
 
 
-
+Route::get("events/{event}",[EventController::class,'show']);
+Route::get('/events',[EventController::class,'index']);
 
 Route::get('/infosessions', [InfoSessionController::class, 'index']);
 Route::put('/validate-invitation', [InfoSessionController::class, 'validateParticipant']);

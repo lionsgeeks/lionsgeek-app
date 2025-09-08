@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import { User, KeyRound } from 'lucide-react';
 
 const breadcrumbs = [
     {
@@ -36,6 +37,30 @@ export default function Profile({ mustVerifyEmail, status }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Profile settings" />
+            {/* Header Section */}
+            <div className="bg-[#212529] py-8 text-white">
+                <div className="mx-auto max-w-7xl px-6">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-[#fee819] p-3">
+                                <User className="h-8 w-8 text-[#212529]" />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-bold">Profile</h1>
+                                <p className="mt-1 text-gray-300">Manage your personal information</p>
+                            </div>
+                        </div>
+                        <div className="flex flex-row-reverse gap-3">
+                            <Button asChild className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                <Link href="/settings/password" prefetch>
+                                    <KeyRound className="mr-2 h-4 w-4" />
+                                    Change Password
+                                </Link>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <SettingsLayout>
                 <div className="space-y-6">
