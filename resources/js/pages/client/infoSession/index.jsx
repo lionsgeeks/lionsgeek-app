@@ -1,30 +1,29 @@
-import { useEffect, useState } from 'react';
-import Modal from '../../../components/Modal';
 import { useAppContext } from '@/context/appContext';
 import AppLayout from '@/layouts/app-layout';
-import { useForm, usePage, router } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import Modal from '../../../components/Modal';
 import { TransText } from '../../../components/TransText';
 import LoadingPage from '../../../components/loadingPage';
 
 // Import step components
-import ProgressIndicator from './partials/ProgressIndicator';
+import GameIntro from '../game/intro';
+import { PatternGame } from '../game/partials/pattern-game';
 import NavigationButtons from './partials/NavigationButtons';
+import ProgressIndicator from './partials/ProgressIndicator';
 import Step1PersonalInfo from './partials/Step1PersonalInfo';
 import Step2EducationSituation from './partials/Step2EducationSituation';
 import Step3ExperienceMotivation from './partials/Step3ExperienceMotivation';
 import Step4GoalsLearning from './partials/Step4GoalsLearning';
 import Step5BackgroundAvailability from './partials/Step5BackgroundAvailability';
 import Step6CVUpload from './partials/Step6CVUpload';
-import { PatternGame } from '../game/partials/pattern-game';
-import GameIntro from '../game/intro';
 import StepSummary from './partials/StepSummary';
-
 
 const InfoSession = ({ trainingType = 'digital' }) => {
     const { selectedLanguage, darkMode } = useAppContext();
     const { sessions } = usePage().props;
     const { url } = usePage();
-    
+
     // Extract formation type from URL parameter
     const urlParams = new URLSearchParams(url.split('?')[1] || '');
     const formationType = urlParams.get('type') || '';
@@ -97,10 +96,15 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                 });
             }
         } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const [stepValidation, setStepValidation] = useState({
-        1: false, 2: false, 3: false, 4: false, 5: false, 6: false
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+        5: false,
+        6: false,
     });
 
     // Handle form field changes
@@ -108,82 +112,81 @@ const InfoSession = ({ trainingType = 'digital' }) => {
         const { name, value, type, files } = e.target;
 
         if (type === 'file') {
-            setData(prevData => ({
+            setData((prevData) => ({
                 ...prevData,
-                [name]: files[0] || null
+                [name]: files[0] || null,
             }));
         } else {
-            setData(prevData => ({
+            setData((prevData) => ({
                 ...prevData,
-                [name]: value
+                [name]: value,
             }));
         }
 
         // Extract formation field from selected session
         if (name === 'info_session_id' && value) {
-            const selectedSession = sessions.find(session => session.id == value);
+            const selectedSession = sessions.find((session) => session.id == value);
             if (selectedSession && selectedSession.formation) {
                 const formationType = selectedSession.formation.toLowerCase();
-                setData(prevData => ({
+                setData((prevData) => ({
                     ...prevData,
-                    formation_field: formationType
+                    formation_field: formationType,
                 }));
             } else {
-                setData(prevData => ({
+                setData((prevData) => ({
                     ...prevData,
-                    formation_field: ''
+                    formation_field: '',
                 }));
             }
         }
 
         // Clear conditional fields when parent field changes
         if (name === 'city' && value !== 'casablanca') {
-            setData(prevData => ({ ...prevData, region: '' }));
+            setData((prevData) => ({ ...prevData, region: '' }));
         }
 
         if (name === 'city' && value !== 'other') {
-            setData(prevData => ({ ...prevData, other_city: '' }));
+            setData((prevData) => ({ ...prevData, other_city: '' }));
         }
 
         if (name === 'has_referring_organization' && value === 'no') {
-            setData(prevData => ({
+            setData((prevData) => ({
                 ...prevData,
                 referring_organization: '',
-                other_organization: ''
+                other_organization: '',
             }));
         }
 
-        if (name === 'referring_organization' && (value !== 'autre_plateforme' && value !== 'autre_association')) {
-            setData(prevData => ({ ...prevData, other_organization: '' }));
+        if (name === 'referring_organization' && value !== 'autre_plateforme' && value !== 'autre_association') {
+            setData((prevData) => ({ ...prevData, other_organization: '' }));
         }
 
         if (name === 'education_level' && value !== 'other') {
-            setData(prevData => ({
+            setData((prevData) => ({
                 ...prevData,
                 diploma_institution: '',
-                diploma_specialty: ''
+                diploma_specialty: '',
             }));
         }
 
         if (name === 'participated_lionsgeek' && value === 'no') {
-            setData(prevData => ({
+            setData((prevData) => ({
                 ...prevData,
                 lionsgeek_activity: '',
-                other_activity: ''
+                other_activity: '',
             }));
         }
 
         if (name === 'lionsgeek_activity' && value !== 'other') {
-            setData(prevData => ({ ...prevData, other_activity: '' }));
+            setData((prevData) => ({ ...prevData, other_activity: '' }));
         }
 
-
         if (name === 'current_situation' && value !== 'other') {
-            setData(prevData => ({ ...prevData, other_status: '' }));
+            setData((prevData) => ({ ...prevData, other_status: '' }));
         }
 
         if (name === 'has_training' && value === 'no') {
-            setData(prevData => ({ ...prevData, previous_training_details: '' }));
+            setData((prevData) => ({ ...prevData, previous_training_details: '' }));
         }
     };
 
@@ -193,13 +196,13 @@ const InfoSession = ({ trainingType = 'digital' }) => {
     const nextStep = () => {
         const isValid = validateCurrentStep();
         if (isValid && currentStep < 8) {
-            setCurrentStep(prev => prev + 1);
+            setCurrentStep((prev) => prev + 1);
         }
     };
 
     const prevStep = () => {
         if (currentStep > 1) {
-            setCurrentStep(prev => prev - 1);
+            setCurrentStep((prev) => prev - 1);
         }
     };
 
@@ -232,7 +235,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
                 setValidationErrors(newErrors);
                 const step1Valid = Object.keys(newErrors).length === 0;
-                setStepValidation(prev => ({ ...prev, 1: step1Valid }));
+                setStepValidation((prev) => ({ ...prev, 1: step1Valid }));
                 return step1Valid;
             case 2:
                 // Education & Current Situation + Phase 2 & 3 validation
@@ -242,26 +245,33 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                 if (!data.current_situation) newErrors.current_situation = 'Current situation is required';
                 if (data.current_situation === 'other' && !data.other_status.trim()) newErrors.other_status = 'Please specify your status';
                 if (!data.has_referring_organization) newErrors.has_referring_organization = 'Please select if you have a referring organization';
-                if (data.has_referring_organization === 'yes' && !data.referring_organization) newErrors.referring_organization = 'Please select your referring organization';
-                if ((data.referring_organization === 'autre_plateforme' || data.referring_organization === 'autre_association') && !data.other_organization.trim()) newErrors.other_organization = 'Please specify the organization';
+                if (data.has_referring_organization === 'yes' && !data.referring_organization)
+                    newErrors.referring_organization = 'Please select your referring organization';
+                if (
+                    (data.referring_organization === 'autre_plateforme' || data.referring_organization === 'autre_association') &&
+                    !data.other_organization.trim()
+                )
+                    newErrors.other_organization = 'Please specify the organization';
 
                 setValidationErrors(newErrors);
                 const step2Valid = Object.keys(newErrors).length === 0;
-                setStepValidation(prev => ({ ...prev, 2: step2Valid }));
+                setStepValidation((prev) => ({ ...prev, 2: step2Valid }));
                 return step2Valid;
             case 3:
                 // Training Experience & Motivation + LionsGEEK validation
                 if (!data.has_training) newErrors.has_training = 'Please select if you have previous training';
-                if (data.has_training === 'yes' && !data.previous_training_details.trim()) newErrors.previous_training_details = 'Please provide training details';
+                if (data.has_training === 'yes' && !data.previous_training_details.trim())
+                    newErrors.previous_training_details = 'Please provide training details';
                 if (!data.why_join_formation.trim()) newErrors.why_join_formation = 'Motivation is required';
                 if (data.why_join_formation.length < 100) newErrors.why_join_formation = 'Motivation must be at least 100 characters';
                 if (!data.participated_lionsgeek) newErrors.participated_lionsgeek = 'Please select if you participated in LionsGEEK';
-                if (data.participated_lionsgeek === 'yes' && !data.lionsgeek_activity) newErrors.lionsgeek_activity = 'Please select your LionsGEEK activity';
+                if (data.participated_lionsgeek === 'yes' && !data.lionsgeek_activity)
+                    newErrors.lionsgeek_activity = 'Please select your LionsGEEK activity';
                 if (data.lionsgeek_activity === 'other' && !data.other_activity.trim()) newErrors.other_activity = 'Please specify the activity';
 
                 setValidationErrors(newErrors);
                 const step3Valid = Object.keys(newErrors).length === 0;
-                setStepValidation(prev => ({ ...prev, 3: step3Valid }));
+                setStepValidation((prev) => ({ ...prev, 3: step3Valid }));
                 return step3Valid;
             case 4:
                 // Goals & Learning + Languages validation
@@ -275,7 +285,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
                 setValidationErrors(newErrors);
                 const step4Valid = Object.keys(newErrors).length === 0;
-                setStepValidation(prev => ({ ...prev, 4: step4Valid }));
+                setStepValidation((prev) => ({ ...prev, 4: step4Valid }));
                 return step4Valid;
             case 5:
                 // Background & Availability validation
@@ -284,7 +294,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
                 setValidationErrors(newErrors);
                 const step5Valid = Object.keys(newErrors).length === 0;
-                setStepValidation(prev => ({ ...prev, 5: step5Valid }));
+                setStepValidation((prev) => ({ ...prev, 5: step5Valid }));
                 return step5Valid;
             case 6:
                 // CV Upload validation (required)
@@ -292,13 +302,12 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
                 setValidationErrors(newErrors);
                 const step6Valid = Object.keys(newErrors).length === 0;
-                setStepValidation(prev => ({ ...prev, 6: step6Valid }));
+                setStepValidation((prev) => ({ ...prev, 6: step6Valid }));
                 return step6Valid;
             case 7:
-
                 const step7Valid = true;
 
-                setStepValidation(prev => ({ ...prev, 7: step7Valid }));
+                setStepValidation((prev) => ({ ...prev, 7: step7Valid }));
 
                 if (step7Valid) {
                     // Removed automatic form submission - now handled by game modal
@@ -327,14 +336,10 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                 dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}
             >
                 {!processing ? (
-                    <div className="max-w-4xl mx-auto">
-                        <div className="text-center mb-8">
-                            <h1 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                <TransText
-                                    en={"Training Application"}
-                                    fr={"Candidature Formation"}
-                                    ar={"طلب التسجيل في تكوين"}
-                                />
+                    <div className="mx-auto max-w-4xl">
+                        <div className="mb-8 text-center">
+                            <h1 className={`mb-4 text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                <TransText en={'Training Application'} fr={'Candidature Formation'} ar={'طلب التسجيل في تكوين'} />
                             </h1>
                             <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                                 <TransText
@@ -345,20 +350,14 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                             </p>
                         </div>
 
-                        {currentStep <= 6 && (
-                            <ProgressIndicator
-                                currentStep={currentStep}
-                                darkMode={darkMode}
-                                selectedLanguage={selectedLanguage}
-                            />
-                        )}
+                        {currentStep <= 6 && <ProgressIndicator currentStep={currentStep} darkMode={darkMode} selectedLanguage={selectedLanguage} />}
 
-                        <div className={`rounded-xl p-8 shadow-lg transition-all duration-300 ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
-                            }`}>
-                            <form
-                                autoComplete="off"
-                                className="space-y-6"
-                            >
+                        <div
+                            className={`rounded-xl p-8 shadow-lg transition-all duration-300 ${
+                                darkMode ? 'border border-gray-700 bg-gray-800' : 'border border-gray-200 bg-white'
+                            }`}
+                        >
+                            <form autoComplete="off" className="space-y-6">
                                 {/* Step Content */}
                                 <div className="step-content">
                                     {currentStep === 1 && (
@@ -427,16 +426,11 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                     {currentStep === 7 && (
                                         <StepSummary data={data} errors={{ ...errors, ...validationErrors }} setCurrentStep={setCurrentStep} />
                                     )}
-                                    {currentStep === 8 && (
-                                        <GameIntro setCurrentStep={setCurrentStep} />
-                                    )}
-                                    {currentStep === 9 && (
-                                        <PatternGame data={data} />
-                                    )}
+                                    {currentStep === 8 && <GameIntro setCurrentStep={setCurrentStep} />}
+                                    {currentStep === 9 && <PatternGame data={data} />}
                                 </div>
                                 {/* Navigation Buttons */}
-                                {
-                                    currentStep < 7 &&
+                                {currentStep < 7 && (
                                     <NavigationButtons
                                         currentStep={currentStep}
                                         darkMode={darkMode}
@@ -446,7 +440,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                         errors={{ ...errors, ...validationErrors }}
                                         onGameRedirect={handleGameRedirect}
                                     />
-                                }
+                                )}
                             </form>
                         </div>
                     </div>
@@ -464,9 +458,9 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                     setConfirmation(false);
                                     setValidate(false);
                                 }}
-                                className={`rounded px-4 py-2 text-white transition-colors duration-300 ${darkMode ? 'bg-beta' : 'bg-beta'
-                                    } ${darkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-600'
-                                    } hover:text-alpha focus:outline-none`}
+                                className={`rounded px-4 py-2 text-white transition-colors duration-300 ${darkMode ? 'bg-beta' : 'bg-beta'} ${
+                                    darkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-600'
+                                } hover:text-alpha focus:outline-none`}
                             >
                                 <TransText en="Close" fr="Fermer" ar="إغلاق" />
                             </button>

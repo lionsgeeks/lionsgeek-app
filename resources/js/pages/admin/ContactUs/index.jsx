@@ -1,31 +1,13 @@
-import React, { useState } from 'react';
-import { usePage, router } from '@inertiajs/react';
-import { Head } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import {
-    Trash2,
-    Mail,
-    User,
-    Users,
-    TypeOutline,
-    FileMinus,
-    MessageCircle,
-    CheckCircle2,
-    Clock,
-    Send,
-    Download,
-    Filter,
-    Search,
-    Plus,
-    Inbox,
-    MailOpen
-} from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app-layout';
+import { Head, router, usePage } from '@inertiajs/react';
+import { Download, FileMinus, Inbox, Mail, MailOpen, MessageCircle, Plus, Send, Trash2, TypeOutline, User, Users } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Index() {
     const { messages, selected } = usePage().props;
@@ -42,7 +24,6 @@ export default function Index() {
         subject: '',
         content: '',
         sender: '',
-
     });
 
     const handleReply = () => {
@@ -70,9 +51,9 @@ export default function Index() {
 
     const handleEmailChange = (e) => {
         const { name, value } = e.target;
-        setEmailData(prev => ({
+        setEmailData((prev) => ({
             ...prev,
-            [name]: value
+            [name]: value,
         }));
     };
 
@@ -84,15 +65,16 @@ export default function Index() {
         });
     };
 
-
-    const selectedMessage = activeId
-        ? messages.find(message => message.id === activeId)
-        : null;
+    const selectedMessage = activeId ? messages.find((message) => message.id === activeId) : null;
 
     const toggleReadStatus = () => {
-        router.put(route('email.markread', selectedMessage.id), {}, {
-            preserveScroll: true,
-        });
+        router.put(
+            route('email.markread', selectedMessage.id),
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
     };
 
     const handleDelete = () => {
@@ -117,9 +99,9 @@ export default function Index() {
 
     // Calculate statistics
     const totalMessages = messages?.length || 0;
-    const unreadMessages = messages?.filter(msg => !msg.mark_as_read)?.length || 0;
-    const sentMessages = messages?.filter(msg => msg.sender)?.length || 0;
-    const receivedMessages = messages?.filter(msg => !msg.sender)?.length || 0;
+    const unreadMessages = messages?.filter((msg) => !msg.mark_as_read)?.length || 0;
+    const sentMessages = messages?.filter((msg) => msg.sender)?.length || 0;
+    const receivedMessages = messages?.filter((msg) => !msg.sender)?.length || 0;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -148,7 +130,7 @@ export default function Index() {
                                     Compose
                                 </Button>
                                 <Button
-                                    onClick={() => window.location.href = route('messages.export')}
+                                    onClick={() => (window.location.href = route('messages.export'))}
                                     className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
                                 >
                                     <Download className="mr-2 h-4 w-4" />
@@ -229,7 +211,7 @@ export default function Index() {
                                 <CardContent className="p-0">
                                     {/* Inbox Header */}
                                     <div className="border-b border-gray-200 p-6">
-                                        <div className="flex items-center gap-3 mb-4">
+                                        <div className="mb-4 flex items-center gap-3">
                                             <Inbox className="h-5 w-5 text-[#212529]" />
                                             <h2 className="text-lg font-semibold text-[#212529]">Inbox</h2>
                                         </div>
@@ -275,27 +257,24 @@ export default function Index() {
                                                 <div
                                                     key={message.id}
                                                     onClick={() => handleSelect(message.id)}
-                                                    className={`
-                                                        cursor-pointer border-b border-gray-100 p-4 transition-colors hover:bg-gray-50
-                                                        ${activeId === message.id ? 'bg-blue-50 border-l-4 border-l-[#212529]' : ''}
-                                                        ${!message.mark_as_read ? 'bg-blue-50/30' : ''}
-                                                    `}
+                                                    className={`cursor-pointer border-b border-gray-100 p-4 transition-colors hover:bg-gray-50 ${activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''} ${!message.mark_as_read ? 'bg-blue-50/30' : ''} `}
                                                 >
                                                     <div className="flex items-start justify-between gap-3">
                                                         <div className="min-w-0 flex-1">
-                                                            <div className="flex items-center gap-2 mb-1">
-                                                                <h3 className="font-semibold text-[#212529] truncate">{message.full_name}</h3>
+                                                            <div className="mb-1 flex items-center gap-2">
+                                                                <h3 className="truncate font-semibold text-[#212529]">{message.full_name}</h3>
                                                                 {!message.mark_as_read && (
-                                                                    <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
-                                                                        New
-                                                                    </Badge>
+                                                                    <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">New</Badge>
                                                                 )}
                                                             </div>
-                                                            <p className="text-sm text-gray-600 truncate">{message.email}</p>
-                                                            <p className="text-sm text-gray-500 truncate mt-1">{message.message}</p>
+                                                            <p className="truncate text-sm text-gray-600">{message.email}</p>
+                                                            <p className="mt-1 truncate text-sm text-gray-500">{message.message}</p>
                                                         </div>
                                                         <div className="flex-shrink-0 text-xs text-gray-400">
-                                                            {new Date(message.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
+                                                            {new Date(message.created_at).toLocaleDateString('en-GB', {
+                                                                day: '2-digit',
+                                                                month: '2-digit',
+                                                            })}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -308,7 +287,7 @@ export default function Index() {
 
                         {/* Message Content Area */}
                         <div className="lg:col-span-2">
-                            <Card className="border-0 bg-white shadow-lg min-h-96">
+                            <Card className="min-h-96 border-0 bg-white shadow-lg">
                                 <CardContent className="p-6">
                                     {isComposing ? (
                                         /* Compose Email Form */
@@ -320,11 +299,14 @@ export default function Index() {
 
                                             <form onSubmit={handleSendEmail} className="space-y-4">
                                                 <div>
-                                                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
                                                         <User className="h-4 w-4" />
                                                         Sender
                                                     </label>
-                                                    <Select value={emailData.sender} onValueChange={(value) => setEmailData(prev => ({ ...prev, sender: value }))}>
+                                                    <Select
+                                                        value={emailData.sender}
+                                                        onValueChange={(value) => setEmailData((prev) => ({ ...prev, sender: value }))}
+                                                    >
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Select sender email" />
                                                         </SelectTrigger>
@@ -337,7 +319,7 @@ export default function Index() {
                                                 </div>
 
                                                 <div>
-                                                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
                                                         <Users className="h-4 w-4" />
                                                         Recipient
                                                     </label>
@@ -352,7 +334,7 @@ export default function Index() {
 
                                                 {showCc && (
                                                     <div>
-                                                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                                                        <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
                                                             <Mail className="h-4 w-4" />
                                                             CC
                                                         </label>
@@ -368,7 +350,7 @@ export default function Index() {
 
                                                 {showBcc && (
                                                     <div>
-                                                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                                                        <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
                                                             <Mail className="h-4 w-4" />
                                                             BCC
                                                         </label>
@@ -404,7 +386,7 @@ export default function Index() {
                                                 </div>
 
                                                 <div>
-                                                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
                                                         <TypeOutline className="h-4 w-4" />
                                                         Subject
                                                     </label>
@@ -418,7 +400,7 @@ export default function Index() {
                                                 </div>
 
                                                 <div>
-                                                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
                                                         <FileMinus className="h-4 w-4" />
                                                         Message
                                                     </label>
@@ -440,10 +422,7 @@ export default function Index() {
                                                     >
                                                         Cancel
                                                     </Button>
-                                                    <Button
-                                                        type="submit"
-                                                        className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]"
-                                                    >
+                                                    <Button type="submit" className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]">
                                                         <Send className="mr-2 h-4 w-4" />
                                                         Send Email
                                                     </Button>
@@ -492,18 +471,22 @@ export default function Index() {
                                             {/* Message Content */}
                                             <div className="space-y-4">
                                                 <div className="flex items-center justify-between text-sm text-gray-600">
-                                                    <span>From: <span className="font-medium text-[#212529]">{selectedMessage.email}</span></span>
-                                                    <span>{new Date(selectedMessage.created_at).toLocaleString('en-US', {
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}</span>
+                                                    <span>
+                                                        From: <span className="font-medium text-[#212529]">{selectedMessage.email}</span>
+                                                    </span>
+                                                    <span>
+                                                        {new Date(selectedMessage.created_at).toLocaleString('en-US', {
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            year: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit',
+                                                        })}
+                                                    </span>
                                                 </div>
 
                                                 <div className="rounded-lg bg-gray-50 p-4">
-                                                    <p className="text-gray-800 whitespace-pre-wrap">{selectedMessage.message}</p>
+                                                    <p className="whitespace-pre-wrap text-gray-800">{selectedMessage.message}</p>
                                                 </div>
 
                                                 <div className="flex gap-3 pt-4">

@@ -402,7 +402,12 @@ const Navbar = () => {
                                             key={index}
                                             style={{ color: darkMode ? '#ffffff' : '#0f0f0f' }}
                                             href={element.link}
-                                            onClick={() => { setIsOpen(false); setFormationMenu(false); setAboutMenu(false); setLanguageIsOpen(false); }}
+                                            onClick={() => {
+                                                setIsOpen(false);
+                                                setFormationMenu(false);
+                                                setAboutMenu(false);
+                                                setLanguageIsOpen(false);
+                                            }}
                                             className={`relative px-2 py-2 text-sm after:bottom-[-13px] after:left-0 after:w-0 after:border-b-[2px] after:transition-all after:duration-[0.35s] hover:after:w-[100%] lg:after:absolute ${
                                                 location.pathname == element.link
                                                     ? 'font-medium after:w-[100%] after:border-alpha'

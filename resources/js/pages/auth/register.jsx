@@ -17,12 +17,15 @@ export default function Register() {
         password_confirmation: '',
     });
 
-    const submit = useCallback((e) => {
-        e.preventDefault();
-        post(route('register'), {
-            onFinish: () => reset('password', 'password_confirmation'),
-        });
-    }, [post, reset]);
+    const submit = useCallback(
+        (e) => {
+            e.preventDefault();
+            post(route('register'), {
+                onFinish: () => reset('password', 'password_confirmation'),
+            });
+        },
+        [post, reset],
+    );
 
     return (
         <AuthLayout title="Create an account" description="Enter your details below to create your account">

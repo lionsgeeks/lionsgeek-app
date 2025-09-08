@@ -1,6 +1,6 @@
+import { Card, CardContent } from '@/components/ui/card';
 import { usePage } from '@inertiajs/react';
 import { Calendar, Mail, MousePointerClick, Users } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
 
 const StatisticCards = () => {
     const { totalContacts, members, upcomingEvents, views } = usePage().props;

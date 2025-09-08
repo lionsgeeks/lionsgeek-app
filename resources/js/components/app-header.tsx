@@ -11,11 +11,11 @@ import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
 const mainNavItems: NavItem[] = [
-        {
-            title: 'About',
-            href: '/about',
-            // add icon
-        }
+    {
+        title: 'About',
+        href: '/about',
+        // add icon
+    },
 ];
 
 const rightNavItems: NavItem[] = [

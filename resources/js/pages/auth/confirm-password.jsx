@@ -14,13 +14,16 @@ export default function ConfirmPassword() {
         password: '',
     });
 
-    const submit = useCallback((e) => {
-        e.preventDefault();
+    const submit = useCallback(
+        (e) => {
+            e.preventDefault();
 
-        post(route('password.confirm'), {
-            onFinish: () => reset('password'),
-        });
-    }, [post, reset]);
+            post(route('password.confirm'), {
+                onFinish: () => reset('password'),
+            });
+        },
+        [post, reset],
+    );
 
     return (
         <AuthLayout

@@ -1,9 +1,9 @@
-import staff from "../../../../../assets/images/ceremonie.jpeg";
-import { TransText } from "../../../../components/TransText";
-import { useAppContext } from "@/context/appContext";
+import { useAppContext } from '@/context/appContext';
+import staff from '../../../../../assets/images/ceremonie.jpeg';
+import { TransText } from '../../../../components/TransText';
 
 export const Stats = () => {
-    const {selectedLanguage, darkMode} = useAppContext();
+    const { selectedLanguage, darkMode } = useAppContext();
 
     const stats = [
         {
@@ -13,7 +13,7 @@ export const Stats = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
-                    stroke={`${darkMode ? "#fff" : "currentColor"} `}
+                    stroke={`${darkMode ? '#fff' : 'currentColor'} `}
                     className="size-16"
                 >
                     <path
@@ -23,7 +23,7 @@ export const Stats = () => {
                     />
                 </svg>
             ),
-            title: { en: "Students", ar: "الطلاب", fr: "Étudiants" },
+            title: { en: 'Students', ar: 'الطلاب', fr: 'Étudiants' },
             numbers: 90,
         },
         {
@@ -38,7 +38,7 @@ export const Stats = () => {
                     viewBox="0 0 24 24"
                 >
                     <path
-                        stroke={`${darkMode ? "#fff" : "currentColor"} `}
+                        stroke={`${darkMode ? '#fff' : 'currentColor'} `}
                         strokeLinecap="square"
                         strokeLinejoin="round"
                         strokeWidth="2"
@@ -46,7 +46,7 @@ export const Stats = () => {
                     />
                 </svg>
             ),
-            title: { en: "Coaches", fr: "Coachs", ar: "المدربون" },
+            title: { en: 'Coaches', fr: 'Coachs', ar: 'المدربون' },
             numbers: 10,
         },
         {
@@ -56,7 +56,7 @@ export const Stats = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
-                    stroke={`${darkMode ? "#fff" : "currentColor"} `}
+                    stroke={`${darkMode ? '#fff' : 'currentColor'} `}
                     className="size-16"
                 >
                     <path
@@ -67,27 +67,24 @@ export const Stats = () => {
                 </svg>
             ),
             title: {
-                en: "Graduated Students",
-                fr: "Étudiants diplômés",
-                ar: "الطلاب المتخرجون",
+                en: 'Graduated Students',
+                fr: 'Étudiants diplômés',
+                ar: 'الطلاب المتخرجون',
             },
             numbers: 150,
         },
     ];
     return (
         <>
-            <section className={` ${darkMode && "bg-[#0f0f0f]"} p-7 flex lg:flex-row flex-col justify-center items-center gap-10`}>
-                <img loading="lazy" className="lg:w-[40%] rounded-lg" src={staff} alt="" />
-                <div
-                    dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
-                    className="flex  lg:w-1/2 gap-5 flex-col"
-                >
-                    <h1 className={`${darkMode && "text-alpha"} font-bold text-4xl`}>
+            <section className={` ${darkMode && 'bg-[#0f0f0f]'} flex flex-col items-center justify-center gap-10 p-7 lg:flex-row`}>
+                <img loading="lazy" className="rounded-lg lg:w-[40%]" src={staff} alt="" />
+                <div dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'} className="flex flex-col gap-5 lg:w-1/2">
+                    <h1 className={`${darkMode && 'text-alpha'} text-4xl font-bold`}>
                         <TransText en="Highlights" fr="Highlights" ar="الأرقام البارزة" />
                     </h1>
                     <p
-                        dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
-                        className={`${selectedLanguage === "ar" ? "" : "lg:w-[80%]"} ${darkMode && "text-white"}  `}
+                        dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}
+                        className={`${selectedLanguage === 'ar' ? '' : 'lg:w-[80%]'} ${darkMode && 'text-white'} `}
                     >
                         <TransText
                             fr="Nos points forts mettent en valeur les étapes franchies par notre communauté dévouée et notre engagement envers un changement positif."
@@ -96,18 +93,15 @@ export const Stats = () => {
             community and our commitment to positive change."
                         />
                     </p>
-                    <div
-                        dir={selectedLanguage === "ar" ? "rtl" : "ltr"}
-                        className="flex gap-5 lg:flex-row flex-col"
-                    >
+                    <div dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'} className="flex flex-col gap-5 lg:flex-row">
                         {stats.map((e, i) => (
                             <div
                                 key={i}
-                                className={`${darkMode ? "bg-beta b" : "border-black/50"} flex flex-col lg:items-start items-center gap-3 rounded-lg border  p-3 lg:w-[25%] lg:aspect-square text-2xl font-semibold`}
+                                className={`${darkMode ? 'b bg-beta' : 'border-black/50'} flex flex-col items-center gap-3 rounded-lg border p-3 text-2xl font-semibold lg:aspect-square lg:w-[25%] lg:items-start`}
                             >
                                 <span className="">{e.icon}</span>
-                                <h1 className={`${darkMode && "text-white"} text-3xl`}>+{e.numbers}</h1>
-                                <p className={`${darkMode && "text-white"} `}>{e.title[selectedLanguage]}</p>
+                                <h1 className={`${darkMode && 'text-white'} text-3xl`}>+{e.numbers}</h1>
+                                <p className={`${darkMode && 'text-white'} `}>{e.title[selectedLanguage]}</p>
                             </div>
                         ))}
                     </div>

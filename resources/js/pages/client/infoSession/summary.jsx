@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
+import { useMemo, useState } from 'react';
 
 export default function SummaryPage() {
     const stored = useMemo(() => {
@@ -64,7 +64,7 @@ export default function SummaryPage() {
             onError: (e) => {
                 setErrors(e || {});
                 setSubmitting(false);
-            }
+            },
         });
     };
 
@@ -80,15 +80,17 @@ export default function SummaryPage() {
                 </div>
 
                 <div className="mx-auto max-w-5xl px-6 py-8">
-                    <div className="rounded-lg bg-white border-0 shadow-lg p-6">
-                        <div className="flex items-center justify-between mb-4">
+                    <div className="rounded-lg border-0 bg-white p-6 shadow-lg">
+                        <div className="mb-4 flex items-center justify-between">
                             <h2 className="text-xl font-semibold text-[#212529]">Personal information</h2>
-                            <button onClick={handleEditAll} className="text-sm rounded-lg bg-gray-100 px-3 py-2 hover:bg-gray-200">Edit all</button>
+                            <button onClick={handleEditAll} className="rounded-lg bg-gray-100 px-3 py-2 text-sm hover:bg-gray-200">
+                                Edit all
+                            </button>
                         </div>
 
                         <div className="divide-y">
                             {fields.map(({ key, label }) => (
-                                <div key={key} className="py-4 flex items-start justify-between gap-4">
+                                <div key={key} className="flex items-start justify-between gap-4 py-4">
                                     <div className="min-w-[220px] text-sm font-medium text-gray-600">{label}</div>
                                     <div className="flex-1">
                                         {editingField === key ? (
@@ -96,27 +98,31 @@ export default function SummaryPage() {
                                                 type="text"
                                                 value={data[key] ?? ''}
                                                 onChange={(e) => updateField(key, e.target.value)}
-                                                className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#fee819] focus:border-transparent"
+                                                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-[#fee819]"
                                             />
                                         ) : (
                                             <div className="text-[#212529]">
-                                                {String(data[key] ?? '').length ? String(data[key]) : <span className="text-gray-400">Not provided</span>}
+                                                {String(data[key] ?? '').length ? (
+                                                    String(data[key])
+                                                ) : (
+                                                    <span className="text-gray-400">Not provided</span>
+                                                )}
                                             </div>
                                         )}
-                                        {errors[key] && <p className="text-sm text-red-600 mt-1">{errors[key]}</p>}
+                                        {errors[key] && <p className="mt-1 text-sm text-red-600">{errors[key]}</p>}
                                     </div>
                                     <div className="min-w-[80px] text-right">
                                         {editingField === key ? (
                                             <button
                                                 onClick={() => setEditingField(null)}
-                                                className="text-sm rounded-lg bg-[#212529] text-white px-3 py-2 hover:bg-[#212529]/90"
+                                                className="rounded-lg bg-[#212529] px-3 py-2 text-sm text-white hover:bg-[#212529]/90"
                                             >
                                                 Save
                                             </button>
                                         ) : (
                                             <button
                                                 onClick={() => setEditingField(key)}
-                                                className="text-sm rounded-lg bg-gray-100 px-3 py-2 hover:bg-gray-200"
+                                                className="rounded-lg bg-gray-100 px-3 py-2 text-sm hover:bg-gray-200"
                                             >
                                                 Edit
                                             </button>
@@ -126,7 +132,7 @@ export default function SummaryPage() {
                             ))}
                         </div>
 
-                        <div className="pt-6 flex items-center justify-end">
+                        <div className="flex items-center justify-end pt-6">
                             <button
                                 onClick={handleConfirm}
                                 disabled={submitting}
@@ -141,5 +147,3 @@ export default function SummaryPage() {
         </AppLayout>
     );
 }
-
-

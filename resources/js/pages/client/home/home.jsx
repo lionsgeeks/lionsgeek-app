@@ -1,16 +1,8 @@
-import { Partners } from "../about/partials/partners";
-import AppLayout from "@/layouts/app-layout";
+import AppLayout from '@/layouts/app-layout';
+import { Partners } from '../about/partials/partners';
 
-import {
-    EventSection,
-    GallerySection,
-    HeroSection,
-    ServicesSection,
-    TrainingSection,
-    WhoSection,
-} from "./partials";
-import { Head } from "@inertiajs/react";
-
+import { Head } from '@inertiajs/react';
+import { EventSection, GallerySection, HeroSection, ServicesSection, TrainingSection, WhoSection } from './partials';
 
 const breadcrumbs = [
     {
@@ -34,4 +26,4 @@ export default function Home() {
             <GallerySection />
         </AppLayout>
     );
-};
+}

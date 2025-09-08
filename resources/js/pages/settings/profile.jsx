@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { User, KeyRound } from 'lucide-react';
+import { KeyRound, User } from 'lucide-react';
 
 const breadcrumbs = [
     {
@@ -51,7 +51,10 @@ export default function Profile({ mustVerifyEmail, status }) {
                             </div>
                         </div>
                         <div className="flex flex-row-reverse gap-3">
-                            <Button asChild className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                            <Button
+                                asChild
+                                className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
+                            >
                                 <Link href="/settings/password" prefetch>
                                     <KeyRound className="mr-2 h-4 w-4" />
                                     Change Password

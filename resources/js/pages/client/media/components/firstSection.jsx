@@ -4,7 +4,7 @@ import { Button } from '../../../../components/Button';
 import { TransText } from '../../../../components/TransText';
 
 import { useAppContext } from '@/context/appContext';
-import { Link, usePage, router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import gsap from 'gsap';
 
 export const FirstSection = () => {
@@ -167,23 +167,21 @@ export const FirstSection = () => {
                 </div>
 
                 <div className={`mt-2 flex w-fit items-center justify-center rounded-lg ${selectedLanguage === 'ar' ? 'self-end' : ''}`}>
-                    {
-                        checkingStatus !== 'open' ? (
-                            <div
-                                className={`cursor-not-allowed rounded-lg border px-3 py-2 select-none ${checkingStatus === 'closed' ? (darkMode ? 'border-alpha text-alpha' : 'bg-[#252529] text-alpha') : checkingStatus === 'full' && 'border-red-500 bg-[#] text-red-500'}`}
-                            >
-                                <TransText
-                                    en={sessionStatus[checkingStatus]?.en}
-                                    fr={sessionStatus[checkingStatus]?.fr}
-                                    ar={sessionStatus[checkingStatus]?.ar}
-                                />
-                            </div>
-                        ) : (
-                            <Button onClick={() => router.visit('/postuler?type=media')}>
-                                <TransText fr="Postuler" en="Apply" ar="تقدم بطلب" />
-                            </Button>
-                        )
-                    }
+                    {checkingStatus !== 'open' ? (
+                        <div
+                            className={`cursor-not-allowed rounded-lg border px-3 py-2 select-none ${checkingStatus === 'closed' ? (darkMode ? 'border-alpha text-alpha' : 'bg-[#252529] text-alpha') : checkingStatus === 'full' && 'border-red-500 bg-[#] text-red-500'}`}
+                        >
+                            <TransText
+                                en={sessionStatus[checkingStatus]?.en}
+                                fr={sessionStatus[checkingStatus]?.fr}
+                                ar={sessionStatus[checkingStatus]?.ar}
+                            />
+                        </div>
+                    ) : (
+                        <Button onClick={() => router.visit('/postuler?type=media')}>
+                            <TransText fr="Postuler" en="Apply" ar="تقدم بطلب" />
+                        </Button>
+                    )}
                 </div>
             </div>
             <div ref={rightside} className="flex w-[100%] justify-center lg:w-[50%]">

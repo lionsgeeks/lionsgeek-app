@@ -65,7 +65,10 @@ export default function Password() {
                             </div>
                         </div>
                         <div className="flex flex-row-reverse gap-3">
-                            <Button asChild className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                            <Button
+                                asChild
+                                className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
+                            >
                                 <a href="/settings/profile">
                                     <User className="mr-2 h-4 w-4" />
                                     Back to Profile

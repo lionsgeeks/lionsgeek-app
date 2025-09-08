@@ -1,38 +1,30 @@
+import { useAppContext } from '@/context/appContext';
 import { usePage } from '@inertiajs/react';
-import { useAppContext } from "@/context/appContext";
 
 export const Press = () => {
-    const {selectedLanguage, darkMode} = useAppContext();
+    const { selectedLanguage, darkMode } = useAppContext();
     const { presses } = usePage().props;
 
-
     return (
-        <section className={`${darkMode ? "bg-[#0f0f0f]" : ""} py-[4vh]`}>
-            <div className="w-full text-center pb-10">
-                <h1 className={`${darkMode ? "text-alpha" : ""} text-xl`}>Press</h1>
-
+        <section className={`${darkMode ? 'bg-[#0f0f0f]' : ''} py-[4vh]`}>
+            <div className="w-full pb-10 text-center">
+                <h1 className={`${darkMode ? 'text-alpha' : ''} text-xl`}>Press</h1>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 justify-center md:justify-around px-4 md:px-16">
+            <div className="grid grid-cols-2 justify-center gap-3 px-4 md:justify-around md:px-16 lg:grid-cols-5">
                 {presses?.map((press, index) => (
-                    <a
-                        href={press.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        key={index}
-                        className="hover:no-underline"
-                    >
-                        <div className="bg-white rounded-lg relative hover:scale-105 transition-all duration-300 shadow-md h-full flex flex-col">
+                    <a href={press.link} target="_blank" rel="noopener noreferrer" key={index} className="hover:no-underline">
+                        <div className="relative flex h-full flex-col rounded-lg bg-white shadow-md transition-all duration-300 hover:scale-105">
                             <img
                                 src={`/storage/images/press/${press.cover}`}
-                                className="h-[25vh] w-full object-cover rounded-t-lg"
+                                className="h-[25vh] w-full rounded-t-lg object-cover"
                                 alt={press.name[selectedLanguage]}
                             />
-                            <div className="flex items-center gap-2 p-2 mt-2 flex-grow">
+                            <div className="mt-2 flex flex-grow items-center gap-2 p-2">
                                 {press.logo && (
                                     <img
                                         src={`/storage/images/press/${press.logo}`}
-                                        className="w-[25px] rounded-full aspect-square"
+                                        className="aspect-square w-[25px] rounded-full"
                                         alt={`Logo ${press.name[selectedLanguage]}`}
                                     />
                                 )}

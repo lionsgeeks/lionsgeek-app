@@ -1,14 +1,28 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { Ban, Calendar, CheckCircle, Edit, Plus, Users, GraduationCap, Clock, Calendar as CalendarIcon, Code2, Palette, Filter, Search, RotateCcw, Trash } from 'lucide-react';
+import {
+    Ban,
+    Calendar as CalendarIcon,
+    CheckCircle,
+    Clock,
+    Code2,
+    Edit,
+    Filter,
+    GraduationCap,
+    Palette,
+    RotateCcw,
+    Search,
+    Trash,
+    Users,
+} from 'lucide-react';
 import { useState } from 'react';
 import { CreateSessionModal } from './partials/create-session-modal';
 import { EditSessionModal } from './partials/edit-session-modal';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 export default function InfoSessions() {
     const { infosessions = [] } = usePage().props;
@@ -52,28 +66,24 @@ export default function InfoSessions() {
     };
 
     const getFormationColor = (formation) => {
-        return formation === 'Coding'
-            ? 'bg-blue-100 text-blue-700 border-blue-200'
-            : 'bg-purple-100 text-purple-700 border-purple-200';
+        return formation === 'Coding' ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-purple-100 text-purple-700 border-purple-200';
     };
 
     const getFormationIcon = (formation) => {
-        return formation === 'Coding' ?
-            <Code2 className="h-6 w-6" /> :
-            <Palette className="h-6 w-6" />;
+        return formation === 'Coding' ? <Code2 className="h-6 w-6" /> : <Palette className="h-6 w-6" />;
     };
 
     // Filter sessions based on search
-    const filteredSessions = infosessions.filter((session) =>
-        session?.name?.toLowerCase().includes(search?.toLowerCase()) ||
-        session?.formation?.toLowerCase().includes(search?.toLowerCase())
+    const filteredSessions = infosessions.filter(
+        (session) =>
+            session?.name?.toLowerCase().includes(search?.toLowerCase()) || session?.formation?.toLowerCase().includes(search?.toLowerCase()),
     );
 
     // Calculate statistics with safe access
     const totalSessions = infosessions?.length || 0;
-    const availableSessions = infosessions?.filter(s => s?.isAvailable)?.length || 0;
-    const completedSessions = infosessions?.filter(s => s?.isFinish)?.length || 0;
-    const codingSessions = infosessions?.filter(s => s?.formation === 'Coding')?.length || 0;
+    const availableSessions = infosessions?.filter((s) => s?.isAvailable)?.length || 0;
+    const completedSessions = infosessions?.filter((s) => s?.isFinish)?.length || 0;
+    const codingSessions = infosessions?.filter((s) => s?.formation === 'Coding')?.length || 0;
     const hasSearch = search.length > 0;
 
     // Empty state
@@ -95,7 +105,7 @@ export default function InfoSessions() {
                                         <p className="mt-1 text-gray-300">Manage informational sessions and training programs</p>
                                     </div>
                                 </div>
-                                <CreateSessionModal  open={createModalOpen} onOpenChange={setCreateModalOpen} />
+                                <CreateSessionModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
                             </div>
                         </div>
                     </div>
@@ -270,14 +280,12 @@ export default function InfoSessions() {
                                     onClick={() => router.visit(`/admin/infosessions/${session.id}`)}
                                 >
                                     <div className="relative bg-gray-50 p-4">
-                                        <div className="flex items-start justify-between mb-3">
-                                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                                        <div className="mb-3 flex items-start justify-between">
+                                            <div className="flex min-w-0 flex-1 items-center gap-3">
                                                 <div className="flex-shrink-0 text-[#212529]">{getFormationIcon(session.formation)}</div>
                                                 <div className="min-w-0 flex-1">
-                                                    <h3 className="text-lg font-semibold capitalize truncate text-[#212529]">{session.name}</h3>
-                                                    <Badge className="bg-[#fee819] text-[#212529] text-xs mt-1 w-fit">
-                                                        {session.formation}
-                                                    </Badge>
+                                                    <h3 className="truncate text-lg font-semibold text-[#212529] capitalize">{session.name}</h3>
+                                                    <Badge className="mt-1 w-fit bg-[#fee819] text-xs text-[#212529]">{session.formation}</Badge>
                                                 </div>
                                             </div>
                                             {/* Edit/Delete - Top Right */}
@@ -326,7 +334,7 @@ export default function InfoSessions() {
                                     <CardContent className="flex-1 p-4">
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                                                <div className="flex-shrink-0 rounded-lg bg-gray-100 p-2">
                                                     <CalendarIcon className="h-4 w-4 text-[#212529]" />
                                                 </div>
                                                 <div className="min-w-0 flex-1">
@@ -334,25 +342,26 @@ export default function InfoSessions() {
                                                     <p className="font-medium text-[#212529]">
                                                         {session.start_date?.includes('T')
                                                             ? session.start_date.replace('T', ' ')
-                                                            : session.start_date
-                                                        }
+                                                            : session.start_date}
                                                     </p>
                                                 </div>
                                             </div>
 
                                             <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                                                <div className="flex-shrink-0 rounded-lg bg-gray-100 p-2">
                                                     <Users className="h-4 w-4 text-[#212529]" />
                                                 </div>
                                                 <div className="min-w-0 flex-1">
                                                     <p className="text-sm text-gray-500">Places</p>
-                                                    <p className="font-medium text-[#212529]">{session.participants_count || 0} / {session.places}</p>
+                                                    <p className="font-medium text-[#212529]">
+                                                        {session.participants_count || 0} / {session.places}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </CardContent>
 
-                                                                        <CardFooter className="p-4 pt-0">
+                                    <CardFooter className="p-4 pt-0">
                                         <div className={`flex w-full items-center gap-2 ${session.isFinish ? 'justify-center' : 'justify-between'}`}>
                                             {/* Available/Unavailable Button - Only show if NOT completed */}
                                             {!session.isFinish && (
@@ -376,8 +385,7 @@ export default function InfoSessions() {
                                                     e.stopPropagation();
                                                     changeStatus(session.id);
                                                 }}
-                                                className={`transform transition-all duration-300 ease-in-out hover:scale-110  'bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]'
-                                                }`}
+                                                className={`'bg-[#212529] hover:text-[#212529]' } transform text-white transition-all duration-300 ease-in-out hover:scale-110 hover:bg-[#fee819]`}
                                             >
                                                 {session.isFinish ? 'Reopen Session' : 'Mark Complete'}
                                             </Button>
@@ -410,11 +418,7 @@ export default function InfoSessions() {
                         >
                             Cancel
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={confirmDeletion}
-                            className="bg-[#ff7376] text-white hover:bg-[#ff5a5e]"
-                        >
+                        <Button variant="destructive" onClick={confirmDeletion} className="bg-[#ff7376] text-white hover:bg-[#ff5a5e]">
                             Delete
                         </Button>
                     </div>

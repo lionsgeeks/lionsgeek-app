@@ -1,15 +1,15 @@
 import { useAppContext } from '@/context/appContext';
 import AppLayout from '@/layouts/app-layout';
+import { Head } from '@inertiajs/react';
 import confetti from '../../../../assets/images/confetti.gif';
 import { TransText } from '../../../components/TransText';
-import { Head } from '@inertiajs/react';
 
 const AttendanceConfirmation = () => {
     const { darkMode, selectedLanguage } = useAppContext();
 
     return (
         <AppLayout>
-            <Head title='Attendance Confirmation'/>
+            <Head title="Attendance Confirmation" />
             <div
                 dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}
                 className={`relative flex h-screen items-center justify-center text-center ${darkMode ? 'bg-black' : ''} `}

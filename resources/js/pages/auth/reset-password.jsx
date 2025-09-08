@@ -16,12 +16,15 @@ export default function ResetPassword({ token, email }) {
         password_confirmation: '',
     });
 
-    const submit = useCallback((e) => {
-        e.preventDefault();
-        post(route('password.store'), {
-            onFinish: () => reset('password', 'password_confirmation'),
-        });
-    }, [post, reset]);
+    const submit = useCallback(
+        (e) => {
+            e.preventDefault();
+            post(route('password.store'), {
+                onFinish: () => reset('password', 'password_confirmation'),
+            });
+        },
+        [post, reset],
+    );
 
     return (
         <AuthLayout title="Reset password" description="Please enter your new password below">
@@ -39,7 +42,7 @@ export default function ResetPassword({ token, email }) {
                             value={data.email}
                             className="mt-1 block w-full"
                             readOnly
-                            onChange={e => setData('email', e.target.value)}
+                            onChange={(e) => setData('email', e.target.value)}
                         />
                         <InputError message={errors.email} className="mt-2" />
                     </div>
@@ -54,7 +57,7 @@ export default function ResetPassword({ token, email }) {
                             value={data.password}
                             className="mt-1 block w-full"
                             autoFocus
-                            onChange={e => setData('password', e.target.value)}
+                            onChange={(e) => setData('password', e.target.value)}
                             placeholder="Password"
                         />
                         <InputError message={errors.password} />
@@ -69,7 +72,7 @@ export default function ResetPassword({ token, email }) {
                             autoComplete="new-password"
                             value={data.password_confirmation}
                             className="mt-1 block w-full"
-                            onChange={e => setData('password_confirmation', e.target.value)}
+                            onChange={(e) => setData('password_confirmation', e.target.value)}
                             placeholder="Confirm password"
                         />
                         <InputError message={errors.password_confirmation} className="mt-2" />

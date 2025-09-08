@@ -3,9 +3,14 @@
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\InfoSessionController;
 use App\Http\Controllers\Api\ParticipantController ;
-
+use App\Models\General;
 use Illuminate\Support\Facades\Route;
 
+// Track visit endpoint (stateless)
+Route::post('/track-visit', function () {
+    General::trackVisit();
+    return response()->json(['ok' => true]);
+});
 
 
 Route::get("events/{event}",[EventController::class,'show']);

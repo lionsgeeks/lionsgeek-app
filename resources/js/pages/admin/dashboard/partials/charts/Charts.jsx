@@ -1,50 +1,37 @@
-"use client"
+'use client';
 
-import React, { useEffect, useState } from "react"
-import BarChart from "./components/BarChart.js"
-import { DonutChart } from "./components/PieChart.js"
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-} from "@/components/ui/card"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { BarChart2 } from "lucide-react"
-import { usePage } from "@inertiajs/react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { usePage } from '@inertiajs/react';
+import { BarChart2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import BarChart from './components/BarChart.js';
+import { DonutChart } from './components/PieChart.js';
 
 const Chart = () => {
-    const { allsessions } = usePage().props
+    const { allsessions } = usePage().props;
 
     // remove private sessions
-    const sessions = allsessions.filter(
-        (session) => session.name.toLowerCase() !== "private session"
-    )
+    const sessions = allsessions.filter((session) => session.name.toLowerCase() !== 'private session');
 
     // default session is the last one
-    const defaultSessionID = sessions[sessions.length - 1]?.id || null
+    const defaultSessionID = sessions[sessions.length - 1]?.id || null;
 
-    const [selectedSession, setSelectedSession] = useState(defaultSessionID)
-    const [barChart, setBarChart] = useState([])
-    const [pieChart, setPieChart] = useState([])
+    const [selectedSession, setSelectedSession] = useState(defaultSessionID);
+    const [barChart, setBarChart] = useState([]);
+    const [pieChart, setPieChart] = useState([]);
 
     useEffect(() => {
-        if (!selectedSession) return
+        if (!selectedSession) return;
 
         fetch(`/admin/getChartData/${selectedSession}`)
             .then((res) => res.json())
             .then((data) => {
-                setBarChart(data.BarChart || [])
-                setPieChart(data.PieChart || [])
+                setBarChart(data.BarChart || []);
+                setPieChart(data.PieChart || []);
             })
-            .catch((err) => console.error("Error fetching chart data:", err))
-    }, [selectedSession])
+            .catch((err) => console.error('Error fetching chart data:', err));
+    }, [selectedSession]);
 
     return (
         <Card className="w-full">
@@ -61,10 +48,7 @@ const Chart = () => {
                     <CardTitle className="text-xl font-semibold">Analyse</CardTitle>
                 </div>
 
-                <Select
-                    value={selectedSession}
-                    onValueChange={(value) => setSelectedSession(value)}
-                >
+                <Select value={selectedSession} onValueChange={(value) => setSelectedSession(value)}>
                     <SelectTrigger className="w-[20%]">
                         <SelectValue placeholder="Select Session" />
                     </SelectTrigger>
@@ -86,7 +70,7 @@ const Chart = () => {
                 </div>
             </CardContent>
         </Card>
-    )
-}
+    );
+};
 
-export default Chart
+export default Chart;

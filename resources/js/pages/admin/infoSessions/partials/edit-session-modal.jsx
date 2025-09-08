@@ -1,12 +1,12 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { router, useForm } from '@inertiajs/react';
-import { Calendar, Loader2, Users, GraduationCap, Code2, Palette, X } from 'lucide-react';
+import { Calendar, Code2, GraduationCap, Loader2, Palette, Users, X } from 'lucide-react';
 import { useEffect } from 'react';
 
 export function EditSessionModal({ open, onOpenChange, session, loading = false }) {
@@ -31,9 +31,9 @@ export function EditSessionModal({ open, onOpenChange, session, loading = false 
     const handleSubmit = async (e) => {
         e.preventDefault();
         router.put(`infosessions/${session.id}`, data, {
-            onSuccess:()=>{
+            onSuccess: () => {
                 onOpenChange(false);
-            }
+            },
         });
     };
 
@@ -54,12 +54,8 @@ export function EditSessionModal({ open, onOpenChange, session, loading = false 
                                 <GraduationCap className="h-6 w-6 text-[#212529]" />
                             </div>
                             <div>
-                                <DialogTitle className="text-xl font-bold text-white">
-                                    Edit Info Session
-                                </DialogTitle>
-                                <p className="mt-1 text-sm text-gray-300">
-                                    Update the details of this informational session
-                                </p>
+                                <DialogTitle className="text-xl font-bold text-white">Edit Info Session</DialogTitle>
+                                <p className="mt-1 text-sm text-gray-300">Update the details of this informational session</p>
                             </div>
                         </div>
                         {/* Custom close button */}
@@ -74,102 +70,94 @@ export function EditSessionModal({ open, onOpenChange, session, loading = false 
 
                 <div className="p-6">
                     <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Session Title */}
-                    <div className="space-y-2">
-                        <Label htmlFor="edit-title" className="text-sm font-medium text-[#212529]">
-                            Session Title <span className="text-[#ff7376]">*</span>
-                        </Label>
-                        <Input
-                            id="edit-title"
-                            value={data.name}
-                            onChange={(e) => handleChange('name', e.target.value)}
-                            placeholder="e.g., Web Development Program Overview"
-                            required
-                            disabled={loading}
-                            className="rounded-lg border focus:border-[#212529] transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20"
-                        />
-                        {errors.name && (
-                            <p className="text-[#ff7376] text-sm">{errors.name}</p>
-                        )}
-                    </div>
-
-                    {/* Program Type */}
-                    <div className="space-y-2">
-                        <Label htmlFor="edit-type" className="text-sm font-medium text-[#212529]">
-                            Program Type <span className="text-[#ff7376]">*</span>
-                        </Label>
-                        <Select value={data.formation} onValueChange={(value) => handleChange('formation', value)} disabled={loading}>
-                            <SelectTrigger className="rounded-lg border focus:border-[#212529] transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20">
-                                <SelectValue placeholder="Choose program type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Coding">
-                                    <div className="flex items-center gap-2">
-                                        <Code2 className="h-4 w-4" />
-                                        <span>Coding Program</span>
-                                    </div>
-                                </SelectItem>
-                                <SelectItem value="Media">
-                                    <div className="flex items-center gap-2">
-                                        <Palette className="h-4 w-4" />
-                                        <span>Media Program</span>
-                                    </div>
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        {errors.formation && (
-                            <p className="text-[#ff7376] text-sm">{errors.formation}</p>
-                        )}
-                    </div>
-
-                    {/* Date and Capacity */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Session Title */}
                         <div className="space-y-2">
-                            <Label htmlFor="edit-date" className="text-sm font-medium text-[#212529]">
-                                Start Date <span className="text-[#ff7376]">*</span>
+                            <Label htmlFor="edit-title" className="text-sm font-medium text-[#212529]">
+                                Session Title <span className="text-[#ff7376]">*</span>
                             </Label>
-                            <div className="relative">
-                                <Calendar className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-                                <Input
-                                    id="edit-date"
-                                    type="date"
-                                    value={data.start_date}
-                                    onChange={(e) => handleChange('start_date', e.target.value)}
-                                    className="pl-10 rounded-lg border focus:border-[#212529] transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20"
-                                    required
-                                    disabled={loading}
-                                    min={new Date().toISOString().split('T')[0]}
-                                />
-                            </div>
-                            {errors.start_date && (
-                                <p className="text-[#ff7376] text-sm">{errors.start_date}</p>
-                            )}
+                            <Input
+                                id="edit-title"
+                                value={data.name}
+                                onChange={(e) => handleChange('name', e.target.value)}
+                                placeholder="e.g., Web Development Program Overview"
+                                required
+                                disabled={loading}
+                                className="rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
+                            />
+                            {errors.name && <p className="text-sm text-[#ff7376]">{errors.name}</p>}
                         </div>
 
+                        {/* Program Type */}
                         <div className="space-y-2">
-                            <Label htmlFor="edit-capacity" className="text-sm font-medium text-[#212529]">
-                                Capacity <span className="text-[#ff7376]">*</span>
+                            <Label htmlFor="edit-type" className="text-sm font-medium text-[#212529]">
+                                Program Type <span className="text-[#ff7376]">*</span>
                             </Label>
-                            <div className="relative">
-                                <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-                                <Input
-                                    id="edit-capacity"
-                                    type="number"
-                                    value={data.places}
-                                    onChange={(e) => handleChange('places', e.target.value)}
-                                    placeholder="50"
-                                    className="pl-10 rounded-lg border focus:border-[#212529] transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20"
-                                    required
-                                    min="1"
-                                    max="500"
-                                    disabled={loading}
-                                />
-                            </div>
-                            {errors.places && (
-                                <p className="text-[#ff7376] text-sm">{errors.places}</p>
-                            )}
+                            <Select value={data.formation} onValueChange={(value) => handleChange('formation', value)} disabled={loading}>
+                                <SelectTrigger className="rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+                                    <SelectValue placeholder="Choose program type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Coding">
+                                        <div className="flex items-center gap-2">
+                                            <Code2 className="h-4 w-4" />
+                                            <span>Coding Program</span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="Media">
+                                        <div className="flex items-center gap-2">
+                                            <Palette className="h-4 w-4" />
+                                            <span>Media Program</span>
+                                        </div>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            {errors.formation && <p className="text-sm text-[#ff7376]">{errors.formation}</p>}
                         </div>
-                    </div>
+
+                        {/* Date and Capacity */}
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="edit-date" className="text-sm font-medium text-[#212529]">
+                                    Start Date <span className="text-[#ff7376]">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <Calendar className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                                    <Input
+                                        id="edit-date"
+                                        type="date"
+                                        value={data.start_date}
+                                        onChange={(e) => handleChange('start_date', e.target.value)}
+                                        className="rounded-lg border pl-10 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
+                                        required
+                                        disabled={loading}
+                                        min={new Date().toISOString().split('T')[0]}
+                                    />
+                                </div>
+                                {errors.start_date && <p className="text-sm text-[#ff7376]">{errors.start_date}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="edit-capacity" className="text-sm font-medium text-[#212529]">
+                                    Capacity <span className="text-[#ff7376]">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                                    <Input
+                                        id="edit-capacity"
+                                        type="number"
+                                        value={data.places}
+                                        onChange={(e) => handleChange('places', e.target.value)}
+                                        placeholder="50"
+                                        className="rounded-lg border pl-10 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
+                                        required
+                                        min="1"
+                                        max="500"
+                                        disabled={loading}
+                                    />
+                                </div>
+                                {errors.places && <p className="text-sm text-[#ff7376]">{errors.places}</p>}
+                            </div>
+                        </div>
 
                         {/* Action Buttons */}
                         <div className="flex gap-3 pt-4">

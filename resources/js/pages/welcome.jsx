@@ -37,7 +37,6 @@ export default function Welcome() {
                         )}
                     </nav>
                 </header>
-
             </div>
         </>
     );

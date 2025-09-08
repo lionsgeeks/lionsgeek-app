@@ -1,16 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
 import { useCallback } from 'react';
-import AppLogoIcon from '@/components/app-logo-icon';
 
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 // import AuthLayout from '@/layouts/auth-layout';
-import { Link } from '@inertiajs/react';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -19,34 +10,41 @@ export default function Login({ status, canResetPassword }) {
         remember: false,
     });
 
-    const submit = useCallback((e) => {
-        e.preventDefault();
-        post(route('login'), {
-            onFinish: () => reset('password'),
-        });
-    }, [post, reset]);
+    const submit = useCallback(
+        (e) => {
+            e.preventDefault();
+            post(route('login'), {
+                onFinish: () => reset('password'),
+            });
+        },
+        [post, reset],
+    );
 
     return (
-        <div className="flex items-center  overflow-hidden bg-black justify-center gap-4">
+        <div className="flex items-center justify-center gap-4 overflow-hidden bg-black">
             <Head title="Log in" />
 
-            <div className="bg-black text-black/50 dark:bg-black overflow-hidden dark:text-white/50">
-                <img
-                    id="background"
-                    className="absolute -left-20 top-0 w-[720px]"
-                    src="/assets/img/LgBg.svg"
-                    alt="Laravel background"
-                />
+            <div className="overflow-hidden bg-black text-black/50 dark:bg-black dark:text-white/50">
+                <img id="background" className="absolute top-0 -left-20 w-[720px]" src="/assets/img/LgBg.svg" alt="Laravel background" />
 
-                <div className="relative min-h-screen overflow-hidden flex flex-col items-center justify-center selection:bg-[#fee819] selection:text-white">
-                    <div className="relative overflow-hidden w-full max-w-2xl px-6 lg:max-w-7xl">
+                <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden selection:bg-[#fee819] selection:text-white">
+                    <div className="relative w-full max-w-2xl overflow-hidden px-6 lg:max-w-7xl">
                         {/* Header */}
                         <header className="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
-                            <div className="flex invert lg:justify-center lg:col-start-2">
-
-                                <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 280 280" preserveAspectRatio="xMidYMid meet">
-
-                                    <g transform="translate(0.000000,302.000000) scale(0.100000,-0.100000)" fill="darkmode ? '#ffffff' : '#000000'" stroke="none">
+                            <div className="flex invert lg:col-start-2 lg:justify-center">
+                                <svg
+                                    version="1.0"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="50"
+                                    height="50"
+                                    viewBox="0 0 280 280"
+                                    preserveAspectRatio="xMidYMid meet"
+                                >
+                                    <g
+                                        transform="translate(0.000000,302.000000) scale(0.100000,-0.100000)"
+                                        fill="darkmode ? '#ffffff' : '#000000'"
+                                        stroke="none"
+                                    >
                                         <path d="M705 3008 c-41 -120 -475 -1467 -475 -1474 1 -9 1238 -910 1257 -916 6 -2 294 203 640 454 l631 458 -84 257 c-46 142 -154 477 -241 745 l-158 488 -783 0 c-617 0 -784 -3 -787 -12z m1265 -412 c0 -3 65 -205 145 -451 80 -245 145 -448 145 -450 0 -2 -173 -130 -384 -283 l-384 -280 -384 279 c-283 207 -382 284 -380 297 5 22 283 875 289 885 4 7 953 10 953 3z"></path>
                                         <path d="M1176 1661 c21 -15 101 -74 178 -130 l139 -101 31 23 c17 13 92 68 166 122 74 54 139 102 144 106 6 5 -145 9 -344 9 l-354 0 40 -29z"></path>
                                     </g>
@@ -63,28 +61,22 @@ export default function Login({ status, canResetPassword }) {
                                     id="docs-card"
                                     className="flex flex-col items-start gap-6 overflow-hidden rounded-lg bg-[#18181b] p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#fee819] md:row-span-3 lg:p-10 lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#fee819]"
                                 >
-                                    <div
-                                        id="screenshot-container"
-                                        className="relative flex w-full flex-1 items-stretch"
-                                    >
+                                    <div id="screenshot-container" className="relative flex w-full flex-1 items-stretch">
                                         <img
                                             src="/assets/img/LgHero.png"
                                             alt="LionsGeek screenshot"
-                                            className="aspect-video h-full w-full flex-1 rounded-[10px] object-top object-cover drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
+                                            className="aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
                                         />
                                         <img
                                             src="/assets/img/LgHero.png"
                                             alt="LionsGeek screenshot dark"
-                                            className="hidden aspect-video h-full w-full flex-1 rounded-[10px] object-top object-cover drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
+                                            className="hidden aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
                                         />
                                         <div className="absolute -bottom-16 -left-16 h-40 w-[calc(100%+8rem)] bg-gradient-to-b from-transparent via-zinc-900 to-zinc-900 dark:via-zinc-900 dark:to-zinc-900" />
                                     </div>
 
                                     <div className="relative flex items-center gap-6 lg:items-end">
-                                        <div
-                                            id="docs-card-content"
-                                            className="flex items-start gap-6 lg:flex-col"
-                                        >
+                                        <div id="docs-card-content" className="flex items-start gap-6 lg:flex-col">
                                             <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#fee819]/10 sm:size-16">
                                                 {/* Icon */}
                                                 <svg
@@ -104,9 +96,7 @@ export default function Login({ status, canResetPassword }) {
                                             </div>
 
                                             <div className="pt-3 sm:pt-5 lg:pt-0">
-                                                <h2 className="text-xl font-semibold text-white">
-                                                    LionsGeek Front-End
-                                                </h2>
+                                                <h2 className="text-xl font-semibold text-white">LionsGeek Front-End</h2>
                                             </div>
                                         </div>
 
@@ -117,11 +107,7 @@ export default function Login({ status, canResetPassword }) {
                                             viewBox="0 0 24 24"
                                             strokeWidth={1.5}
                                         >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                                            />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
                                         </svg>
                                     </div>
                                 </a>
@@ -131,85 +117,67 @@ export default function Login({ status, canResetPassword }) {
                                     <form onSubmit={submit} className="w-[70%]">
                                         {/* Email */}
                                         <div>
-                                            <label className='text-gray-200 text-sm' htmlFor="email">Email:</label>
+                                            <label className="text-sm text-gray-200" htmlFor="email">
+                                                Email:
+                                            </label>
                                             <input
                                                 id="email"
                                                 type="email"
                                                 name="email"
                                                 value={data.email}
-                                                onChange={(e) =>
-                                                    setData("email", e.target.value)
-                                                }
-                                                className="block mt-1 w-full border rounded p-2 text-white"
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                className="mt-1 block w-full rounded border p-2 text-white"
                                                 required
                                                 autoFocus
                                                 autoComplete="username"
                                             />
-                                            {errors.email && (
-                                                <div className="mt-2 text-red-500 text-sm">
-                                                    {errors.email}
-                                                </div>
-                                            )}
+                                            {errors.email && <div className="mt-2 text-sm text-red-500">{errors.email}</div>}
                                         </div>
 
                                         {/* Password */}
                                         <div className="mt-4">
-                                            <label className='text-gray-200 text-sm' htmlFor="password">Password:</label>
+                                            <label className="text-sm text-gray-200" htmlFor="password">
+                                                Password:
+                                            </label>
                                             <input
                                                 id="password"
                                                 type="password"
                                                 name="password"
                                                 value={data.password}
-                                                onChange={(e) =>
-                                                    setData("password", e.target.value)
-                                                }
-                                                className="block mt-1 text-white w-full border rounded p-2"
+                                                onChange={(e) => setData('password', e.target.value)}
+                                                className="mt-1 block w-full rounded border p-2 text-white"
                                                 required
                                                 autoComplete="current-password"
                                             />
-                                            {errors.password && (
-                                                <div className="mt-2 text-red-500 text-sm">
-                                                    {errors.password}
-                                                </div>
-                                            )}
+                                            {errors.password && <div className="mt-2 text-sm text-red-500">{errors.password}</div>}
                                         </div>
 
                                         {/* Remember me */}
-                                        <div className="block mt-4">
-                                            <label
-                                                htmlFor="remember_me"
-                                                className="inline-flex items-center"
-                                            >
+                                        <div className="mt-4 block">
+                                            <label htmlFor="remember_me" className="inline-flex items-center">
                                                 <input
                                                     id="remember_me"
                                                     type="checkbox"
                                                     checked={data.remember}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            "remember",
-                                                            e.target.checked
-                                                        )
-                                                    }
+                                                    onChange={(e) => setData('remember', e.target.checked)}
                                                     className="rounded border-gray-300 text-alpha shadow-sm focus:ring-alpha"
                                                 />
-                                                <span className="ms-2 text-sm text-white">
-                                                    Remember me
-                                                </span>
+                                                <span className="ms-2 text-sm text-white">Remember me</span>
                                             </label>
                                         </div>
 
                                         {/* Actions */}
-                                        <div className="flex items-center justify-end mt-4">
+                                        <div className="mt-4 flex items-center justify-end">
                                             <a
-                                                href={route("password.request")}
-                                                className="underline text-sm text-gray-300 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-alpha"
+                                                href={route('password.request')}
+                                                className="rounded-md text-sm text-gray-300 underline hover:text-gray-900 focus:ring-2 focus:ring-alpha focus:ring-offset-2 focus:outline-none"
                                             >
                                                 Forgot your password?
                                             </a>
 
                                             <button
                                                 type="submit"
-                                                className="ms-3 bg-[#fee819] px-4 py-2 rounded text-black font-semibold disabled:opacity-50"
+                                                className="ms-3 rounded bg-[#fee819] px-4 py-2 font-semibold text-black disabled:opacity-50"
                                                 disabled={processing}
                                             >
                                                 Log in
@@ -221,13 +189,10 @@ export default function Login({ status, canResetPassword }) {
                         </main>
 
                         {/* Footer */}
-                        <footer className="py-16 text-center text-sm text-white/70">
-                            LionsGeek Coding Pro &copy;
-                        </footer>
+                        <footer className="py-16 text-center text-sm text-white/70">LionsGeek Coding Pro &copy;</footer>
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }

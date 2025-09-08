@@ -1,5 +1,5 @@
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import EventForm from "./EventForm";
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import EventForm from './EventForm';
 
 export default function EditEventDialog({ event, isOpen, onClose, onSuccess }) {
     const handleSuccess = () => {
@@ -9,13 +9,9 @@ export default function EditEventDialog({ event, isOpen, onClose, onSuccess }) {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
                 <DialogTitle className="sr-only">Edit Event</DialogTitle>
-                <EventForm
-                    event={event}
-                    onClose={onClose}
-                    onSuccess={handleSuccess}
-                />
+                <EventForm event={event} onClose={onClose} onSuccess={handleSuccess} />
             </DialogContent>
         </Dialog>
     );

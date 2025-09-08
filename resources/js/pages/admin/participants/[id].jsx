@@ -1,33 +1,30 @@
-import AppLayout from '@/layouts/app-layout';
-import { Head, usePage, router } from '@inertiajs/react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import AppLayout from '@/layouts/app-layout';
+import { Head, router, usePage } from '@inertiajs/react';
 import {
     ArrowLeft,
-    User,
-    Mail,
-    Phone,
-    MapPin,
+    BookOpen,
     Calendar,
-    GraduationCap,
     CheckCircle2,
     Clock,
-    Target,
-    MessageSquare,
-    FileText,
-    TrendingUp,
-    Star,
-    Award,
-    BookOpen,
     Edit,
-    XCircle
+    FileText,
+    GraduationCap,
+    Mail,
+    MapPin,
+    MessageSquare,
+    Phone,
+    Star,
+    Target,
+    TrendingUp,
+    User,
 } from 'lucide-react';
 import { AdminNotesSection } from './partials/admin-notes-section';
 import { FrequentQuestionsSection } from './partials/frequent-questions-section';
 import { MotivationSection } from './partials/motivation-section';
-import { ParticipantProfileHeader } from './partials/participant-profile-header';
 import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-section';
 export default function ParticipantProfilePage() {
     const { participant } = usePage().props;
@@ -35,14 +32,14 @@ export default function ParticipantProfilePage() {
     if (!participant) {
         return (
             <AppLayout>
-                <div className="min-h-screen bg-white flex items-center justify-center">
-                    <div className="text-center p-8">
-                        <User className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <div className="flex min-h-screen items-center justify-center bg-white">
+                    <div className="p-8 text-center">
+                        <User className="mx-auto mb-4 h-16 w-16 text-gray-400" />
                         <h1 className="mb-4 text-2xl font-bold text-[#212529]">Participant Not Found</h1>
                         <p className="mb-6 text-gray-600">The participant you're looking for doesn't exist.</p>
                         <Button
                             onClick={() => router.visit('/admin/participants')}
-                            className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                            className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to Participants
@@ -65,29 +62,29 @@ export default function ParticipantProfilePage() {
     ];
 
     const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
         });
     };
 
     const getStepColor = (step) => {
-        switch(step) {
+        switch (step) {
             case 'info_session':
-                return "bg-[#f2f2f2] text-[#212529]";
+                return 'bg-[#f2f2f2] text-[#212529]';
             case 'interview':
-                return "bg-[#fee819] text-[#212529]";
+                return 'bg-[#fee819] text-[#212529]';
             case 'interview_pending':
-                return "bg-[#fee819] text-[#212529]";
+                return 'bg-[#fee819] text-[#212529]';
             case 'interview_failed':
-                return "bg-[#ff7376] text-white";
+                return 'bg-[#ff7376] text-white';
             case 'jungle':
-                return "bg-[#fee819] text-[#212529]";
+                return 'bg-[#fee819] text-[#212529]';
             case 'jungle_failed':
-                return "bg-[#ff7376] text-white";
+                return 'bg-[#ff7376] text-white';
             default:
-                return "bg-[#212529] text-white";
+                return 'bg-[#212529] text-white';
         }
     };
 
@@ -106,11 +103,11 @@ export default function ParticipantProfilePage() {
                 {/* Header Banner */}
                 <div className="bg-[#212529] text-white">
                     <div className="p-6">
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="mb-4 flex items-center justify-between">
                             <Button
                                 onClick={() => router.visit('/admin/participants')}
                                 variant="ghost"
-                                className="text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
+                                className="rounded-lg text-white transition-all duration-200 ease-in-out hover:bg-[#fee819] hover:text-[#212529]"
                             >
                                 <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back to Participants
@@ -119,59 +116,59 @@ export default function ParticipantProfilePage() {
                             <Button
                                 onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)}
                                 variant="ghost"
-                                className="text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
+                                className="rounded-lg text-white transition-all duration-200 ease-in-out hover:bg-[#fee819] hover:text-[#212529]"
                             >
                                 <Edit className="mr-2 h-4 w-4" />
                                 Edit Profile
                             </Button>
                         </div>
 
-                        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
+                        <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center">
                             {/* Profile Image & Basic Info */}
                             <div className="flex items-center gap-6">
                                 <div className="relative">
-                                    <div className="w-24 h-24 rounded-xl overflow-hidden bg-white/10">
+                                    <div className="h-24 w-24 overflow-hidden rounded-xl bg-white/10">
                                         {participant.image ? (
                                             <img
                                                 src={'/storage/images/participants/' + participant.image}
                                                 alt={participant.full_name}
-                                                className="w-full h-full object-cover"
+                                                className="h-full w-full object-cover"
                                             />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center">
-                                                <User className="w-8 h-8 text-white/60" />
+                                            <div className="flex h-full w-full items-center justify-center">
+                                                <User className="h-8 w-8 text-white/60" />
                                             </div>
                                         )}
                                     </div>
-                                    <div className="absolute -bottom-2 -right-2">
-                                        <div className="bg-[#fee819] rounded-full p-1">
-                                            <CheckCircle2 className="w-4 h-4 text-[#212529]" />
+                                    <div className="absolute -right-2 -bottom-2">
+                                        <div className="rounded-full bg-[#fee819] p-1">
+                                            <CheckCircle2 className="h-4 w-4 text-[#212529]" />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="flex-1">
-                                    <h1 className="text-3xl font-bold mb-2">{participant.full_name}</h1>
-                                    <div className="flex flex-wrap gap-2 mb-3">
+                                    <h1 className="mb-2 text-3xl font-bold">{participant.full_name}</h1>
+                                    <div className="mb-3 flex flex-wrap gap-2">
                                         <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1 font-medium`}>
                                             {participant.current_step.replaceAll('_', ' ')}
                                         </Badge>
                                         {participant.info_session ? (
-                                            <Badge className="bg-[#fee819] text-[#212529] rounded-lg px-3 py-1 font-medium">
+                                            <Badge className="rounded-lg bg-[#fee819] px-3 py-1 font-medium text-[#212529]">
                                                 {participant.info_session.formation}
                                             </Badge>
                                         ) : (
-                                            <Badge className="bg-gray-500 text-white rounded-lg px-3 py-1 font-medium">
+                                            <Badge className="rounded-lg bg-gray-500 px-3 py-1 font-medium text-white">
                                                 {participant.formation_field || 'No Session'}
                                             </Badge>
                                         )}
                                         {(participant.current_step === 'jungle' || participant.current_step?.includes('school')) && (
                                             <Badge
-                                                className={`${getConfirmationStatus(participant)
-                                                    ? 'bg-[#51b04f] text-white'
-                                                    : 'bg-yellow-500 text-white'} rounded-lg px-3 py-1 font-medium`}
+                                                className={`${
+                                                    getConfirmationStatus(participant) ? 'bg-[#51b04f] text-white' : 'bg-yellow-500 text-white'
+                                                } rounded-lg px-3 py-1 font-medium`}
                                             >
-                                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                                <CheckCircle2 className="mr-1 h-3 w-3" />
                                                 {getConfirmationStatus(participant) ? 'Confirmed' : 'Pending'}
                                             </Badge>
                                         )}
@@ -181,26 +178,28 @@ export default function ParticipantProfilePage() {
                             </div>
 
                             {/* Quick Stats */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:ml-auto">
-                                <div className="text-center p-3 bg-white/10 rounded-lg">
-                                    <Calendar className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
+                            <div className="grid grid-cols-2 gap-4 lg:ml-auto lg:grid-cols-4">
+                                <div className="rounded-lg bg-white/10 p-3 text-center">
+                                    <Calendar className="mx-auto mb-1 h-5 w-5 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Birthday</div>
                                     <div className="text-sm font-medium">{formatDate(participant.birthday)}</div>
                                 </div>
-                                <div className="text-center p-3 bg-white/10 rounded-lg">
-                                    <MapPin className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
+                                <div className="rounded-lg bg-white/10 p-3 text-center">
+                                    <MapPin className="mx-auto mb-1 h-5 w-5 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Location</div>
                                     <div className="text-sm font-medium capitalize">{participant.city}</div>
                                 </div>
-                                <div className="text-center p-3 bg-white/10 rounded-lg">
-                                    <Target className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
+                                <div className="rounded-lg bg-white/10 p-3 text-center">
+                                    <Target className="mx-auto mb-1 h-5 w-5 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Gender</div>
                                     <div className="text-sm font-medium capitalize">{participant.gender}</div>
                                 </div>
-                                <div className="text-center p-3 bg-white/10 rounded-lg">
-                                    <GraduationCap className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
+                                <div className="rounded-lg bg-white/10 p-3 text-center">
+                                    <GraduationCap className="mx-auto mb-1 h-5 w-5 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Program</div>
-                                    <div className="text-sm font-medium">{participant.info_session?.formation || participant.formation_field || 'Not assigned'}</div>
+                                    <div className="text-sm font-medium">
+                                        {participant.info_session?.formation || participant.formation_field || 'Not assigned'}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -209,41 +208,43 @@ export default function ParticipantProfilePage() {
 
                 {/* Main Content */}
                 <div className="p-6 pb-3">
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
                         {/* Contact & Personal Info */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                        <Card className="rounded-lg border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <Mail className="w-5 h-5" />
+                                    <Mail className="h-5 w-5" />
                                     Contact Information
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <Mail className="w-4 h-4 text-[#212529] flex-shrink-0" />
+                                <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
+                                    <Mail className="h-4 w-4 flex-shrink-0 text-[#212529]" />
                                     <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Email</div>
-                                        <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
+                                        <div className="mb-1 text-xs text-gray-500">Email</div>
+                                        <div className="truncate text-sm font-medium text-[#212529]">{participant.email}</div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <Phone className="w-4 h-4 text-[#212529] flex-shrink-0" />
+                                <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
+                                    <Phone className="h-4 w-4 flex-shrink-0 text-[#212529]" />
                                     <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Phone</div>
+                                        <div className="mb-1 text-xs text-gray-500">Phone</div>
                                         <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <MapPin className="w-4 h-4 text-[#212529] flex-shrink-0" />
+                                <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
+                                    <MapPin className="h-4 w-4 flex-shrink-0 text-[#212529]" />
                                     <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Address</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.city}, {participant.prefecture?.replaceAll('_', ' ')}</div>
+                                        <div className="mb-1 text-xs text-gray-500">Address</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">
+                                            {participant.city}, {participant.prefecture?.replaceAll('_', ' ')}
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <Calendar className="w-4 h-4 text-[#212529] flex-shrink-0" />
+                                <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
+                                    <Calendar className="h-4 w-4 flex-shrink-0 text-[#212529]" />
                                     <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Birthday</div>
+                                        <div className="mb-1 text-xs text-gray-500">Birthday</div>
                                         <div className="text-sm font-medium text-[#212529]">{formatDate(participant.birthday)}</div>
                                     </div>
                                 </div>
@@ -251,10 +252,10 @@ export default function ParticipantProfilePage() {
                         </Card>
 
                         {/* Session Details */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                        <Card className="rounded-lg border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <BookOpen className="w-5 h-5" />
+                                    <BookOpen className="h-5 w-5" />
                                     Session Details
                                 </CardTitle>
                             </CardHeader>
@@ -262,23 +263,23 @@ export default function ParticipantProfilePage() {
                                 {participant.info_session ? (
                                     <>
                                         <div>
-                                            <div className="text-xs text-gray-500 mb-1">Session Name</div>
+                                            <div className="mb-1 text-xs text-gray-500">Session Name</div>
                                             <div className="text-sm font-medium text-[#212529]">{participant.info_session.name}</div>
                                         </div>
                                         <Separator />
                                         <div>
-                                            <div className="text-xs text-gray-500 mb-1">Start Date</div>
+                                            <div className="mb-1 text-xs text-gray-500">Start Date</div>
                                             <div className="text-sm font-medium text-[#212529]">{participant.info_session.start_date}</div>
                                         </div>
                                         <Separator />
                                         <div>
-                                            <div className="text-xs text-gray-500 mb-1">Formation Type</div>
+                                            <div className="mb-1 text-xs text-gray-500">Formation Type</div>
                                             <div className="text-sm font-medium text-[#212529]">{participant.info_session.formation}</div>
                                         </div>
                                     </>
                                 ) : (
-                                    <div className="text-center py-4">
-                                        <div className="text-sm text-gray-500 mb-2">No session assigned yet</div>
+                                    <div className="py-4 text-center">
+                                        <div className="mb-2 text-sm text-gray-500">No session assigned yet</div>
                                         <div className="text-xs text-gray-400">
                                             {participant.formation_field && `Applied for: ${participant.formation_field}`}
                                         </div>
@@ -288,36 +289,38 @@ export default function ParticipantProfilePage() {
                         </Card>
 
                         {/* Application Details */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                        <Card className="rounded-lg border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <FileText className="w-5 h-5" />
+                                    <FileText className="h-5 w-5" />
                                     Application Details
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Formation Field</div>
+                                    <div className="mb-1 text-xs text-gray-500">Formation Field</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{participant.formation_field || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Region</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.region?.replaceAll('_', ' ') || '-'}</div>
+                                    <div className="mb-1 text-xs text-gray-500">Region</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">
+                                        {participant.region?.replaceAll('_', ' ') || '-'}
+                                    </div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Other City</div>
+                                    <div className="mb-1 text-xs text-gray-500">Other City</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{participant.other_city || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Gender</div>
+                                    <div className="mb-1 text-xs text-gray-500">Gender</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{participant.gender || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Source</div>
+                                    <div className="mb-1 text-xs text-gray-500">Source</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.source || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">CV</div>
+                                    <div className="mb-1 text-xs text-gray-500">CV</div>
                                     <div className="text-sm font-medium text-[#212529]">
                                         {participant.cv_file ? (
                                             <a
@@ -337,169 +340,177 @@ export default function ParticipantProfilePage() {
                         </Card>
 
                         {/* Education & Situation */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                        <Card className="rounded-lg border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <GraduationCap className="w-5 h-5" />
+                                    <GraduationCap className="h-5 w-5" />
                                     Education & Situation
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Education Level</div>
+                                    <div className="mb-1 text-xs text-gray-500">Education Level</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{participant.education_level || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Institution</div>
+                                    <div className="mb-1 text-xs text-gray-500">Institution</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.diploma_institution || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Specialty</div>
+                                    <div className="mb-1 text-xs text-gray-500">Specialty</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.diploma_specialty || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Current Situation</div>
+                                    <div className="mb-1 text-xs text-gray-500">Current Situation</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{participant.current_situation || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Other Status</div>
+                                    <div className="mb-1 text-xs text-gray-500">Other Status</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.other_status || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Referring Organization</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.has_referring_organization ? `${participant.has_referring_organization} - ${participant.referring_organization || '-'}` : '-'}</div>
+                                    <div className="mb-1 text-xs text-gray-500">Referring Organization</div>
+                                    <div className="text-sm font-medium text-[#212529]">
+                                        {participant.has_referring_organization
+                                            ? `${participant.has_referring_organization} - ${participant.referring_organization || '-'}`
+                                            : '-'}
+                                    </div>
                                 </div>
                                 <div className="md:col-span-2">
-                                    <div className="text-xs text-gray-500 mb-1">Other Organization</div>
+                                    <div className="mb-1 text-xs text-gray-500">Other Organization</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.other_organization || '-'}</div>
                                 </div>
                             </CardContent>
                         </Card>
 
                         {/* Game Results */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                        <Card className="rounded-lg border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <Star className="w-5 h-5" />
+                                    <Star className="h-5 w-5" />
                                     Game Results
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Completed</div>
+                                    <div className="mb-1 text-xs text-gray-500">Completed</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.game_completed ? 'Yes' : 'No'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Correct Answers</div>
+                                    <div className="mb-1 text-xs text-gray-500">Correct Answers</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.correct_answers ?? '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Levels Completed</div>
+                                    <div className="mb-1 text-xs text-gray-500">Levels Completed</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.levels_completed ?? '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Total Attempts</div>
+                                    <div className="mb-1 text-xs text-gray-500">Total Attempts</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.total_attempts ?? '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Wrong Attempts</div>
+                                    <div className="mb-1 text-xs text-gray-500">Wrong Attempts</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.wrong_attempts ?? '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Time Spent</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.time_spent_formatted || (participant.time_spent ? `${participant.time_spent}s` : '-')}</div>
+                                    <div className="mb-1 text-xs text-gray-500">Time Spent</div>
+                                    <div className="text-sm font-medium text-[#212529]">
+                                        {participant.time_spent_formatted || (participant.time_spent ? `${participant.time_spent}s` : '-')}
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
 
                         {/* Languages */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                        <Card className="rounded-lg border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <MessageSquare className="w-5 h-5" />
+                                    <MessageSquare className="h-5 w-5" />
                                     Languages
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Arabic</div>
+                                    <div className="mb-1 text-xs text-gray-500">Arabic</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{participant.arabic_level || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">French</div>
+                                    <div className="mb-1 text-xs text-gray-500">French</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{participant.french_level || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">English</div>
+                                    <div className="mb-1 text-xs text-gray-500">English</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{participant.english_level || '-'}</div>
                                 </div>
                             </CardContent>
                         </Card>
 
                         {/* Background & Availability */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                        <Card className="rounded-lg border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <Clock className="w-5 h-5" />
+                                    <Clock className="h-5 w-5" />
                                     Background & Availability
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">How heard about formation</div>
+                                    <div className="mb-1 text-xs text-gray-500">How heard about formation</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.how_heard_about_formation || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Current Commitments</div>
+                                    <div className="mb-1 text-xs text-gray-500">Current Commitments</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.current_commitments || '-'}</div>
                                 </div>
                             </CardContent>
                         </Card>
 
                         {/* Training & Experience */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                        <Card className="rounded-lg border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <TrendingUp className="w-5 h-5" />
+                                    <TrendingUp className="h-5 w-5" />
                                     Training & Experience
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <div className="text-xs text-gray-500 mb-1">Has Training</div>
+                                        <div className="mb-1 text-xs text-gray-500">Has Training</div>
                                         <div className="text-sm font-medium text-[#212529] capitalize">{participant.has_training || '-'}</div>
                                     </div>
                                     <div>
-                                        <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.participated_lionsgeek || '-'}</div>
+                                        <div className="mb-1 text-xs text-gray-500">Participated in LionsGEEK</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">
+                                            {participant.participated_lionsgeek || '-'}
+                                        </div>
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Previous Training Details</div>
+                                    <div className="mb-1 text-xs text-gray-500">Previous Training Details</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.previous_training_details || '-'}</div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
+                                        <div className="mb-1 text-xs text-gray-500">LionsGEEK Activity</div>
                                         <div className="text-sm font-medium text-[#212529]">{participant.lionsgeek_activity || '-'}</div>
                                     </div>
                                     <div>
-                                        <div className="text-xs text-gray-500 mb-1">Other Activity</div>
+                                        <div className="mb-1 text-xs text-gray-500">Other Activity</div>
                                         <div className="text-sm font-medium text-[#212529]">{participant.other_activity || '-'}</div>
                                     </div>
                                 </div>
                                 <Separator />
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Objectives After Formation</div>
+                                    <div className="mb-1 text-xs text-gray-500">Objectives After Formation</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.objectives_after_formation || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Priority Learning Topics</div>
+                                    <div className="mb-1 text-xs text-gray-500">Priority Learning Topics</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.priority_learning_topics || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Last Self Learned</div>
+                                    <div className="mb-1 text-xs text-gray-500">Last Self Learned</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.last_self_learned || '-'}</div>
                                 </div>
                             </CardContent>

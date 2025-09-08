@@ -1,10 +1,10 @@
+import { useAppContext } from '@/context/appContext';
+import { router, usePage } from '@inertiajs/react';
+import gsap from 'gsap';
 import { useEffect, useRef, useState } from 'react';
 import developer from '../../../../../assets/images/Programmer-cuate.svg';
 import { Button } from '../../../../components/Button';
 import { TransText } from '../../../../components/TransText';
-import { useAppContext } from '@/context/appContext';
-import { Link, usePage, router } from '@inertiajs/react';
-import gsap from 'gsap';
 
 export const FirstSection = () => {
     const { sessions } = usePage().props;

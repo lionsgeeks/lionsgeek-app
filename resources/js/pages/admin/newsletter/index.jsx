@@ -1,12 +1,11 @@
-import AppLayout from "@/layouts/app-layout";
-import { Head, useForm, usePage } from "@inertiajs/react";
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { Mail, Send, Users, History, Calendar, MessageSquare } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app-layout';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { Calendar, History, Mail, MessageSquare, Send, Users } from 'lucide-react';
 
 const breadcrumbs = [
     {
@@ -14,7 +13,6 @@ const breadcrumbs = [
         href: '/admin/newsletter',
     },
 ];
-
 
 export default function NewsletterAdmin() {
     const { subscribers = [], lastnews = [] } = usePage().props;
@@ -25,7 +23,7 @@ export default function NewsletterAdmin() {
 
     const handleSendNewsletter = (e) => {
         e.preventDefault();
-        post(route('newsletter.store'))
+        post(route('newsletter.store'));
     };
 
     // Format date function
@@ -37,7 +35,7 @@ export default function NewsletterAdmin() {
                 month: 'long',
                 day: 'numeric',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
             });
         } catch (error) {
             return dateString;
@@ -188,22 +186,22 @@ export default function NewsletterAdmin() {
                                 {lastnews.length > 0 ? (
                                     <div className="space-y-4">
                                         {recentNewsletters.map((newsletter, index) => (
-                                            <div key={index} className="rounded-lg border border-gray-200 p-4 transition-all duration-200 hover:bg-gray-50">
+                                            <div
+                                                key={index}
+                                                className="rounded-lg border border-gray-200 p-4 transition-all duration-200 hover:bg-gray-50"
+                                            >
                                                 <div className="flex items-start justify-between">
                                                     <div className="flex-1">
-                                                        <h3 className="font-semibold text-[#212529] line-clamp-1">
-                                                            {newsletter.subject}
-                                                        </h3>
+                                                        <h3 className="line-clamp-1 font-semibold text-[#212529]">{newsletter.subject}</h3>
                                                         <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
                                                             <Calendar className="h-4 w-4" />
                                                             <span>{formatDate(newsletter.created_at)}</span>
                                                         </div>
                                                         {newsletter.content && (
-                                                            <p className="mt-2 text-sm text-gray-500 line-clamp-2">
-                                                                {newsletter.content.length > 100 
+                                                            <p className="mt-2 line-clamp-2 text-sm text-gray-500">
+                                                                {newsletter.content.length > 100
                                                                     ? newsletter.content.substring(0, 100) + '...'
-                                                                    : newsletter.content
-                                                                }
+                                                                    : newsletter.content}
                                                             </p>
                                                         )}
                                                     </div>
@@ -233,5 +231,5 @@ export default function NewsletterAdmin() {
                 </div>
             </div>
         </AppLayout>
-    )
+    );
 }

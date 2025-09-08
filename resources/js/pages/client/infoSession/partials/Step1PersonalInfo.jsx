@@ -1,12 +1,12 @@
 import { TransText } from '../../../../components/TransText';
 
-const Required = () => <span className="text-red-500 ml-1">*</span>;
+const Required = () => <span className="ml-1 text-red-500">*</span>;
 
 const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLanguage, sessions = [] }) => {
     return (
         <div className="space-y-6">
             <div className="text-center">
-                <h2 className={`text-2xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                <h2 className={`mb-2 text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                     <TransText en="Personal Information" fr="Informations Personnelles" ar="المعلومات الشخصية" />
                 </h2>
                 <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -14,10 +14,10 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {/* Full Name */}
                 <div className="md:col-span-2">
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="Full Name" fr="Nom + Prénom" ar="الاسم الكامل" />
                         <Required />
                     </label>
@@ -26,20 +26,27 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         name="full_name"
                         value={data.full_name}
                         onChange={handleChange}
-                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
-                                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                            }`}
-                        placeholder={selectedLanguage === 'en' ? 'Enter your full name' : selectedLanguage === 'fr' ? 'Entrez votre nom complet' : 'أدخل اسمك الكامل'}
+                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode
+                                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                        }`}
+                        placeholder={
+                            selectedLanguage === 'en'
+                                ? 'Enter your full name'
+                                : selectedLanguage === 'fr'
+                                  ? 'Entrez votre nom complet'
+                                  : 'أدخل اسمك الكامل'
+                        }
                         required
                         autoComplete="off"
                     />
-                    {errors.full_name && <span className="text-sm text-red-500 mt-1">{errors.full_name}</span>}
+                    {errors.full_name && <span className="mt-1 text-sm text-red-500">{errors.full_name}</span>}
                 </div>
 
                 {/* Birthday */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="Date of Birth" fr="Date de naissance" ar="تاريخ الميلاد" />
                         <Required />
                     </label>
@@ -50,16 +57,17 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         onChange={handleChange}
                         max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
                         min={new Date(new Date().setFullYear(new Date().getFullYear() - 30)).toISOString().split('T')[0]}
-                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
-                                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                            }`}
+                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode
+                                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                        }`}
                         required
                         autoComplete="off"
                     />
-                    {errors.birthday && <span className="text-sm text-red-500 mt-1">{errors.birthday}</span>}
+                    {errors.birthday && <span className="mt-1 text-sm text-red-500">{errors.birthday}</span>}
                     {data.birthday && (
-                        <p className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <p className={`mt-1 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                             <TransText
                                 en={`Age: ${Math.floor((new Date() - new Date(data.birthday)) / (365.25 * 24 * 60 * 60 * 1000))} years`}
                                 fr={`Âge: ${Math.floor((new Date() - new Date(data.birthday)) / (365.25 * 24 * 60 * 60 * 1000))} ans`}
@@ -71,7 +79,7 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
 
                 {/* City */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="City" fr="Ville" ar="المدينة" />
                         <Required />
                     </label>
@@ -79,10 +87,9 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         name="city"
                         value={data.city}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
-                                ? 'bg-gray-700 border-gray-600 text-white'
-                                : 'bg-white border-gray-300 text-gray-900'
-                            }`}
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                        }`}
                         required
                         autoComplete="off"
                     >
@@ -123,13 +130,13 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                             <TransText en="Other" fr="Autre" ar="أخرى" />
                         </option>
                     </select>
-                    {errors.city && <span className="text-sm text-red-500 mt-1">{errors.city}</span>}
+                    {errors.city && <span className="mt-1 text-sm text-red-500">{errors.city}</span>}
                 </div>
 
                 {/* Region (only for Casablanca) */}
                 {data.city === 'casablanca' && (
                     <div>
-                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                             <TransText en="Region" fr="Région" ar="المنطقة" />
                             <Required />
                         </label>
@@ -137,10 +144,9 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                             name="region"
                             value={data.region}
                             onChange={handleChange}
-                            className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
-                                    ? 'bg-gray-700 border-gray-600 text-white'
-                                    : 'bg-white border-gray-300 text-gray-900'
-                                }`}
+                            className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                                darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                            }`}
                             required
                             autoComplete="off"
                         >
@@ -184,14 +190,14 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                                 <TransText en="Sidi Othmane" fr="Sidi Othmane" ar="سيدي عثمان" />
                             </option>
                         </select>
-                        {errors.region && <span className="text-sm text-red-500 mt-1">{errors.region}</span>}
+                        {errors.region && <span className="mt-1 text-sm text-red-500">{errors.region}</span>}
                     </div>
                 )}
 
                 {/* Other City (conditional) */}
                 {data.city === 'other' && (
                     <div>
-                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                             <TransText en="Please specify your city" fr="Veuillez préciser votre ville" ar="يرجى تحديد مدينتك" />
                             <Required />
                         </label>
@@ -200,21 +206,28 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                             name="other_city"
                             value={data.other_city}
                             onChange={handleChange}
-                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
-                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                                }`}
-                            placeholder={selectedLanguage === 'en' ? 'Enter your city name' : selectedLanguage === 'fr' ? 'Entrez le nom de votre ville' : 'أدخل اسم مدينتك'}
+                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                                darkMode
+                                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                    : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                            }`}
+                            placeholder={
+                                selectedLanguage === 'en'
+                                    ? 'Enter your city name'
+                                    : selectedLanguage === 'fr'
+                                      ? 'Entrez le nom de votre ville'
+                                      : 'أدخل اسم مدينتك'
+                            }
                             required
                             autoComplete="off"
                         />
-                        {errors.other_city && <span className="text-sm text-red-500 mt-1">{errors.other_city}</span>}
+                        {errors.other_city && <span className="mt-1 text-sm text-red-500">{errors.other_city}</span>}
                     </div>
                 )}
 
                 {/* Email */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="Email Address" fr="Adresse e-mail" ar="البريد الإلكتروني" />
                         <Required />
                     </label>
@@ -223,22 +236,29 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                         name="email"
                         value={data.email}
                         onChange={handleChange}
-                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${errors.email
+                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            errors.email
                                 ? 'border-red-500 text-red-500'
                                 : darkMode
-                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                            }`}
-                        placeholder={selectedLanguage === 'en' ? 'your.email@example.com' : selectedLanguage === 'fr' ? 'votre.email@exemple.com' : 'بريدك@مثال.com'}
+                                  ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                  : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                        }`}
+                        placeholder={
+                            selectedLanguage === 'en'
+                                ? 'your.email@example.com'
+                                : selectedLanguage === 'fr'
+                                  ? 'votre.email@exemple.com'
+                                  : 'بريدك@مثال.com'
+                        }
                         required
                         autoComplete="off"
                     />
-                    {errors.email && <span className="text-sm text-red-500 mt-1">{errors.email}</span>}
+                    {errors.email && <span className="mt-1 text-sm text-red-500">{errors.email}</span>}
                 </div>
 
                 {/* Phone */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="Phone Number" fr="Numéro de téléphone" ar="رقم الهاتف" />
                         <Required />
                     </label>
@@ -251,30 +271,32 @@ const Step1PersonalInfo = ({ data, handleChange, errors, darkMode, selectedLangu
                             const value = e.target.value.replace(/[^0-9+\-\s()]/g, '');
                             handleChange({ target: { name: 'phone', value } });
                         }}
-                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
-                                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                            }`}
-                        placeholder={selectedLanguage === 'en' ? '+212 6XX XXX XXX' : selectedLanguage === 'fr' ? '+212 6XX XXX XXX' : '+212 6XX XXX XXX'}
+                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode
+                                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                        }`}
+                        placeholder={
+                            selectedLanguage === 'en' ? '+212 6XX XXX XXX' : selectedLanguage === 'fr' ? '+212 6XX XXX XXX' : '+212 6XX XXX XXX'
+                        }
                         required
                         autoComplete="off"
                     />
-                    {errors.phone && <span className="text-sm text-red-500 mt-1">{errors.phone}</span>}
+                    {errors.phone && <span className="mt-1 text-sm text-red-500">{errors.phone}</span>}
                 </div>
 
                 {/* Gender */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="Gender" fr="Genre" ar="الجنس" />
                     </label>
                     <select
                         name="gender"
                         value={data.gender}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${darkMode
-                                ? 'bg-gray-700 border-gray-600 text-white'
-                                : 'bg-white border-gray-300 text-gray-900'
-                            }`}
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                        }`}
                         autoComplete="off"
                     >
                         <option value="" className={darkMode ? 'bg-gray-700' : 'bg-white'}>

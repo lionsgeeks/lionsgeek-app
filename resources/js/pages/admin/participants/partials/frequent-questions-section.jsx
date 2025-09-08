@@ -13,13 +13,13 @@ export function FrequentQuestionsSection({ participant }) {
     const [openSections, setOpenSections] = useState({
         background: false,
         interest: false,
-        additional: false
+        additional: false,
     });
 
     const toggleSection = (section) => {
-        setOpenSections(prev => ({
+        setOpenSections((prev) => ({
             ...prev,
-            [section]: !prev[section]
+            [section]: !prev[section],
         }));
     };
 
@@ -41,7 +41,7 @@ export function FrequentQuestionsSection({ participant }) {
     });
 
     const handleSave = () => {
-        post(route(`participant.questions`, participant.id))
+        post(route(`participant.questions`, participant.id));
     };
 
     const handleChange = (field, value) => {
@@ -63,9 +63,11 @@ export function FrequentQuestionsSection({ participant }) {
                 {/* Background Section */}
                 <Collapsible open={openSections.background} onOpenChange={() => toggleSection('background')}>
                     <CollapsibleTrigger className="w-full">
-                        <div className="flex items-center justify-between w-full mb-4 cursor-pointer pb-2 text-lg font-semibold hover:text-[#fee819] transition-colors duration-200">
+                        <div className="mb-4 flex w-full cursor-pointer items-center justify-between pb-2 text-lg font-semibold transition-colors duration-200 hover:text-[#fee819]">
                             <h3>Background</h3>
-                            <ChevronDown className={`h-5 w-5 text-[#212529] transition-transform duration-200 ${openSections.background ? 'rotate-180' : ''}`} />
+                            <ChevronDown
+                                className={`h-5 w-5 text-[#212529] transition-transform duration-200 ${openSections.background ? 'rotate-180' : ''}`}
+                            />
                         </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
@@ -135,9 +137,11 @@ export function FrequentQuestionsSection({ participant }) {
                 {/* Interest Section */}
                 <Collapsible open={openSections.interest} onOpenChange={() => toggleSection('interest')}>
                     <CollapsibleTrigger className="w-full">
-                        <div className="flex items-center justify-between w-full mb-4 cursor-pointer text-lg font-semibold hover:text-[#fee819] transition-colors duration-200">
+                        <div className="mb-4 flex w-full cursor-pointer items-center justify-between text-lg font-semibold transition-colors duration-200 hover:text-[#fee819]">
                             <h3>Interest</h3>
-                            <ChevronDown className={`h-5 w-5 text-[#212529] transition-transform duration-200 ${openSections.interest ? 'rotate-180' : ''}`} />
+                            <ChevronDown
+                                className={`h-5 w-5 text-[#212529] transition-transform duration-200 ${openSections.interest ? 'rotate-180' : ''}`}
+                            />
                         </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
@@ -195,9 +199,11 @@ export function FrequentQuestionsSection({ participant }) {
                 {/* Additional Section */}
                 <Collapsible open={openSections.additional} onOpenChange={() => toggleSection('additional')}>
                     <CollapsibleTrigger className="w-full">
-                        <div className="flex items-center justify-between w-full mb-4 cursor-pointer text-lg font-semibold hover:text-[#fee819] transition-colors duration-200">
+                        <div className="mb-4 flex w-full cursor-pointer items-center justify-between text-lg font-semibold transition-colors duration-200 hover:text-[#fee819]">
                             <h3>Additional</h3>
-                            <ChevronDown className={`h-5 w-5 text-[#212529] transition-transform duration-200 ${openSections.additional ? 'rotate-180' : ''}`} />
+                            <ChevronDown
+                                className={`h-5 w-5 text-[#212529] transition-transform duration-200 ${openSections.additional ? 'rotate-180' : ''}`}
+                            />
                         </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent>

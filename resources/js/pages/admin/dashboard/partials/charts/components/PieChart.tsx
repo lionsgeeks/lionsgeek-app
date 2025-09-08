@@ -1,59 +1,59 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { Label, Pie, PieChart } from "recharts"
+import * as React from 'react';
+import { Label, Pie, PieChart } from 'recharts';
 
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
-export const description = "A donut chart with text"
+export const description = 'A donut chart with text';
 
 interface PieStep {
-    step: string
-    total: number
-    male: number
-    female: number
+    step: string;
+    total: number;
+    male: number;
+    female: number;
 }
 
 interface DonutChartProps {
-    pieChart: PieStep[]
-    id: number | string
+    pieChart: PieStep[];
+    id: number | string;
 }
 
 const chartConfig: ChartConfig = {
     male: {
-        label: "Male",
-        color: "var(--chart-1)",
+        label: 'Male',
+        color: 'var(--chart-1)',
     },
     female: {
-        label: "Female",
-        color: "var(--chart-2)",
+        label: 'Female',
+        color: 'var(--chart-2)',
     },
-}
+};
 
 export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
-    const [selectedStep, setSelectedStep] = React.useState<PieStep | null>(null)
+    const [selectedStep, setSelectedStep] = React.useState<PieStep | null>(null);
 
     // Reset selected step whenever pieChart changes
     React.useEffect(() => {
-        if (!pieChart || pieChart.length === 0) return
-        const infoStep = pieChart.find((step) => step.step.trim() === "Info Session")
-        setSelectedStep(infoStep || pieChart[0])
-    }, [pieChart])
+        if (!pieChart || pieChart.length === 0) return;
+        const infoStep = pieChart.find((step) => step.step.trim() === 'Info Session');
+        setSelectedStep(infoStep || pieChart[0]);
+    }, [pieChart]);
 
     // Prepare male/female dataset
     const genderData = React.useMemo(() => {
-        if (!selectedStep) return []
+        if (!selectedStep) return [];
         return [
-            { name: "Male", value: selectedStep.male ?? 0, fill: "#16537e" },
-            { name: "Female", value: selectedStep.female ?? 0, fill: "#c22673" },
-        ]
-    }, [selectedStep])
+            { name: 'Male', value: selectedStep.male ?? 0, fill: '#16537e' },
+            { name: 'Female', value: selectedStep.female ?? 0, fill: '#c22673' },
+        ];
+    }, [selectedStep]);
 
-    const totalVisitors = selectedStep?.total ?? 0
+    const totalVisitors = selectedStep?.total ?? 0;
 
     if (!pieChart || pieChart.length === 0) {
-        return <p>No data available</p>
+        return <p>No data available</p>;
     }
 
     return (
@@ -63,41 +63,22 @@ export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
                     <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
                         <PieChart>
                             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                            <Pie
-                                data={genderData}
-                                dataKey="value"
-                                nameKey="name"
-                                innerRadius={60}
-                                strokeWidth={5}
-                            >
+                            <Pie data={genderData} dataKey="value" nameKey="name" innerRadius={60} strokeWidth={5}>
                                 <Label
                                     content={({ viewBox }) => {
-                                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                        if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
                                             return (
-                                                <text
-                                                    x={viewBox.cx}
-                                                    y={viewBox.cy}
-                                                    textAnchor="middle"
-                                                    dominantBaseline="middle"
-                                                >
-                                                    <tspan
-                                                        x={viewBox.cx}
-                                                        y={viewBox.cy}
-                                                        className="fill-foreground text-3xl font-bold"
-                                                    >
+                                                <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+                                                    <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-3xl font-bold">
                                                         {totalVisitors}
                                                     </tspan>
-                                                    <tspan
-                                                        x={viewBox.cx}
-                                                        y={(viewBox.cy || 0) + 24}
-                                                        className="fill-muted-foreground"
-                                                    >
+                                                    <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className="fill-muted-foreground">
                                                         Participants
                                                     </tspan>
                                                 </text>
-                                            )
+                                            );
                                         }
-                                        return null
+                                        return null;
                                     }}
                                 />
                             </Pie>
@@ -126,5 +107,5 @@ export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
                 </CardFooter>
             </Card>
         </div>
-    )
-}
+    );
+};
