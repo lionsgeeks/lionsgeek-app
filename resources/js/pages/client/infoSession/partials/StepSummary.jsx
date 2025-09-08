@@ -55,33 +55,52 @@ export default function StepSummary({ data, errors, setCurrentStep }) {
 
     return (
         <div className="space-y-6">
-            <div className="rounded-lg border border-gray-200 bg-white p-6">
-                <div className="mb-4 flex items-center justify-between">
+            <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6">
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="text-lg font-semibold text-[#212529]">Review your details</h3>
                     <button
                         type="button"
                         onClick={() => setCurrentStep(8)}
-                        className="rounded-lg bg-[#212529] px-4 py-2 text-white transition-all duration-200 hover:bg-[#212529]/90 hover:shadow"
+                        className="w-full rounded-lg bg-[#212529] px-4 py-2 text-white transition-all duration-200 hover:bg-[#212529]/90 hover:shadow sm:w-auto"
                     >
                         Proceed to Game Intro
                     </button>
                 </div>
                 <div className="divide-y">
                     {provided.map(({ key, label }) => (
-                        <div key={key} className="flex items-start justify-between gap-4 py-4">
-                            <div className="min-w-[220px] text-sm font-medium text-gray-600">{label}</div>
-                            <div className="flex-1">
-                                <div className="text-[#212529]">{String(data[key])}</div>
+                        <div key={key} className="py-4">
+                            {/* Mobile Layout */}
+                            <div className="block sm:hidden">
+                                <div className="mb-2 flex items-center justify-between">
+                                    <div className="text-sm font-medium text-gray-600">{label}</div>
+                                    <button
+                                        type="button"
+                                        onClick={() => goToField(key)}
+                                        className="rounded-lg bg-gray-100 px-3 py-1 text-xs hover:bg-gray-200"
+                                    >
+                                        Edit
+                                    </button>
+                                </div>
+                                <div className="text-[#212529] break-words">{String(data[key])}</div>
                                 {errors[key] && <p className="mt-1 text-sm text-red-600">{errors[key]}</p>}
                             </div>
-                            <div className="min-w-[80px] text-right">
-                                <button
-                                    type="button"
-                                    onClick={() => goToField(key)}
-                                    className="rounded-lg bg-gray-100 px-3 py-2 text-sm hover:bg-gray-200"
-                                >
-                                    Edit
-                                </button>
+                            
+                            {/* Desktop Layout */}
+                            <div className="hidden sm:flex sm:items-start sm:justify-between sm:gap-4">
+                                <div className="min-w-[200px] text-sm font-medium text-gray-600 lg:min-w-[220px]">{label}</div>
+                                <div className="flex-1">
+                                    <div className="text-[#212529] break-words">{String(data[key])}</div>
+                                    {errors[key] && <p className="mt-1 text-sm text-red-600">{errors[key]}</p>}
+                                </div>
+                                <div className="min-w-[80px] text-right">
+                                    <button
+                                        type="button"
+                                        onClick={() => goToField(key)}
+                                        className="rounded-lg bg-gray-100 px-3 py-2 text-sm hover:bg-gray-200"
+                                    >
+                                        Edit
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ))}
