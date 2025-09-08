@@ -9,6 +9,7 @@ import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { KeyRound, User } from 'lucide-react';
 
 const breadcrumbs = [
     {
@@ -50,6 +51,30 @@ export default function Password() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Password settings" />
+            {/* Header Section */}
+            <div className="bg-[#212529] py-8 text-white">
+                <div className="mx-auto max-w-7xl px-6">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-[#fee819] p-3">
+                                <KeyRound className="h-8 w-8 text-[#212529]" />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-bold">Password</h1>
+                                <p className="mt-1 text-gray-300">Update your account password</p>
+                            </div>
+                        </div>
+                        <div className="flex flex-row-reverse gap-3">
+                            <Button asChild className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                <a href="/settings/profile">
+                                    <User className="mr-2 h-4 w-4" />
+                                    Back to Profile
+                                </a>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <SettingsLayout>
                 <div className="space-y-6">
