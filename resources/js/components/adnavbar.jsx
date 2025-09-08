@@ -107,19 +107,19 @@ export default function AdNavbar( ) {
                             {open && (
                                 <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg py-1">
                                     <Link
-                                        href="/profile"
+                                        href={route('profile.edit')}
                                         className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                                     >
                                         Profile
                                     </Link>
                                     <Link
-                                        href="/settings"
+                                        href={route('profile.edit')}
                                         className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                                     >
                                         Settings
                                     </Link>
                                     <Link
-                                        href="/logout"
+                                        href={route('logout')}
                                         method="post"
                                         as="button"
                                         className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
