@@ -246,19 +246,21 @@ export default function CoworkingForm() {
     return (
         <AppLayout>
             <Head title="Apply to Co-work" />
+            <div className={`${darkMode ? "bg-black"  : "bg-white"}`}>
+
             {
                 !sending ?
                     <form
                         onSubmit={onFormSubmit}
-                        className={`p-6  rounded-lg shadow-md mb-4 ${darkMode ? "bg-[#212529] "  : "bg-gray-50/50"}  `}
+                        className={`p-5 rounded-lg shadow-md flex flex-col mx-auto   w-[95vw]    mt-20 mb-5 ${darkMode ? "bg-[#212529]"  : "bg-gray-50/50"}`}
                     >
-                        <h1 className={`text-2xl font-bold mb-4 ${darkMode ? "text-white" : ""}`}>Application Form</h1>
+                        <h1 className={`text-2xl font-bold mb-3 ${darkMode ? "text-white" : ""}`}>Application Form</h1>
 
                         <h2 className={`underline font-semibold mb-2 text-lg ${darkMode ? "text-white" : ""}`}>
                             Personal Information
                         </h2>
                         <div className="flex items-center flex-col lg:flex-row justify-around gap-2">
-                            <div className="mb-4 w-full">
+                            <div className="mb-3 w-full">
                                 <label
                                     className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}
                                     htmlFor="full_name"
@@ -275,12 +277,12 @@ export default function CoworkingForm() {
                                                 "أدخل اسمك الكامل"}
                                     value={data.full_name}
                                     onChange={handleChange}
-                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                    className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                     required
                                 />
                             </div>
 
-                            <div className="mb-4 w-full">
+                            <div className="mb-3 w-full">
                                 <label
                                     className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}
                                     htmlFor="email"
@@ -297,14 +299,14 @@ export default function CoworkingForm() {
                                                 "أدخل بريدك الإلكتروني  "}
                                     value={data.email}
                                     onChange={handleChange}
-                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                    className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                     required
                                 />
                             </div>
                         </div>
 
                         <div className="flex items-center flex-col lg:flex-row justify-around gap-2">
-                            <div className="mb-4 w-full">
+                            <div className="mb-3 w-full">
                                 <label
                                     className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}
                                     htmlFor="phone"
@@ -321,12 +323,12 @@ export default function CoworkingForm() {
                                                 "أدخل رقم هاتفك"}
                                     value={data.phone}
                                     onChange={handleChange}
-                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                    className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                     required
                                 />
                             </div>
 
-                            <div className="mb-4 w-full">
+                            <div className="mb-3 w-full">
                                 <label
                                     className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}
                                     htmlFor="birthday"
@@ -343,14 +345,14 @@ export default function CoworkingForm() {
                                     name="birthday"
                                     value={data.birthday}
                                     onChange={handleChange}
-                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                    className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                     required
                                 />
                             </div>
                         </div>
 
                         <div className="flex items-center flex-col lg:flex-row justify-around gap-2">
-                            <div className="mb-4 w-full">
+                            <div className="mb-3 w-full">
                                 <label
                                     className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}
                                     htmlFor="formation"
@@ -371,13 +373,13 @@ export default function CoworkingForm() {
                                                 "التعليم/الخبرة المهنية"}
                                     value={data.formation}
                                     onChange={handleChange}
-                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                    className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                     required
                                 />
                             </div>
 
-                            <div className="mb-6 w-full">
-                                <p className={`mb-3 text-sm font-bold ${darkMode ? "text-white" : ""}`}>
+                            <div className="mb-4 w-full">
+                                <p className={`mb-2 text-sm font-bold ${darkMode ? "text-white" : ""}`}>
                                     <TransText
                                         className={`${darkMode ? "text-white bg" : ""}`}
                                         en="Upload CV"
@@ -388,8 +390,7 @@ export default function CoworkingForm() {
                                 </p>
                                 <label
                                     htmlFor="cv"
-                                    className={`flex items-center gap-2  border shadow p-[11px] rounded cursor-pointer ${data.cv ? "bg-alpha" : "bg-white"
-                                        }`}
+                                    className={`flex items-center gap-2 border shadow p-[11px] rounded cursor-pointer ${data.cv ? "bg-alpha" : darkMode ? "bg-[#2b3035] text-white border-gray-600" : "bg-white"}`}
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -427,7 +428,7 @@ export default function CoworkingForm() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col mb-6 lg:w-[48%]">
+                        <div className="flex flex-col mb-4 lg:w-[48%]">
                             <label htmlFor="gender" className={`${darkMode ? "text-white" : "text-gray-700"}`}>
                                 <TransText en="Gender" fr="Genre" ar="الجنس" />:
                                 <Required />
@@ -438,7 +439,7 @@ export default function CoworkingForm() {
                                 onChange={(e) => {
                                     setData('gender', e.target.value);
                                 }}
-                                className={`w-full rounded border border-gray-300 p-[10px] appearance-none ${darkMode ? "text-white" : "text-gray-700"}`}
+                                className={`w-full rounded p-[10px] appearance-none ${darkMode ? "bg-[#2b3035] text-white border border-gray-600" : "bg-white text-gray-700 border border-gray-300"}`}
                                 required
                             >
                                 <option value="" disabled defaultValue className={darkMode ? "bg-[#212529] text-white" : "bg-white text-gray-700"}>
@@ -461,7 +462,7 @@ export default function CoworkingForm() {
                                 ar="معلومات المشروع"
                             />
                         </h1>
-                        <div className="mb-4">
+                        <div className="mb-3">
                             <label
                                 className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}
                                 htmlFor="proj_name"
@@ -478,12 +479,12 @@ export default function CoworkingForm() {
                                             "أدخل اسم المشروع"}
                                 value={data.proj_name}
                                 onChange={handleChange}
-                                className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                 required
                             />
                         </div>
 
-                        <div className="mb-4">
+                        <div className="mb-3">
                             <label
                                 className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}
                                 htmlFor="proj_desc"
@@ -503,12 +504,12 @@ export default function CoworkingForm() {
                                             "أدخل وصف المشروع"}
                                 value={data.proj_desc}
                                 onChange={handleChange}
-                                className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                 required
                             />
                         </div>
 
-                        <fieldset className="mb-4">
+                        <fieldset className="mb-3">
                             <legend className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}>
                                 <TransText
                                     en="Project's domain of activity"
@@ -537,12 +538,12 @@ export default function CoworkingForm() {
                                     value={data.otherDomains}
                                     required
                                     onChange={(e) => setData('otherDomains', e.target.value)}
-                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                    className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                 />
                             )}
                         </fieldset>
 
-                        <div className="mb-4">
+                        <div className="mb-3">
                             <label
                                 className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}
                                 htmlFor="proj_plan"
@@ -563,13 +564,13 @@ export default function CoworkingForm() {
                                             "أدخل خطة العمل"}
                                 value={data.proj_plan}
                                 onChange={handleChange}
-                                className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                 required
                             />
                         </div>
 
-                        <div className="mb-6 w-full">
-                            <p className={`${darkMode && "text-white"} mb-3 text-sm font-bold`}>
+                        <div className="mb-4 w-full">
+                            <p className={`${darkMode && "text-white"} mb-2 text-sm font-bold`}>
                                 <TransText
                                     en="Upload Project Presentation"
                                     fr="Télécharger la Présentation du Projet"
@@ -579,8 +580,7 @@ export default function CoworkingForm() {
                             </p>
                             <label
                                 htmlFor="projPresentation"
-                                className={`flex items-center gap-2  border border-gray p-2 rounded cursor-pointer ${data.presentation ? "bg-alpha" : "bg-white"
-                                    }`}
+                                className={`flex items-center gap-2 border p-2 rounded cursor-pointer ${data.presentation ? "bg-alpha" : darkMode ? "bg-[#2b3035] text-white border-gray-600" : "bg-white border-gray"}`}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -616,7 +616,7 @@ export default function CoworkingForm() {
                             />
                         </div>
 
-                        <div className="mb-4">
+                        <div className="mb-3">
                             <label
                                 className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}
                                 htmlFor="proj_plan"
@@ -635,11 +635,11 @@ export default function CoworkingForm() {
                                             "أدخل مشروع مشابه سابق"}
                                 value={data.prev_proj}
                                 onChange={handleChange}
-                                className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                             />
                         </div>
 
-                        <fieldset className="mb-4">
+                        <fieldset className="mb-3">
                             <legend className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}>
                                 <TransText
                                     ar="كيف سمعت عن فرصة السكن التعاوني في عين السبع"
@@ -669,12 +669,12 @@ export default function CoworkingForm() {
                                     value={data.otherReasons}
                                     required
                                     onChange={(e) => setData('otherReasons', e.target.value)}
-                                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 fo focus:outline-beta ${darkMode ? "text-white placeholder:text-white" : "text-gray-700"}`}
+                                    className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                 />
                             )}
                         </fieldset>
 
-                        <fieldset className="mb-4">
+                        <fieldset className="mb-3">
                             <legend className={`block text-sm font-bold mb-2 ${darkMode ? "text-white" : "text-gray-700"}`}>
                                 <TransText ar="احتياجاتك" en="Needs" fr="Besoins" />
                             </legend>
@@ -700,7 +700,7 @@ export default function CoworkingForm() {
                                     value={data.otherNeeds}
                                     required
                                     onChange={(e) => setData('otherNeeds', e.target.value)}
-                                    className={`shadow border rounded w-full py-2 px-3  fo focus:outline-beta ${darkMode ? "text-white" : "text-gray-700"}`}
+                                    className={`shadow border rounded w-full py-2 px-3 fo focus:outline-beta ${darkMode ? "bg-[#2b3035] text-white placeholder:text-gray-300 border-gray-600" : "bg-white text-gray-700 border-gray-300"}`}
                                 />
                             )}
                         </fieldset>
@@ -719,6 +719,7 @@ export default function CoworkingForm() {
                     :
                     <LoadingPage load={true} />
             }
+            </div>
 
             {!sending && confirmation && (
                 <Modal
