@@ -21,10 +21,15 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/participants/{participant}/reject', [ParticipantController::class, 'reject'])->name('participants.reject');
 
     Route::resource('participants', ParticipantController::class)->except(['store']);
-});;
+});
 Route::post('/participants/store', [ParticipantController::class, 'store'])->name('participants.store');
 Route::get('/participant/confirmation/jungle/{full_name}/{id}', [ParticipantController::class, 'confirmationJungle']);
 Route::get('/participant/confirmation/school/{full_name}/{id}', [ParticipantController::class, 'confirmationSchool']);
+
+// Signed reservation link for approved participants to reserve an info session
+Route::get('/participants/{participant}/reserve/{session}', [ParticipantController::class, 'reserve'])
+    ->middleware('signed')
+    ->name('participants.reserve');
 
 Route::get('/participant/associate-confirmation', function () {
     $participants = Participant::all();
