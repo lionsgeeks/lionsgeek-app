@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { Filter, FolderOpen, Search, RotateCcw, Trash, Pen } from 'lucide-react';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { Filter, FolderOpen, RotateCcw, Search, Trash } from 'lucide-react';
 import { useState } from 'react';
 import ProjectModal from './partials/projectModal';
 
@@ -19,11 +19,12 @@ export default function ProjectsAdmin() {
     const { delete: destroy } = useForm();
     const [search, setSearch] = useState('');
 
-    const filteredProjects = projects.filter((project) =>
-        project?.name?.toLowerCase().includes(search?.toLowerCase()) ||
-        project?.description?.en?.toLowerCase().includes(search?.toLowerCase()) ||
-        project?.description?.fr?.toLowerCase().includes(search?.toLowerCase()) ||
-        project?.description?.ar?.toLowerCase().includes(search?.toLowerCase())
+    const filteredProjects = projects.filter(
+        (project) =>
+            project?.name?.toLowerCase().includes(search?.toLowerCase()) ||
+            project?.description?.en?.toLowerCase().includes(search?.toLowerCase()) ||
+            project?.description?.fr?.toLowerCase().includes(search?.toLowerCase()) ||
+            project?.description?.ar?.toLowerCase().includes(search?.toLowerCase()),
     );
 
     const onDeleteProject = (projectID) => {
@@ -102,7 +103,6 @@ export default function ProjectsAdmin() {
                     </div>
                 </div>
 
-              
                 <div className="mx-auto mb-8 max-w-7xl px-6">
                     <Card className="border-0 bg-gray-50">
                         <CardContent className="p-6">
@@ -205,7 +205,10 @@ export default function ProjectsAdmin() {
                                             {project.name || 'Untitled Project'}
                                         </h3>
                                         <p className="line-clamp-2 min-h-[20px] text-sm text-gray-600">
-                                            {project.description?.en || project.description?.fr || project.description?.ar || 'No description available'}
+                                            {project.description?.en ||
+                                                project.description?.fr ||
+                                                project.description?.ar ||
+                                                'No description available'}
                                         </p>
                                     </CardContent>
 
@@ -243,5 +246,5 @@ export default function ProjectsAdmin() {
                 </div>
             </div>
         </AppLayout>
-    )
+    );
 }

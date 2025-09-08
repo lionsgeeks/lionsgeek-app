@@ -1,13 +1,23 @@
-import { EditorContent, useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import TextAlign from '@tiptap/extension-text-align'
+import TextAlign from '@tiptap/extension-text-align';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 
-import { FaBold, FaItalic, FaStrikethrough, FaListOl, FaListUl, FaQuoteLeft, FaRedo, FaUndo, FaAlignLeft, FaAlignCenter, FaAlignJustify, FaAlignRight, FaMinus } from 'react-icons/fa'
-import { Listbox, } from '@headlessui/react';
+import { Listbox } from '@headlessui/react';
 import { useState } from 'react';
-import Document from '@tiptap/extension-document'
-import Paragraph from '@tiptap/extension-paragraph'
-import Text from '@tiptap/extension-text'
+import {
+    FaAlignCenter,
+    FaAlignJustify,
+    FaAlignLeft,
+    FaAlignRight,
+    FaBold,
+    FaItalic,
+    FaListOl,
+    FaListUl,
+    FaMinus,
+    FaRedo,
+    FaStrikethrough,
+    FaUndo,
+} from 'react-icons/fa';
 
 const buttonConfigs = [
     {
@@ -52,8 +62,6 @@ const buttonConfigs = [
         action: (editor) => editor.chain().focus().setHorizontalRule().run(),
         icon: <FaMinus />,
     },
-
-
 ];
 
 const textAlignment = [
@@ -62,44 +70,34 @@ const textAlignment = [
     { value: 'right', icon: <FaAlignRight /> },
     { value: 'justify', icon: <FaAlignJustify /> },
 ];
-const headingConfigs = [1, 2, 3, 4].map(level => ({
+const headingConfigs = [1, 2, 3, 4].map((level) => ({
     action: (editor) => editor.chain().focus().toggleHeading({ level }).run(),
     isActive: (editor) => editor.isActive('heading', { level }),
     icon: `H${level}`,
 }));
 
-
-
-
-
-
 const MenuBar = ({ editor }) => {
-    const [selected, setSelected] = useState(textAlignment[1])
+    const [selected, setSelected] = useState(textAlignment[1]);
     if (!editor) {
         return null;
     }
 
     return (
-        <div className='flex items-center flex-wrap gap-2 mt-1 border p-1 m-0'>
+        <div className="m-0 mt-1 flex flex-wrap items-center gap-2 border p-1">
             <select
                 onChange={(e) => {
-                    const selectedIndex = e.target.value
-                    headingConfigs[selectedIndex].action(editor)
+                    const selectedIndex = e.target.value;
+                    headingConfigs[selectedIndex].action(editor);
                 }}
-                className="cursor-pointer px-2 py-1 border rounded text-xs focus:outline-0"
+                className="cursor-pointer rounded border px-2 py-1 text-xs focus:outline-0"
             >
                 {headingConfigs.map(({ isActive }, index) => (
                     <option
                         key={index}
                         value={index}
-                        className={`
-        ${isActive(editor) ? "bg-alpha" : ""}
-        ${index === 0 ? "text-2xl font-semibold " : ""}
-        ${index === 1 ? "text-xl font-medium" : ""}
-        ${index === 2 ? "text-lg " : ""}
-        `}
+                        className={` ${isActive(editor) ? 'bg-alpha' : ''} ${index === 0 ? 'text-2xl font-semibold' : ''} ${index === 1 ? 'text-xl font-medium' : ''} ${index === 2 ? 'text-lg' : ''} `}
                     >
-                        {index === 0 ? "Heading 1" : index === 1 ? "Heading 2" : index === 2 ? "Heading 3" : "Normal"}
+                        {index === 0 ? 'Heading 1' : index === 1 ? 'Heading 2' : index === 2 ? 'Heading 3' : 'Normal'}
                     </option>
                 ))}
             </select>
@@ -107,77 +105,66 @@ const MenuBar = ({ editor }) => {
             {buttonConfigs.map(({ action, isActive, icon, disabled }, index) => (
                 <button
                     key={index}
-                    type='button'
+                    type="button"
                     onClick={() => action(editor)}
                     disabled={disabled ? disabled(editor) : false}
-                    className={`${isActive && isActive(editor) ? 'is-active' : ''} cursor-pointer text-xs rounded-lg hover:text-blue-700`}
+                    className={`${isActive && isActive(editor) ? 'is-active' : ''} cursor-pointer rounded-lg text-xs hover:text-blue-700`}
                 >
                     {icon}
                 </button>
             ))}
 
-            <Listbox value={selected} onChange={(item) => {
-                setSelected(item)
-                editor.chain().focus().setTextAlign(item.value).run()
-            }}>
+            <Listbox
+                value={selected}
+                onChange={(item) => {
+                    setSelected(item);
+                    editor.chain().focus().setTextAlign(item.value).run();
+                }}
+            >
                 <div className="relative">
-                    <Listbox.Button className="px-2 py-1 focus:outline-0">
-                        {selected.icon}
-                    </Listbox.Button>
-                    <Listbox.Options className="absolute mt-1 bg-white border rounded shadow">
+                    <Listbox.Button className="px-2 py-1 focus:outline-0">{selected.icon}</Listbox.Button>
+                    <Listbox.Options className="absolute mt-1 rounded border bg-white shadow">
                         {textAlignment.map((item, idx) => (
-                            <Listbox.Option
-                                key={idx}
-                                value={item}
-                                className="cursor-pointer p-2 hover:bg-gray-100 flex justify-center"
-                            >
+                            <Listbox.Option key={idx} value={item} className="flex cursor-pointer justify-center p-2 hover:bg-gray-100">
                                 {item.icon}
                             </Listbox.Option>
                         ))}
                     </Listbox.Options>
                 </div>
             </Listbox>
-
-
-
-
-
         </div>
     );
 };
 
-
 const Tiptap = (props) => {
-
     const editor = useEditor({
         extensions: [
             StarterKit,
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
             }),
-            
         ],
         content: props.content,
         onUpdate({ editor }) {
-            props.setData(props.lang == 'English' ? 'description_en' : props.lang == 'العربية' ? 'description_ar' : 'description_fr', editor.getHTML());
+            props.setData(
+                props.lang == 'English' ? 'description_en' : props.lang == 'العربية' ? 'description_ar' : 'description_fr',
+                editor.getHTML(),
+            );
         },
         editorProps: {
             attributes: {
                 class: 'reset-tw',
             },
         },
-    })
+    });
     return (
         <div>
             <MenuBar editor={editor} />
-            <div className="border min-h-[200px] max-h-[40vh] overflow-y-auto">
-                <EditorContent
-                    className="reset-tw w-full p-2"
-                    editor={editor}
-                />
+            <div className="max-h-[40vh] min-h-[200px] overflow-y-auto border">
+                <EditorContent className="reset-tw w-full p-2" editor={editor} />
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Tiptap;

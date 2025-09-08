@@ -1,15 +1,8 @@
-import TrainingSection from "./trainingSection";
-import HeroSection from "./heroSection";
-import GallerySection from "./gallerySection";
-import ServicesSection from "./servicesSection";
-import WhoSection from "./whoSection";
-import EventSection from "./eventSection";
+import EventSection from './eventSection';
+import GallerySection from './gallerySection';
+import HeroSection from './heroSection';
+import ServicesSection from './servicesSection';
+import TrainingSection from './trainingSection';
+import WhoSection from './whoSection';
 
-export {
-  HeroSection,
-  TrainingSection,
-  GallerySection,
-  ServicesSection,
-  WhoSection,
-  EventSection,
-};
+export { EventSection, GallerySection, HeroSection, ServicesSection, TrainingSection, WhoSection };

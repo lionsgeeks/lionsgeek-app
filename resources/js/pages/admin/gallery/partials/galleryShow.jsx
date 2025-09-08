@@ -142,9 +142,7 @@ export default function GalleryShow({ gallery }) {
                 <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                     <DialogContent className="sm:max-w-[425px]">
                         <DialogTitle>Delete image?</DialogTitle>
-                        <div className="text-sm text-[#6b7280]">
-                            This action cannot be undone. The image will be permanently deleted.
-                        </div>
+                        <div className="text-sm text-[#6b7280]">This action cannot be undone. The image will be permanently deleted.</div>
                         <div className="mt-4 flex justify-end gap-2">
                             <button
                                 onClick={() => {

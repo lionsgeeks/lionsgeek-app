@@ -1,22 +1,20 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, usePage } from '@inertiajs/react';
-import { useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import CoworkingRequests from './admin/dashboard/partials/CoworkingRequests';
 import NewsLetter from './admin/dashboard/partials/NewsLetter';
 import StatisticCards from './admin/dashboard/partials/StatisticCards';
 import UnreadMessages from './admin/dashboard/partials/UnreadMessages';
-import UpcomingEvents from './admin/dashboard/partials/UpcomingEvents'
+import UpcomingEvents from './admin/dashboard/partials/UpcomingEvents';
 
-
-import Chart from './admin/dashboard/partials/charts/Charts';
 import { BarChart3, Plus } from 'lucide-react';
+import Chart from './admin/dashboard/partials/charts/Charts';
 
-import { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useState } from 'react';
 
-import { Button } from "@headlessui/react";
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@headlessui/react';
 
 const breadcrumbs = [
     {
@@ -25,7 +23,6 @@ const breadcrumbs = [
     },
 ];
 const Dashboard = () => {
-
     const { data, setData, post } = useForm({
         name: '',
         email: '',
@@ -38,14 +35,12 @@ const Dashboard = () => {
             onSuccess: () => {
                 setIsOpen(false);
                 setData({
-                    'name': '',
-                    'email': '',
-                })
-            }
-        }
-        );
+                    name: '',
+                    email: '',
+                });
+            },
+        });
     };
-
 
     return (
         <>
@@ -61,7 +56,7 @@ const Dashboard = () => {
                                         <BarChart3 className="h-8 w-8 text-[#212529]" />
                                     </div>
                                     <div>
-                                        <h1 className="text-3xl font-bold capitalize">Hello {auth.user.name }</h1>
+                                        <h1 className="text-3xl font-bold capitalize">Hello {auth.user.name}</h1>
                                         <p className="mt-1 text-gray-300">Overview of your system metrics and activities</p>
                                     </div>
                                 </div>
@@ -69,7 +64,7 @@ const Dashboard = () => {
                                 {/* Dialog outside of Select for admin info */}
                                 <Dialog open={isOpen} onOpenChange={setIsOpen}>
                                     <DialogTrigger asChild>
-                                        <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819] flex p-2 rounded-lg items-center cursor-pointer text-sm font-medium">
+                                        <Button className="flex transform cursor-pointer items-center rounded-lg bg-[#fee819] p-2 text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
                                             <Plus className="mr-2 h-4 w-4" />
                                             Add Admin
                                         </Button>
@@ -109,7 +104,8 @@ const Dashboard = () => {
                                             </div>
 
                                             <div className="flex justify-end gap-2">
-                                                <Button className='text-white bg-black rounded-lg transition-all duration-300 hover:text-beta hover:bg-alpha p-2 cursor-pointer'
+                                                <Button
+                                                    className="cursor-pointer rounded-lg bg-black p-2 text-white transition-all duration-300 hover:bg-alpha hover:text-beta"
                                                     variant="outline"
                                                     onClick={() => {
                                                         setIsOpen(false);
@@ -119,7 +115,12 @@ const Dashboard = () => {
                                                     Cancel
                                                 </Button>
 
-                                                <Button className='text-white bg-black rounded-lg transition-all duration-300 hover:text-beta hover:bg-alpha p-2 cursor-pointer' type="submit">Add Admin</Button>
+                                                <Button
+                                                    className="cursor-pointer rounded-lg bg-black p-2 text-white transition-all duration-300 hover:bg-alpha hover:text-beta"
+                                                    type="submit"
+                                                >
+                                                    Add Admin
+                                                </Button>
                                             </div>
                                         </form>
                                     </DialogContent>
@@ -134,7 +135,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Main Content */}
-                    <div className="mx-auto max-w-7xl px-6 py-8 space-y-8">
+                    <div className="mx-auto max-w-7xl space-y-8 px-6 py-8">
                         {/* session analysing chart */}
                         <Chart />
 
@@ -143,13 +144,12 @@ const Dashboard = () => {
 
                         {/* Coworking request */}
                         <CoworkingRequests />
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                             {/* News Letter */}
                             <NewsLetter />
                             {/* Unread Messages */}
                             <UnreadMessages />
                         </div>
-
 
                         {/* Upcoming Events */}
                         <UpcomingEvents />

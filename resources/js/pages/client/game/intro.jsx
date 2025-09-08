@@ -1,7 +1,5 @@
-import React from 'react';
-import AppLayout from '@/layouts/app-layout';
-import { Head, router } from '@inertiajs/react';
 import { useAppContext } from '@/context/appContext';
+import { router } from '@inertiajs/react';
 
 const breadcrumbs = [
     { title: 'Homepage', href: '/' },
@@ -19,7 +17,7 @@ export default function GameIntro({ setCurrentStep }) {
         },
         description: {
             en: 'You will play a short pattern recognition game. Read the notes below, then start.',
-            fr: "Vous jouerez à un court jeu de reconnaissance de motifs. Lisez les notes ci‑dessous, puis commencez.",
+            fr: 'Vous jouerez à un court jeu de reconnaissance de motifs. Lisez les notes ci‑dessous, puis commencez.',
             ar: 'ستقوم بلعب لعبة قصيرة للتعرّف على الأنماط. اقرأ الملاحظات أدناه ثم ابدأ.',
         },
         bullet1: {
@@ -48,12 +46,12 @@ export default function GameIntro({ setCurrentStep }) {
     return (
         <div className={`space-y-6 text-center ${selectedLanguage === 'ar' ? 'rtl' : ''}`} dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
             <div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-beta">{t('heading')}</h1>
-                <p className={`mt-2 text-sm sm:text-base opacity-90 ${darkMode ? 'text-white' : 'text-black'}`}>{t('description')}</p>
+                <h1 className="text-2xl font-extrabold text-beta sm:text-3xl">{t('heading')}</h1>
+                <p className={`mt-2 text-sm opacity-90 sm:text-base ${darkMode ? 'text-white' : 'text-black'}`}>{t('description')}</p>
             </div>
 
             <div className={`${selectedLanguage === 'ar' ? 'text-right' : 'text-left'} ${darkMode ? 'text-white' : 'text-black'}`}>
-                <ul className="list-disc pl-5 text-sm sm:text-base space-y-1">
+                <ul className="list-disc space-y-1 pl-5 text-sm sm:text-base">
                     <li>{t('bullet1')}</li>
                     <li>{t('bullet2')}</li>
                     <li>{t('bullet3')}</li>
@@ -78,5 +76,3 @@ export default function GameIntro({ setCurrentStep }) {
         </div>
     );
 }
-
-

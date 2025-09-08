@@ -67,23 +67,15 @@ const ContactUs = () => {
 
     return (
         <AppLayout>
-          <Head title="Contact Us" />
+            <Head title="Contact Us" />
             <div className={`mt-16 flex flex-col justify-center overflow-x-hidden px-5 py-[12vh] lg:px-16 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-white'}`}>
                 <div dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'} className="flex flex-col justify-between gap-8 lg:flex-row">
                     <div dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'} className="flex flex-col gap-6 px-3 lg:w-[50%]">
-                        <div  className="tessst [clip-path: polygon((0 100%, 100% 100%, 100% 100%, 0% 100%)] translate-y-12 opacity-0">
-                            <h1
-                                className={`text-[2.1rem] font-bold ${
-                                    darkMode ? 'text-white' : 'text-black'
-                                }`}
-                            >
+                        <div className="tessst [clip-path: polygon((0 100%, 100% 100%, 100% 100%, 0% 100%)] translate-y-12 opacity-0">
+                            <h1 className={`text-[2.1rem] font-bold ${darkMode ? 'text-white' : 'text-black'}`}>
                                 <TransText en="Ready to start?" fr="Prêt à commencer ?" ar="هل أنت مستعد للبدء؟ " />
                             </h1>
-                            <h1
-                                className={`text-[2.1rem] font-bold ${
-                                    darkMode ? 'text-white' : 'text-black'
-                                }`}
-                            >
+                            <h1 className={`text-[2.1rem] font-bold ${darkMode ? 'text-white' : 'text-black'}`}>
                                 <TransText en="We've got you covered" ar="نحن هنا من أجلك" fr="On s’occupe de tout" />
                             </h1>
                         </div>
@@ -101,7 +93,7 @@ const ContactUs = () => {
                         </div>
                         <div className={`flex flex-col gap-1 text-[0.9rem] font-thin text-gray-500`}>
                             <div
-                                className={`flex items-center  tessst [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] translate-y-12 gap-2 opacity-0`}
+                                className={`tessst [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] flex translate-y-12 items-center gap-2 opacity-0`}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -128,7 +120,7 @@ const ContactUs = () => {
                                 </p>
                             </div>
                             <div
-                                className={`flex items-center tessst [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] translate-y-12 gap-2 opacity-0`}
+                                className={`tessst [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] flex translate-y-12 items-center gap-2 opacity-0`}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -145,10 +137,15 @@ const ContactUs = () => {
                                         d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
                                     />
                                 </svg>
-                                <p dir='ltr' className={`${darkMode ? 'text-white' : 'text-black'} ${selectedLanguage === 'ar' ? 'text-right' : 'text-left'}`}>+212 522 662 660</p>
+                                <p
+                                    dir="ltr"
+                                    className={`${darkMode ? 'text-white' : 'text-black'} ${selectedLanguage === 'ar' ? 'text-right' : 'text-left'}`}
+                                >
+                                    +212 522 662 660
+                                </p>
                             </div>
                             <div
-                                className={`flex items-center tessst [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] translate-y-12 gap-2 opacity-0`}
+                                className={`tessst [clip-path: polygon(0 100%, 95% 100%, 100% 100%, 0% 100%)] flex translate-y-12 items-center gap-2 opacity-0`}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"

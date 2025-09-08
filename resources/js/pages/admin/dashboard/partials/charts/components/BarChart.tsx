@@ -1,44 +1,34 @@
-"use client"
+'use client';
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
-import {
-    Card,
-    CardContent,
-} from "@/components/ui/card"
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartLegend,
-    ChartLegendContent,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart"
+import { Card, CardContent } from '@/components/ui/card';
+import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 
 // Describe your chart config
 const chartConfig = {
     success: {
-        label: "Success",
-        color: "var(--chart-1)",
+        label: 'Success',
+        color: 'var(--chart-1)',
     },
     failed: {
-        label: "Failed",
-        color: "var(--chart-2)",
+        label: 'Failed',
+        color: 'var(--chart-2)',
     },
     absence: {
-        label: "Absence",
-        color: "var(--chart-3)", // make sure you have this CSS var or use a hex color
+        label: 'Absence',
+        color: 'var(--chart-3)', // make sure you have this CSS var or use a hex color
     },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 // Define prop types for this component
 type ChartBarStackedProps = {
     barChart: {
-        step: string
-        success?: number
-        failed?: number
-        absence?: number
-    }[]
-}
+        step: string;
+        success?: number;
+        failed?: number;
+        absence?: number;
+    }[];
+};
 
 export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
     return (
@@ -52,13 +42,7 @@ export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
                     <ChartContainer config={chartConfig}>
                         <BarChart accessibilityLayer data={barChart}>
                             <CartesianGrid vertical={false} />
-                            <XAxis
-                                dataKey="step"
-                                tickLine={false}
-                                tickMargin={10}
-                                axisLine={false}
-                                tickFormatter={(value) => value}
-                            />
+                            <XAxis dataKey="step" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value} />
                             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
                             <ChartLegend content={<ChartLegendContent />} />
                             <Bar dataKey="success" stackId="a" fill="#104e64" radius={[0, 0, 4, 4]} />
@@ -77,5 +61,5 @@ export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
                     </CardFooter> */}
             </Card>
         </div>
-    )
+    );
 }

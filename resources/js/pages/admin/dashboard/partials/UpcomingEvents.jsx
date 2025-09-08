@@ -1,10 +1,9 @@
-import { Link, usePage } from '@inertiajs/react'
-import dayjs from 'dayjs'
+import { Link, usePage } from '@inertiajs/react';
+import dayjs from 'dayjs';
 import { Calendar } from 'lucide-react';
 
 const UpcomingEvents = () => {
-    const { upcomingEvents } = usePage().props
-
+    const { upcomingEvents } = usePage().props;
 
     return (
         <div className="rounded-xl bg-white p-5 shadow-md">
@@ -16,18 +15,13 @@ const UpcomingEvents = () => {
                     </div>
                     <h2 className="text-lg font-semibold text-[#212529]">Upcoming Events</h2>
                 </div>
-                <Link
-                    href="/admin/events"
-                    className="rounded-lg bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black"
-                >
+                <Link href="/admin/events" className="rounded-lg bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black">
                     View All
                 </Link>
             </div>
 
             {upcomingEvents.length === 0 ? (
-                <p className="py-6 text-center text-gray-500">
-                    No upcoming events available.
-                </p>
+                <p className="py-6 text-center text-gray-500">No upcoming events available.</p>
             ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full table-auto border-collapse text-sm">
@@ -62,7 +56,7 @@ const UpcomingEvents = () => {
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
-export default UpcomingEvents
+export default UpcomingEvents;

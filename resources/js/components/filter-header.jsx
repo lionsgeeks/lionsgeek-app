@@ -1,8 +1,8 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Clipboard, Copy, Search, Filter, RotateCcw, Mail } from 'lucide-react';
+import { Clipboard, Copy, Mail, RotateCcw, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import InterviewDialog from './interviewDialog';
 import InviteDialog from './inviteDialog';
@@ -12,19 +12,20 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
     const [selectedStep, setSelectedStep] = useState('');
     const [selectedSession, setSelectedSession] = useState('');
     const [copy, setCopy] = useState(true);
-    
-    const filtredParticipans = participants?.filter((participant) => {
-        if (!participant) return false;
-        
-        const matchesSearch =
-            !search ||
-            participant?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-            participant?.email?.toLowerCase().includes(search.toLowerCase());
-        const matchesSession = !selectedSession || selectedSession === 'All' || participant?.info_session?.name === selectedSession;
-        const matchesStep = !selectedStep || selectedStep === 'All' || participant?.current_step === selectedStep;
-        return matchesSearch && matchesSession && matchesStep;
-    }) || [];
-    
+
+    const filtredParticipans =
+        participants?.filter((participant) => {
+            if (!participant) return false;
+
+            const matchesSearch =
+                !search ||
+                participant?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+                participant?.email?.toLowerCase().includes(search.toLowerCase());
+            const matchesSession = !selectedSession || selectedSession === 'All' || participant?.info_session?.name === selectedSession;
+            const matchesStep = !selectedStep || selectedStep === 'All' || participant?.current_step === selectedStep;
+            return matchesSearch && matchesSession && matchesStep;
+        }) || [];
+
     useEffect(() => {
         setFiltredParticipants(filtredParticipans);
     }, [search, selectedSession, selectedStep]);
@@ -56,9 +57,9 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                         variant="ghost"
                         size="sm"
                         onClick={handleReset}
-                        className="text-[#212529] hover:text-[#212529]/80 rounded-lg transition-all duration-200 ease-in-out hover:bg-gray-50"
+                        className="rounded-lg text-[#212529] transition-all duration-200 ease-in-out hover:bg-gray-50 hover:text-[#212529]/80"
                     >
-                        <RotateCcw className="h-4 w-4 mr-1" />
+                        <RotateCcw className="mr-1 h-4 w-4" />
                         Reset
                     </Button>
                 </div>
@@ -67,20 +68,20 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
             {/* Filter Controls */}
             <div className="flex flex-wrap items-center gap-3">
                 {/* Search Input */}
-                <div className="relative min-w-[280px] flex-1 max-w-md">
+                <div className="relative max-w-md min-w-[280px] flex-1">
                     <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-                    <Input 
-                        value={search} 
-                        onChange={(e) => setSearch(e.target.value)} 
-                        placeholder="Search by name or email..." 
-                        className="pl-10 rounded-lg border focus:border-[#212529] transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20" 
+                    <Input
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Search by name or email..."
+                        className="rounded-lg border pl-10 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
                     />
                 </div>
 
                 {/* Session Filter */}
                 {infosessions && (
                     <Select onValueChange={setSelectedSession} value={selectedSession}>
-                        <SelectTrigger className="w-48 rounded-lg border focus:border-[#212529] transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20">
+                        <SelectTrigger className="w-48 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
                             <SelectValue placeholder="Filter By Session" />
                         </SelectTrigger>
                         <SelectContent>
@@ -112,18 +113,18 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                     </SelectContent>
                 </Select>
 
-                            {/* Copy Emails Button */}
-            <Button
-                onClick={handleCopyEmails}
-                className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-                    {copy ? <Copy className="h-4 w-4 mr-2" /> : <Clipboard className="h-4 w-4 mr-2" />}
+                {/* Copy Emails Button */}
+                <Button
+                    onClick={handleCopyEmails}
+                    className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+                >
+                    {copy ? <Copy className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
                     {copy ? 'Copy Emails' : 'Copied!'}
                 </Button>
 
                 {/* Action Buttons for Infosession Detail Page */}
                 {!infosessions && (
-                    <div className="flex gap-3 ml-auto">
+                    <div className="ml-auto flex gap-3">
                         <InterviewDialog infosession={infosession} />
                         <InviteDialog infosession={infosession} step={'jungle'} />
                         <InviteDialog infosession={infosession} step={'school'} />
@@ -133,14 +134,15 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
             {/* Results Summary */}
             {participants && (
-                <div className="flex items-center justify-between pt-3 border-t">
+                <div className="flex items-center justify-between border-t pt-3">
                     <div className="flex items-center gap-4">
                         <span className="text-sm text-gray-600">
-                            Showing <span className="font-medium text-[#212529]">{filtredParticipans.length}</span> of <span className="font-medium text-[#212529]">{participants.length}</span> participants
+                            Showing <span className="font-medium text-[#212529]">{filtredParticipans.length}</span> of{' '}
+                            <span className="font-medium text-[#212529]">{participants.length}</span> participants
                         </span>
                         {filtredParticipans.length > 0 && (
-                            <Badge className="bg-gray-100 text-[#212529] rounded-lg px-2 py-1">
-                                <Mail className="h-3 w-3 mr-1" />
+                            <Badge className="rounded-lg bg-gray-100 px-2 py-1 text-[#212529]">
+                                <Mail className="mr-1 h-3 w-3" />
                                 {filtredParticipans.length} emails
                             </Badge>
                         )}

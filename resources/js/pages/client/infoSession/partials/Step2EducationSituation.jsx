@@ -1,12 +1,12 @@
 import { TransText } from '../../../../components/TransText';
 
-const Required = () => <span className="text-red-500 ml-1">*</span>;
+const Required = () => <span className="ml-1 text-red-500">*</span>;
 
 const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selectedLanguage }) => {
     return (
         <div className="space-y-6">
             <div className="text-center">
-                <h2 className={`text-2xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                <h2 className={`mb-2 text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                     <TransText en="Education & Current Situation" fr="Formation et Situation Actuelle" ar="التعليم والوضع الحالي" />
                 </h2>
                 <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -17,7 +17,7 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
             <div className="space-y-6">
                 {/* Education Level */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="Current Education Level" fr="Votre niveau d'études actuel" ar="مستوى تعليمك الحالي" />
                         <Required />
                     </label>
@@ -25,10 +25,8 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                         name="education_level"
                         value={data.education_level}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                            darkMode 
-                                ? 'bg-gray-700 border-gray-600 text-white' 
-                                : 'bg-white border-gray-300 text-gray-900'
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
                         }`}
                         required
                     >
@@ -60,15 +58,19 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                             <TransText en="Other" fr="Autre" ar="أخرى" />
                         </option>
                     </select>
-                    {errors.education_level && <span className="text-sm text-red-500 mt-1">{errors.education_level}</span>}
+                    {errors.education_level && <span className="mt-1 text-sm text-red-500">{errors.education_level}</span>}
                 </div>
 
                 {/* Conditional Institution and Specialty fields - ONLY for "Other" */}
                 {data.education_level === 'other' && (
                     <>
                         <div>
-                            <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                                <TransText en="In which institution did you obtain this diploma?" fr="Dans quelle institution avez-vous obtenu ce diplôme ?" ar="في أي مؤسسة حصلت على هذه الشهادة؟" />
+                            <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                                <TransText
+                                    en="In which institution did you obtain this diploma?"
+                                    fr="Dans quelle institution avez-vous obtenu ce diplôme ?"
+                                    ar="في أي مؤسسة حصلت على هذه الشهادة؟"
+                                />
                                 <Required />
                             </label>
                             <input
@@ -76,19 +78,25 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                                 name="diploma_institution"
                                 value={data.diploma_institution}
                                 onChange={handleChange}
-                                className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
+                                className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
                                     darkMode
-                                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                                 }`}
-                                placeholder={selectedLanguage === 'en' ? 'Institution name' : selectedLanguage === 'fr' ? 'Nom de l\'institution' : 'اسم المؤسسة'}
+                                placeholder={
+                                    selectedLanguage === 'en'
+                                        ? 'Institution name'
+                                        : selectedLanguage === 'fr'
+                                          ? "Nom de l'institution"
+                                          : 'اسم المؤسسة'
+                                }
                                 required
                             />
-                            {errors.diploma_institution && <span className="text-sm text-red-500 mt-1">{errors.diploma_institution}</span>}
+                            {errors.diploma_institution && <span className="mt-1 text-sm text-red-500">{errors.diploma_institution}</span>}
                         </div>
 
                         <div>
-                            <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                            <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                                 <TransText en="What specialty?" fr="Quelle spécialité ?" ar="ما هو التخصص؟" />
                                 <Required />
                             </label>
@@ -97,22 +105,22 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                                 name="diploma_specialty"
                                 value={data.diploma_specialty}
                                 onChange={handleChange}
-                                className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
+                                className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
                                     darkMode
-                                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                                 }`}
                                 placeholder={selectedLanguage === 'en' ? 'Your specialty' : selectedLanguage === 'fr' ? 'Votre spécialité' : 'تخصصك'}
                                 required
                             />
-                            {errors.diploma_specialty && <span className="text-sm text-red-500 mt-1">{errors.diploma_specialty}</span>}
+                            {errors.diploma_specialty && <span className="mt-1 text-sm text-red-500">{errors.diploma_specialty}</span>}
                         </div>
                     </>
                 )}
 
                 {/* Current Situation */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                         <TransText en="Current Situation" fr="Situation actuelle" ar="الوضع الحالي" />
                         <Required />
                     </label>
@@ -120,10 +128,8 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                         name="current_situation"
                         value={data.current_situation}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                            darkMode 
-                                ? 'bg-gray-700 border-gray-600 text-white' 
-                                : 'bg-white border-gray-300 text-gray-900'
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
                         }`}
                         required
                     >
@@ -155,13 +161,13 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                             <TransText en="Other" fr="Autre" ar="أخرى" />
                         </option>
                     </select>
-                    {errors.current_situation && <span className="text-sm text-red-500 mt-1">{errors.current_situation}</span>}
+                    {errors.current_situation && <span className="mt-1 text-sm text-red-500">{errors.current_situation}</span>}
                 </div>
 
                 {/* Conditional Other Status field */}
                 {data.current_situation === 'other' && (
                     <div>
-                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                             <TransText en="Please specify" fr="Veuillez préciser" ar="يرجى التحديد" />
                             <Required />
                         </label>
@@ -170,32 +176,40 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                             name="other_status"
                             value={data.other_status}
                             onChange={handleChange}
-                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
+                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
                                 darkMode
-                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                    : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                             }`}
-                            placeholder={selectedLanguage === 'en' ? 'Specify your situation' : selectedLanguage === 'fr' ? 'Précisez votre situation' : 'حدد وضعك'}
+                            placeholder={
+                                selectedLanguage === 'en'
+                                    ? 'Specify your situation'
+                                    : selectedLanguage === 'fr'
+                                      ? 'Précisez votre situation'
+                                      : 'حدد وضعك'
+                            }
                             required
                         />
-                        {errors.other_status && <span className="text-sm text-red-500 mt-1">{errors.other_status}</span>}
+                        {errors.other_status && <span className="mt-1 text-sm text-red-500">{errors.other_status}</span>}
                     </div>
                 )}
 
                 {/* Has Referring Organization - Step 1 */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                        <TransText en="Do you have a referring organization/association?" fr="Avez-vous une organisation / association référente ?" ar="هل لديك جمعية أو مؤسسة أوصت بك؟" />
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <TransText
+                            en="Do you have a referring organization/association?"
+                            fr="Avez-vous une organisation / association référente ?"
+                            ar="هل لديك جمعية أو مؤسسة أوصت بك؟"
+                        />
                         <Required />
                     </label>
                     <select
                         name="has_referring_organization"
                         value={data.has_referring_organization}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                            darkMode
-                                ? 'bg-gray-700 border-gray-600 text-white'
-                                : 'bg-white border-gray-300 text-gray-900'
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
                         }`}
                         required
                     >
@@ -209,13 +223,13 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                             <TransText en="No" fr="Non" ar="لا" />
                         </option>
                     </select>
-                    {errors.has_referring_organization && <span className="text-sm text-red-500 mt-1">{errors.has_referring_organization}</span>}
+                    {errors.has_referring_organization && <span className="mt-1 text-sm text-red-500">{errors.has_referring_organization}</span>}
                 </div>
 
                 {/* Organization Selection - Step 2 (conditional) */}
                 {data.has_referring_organization === 'yes' && (
                     <div>
-                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                             <TransText en="Which organization/association?" fr="Quelle organisation / association ?" ar="أي جمعية أو مؤسسة؟" />
                             <Required />
                         </label>
@@ -223,10 +237,8 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                             name="referring_organization"
                             value={data.referring_organization}
                             onChange={handleChange}
-                            className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                                darkMode
-                                    ? 'bg-gray-700 border-gray-600 text-white'
-                                    : 'bg-white border-gray-300 text-gray-900'
+                            className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                                darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
                             }`}
                             required
                         >
@@ -258,33 +270,44 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                                 Autre Association / جمعية أخرى
                             </option>
                         </select>
-                        {errors.referring_organization && <span className="text-sm text-red-500 mt-1">{errors.referring_organization}</span>}
+                        {errors.referring_organization && <span className="mt-1 text-sm text-red-500">{errors.referring_organization}</span>}
                     </div>
                 )}
 
                 {/* Conditional Other Organization field */}
-                {data.has_referring_organization === 'yes' && (data.referring_organization === 'autre_plateforme' || data.referring_organization === 'autre_association') && (
-                    <div>
-                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                            <TransText en="Please specify the name of the association" fr="Merci de préciser le nom de l'association" ar="المرجو تحديد اسم الجمعية" />
-                            <Required />
-                        </label>
-                        <input
-                            type="text"
-                            name="other_organization"
-                            value={data.other_organization}
-                            onChange={handleChange}
-                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                                darkMode
-                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                            }`}
-                            placeholder={selectedLanguage === 'en' ? 'Organization name' : selectedLanguage === 'fr' ? 'Nom de l\'organisation' : 'اسم المنظمة'}
-                            required
-                        />
-                        {errors.other_organization && <span className="text-sm text-red-500 mt-1">{errors.other_organization}</span>}
-                    </div>
-                )}
+                {data.has_referring_organization === 'yes' &&
+                    (data.referring_organization === 'autre_plateforme' || data.referring_organization === 'autre_association') && (
+                        <div>
+                            <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                                <TransText
+                                    en="Please specify the name of the association"
+                                    fr="Merci de préciser le nom de l'association"
+                                    ar="المرجو تحديد اسم الجمعية"
+                                />
+                                <Required />
+                            </label>
+                            <input
+                                type="text"
+                                name="other_organization"
+                                value={data.other_organization}
+                                onChange={handleChange}
+                                className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                                    darkMode
+                                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                                }`}
+                                placeholder={
+                                    selectedLanguage === 'en'
+                                        ? 'Organization name'
+                                        : selectedLanguage === 'fr'
+                                          ? "Nom de l'organisation"
+                                          : 'اسم المنظمة'
+                                }
+                                required
+                            />
+                            {errors.other_organization && <span className="mt-1 text-sm text-red-500">{errors.other_organization}</span>}
+                        </div>
+                    )}
             </div>
         </div>
     );

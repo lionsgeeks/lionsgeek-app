@@ -24,7 +24,7 @@ const CoworkingRequests = () => {
             ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full table-auto border-collapse text-sm">
-                        <thead className="bg-gray-200 ">
+                        <thead className="bg-gray-200">
                             <tr>
                                 <th className="px-4 py-3 text-left font-medium text-black">Name</th>
                                 <th className="px-4 py-3 text-left font-medium text-black">Email</th>
@@ -40,12 +40,13 @@ const CoworkingRequests = () => {
                                     <td className="px-4 py-3 text-gray-600">{request.email}</td>
                                     <td className="px-4 py-3">
                                         <span
-                                            className={`rounded-full px-2 py-1 text-xs font-medium ${request.needs?.toLowerCase().includes('studio')
-                                                ? 'bg-blue-100 text-blue-700'
-                                                : request.needs?.toLowerCase().includes('workstation')
-                                                    ? 'bg-purple-100 text-purple-700'
-                                                    : 'bg-gray-100 text-gray-700'
-                                                }`}
+                                            className={`rounded-full px-2 py-1 text-xs font-medium ${
+                                                request.needs?.toLowerCase().includes('studio')
+                                                    ? 'bg-blue-100 text-blue-700'
+                                                    : request.needs?.toLowerCase().includes('workstation')
+                                                      ? 'bg-purple-100 text-purple-700'
+                                                      : 'bg-gray-100 text-gray-700'
+                                            }`}
                                         >
                                             {request.needs || '-'}
                                         </span>

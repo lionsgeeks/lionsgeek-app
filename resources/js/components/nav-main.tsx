@@ -11,10 +11,7 @@ export function NavMain({ items = [], title = '' }: NavMainProps) {
     const page = usePage();
     return (
         <SidebarGroup className="px-2 py-0">
-            {
-                title &&
-                <SidebarGroupLabel>{title}</SidebarGroupLabel>
-            }
+            {title && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
             <SidebarMenu>
                 {items.map((item) => (
                     <SidebarMenuItem key={item.title}>

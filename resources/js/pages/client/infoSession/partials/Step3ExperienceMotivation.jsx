@@ -1,33 +1,45 @@
 import { TransText } from '../../../../components/TransText';
 
-const Required = () => <span className="text-red-500 ml-1">*</span>;
+const Required = () => <span className="ml-1 text-red-500">*</span>;
 
 const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selectedLanguage, trainingType }) => {
     const isDigitalMarketing = trainingType === 'digital' || trainingType === 'media';
-    
+
     return (
         <div className="space-y-6">
             <div className="text-center">
-                <h2 className={`text-2xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                    <TransText 
-                        en={isDigitalMarketing ? "Digital Marketing Experience" : "Programming Experience"} 
-                        fr={isDigitalMarketing ? "Expérience Marketing Digital" : "Expérience en Programmation"} 
-                        ar={isDigitalMarketing ? "خبرة التسويق الرقمي" : "خبرة البرمجة"} 
+                <h2 className={`mb-2 text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <TransText
+                        en={isDigitalMarketing ? 'Digital Marketing Experience' : 'Programming Experience'}
+                        fr={isDigitalMarketing ? 'Expérience Marketing Digital' : 'Expérience en Programmation'}
+                        ar={isDigitalMarketing ? 'خبرة التسويق الرقمي' : 'خبرة البرمجة'}
                     />
                 </h2>
                 <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    <TransText en="Tell us about your experience and motivation" fr="Parlez-nous de votre expérience et motivation" ar="أخبرنا عن خبرتك ودافعك" />
+                    <TransText
+                        en="Tell us about your experience and motivation"
+                        fr="Parlez-nous de votre expérience et motivation"
+                        ar="أخبرنا عن خبرتك ودافعك"
+                    />
                 </p>
             </div>
 
             <div className="space-y-6">
                 {/* Training Experience */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                        <TransText 
-                            en={isDigitalMarketing ? "Have you already taken digital marketing training?" : "Have you already taken programming training?"} 
-                            fr={isDigitalMarketing ? "Avez-vous déjà suivi une formation marketing digital ?" : "Avez-vous déjà suivi une formation en programmation ?"} 
-                            ar={isDigitalMarketing ? "هل سبق لك أن تلقيت تدريباً في التسويق الرقمي؟" : "هل سبق لك أن تلقيت تدريباً في البرمجة؟"} 
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <TransText
+                            en={
+                                isDigitalMarketing
+                                    ? 'Have you already taken digital marketing training?'
+                                    : 'Have you already taken programming training?'
+                            }
+                            fr={
+                                isDigitalMarketing
+                                    ? 'Avez-vous déjà suivi une formation marketing digital ?'
+                                    : 'Avez-vous déjà suivi une formation en programmation ?'
+                            }
+                            ar={isDigitalMarketing ? 'هل سبق لك أن تلقيت تدريباً في التسويق الرقمي؟' : 'هل سبق لك أن تلقيت تدريباً في البرمجة؟'}
                         />
                         <Required />
                     </label>
@@ -35,10 +47,8 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                         name="has_training"
                         value={data.has_training}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                            darkMode 
-                                ? 'bg-gray-700 border-gray-600 text-white' 
-                                : 'bg-white border-gray-300 text-gray-900'
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
                         }`}
                         required
                     >
@@ -52,13 +62,13 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                             <TransText en="No" fr="Non" ar="لا" />
                         </option>
                     </select>
-                    {errors.has_training && <span className="text-sm text-red-500 mt-1">{errors.has_training}</span>}
+                    {errors.has_training && <span className="mt-1 text-sm text-red-500">{errors.has_training}</span>}
                 </div>
 
                 {/* Previous Training Details (conditional) */}
                 {data.has_training === 'yes' && (
                     <div>
-                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                             <TransText en="Please specify which training" fr="Veuillez préciser quelle formation" ar="يرجى تحديد نوع التدريب" />
                             <Required />
                         </label>
@@ -67,29 +77,50 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                             name="previous_training_details"
                             value={data.previous_training_details}
                             onChange={handleChange}
-                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                                darkMode 
-                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                                darkMode
+                                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                    : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                             }`}
-                            placeholder={selectedLanguage === 'en' ? 'Describe your previous training' : selectedLanguage === 'fr' ? 'Décrivez votre formation précédente' : 'صف تدريبك السابق'}
+                            placeholder={
+                                selectedLanguage === 'en'
+                                    ? 'Describe your previous training'
+                                    : selectedLanguage === 'fr'
+                                      ? 'Décrivez votre formation précédente'
+                                      : 'صف تدريبك السابق'
+                            }
                             required
                         />
-                        {errors.previous_training_details && <span className="text-sm text-red-500 mt-1">{errors.previous_training_details}</span>}
+                        {errors.previous_training_details && <span className="mt-1 text-sm text-red-500">{errors.previous_training_details}</span>}
                     </div>
                 )}
 
                 {/* Motivation */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                        <TransText 
-                            en={isDigitalMarketing ? "Why do you want to join this digital marketing training at Lionsgeek?" : "Why do you want to join this coding training at Lionsgeek?"} 
-                            fr={isDigitalMarketing ? "Pourquoi souhaitez-vous rejoindre cette formation en marketing digital à Lionsgeek ?" : "Pourquoi souhaitez-vous rejoindre cette formation en programmation à Lionsgeek ?"} 
-                            ar={isDigitalMarketing ? "لماذا تريد الانضمام إلى هذا التدريب في التسويق الرقمي في Lionsgeek؟" : "لماذا تريد الانضمام إلى هذا التدريب في البرمجة في Lionsgeek؟"} 
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <TransText
+                            en={
+                                isDigitalMarketing
+                                    ? 'Why do you want to join this digital marketing training at Lionsgeek?'
+                                    : 'Why do you want to join this coding training at Lionsgeek?'
+                            }
+                            fr={
+                                isDigitalMarketing
+                                    ? 'Pourquoi souhaitez-vous rejoindre cette formation en marketing digital à Lionsgeek ?'
+                                    : 'Pourquoi souhaitez-vous rejoindre cette formation en programmation à Lionsgeek ?'
+                            }
+                            ar={
+                                isDigitalMarketing
+                                    ? 'لماذا تريد الانضمام إلى هذا التدريب في التسويق الرقمي في Lionsgeek؟'
+                                    : 'لماذا تريد الانضمام إلى هذا التدريب في البرمجة في Lionsgeek؟'
+                            }
                         />
                         <Required />
-                        <span className={`ml-2 text-sm ${data.why_join_formation && data.why_join_formation.length < 100 ? 'text-red-500' : 'text-alpha'}`}>
-                            ({data.why_join_formation ? data.why_join_formation.length : 0}/100 <TransText en="characters minimum" fr="caractères minimum" ar="حرف كحد أدنى" />)
+                        <span
+                            className={`ml-2 text-sm ${data.why_join_formation && data.why_join_formation.length < 100 ? 'text-red-500' : 'text-alpha'}`}
+                        >
+                            ({data.why_join_formation ? data.why_join_formation.length : 0}/100{' '}
+                            <TransText en="characters minimum" fr="caractères minimum" ar="حرف كحد أدنى" />)
                         </span>
                     </label>
                     <textarea
@@ -98,32 +129,40 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                         onChange={handleChange}
                         onPaste={(e) => e.preventDefault()}
                         rows={5}
-                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                            darkMode 
-                                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode
+                                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                         }`}
-                        placeholder={selectedLanguage === 'en' ? 'Please provide a detailed explanation of your motivation (minimum 100 characters)' : selectedLanguage === 'fr' ? 'Veuillez fournir une explication détaillée de votre motivation (minimum 100 caractères)' : 'يرجى تقديم شرح مفصل لدافعك (100 حرف كحد أدنى)'}
+                        placeholder={
+                            selectedLanguage === 'en'
+                                ? 'Please provide a detailed explanation of your motivation (minimum 100 characters)'
+                                : selectedLanguage === 'fr'
+                                  ? 'Veuillez fournir une explication détaillée de votre motivation (minimum 100 caractères)'
+                                  : 'يرجى تقديم شرح مفصل لدافعك (100 حرف كحد أدنى)'
+                        }
                         required
                         minLength={100}
                     />
-                    {errors.why_join_formation && <span className="text-sm text-red-500 mt-1">{errors.why_join_formation}</span>}
+                    {errors.why_join_formation && <span className="mt-1 text-sm text-red-500">{errors.why_join_formation}</span>}
                 </div>
 
                 {/* LionsGEEK Participation */}
                 <div>
-                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
-                        <TransText en="Have you already participated in a LionsGEEK activity?" fr="Avez-vous déjà participé à une activité LionsGEEK ?" ar="هل سبق لك أن شاركت في نشاط مع LionsGEEK؟" />
+                    <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <TransText
+                            en="Have you already participated in a LionsGEEK activity?"
+                            fr="Avez-vous déjà participé à une activité LionsGEEK ?"
+                            ar="هل سبق لك أن شاركت في نشاط مع LionsGEEK؟"
+                        />
                         <Required />
                     </label>
                     <select
                         name="participated_lionsgeek"
                         value={data.participated_lionsgeek}
                         onChange={handleChange}
-                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                            darkMode 
-                                ? 'bg-gray-700 border-gray-600 text-white' 
-                                : 'bg-white border-gray-300 text-gray-900'
+                        className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
                         }`}
                         required
                     >
@@ -137,13 +176,13 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                             <TransText en="No" fr="Non" ar="لا" />
                         </option>
                     </select>
-                    {errors.participated_lionsgeek && <span className="text-sm text-red-500 mt-1">{errors.participated_lionsgeek}</span>}
+                    {errors.participated_lionsgeek && <span className="mt-1 text-sm text-red-500">{errors.participated_lionsgeek}</span>}
                 </div>
 
                 {/* LionsGEEK Activity (conditional) */}
                 {data.participated_lionsgeek === 'yes' && (
                     <div>
-                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                             <TransText en="Which one?" fr="Laquelle ?" ar="أي نشاط؟" />
                             <Required />
                         </label>
@@ -151,10 +190,8 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                             name="lionsgeek_activity"
                             value={data.lionsgeek_activity}
                             onChange={handleChange}
-                            className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                                darkMode 
-                                    ? 'bg-gray-700 border-gray-600 text-white' 
-                                    : 'bg-white border-gray-300 text-gray-900'
+                            className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                                darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
                             }`}
                             required
                         >
@@ -183,14 +220,14 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                                 <TransText en="Other" fr="Autre" ar="أخرى" />
                             </option>
                         </select>
-                        {errors.lionsgeek_activity && <span className="text-sm text-red-500 mt-1">{errors.lionsgeek_activity}</span>}
+                        {errors.lionsgeek_activity && <span className="mt-1 text-sm text-red-500">{errors.lionsgeek_activity}</span>}
                     </div>
                 )}
 
                 {/* Other Activity (conditional) */}
                 {data.lionsgeek_activity === 'other' && (
                     <div>
-                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
+                        <label className={`mb-2 block text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                             <TransText en="Please specify the activity" fr="Veuillez préciser l'activité" ar="يرجى تحديد النشاط" />
                             <Required />
                         </label>
@@ -199,15 +236,15 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                             name="other_activity"
                             value={data.other_activity}
                             onChange={handleChange}
-                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
-                                darkMode 
-                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                            className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
+                                darkMode
+                                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                    : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                             }`}
-                            placeholder={selectedLanguage === 'en' ? 'Activity name' : selectedLanguage === 'fr' ? 'Nom de l\'activité' : 'اسم النشاط'}
+                            placeholder={selectedLanguage === 'en' ? 'Activity name' : selectedLanguage === 'fr' ? "Nom de l'activité" : 'اسم النشاط'}
                             required
                         />
-                        {errors.other_activity && <span className="text-sm text-red-500 mt-1">{errors.other_activity}</span>}
+                        {errors.other_activity && <span className="mt-1 text-sm text-red-500">{errors.other_activity}</span>}
                     </div>
                 )}
             </div>

@@ -1,8 +1,8 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Link, usePage } from '@inertiajs/react';
 import dayjs from 'dayjs';
-import { Card, CardContent } from '@/components/ui/card';
 import { Mail } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 const NewsLetter = () => {
     const { newsLetter } = usePage().props;
@@ -19,11 +19,7 @@ const NewsLetter = () => {
                         <h2 className="text-lg font-semibold text-[#212529]">Recent Newsletters</h2>
                     </div>
                     <Link href="/admin/newsletter">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-white bg-beta hover:bg-alpha hover:text-beta"
-                        >
+                        <Button variant="outline" size="sm" className="bg-beta text-white hover:bg-alpha hover:text-beta">
                             View All
                         </Button>
                     </Link>
@@ -41,16 +37,14 @@ const NewsLetter = () => {
                         <Link
                             key={item.id}
                             href={`/admin/newsletter`}
-                            className="block rounded-lg border-b-2 p-4 hover:bg-gray-200 transition-all duration-300"
+                            className="block rounded-lg border-b-2 p-4 transition-all duration-300 hover:bg-gray-200"
                         >
                             <div className="flex items-start justify-between gap-4">
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-[#212529] truncate">{item.subject}</h3>
-                                    <p className="mt-1 text-sm text-gray-600 line-clamp-2">{item.content}</p>
+                                <div className="min-w-0 flex-1">
+                                    <h3 className="truncate font-semibold text-[#212529]">{item.subject}</h3>
+                                    <p className="mt-1 line-clamp-2 text-sm text-gray-600">{item.content}</p>
                                 </div>
-                                <div className="flex-shrink-0 text-xs text-gray-400">
-                                    {dayjs(item.created_at).format('YYYY-MM-DD')}
-                                </div>
+                                <div className="flex-shrink-0 text-xs text-gray-400">{dayjs(item.created_at).format('YYYY-MM-DD')}</div>
                             </div>
                         </Link>
                     ))}

@@ -1,11 +1,21 @@
 import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, BriefcaseBusiness, Calendar, Camera, CircleArrowDown, CircleArrowUp, Code, Contact, FolderKanban, GalleryHorizontal, GalleryHorizontalEnd, HeartHandshake, Home, LayoutGrid, Mail, MessageCircleQuestion, Mic, MicVocal, UserPen, Users } from 'lucide-react';
+import {
+    BookOpen,
+    BriefcaseBusiness,
+    Calendar,
+    Contact,
+    GalleryHorizontalEnd,
+    HeartHandshake,
+    LayoutGrid,
+    Mail,
+    Mic,
+    MicVocal,
+    Users,
+} from 'lucide-react';
 import AppLogo from './app-logo';
-import { useState } from 'react';
 
 const adminNavItems: NavItem[] = [
     {
@@ -16,12 +26,12 @@ const adminNavItems: NavItem[] = [
     {
         title: 'Events',
         href: '/admin/events',
-        icon: Calendar
+        icon: Calendar,
     },
     {
         title: 'Blogs',
         href: '/admin/blogs',
-        icon: BookOpen
+        icon: BookOpen,
     },
     {
         title: 'Press',
@@ -46,24 +56,23 @@ const adminNavItems: NavItem[] = [
     {
         title: 'Gallery',
         href: '/admin/gallery',
-        icon: GalleryHorizontalEnd
+        icon: GalleryHorizontalEnd,
     },
     {
         title: 'Projects',
         href: '/admin/projects',
-        icon: BriefcaseBusiness
+        icon: BriefcaseBusiness,
     },
     {
         title: 'Infosessions',
         href: '/admin/infosessions',
-        icon: Mic
+        icon: Mic,
     },
     {
         title: 'Participants',
         href: '/admin/participants',
         icon: Users,
     },
-
 ];
 
 // const userNavItems: NavItem[] = [
@@ -119,7 +128,6 @@ const adminNavItems: NavItem[] = [
 //     },
 // ]
 
-
 export function AppSidebar() {
     // const [showUserItems, setShowUserItems] = useState(false);
     return (
@@ -136,8 +144,8 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent className="overflow-auto no-scrollbar">
-                <NavMain items={adminNavItems} title='' />
+            <SidebarContent className="no-scrollbar overflow-auto">
+                <NavMain items={adminNavItems} title="" />
 
                 {/* <div className='flex items-center justify-center gap-2 cursor-pointer mt-2'
                     onClick={() => { setShowUserItems(!showUserItems) }}
@@ -159,9 +167,7 @@ export function AppSidebar() {
                 } */}
             </SidebarContent>
 
-            <SidebarFooter>
-                {/* <NavUser /> */}
-            </SidebarFooter>
+            <SidebarFooter>{/* <NavUser /> */}</SidebarFooter>
         </Sidebar>
     );
 }

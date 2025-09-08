@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Card, CardContent } from "@/components/ui/card";
-import { Plus } from "lucide-react";
-import EventForm from "./EventForm";
-import { Button } from "@headlessui/react";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@headlessui/react';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import EventForm from './EventForm';
 
 export default function CreateEventDialog({ onSuccess }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +15,7 @@ export default function CreateEventDialog({ onSuccess }) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819] flex p-2 rounded-lg items-center cursor-pointer text-sm font-medium">
+                <Button className="flex transform cursor-pointer items-center rounded-lg bg-[#fee819] p-2 text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
                     <Plus className="mr-2 h-4 w-4" />
                     Create Event
                 </Button>
@@ -30,12 +29,9 @@ export default function CreateEventDialog({ onSuccess }) {
                     </Card>
                 )} */}
             </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
                 <DialogTitle className="sr-only">Create New </DialogTitle>
-                <EventForm
-                    onClose={() => setIsOpen(false)}
-                    onSuccess={handleSuccess}
-                />
+                <EventForm onClose={() => setIsOpen(false)} onSuccess={handleSuccess} />
             </DialogContent>
         </Dialog>
     );

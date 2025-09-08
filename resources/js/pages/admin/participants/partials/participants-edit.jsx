@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Head, useForm, usePage, router } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, User, Upload, Loader2 } from 'lucide-react';
+import AppLayout from '@/layouts/app-layout';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { ArrowLeft, Loader2, Upload, User } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function ParticipantEdit() {
     const { participant, sessions } = usePage().props;
@@ -68,14 +68,13 @@ export default function ParticipantEdit() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         post(route('participants.update', participant.id), {
             forceFormData: true,
             onSuccess: () => {
                 router.visit(`/admin/participants/${participant.id}`);
             },
-            onError: (errors) => {
-            }
+            onError: (errors) => {},
         });
     };
 
@@ -88,14 +87,14 @@ export default function ParticipantEdit() {
     if (!participant) {
         return (
             <AppLayout>
-                <div className="min-h-screen bg-white flex items-center justify-center">
-                    <div className="text-center p-8">
-                        <User className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <div className="flex min-h-screen items-center justify-center bg-white">
+                    <div className="p-8 text-center">
+                        <User className="mx-auto mb-4 h-16 w-16 text-gray-400" />
                         <h1 className="mb-4 text-2xl font-bold text-[#212529]">Participant Not Found</h1>
                         <p className="mb-6 text-gray-600">The participant you're looking for doesn't exist.</p>
-                        <Button 
+                        <Button
                             onClick={() => router.visit('/admin/participants')}
-                            className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                            className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to Participants
@@ -109,15 +108,15 @@ export default function ParticipantEdit() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Editing ${participant.full_name}'s profile`} />
-            
+
             <div className="min-h-screen bg-gray-50">
                 {/* Header Banner */}
                 <div className="bg-[#212529] py-8 text-white">
                     <div className="mx-auto max-w-7xl px-6">
-                        <Button 
+                        <Button
                             onClick={() => router.visit(`/admin/participants/${participant.id}`)}
                             variant="ghost"
-                            className="mb-6 text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
+                            className="mb-6 rounded-lg text-white transition-all duration-200 ease-in-out hover:bg-[#fee819] hover:text-[#212529]"
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to Profile
@@ -141,9 +140,9 @@ export default function ParticipantEdit() {
                         <CardContent className="p-8">
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* Name and Birthday Row */}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                                     <div>
-                                        <Label htmlFor="full_name" className="text-sm font-semibold text-[#212529] mb-2 block">
+                                        <Label htmlFor="full_name" className="mb-2 block text-sm font-semibold text-[#212529]">
                                             Full Name:
                                         </Label>
                                         <Input
@@ -154,12 +153,10 @@ export default function ParticipantEdit() {
                                             className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]"
                                             required
                                         />
-                                        {errors.full_name && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.full_name}</p>
-                                        )}
+                                        {errors.full_name && <p className="mt-1 text-sm text-red-600">{errors.full_name}</p>}
                                     </div>
                                     <div>
-                                        <Label htmlFor="birthday" className="text-sm font-semibold text-[#212529] mb-2 block">
+                                        <Label htmlFor="birthday" className="mb-2 block text-sm font-semibold text-[#212529]">
                                             Birthday:
                                         </Label>
                                         <Input
@@ -170,16 +167,14 @@ export default function ParticipantEdit() {
                                             className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]"
                                             required
                                         />
-                                        {errors.birthday && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.birthday}</p>
-                                        )}
+                                        {errors.birthday && <p className="mt-1 text-sm text-red-600">{errors.birthday}</p>}
                                     </div>
                                 </div>
 
                                 {/* Email and Phone Row */}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                                     <div>
-                                        <Label htmlFor="email" className="text-sm font-semibold text-[#212529] mb-2 block">
+                                        <Label htmlFor="email" className="mb-2 block text-sm font-semibold text-[#212529]">
                                             Email:
                                         </Label>
                                         <Input
@@ -190,12 +185,10 @@ export default function ParticipantEdit() {
                                             className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]"
                                             required
                                         />
-                                        {errors.email && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                                        )}
+                                        {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                                     </div>
                                     <div>
-                                        <Label htmlFor="phone" className="text-sm font-semibold text-[#212529] mb-2 block">
+                                        <Label htmlFor="phone" className="mb-2 block text-sm font-semibold text-[#212529]">
                                             Phone:
                                         </Label>
                                         <Input
@@ -206,20 +199,18 @@ export default function ParticipantEdit() {
                                             className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]"
                                             required
                                         />
-                                        {errors.phone && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                                        )}
+                                        {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
                                     </div>
                                 </div>
 
                                 {/* City and Prefecture Row */}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                                     <div>
-                                        <Label htmlFor="city" className="text-sm font-semibold text-[#212529] mb-2 block">
+                                        <Label htmlFor="city" className="mb-2 block text-sm font-semibold text-[#212529]">
                                             City:
                                         </Label>
                                         <Select value={(data.city || '').toString()} onValueChange={(value) => setData('city', value)}>
-                                            <SelectTrigger className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819] capitalize">
+                                            <SelectTrigger className="w-full rounded-lg border border-gray-300 capitalize focus:border-[#fee819] focus:ring-[#fee819]">
                                                 <SelectValue placeholder="Select your city" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -236,13 +227,11 @@ export default function ParticipantEdit() {
                                                 <SelectItem value="other">Other</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        {errors.city && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.city}</p>
-                                        )}
+                                        {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city}</p>}
                                     </div>
                                     {(data.city || '').toString().trim().toLowerCase() === 'casablanca' && (
                                         <div>
-                                            <Label htmlFor="prefecture" className="text-sm font-semibold text-[#212529] mb-2 block">
+                                            <Label htmlFor="prefecture" className="mb-2 block text-sm font-semibold text-[#212529]">
                                                 Prefecture:
                                             </Label>
                                             <Select value={data.prefecture || ''} onValueChange={(value) => setData('prefecture', value)}>
@@ -263,20 +252,21 @@ export default function ParticipantEdit() {
                                                     <SelectItem value="sidi_othmane">Sidi Othmane</SelectItem>
                                                 </SelectContent>
                                             </Select>
-                                            {errors.prefecture && (
-                                                <p className="mt-1 text-sm text-red-600">{errors.prefecture}</p>
-                                            )}
+                                            {errors.prefecture && <p className="mt-1 text-sm text-red-600">{errors.prefecture}</p>}
                                         </div>
                                     )}
                                 </div>
 
                                 {/* Session and Current Step Row */}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                                     <div>
-                                        <Label htmlFor="session" className="text-sm font-semibold text-[#212529] mb-2 block">
+                                        <Label htmlFor="session" className="mb-2 block text-sm font-semibold text-[#212529]">
                                             Session:
                                         </Label>
-                                        <Select value={data.session ? data.session.toString() : ''} onValueChange={(value) => setData('session', value)}>
+                                        <Select
+                                            value={data.session ? data.session.toString() : ''}
+                                            onValueChange={(value) => setData('session', value)}
+                                        >
                                             <SelectTrigger className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]">
                                                 <SelectValue placeholder="Select a session" />
                                             </SelectTrigger>
@@ -288,12 +278,10 @@ export default function ParticipantEdit() {
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        {errors.session && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.session}</p>
-                                        )}
+                                        {errors.session && <p className="mt-1 text-sm text-red-600">{errors.session}</p>}
                                     </div>
                                     <div>
-                                        <Label htmlFor="step" className="text-sm font-semibold text-[#212529] mb-2 block">
+                                        <Label htmlFor="step" className="mb-2 block text-sm font-semibold text-[#212529]">
                                             Current Step:
                                         </Label>
                                         <Select value={data.step || ''} onValueChange={(value) => setData('step', value)}>
@@ -311,36 +299,23 @@ export default function ParticipantEdit() {
                                                 <SelectItem value="media_school">Media School</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        {errors.step && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.step}</p>
-                                        )}
+                                        {errors.step && <p className="mt-1 text-sm text-red-600">{errors.step}</p>}
                                     </div>
                                 </div>
 
                                 {/* Profile Image */}
                                 <div>
-                                    <Label className="text-sm font-semibold text-[#212529] mb-2 block">
-                                        Profile Image:
-                                    </Label>
+                                    <Label className="mb-2 block text-sm font-semibold text-[#212529]">Profile Image:</Label>
                                     <div className="w-full">
                                         <label
                                             htmlFor="image"
-                                            className="w-full p-4 rounded-lg cursor-pointer font-medium border-2 border-dashed border-gray-300 hover:border-[#fee819] text-[#212529] flex items-center justify-center gap-3 transition-all duration-200 hover:bg-gray-50"
+                                            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-4 font-medium text-[#212529] transition-all duration-200 hover:border-[#fee819] hover:bg-gray-50"
                                         >
                                             <Upload className="h-5 w-5" />
                                             {selectedFile ? selectedFile.name : 'Upload Image'}
                                         </label>
-                                        <input
-                                            id="image"
-                                            name="image"
-                                            type="file"
-                                            onChange={handleFileChange}
-                                            accept="image/*"
-                                            className="hidden"
-                                        />
-                                        {errors.image && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.image}</p>
-                                        )}
+                                        <input id="image" name="image" type="file" onChange={handleFileChange} accept="image/*" className="hidden" />
+                                        {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
                                     </div>
                                 </div>
 
@@ -349,7 +324,7 @@ export default function ParticipantEdit() {
                                     <Button
                                         type="submit"
                                         disabled={processing}
-                                        className="w-full bg-[#212529] text-white py-3 rounded-lg font-medium hover:bg-[#fee819] hover:text-[#212529] transition-all duration-300 ease-in-out transform hover:scale-105"
+                                        className="w-full transform rounded-lg bg-[#212529] py-3 font-medium text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
                                     >
                                         {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                         {processing ? 'Updating...' : 'Update'}

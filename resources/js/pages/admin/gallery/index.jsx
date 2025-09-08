@@ -1,9 +1,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { Filter, Image, Images, RotateCcw, Search, Trash } from 'lucide-react';
 import { useState } from 'react';
@@ -286,11 +286,7 @@ export default function GalleryAdmin() {
                         >
                             Cancel
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={confirmDeletion}
-                            className="bg-[#ff7376] text-white hover:bg-[#ff5a5e]"
-                        >
+                        <Button variant="destructive" onClick={confirmDeletion} className="bg-[#ff7376] text-white hover:bg-[#ff5a5e]">
                             Delete
                         </Button>
                     </div>

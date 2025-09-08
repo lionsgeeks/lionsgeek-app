@@ -75,7 +75,6 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-
     *,
     ::after,
     ::before,
@@ -272,7 +271,7 @@
     transition: 0.5s ease;
 }
 
-.projects:hover>.preview {
+.projects:hover > .preview {
     top: 0;
     transition: 0.5s ease;
 }

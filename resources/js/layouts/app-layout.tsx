@@ -30,12 +30,13 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
                         sessionStorage.setItem('visit_tracked', '1');
                     });
             }
-        } catch {}
+        } catch {
+            // Silently catch potential sessionStorage errors
+        }
     }, []);
     const currentUrl = window.location.href.toLowerCase();
     const useSidebarLayout = auth?.user && (currentUrl.includes('/admin/') || currentUrl.includes('/settings/'));
     const LayoutComponent = useSidebarLayout ? AppSidebarLayout : AppHeaderLayout;
-
 
     return (
         <LayoutComponent breadcrumbs={breadcrumbs} {...props}>

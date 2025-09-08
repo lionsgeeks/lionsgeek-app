@@ -1,34 +1,15 @@
-import { usePage, router } from "@inertiajs/react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import AppLayout from "@/layouts/app-layout";
-import {
-    ArrowLeft,
-    Calendar,
-    Users,
-    MapPin,
-    Clock,
-    Edit,
-    Trash2,
-    Search,
-    ChevronLeft,
-    ChevronRight,
-    Filter,
-} from "lucide-react";
-import { useState, useMemo } from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import EditEventDialog from "./partials/EditEventDialog";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import AppLayout from '@/layouts/app-layout';
+import { router, usePage } from '@inertiajs/react';
+import { ArrowLeft, Calendar, Clock, Edit, MapPin, Trash2, Users } from 'lucide-react';
+import { useState } from 'react';
+import EditEventDialog from './partials/EditEventDialog';
 
+import logo from '../../../../assets/images/logolionsgeek.png';
 import Participants from '../../../components/participants';
-import logo from "../../../../assets/images/logolionsgeek.png"
 export default function AdminEventShow() {
     const { event } = usePage().props;
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -36,17 +17,17 @@ export default function AdminEventShow() {
     const [isDeleting, setIsDeleting] = useState(false);
     const { props } = usePage();
     const appUrl = props.ziggy?.url || window.location.origin;
-    const tab = "English"; // This should be dynamic based on your language logic
+    const tab = 'English'; // This should be dynamic based on your language logic
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
+        return date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
         });
     };
 
@@ -64,9 +45,9 @@ export default function AdminEventShow() {
 
     const handleDelete = () => {
         setIsDeleting(true);
-        router.delete(route("admin.events.destroy", event.id), {
+        router.delete(route('admin.events.destroy', event.id), {
             onSuccess: () => {
-                router.visit(route("admin.events.index"));
+                router.visit(route('admin.events.index'));
             },
             onError: () => {
                 setIsDeleting(false);
@@ -78,17 +59,17 @@ export default function AdminEventShow() {
     };
 
     const getDisplayText = (multilingualField) => {
-        if (typeof multilingualField === "object") {
+        if (typeof multilingualField === 'object') {
             return {
-                en: multilingualField.en || "Not provided",
-                fr: multilingualField.fr || "Non fourni",
-                ar: multilingualField.ar || "غير متوفر",
+                en: multilingualField.en || 'Not provided',
+                fr: multilingualField.fr || 'Non fourni',
+                ar: multilingualField.ar || 'غير متوفر',
             };
         }
         return {
-            en: multilingualField || "Not provided",
-            fr: multilingualField || "Non fourni",
-            ar: multilingualField || "غير متوفر",
+            en: multilingualField || 'Not provided',
+            fr: multilingualField || 'Non fourni',
+            ar: multilingualField || 'غير متوفر',
         };
     };
 
@@ -97,13 +78,13 @@ export default function AdminEventShow() {
 
     return (
         <AppLayout>
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex flex-1 flex-col overflow-hidden">
                 <div className="bg-[#212529] py-8 text-white">
                     <div className="mx-auto max-w-7xl px-6">
                         <Button
                             onClick={() => router.visit('/admin/events')}
                             variant="ghost"
-                            className="mb-6 text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
+                            className="mb-6 rounded-lg text-white transition-all duration-200 ease-in-out hover:bg-[#fee819] hover:text-[#212529]"
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to events
@@ -118,15 +99,14 @@ export default function AdminEventShow() {
                                     <p className="mt-1 text-gray-300">Manage event details</p>
                                 </div>
                             </div>
-                            <div className="flex items-center md:justify-between justify-end mb-6">
-
-                                <div className="flex   gap-2">
+                            <div className="mb-6 flex items-center justify-end md:justify-between">
+                                <div className="flex gap-2">
                                     <Button onClick={handleEdit}>
-                                        <Edit className="h-4 w-4 mr-2" />
+                                        <Edit className="mr-2 h-4 w-4" />
                                         Edit
                                     </Button>
                                     <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
-                                        <Trash2 className="h-4 w-4 mr-2" />
+                                        <Trash2 className="mr-2 h-4 w-4" />
                                         Delete
                                     </Button>
                                 </div>
@@ -137,23 +117,22 @@ export default function AdminEventShow() {
                 <main className="flex-1 overflow-y-auto p-6">
                     {/* Header */}
 
-
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div className="lg:col-span-2 space-y-6">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        <div className="space-y-6 lg:col-span-2">
                             <div>
-                                <h2 className="text-3xl font-bold mb-2">{nameTexts.en}</h2>
-                                <p className="text-muted-foreground mb-4">{descriptionTexts.en}</p>
+                                <h2 className="mb-2 text-3xl font-bold">{nameTexts.en}</h2>
+                                <p className="mb-4 text-muted-foreground">{descriptionTexts.en}</p>
                                 <div className="flex gap-2">
                                     <Badge variant="secondary">Event</Badge>
                                     <Badge variant="secondary">Registration</Badge>
                                 </div>
                             </div>
 
-                            <div className="rounded-lg overflow-hidden">
+                            <div className="overflow-hidden rounded-lg">
                                 <img
                                     src={`${appUrl}/storage/images/events/${event.cover}`}
                                     alt={nameTexts.en}
-                                    className="w-full h-64 sm:h-80 object-cover"
+                                    className="h-64 w-full object-cover sm:h-80"
                                 />
                             </div>
 
@@ -167,7 +146,7 @@ export default function AdminEventShow() {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-start gap-3">
-                                        <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                        <Calendar className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                         <div>
                                             <p className="font-medium">Date & Time</p>
                                             <p className="text-sm text-muted-foreground">{formatDate(event.date)}</p>
@@ -175,32 +154,26 @@ export default function AdminEventShow() {
                                     </div>
 
                                     <div className="flex items-start gap-3">
-                                        <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                        <MapPin className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                         <div>
                                             <p className="font-medium">Location</p>
-                                            <p className="text-sm text-muted-foreground">
-                                                "Ain sebaa center, 4th floor, Route de Rabat, Casablanca"
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">"Ain sebaa center, 4th floor, Route de Rabat, Casablanca"</p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-start gap-3">
-                                        <Users className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                        <Users className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                         <div>
                                             <p className="font-medium">Capacity</p>
-                                            <p className="text-sm text-muted-foreground">
-                                                {event.capacity} person
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">{event.capacity} person</p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-start gap-3">
-                                        <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                        <Clock className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                         <div>
                                             <p className="font-medium">Duration</p>
-                                            <p className="text-sm text-muted-foreground">
-                                                90 minutes
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">90 minutes</p>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -212,26 +185,21 @@ export default function AdminEventShow() {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div>
-                                        <p className="text-sm text-muted-foreground mb-1">Total Bookings</p>
-                                        <p className="text-3xl font-bold text-blue-600">
-                                            {event.bookings?.length.toLocaleString() || 0}
-                                        </p>
+                                        <p className="mb-1 text-sm text-muted-foreground">Total Bookings</p>
+                                        <p className="text-3xl font-bold text-blue-600">{event.bookings?.length.toLocaleString() || 0}</p>
                                     </div>
 
                                     <div>
-                                        <p className="text-sm text-muted-foreground mb-1">Available Spots</p>
+                                        <p className="mb-1 text-sm text-muted-foreground">Available Spots</p>
                                         <p className="text-3xl font-bold text-green-600">
                                             {Math.max(0, event.capacity - (event.bookings?.length || 0)).toLocaleString()}
                                         </p>
                                     </div>
 
                                     <div>
-                                        <p className="text-sm text-muted-foreground mb-1">Registration Rate</p>
+                                        <p className="mb-1 text-sm text-muted-foreground">Registration Rate</p>
                                         <p className="text-lg font-semibold">
-                                            {event.capacity > 0
-                                                ? (((event.bookings?.length || 0) / event.capacity) * 100).toFixed(1)
-                                                : 0}
-                                            %
+                                            {event.capacity > 0 ? (((event.bookings?.length || 0) / event.capacity) * 100).toFixed(1) : 0}%
                                         </p>
                                     </div>
                                 </CardContent>
@@ -243,18 +211,10 @@ export default function AdminEventShow() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex items-center gap-3">
-                                        <img
-                                            className="h-10 w-10 rounded-full"
-                                            src={logo}
-                                            alt="Lions Geek Logo"
-                                        />
+                                        <img className="h-10 w-10 rounded-full" src={logo} alt="Lions Geek Logo" />
                                         <div>
-                                            <p className="font-medium">
-                                                LionsGeek
-                                            </p>
-                                            <p className="text-sm text-muted-foreground">
-                                                "contact@lionsgeek.ma"
-                                            </p>
+                                            <p className="font-medium">LionsGeek</p>
+                                            <p className="text-sm text-muted-foreground">"contact@lionsgeek.ma"</p>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -269,37 +229,22 @@ export default function AdminEventShow() {
                     <DialogHeader>
                         <DialogTitle>Delete Event</DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to delete "{nameTexts.en}"? This action cannot be
-                            undone and will permanently remove the event and all associated data.
+                            Are you sure you want to delete "{nameTexts.en}"? This action cannot be undone and will permanently remove the event and
+                            all associated data.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowDeleteDialog(false)}
-                            disabled={isDeleting}
-                        >
+                        <Button variant="outline" onClick={() => setShowDeleteDialog(false)} disabled={isDeleting}>
                             Cancel
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={handleDelete}
-                            disabled={isDeleting}
-                        >
-                            {isDeleting ? "Deleting..." : "Delete Event"}
+                        <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+                            {isDeleting ? 'Deleting...' : 'Delete Event'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
-            <EditEventDialog
-                event={event}
-                isOpen={showEditDialog}
-                onClose={handleCloseEdit}
-                onSuccess={handleEditSuccess}
-            />
+            <EditEventDialog event={event} isOpen={showEditDialog} onClose={handleCloseEdit} onSuccess={handleEditSuccess} />
         </AppLayout>
     );
 }
-
-

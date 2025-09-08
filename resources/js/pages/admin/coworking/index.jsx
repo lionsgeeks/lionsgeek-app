@@ -1,12 +1,12 @@
-import AppLayout from "@/layouts/app-layout"
-import { Head, useForm, usePage } from "@inertiajs/react";
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { useState } from "react";
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Briefcase, Users, Clock, CheckCircle2, XCircle, Search, Download, Filter } from 'lucide-react';
+import AppLayout from '@/layouts/app-layout';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { Briefcase, CheckCircle2, Clock, Download, Filter, Search, Users, XCircle } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs = [
     {
@@ -21,7 +21,7 @@ export default function CoworkingAdmin() {
     const [cowID, setCowID] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const { data, setData, put } = useForm({
-        status: ''
+        status: '',
     });
 
     const onActionForm = () => {
@@ -31,29 +31,25 @@ export default function CoworkingAdmin() {
                 setData({
                     status: '',
                 });
-            }
-        })
-    }
+            },
+        });
+    };
 
     const onActionClick = (status, coworkID) => {
         setData('status', status);
         setCowID(coworkID);
         setIsOpen(true);
-    }
+    };
     const filteredCoworkings = coworkings.filter((cow) => {
         const query = searchQuery.toLowerCase();
-        return (
-            cow.full_name.toLowerCase().includes(query) ||
-            cow.email.toLowerCase().includes(query) ||
-            cow.phone.toLowerCase().includes(query)
-        );
+        return cow.full_name.toLowerCase().includes(query) || cow.email.toLowerCase().includes(query) || cow.phone.toLowerCase().includes(query);
     });
 
     // Calculate statistics
     const totalRequests = coworkings?.length || 0;
-    const approvedRequests = coworkings?.filter(cow => cow.status === 1)?.length || 0;
-    const rejectedRequests = coworkings?.filter(cow => cow.status === 2)?.length || 0;
-    const pendingRequests = coworkings?.filter(cow => !cow.status || cow.status === 0)?.length || 0;
+    const approvedRequests = coworkings?.filter((cow) => cow.status === 1)?.length || 0;
+    const rejectedRequests = coworkings?.filter((cow) => cow.status === 2)?.length || 0;
+    const pendingRequests = coworkings?.filter((cow) => !cow.status || cow.status === 0)?.length || 0;
     const hasSearch = searchQuery.length > 0;
 
     return (
@@ -160,14 +156,14 @@ export default function CoworkingAdmin() {
                                     )}
                                 </div>
                                 <div className="relative w-full sm:w-auto">
-                                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
                                     <Input
-                        type="search"
-                        placeholder="Search by name, email or phone"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        type="search"
+                                        placeholder="Search by name, email or phone"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
                                         className="w-full pl-10 sm:w-80"
-                    />
+                                    />
                                 </div>
                             </div>
                         </CardContent>
@@ -181,13 +177,12 @@ export default function CoworkingAdmin() {
                             <CardContent className="p-12 text-center">
                                 <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
                                     <Briefcase className="h-12 w-12 text-gray-400" />
-            </div>
+                                </div>
                                 <h2 className="mb-3 text-2xl font-bold text-[#212529]">No Requests Found</h2>
                                 <p className="mb-6 text-gray-600">
-                                    {hasSearch 
-                                        ? "No coworking requests match your search criteria. Try adjusting your search terms."
-                                        : "No coworking requests have been submitted yet."
-                                    }
+                                    {hasSearch
+                                        ? 'No coworking requests match your search criteria. Try adjusting your search terms.'
+                                        : 'No coworking requests have been submitted yet.'}
                                 </p>
                             </CardContent>
                         </Card>
@@ -199,18 +194,24 @@ export default function CoworkingAdmin() {
                                         <thead>
                                             <tr className="border-b border-gray-200 bg-gray-50">
                                                 <th className="px-6 py-4 text-left text-sm font-semibold text-[#212529]">Name</th>
-                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">Phone</th>
-                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">Email</th>
-                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">Date</th>
+                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">
+                                                    Phone
+                                                </th>
+                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">
+                                                    Email
+                                                </th>
+                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">
+                                                    Date
+                                                </th>
                                                 <th className="px-6 py-4 text-center text-sm font-semibold text-[#212529]">Status</th>
                                                 <th className="px-6 py-4 text-center text-sm font-semibold text-[#212529]">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredCoworkings.map((cow) => (
-                                <tr
-                                    key={cow.id}
-                                    onClick={() => window.location.href = `/admin/coworking/${cow.id}`}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {filteredCoworkings.map((cow) => (
+                                                <tr
+                                                    key={cow.id}
+                                                    onClick={() => (window.location.href = `/admin/coworking/${cow.id}`)}
                                                     className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
                                                 >
                                                     <td className="px-6 py-4">
@@ -241,17 +242,14 @@ export default function CoworkingAdmin() {
                                                             </Badge>
                                                         )}
                                                     </td>
-                                                    <td 
-                                                        onClick={(e) => e.stopPropagation()} 
-                                                        className="px-6 py-4 text-center"
-                                                    >
+                                                    <td onClick={(e) => e.stopPropagation()} className="px-6 py-4 text-center">
                                                         {(!cow.status || cow.status === 0) && (
                                                             <div className="flex justify-center gap-2">
                                                                 <Button
                                                                     size="sm"
                                                                     variant="outline"
                                                                     onClick={() => onActionClick('reject', cow.id)}
-                                                                    className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+                                                                    className="border-red-300 text-red-600 hover:border-red-400 hover:bg-red-50"
                                                                 >
                                                                     <XCircle className="h-4 w-4" />
                                                                 </Button>
@@ -262,13 +260,13 @@ export default function CoworkingAdmin() {
                                                                 >
                                                                     <CheckCircle2 className="h-4 w-4" />
                                                                 </Button>
-                                                </div>
-                                            )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </CardContent>
                         </Card>
@@ -276,24 +274,31 @@ export default function CoworkingAdmin() {
                 </div>
             </div>
 
-
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogContent>
                     <DialogTitle>Please Confirm Your Action for This Coworker?</DialogTitle>
 
                     <div className="flex justify-end gap-2">
-                        <Button variant="outline"
-                            onClick={() => { setIsOpen(false) }}
-                        >Cancel</Button>
                         <Button
-                            onClick={() => { onActionForm() }}
-                            variant={data.status == "approve" ? 'default' : 'destructive'}
+                            variant="outline"
+                            onClick={() => {
+                                setIsOpen(false);
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                onActionForm();
+                            }}
+                            variant={data.status == 'approve' ? 'default' : 'destructive'}
                             className="capitalize"
-                        >{data.status}</Button>
+                        >
+                            {data.status}
+                        </Button>
                     </div>
                 </DialogContent>
             </Dialog>
-
         </AppLayout>
-    )
+    );
 }

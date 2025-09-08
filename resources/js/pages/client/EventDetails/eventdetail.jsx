@@ -1,6 +1,6 @@
-import { Head } from "@inertiajs/react";
-import FirstSectionEventDetail from "./components/firstSection";
-import AppLayout from "@/layouts/app-layout";
+import AppLayout from '@/layouts/app-layout';
+import { Head } from '@inertiajs/react';
+import FirstSectionEventDetail from './components/firstSection';
 
 export default function EventDetailPage({ event }) {
     return (

@@ -1,11 +1,9 @@
+import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from '@/components/ui/input';
 import { useForm } from '@inertiajs/react';
 import { Edit, FolderOpen, Plus, Upload, X } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ProjectModal({ project }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +16,7 @@ export default function ProjectModal({ project }) {
         description_ar: project ? project.description?.ar : '',
         logo: project ? project.logo : '',
         preview: project ? project.preview : '',
-    })
+    });
 
     const handleFileChange = (event) => {
         if (event.target.name === 'logo') {
@@ -41,8 +39,8 @@ export default function ProjectModal({ project }) {
                 {
                     onSuccess: () => {
                         setIsOpen(false);
-                    }
-                }
+                    },
+                },
             );
         } else {
             post(route('projects.store'), {
@@ -56,11 +54,10 @@ export default function ProjectModal({ project }) {
                         preview: '',
                     });
                     setIsOpen(false);
-                }
-            })
+                },
+            });
         }
-    }
-
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -85,9 +82,7 @@ export default function ProjectModal({ project }) {
                                 <FolderOpen className="h-6 w-6 text-[#212529]" />
                             </div>
                             <div>
-                                <DialogTitle className="text-xl font-bold text-white">
-                                    {project ? 'Edit Project' : 'Create New Project'}
-                                </DialogTitle>
+                                <DialogTitle className="text-xl font-bold text-white">{project ? 'Edit Project' : 'Create New Project'}</DialogTitle>
                                 <p className="mt-1 text-sm text-gray-300">
                                     {project ? 'Update project information and images' : 'Add a new project with logo and preview'}
                                 </p>
@@ -105,7 +100,6 @@ export default function ProjectModal({ project }) {
 
                 <div className="p-6">
                     <form onSubmit={onFormSubmit} className="space-y-6">
-
                         <div>
                             <label htmlFor="name" className="mb-2 block text-sm font-medium text-[#212529]">
                                 Project Name *
@@ -122,21 +116,20 @@ export default function ProjectModal({ project }) {
                             />
                         </div>
 
-
                         <div className="flex items-center justify-center gap-1 rounded-lg bg-gray-100 p-1">
                             {languages.map((language) => (
                                 <button
                                     key={language}
                                     onClick={() => setTab(language)}
-                                    className={`flex-1 rounded-md px-3 py-2 font-medium transition-all duration-200 ${tab === language ? 'bg-[#212529] text-white shadow-sm' : 'bg-transparent text-gray-600 hover:bg-gray-200'
-                                        }`}
+                                    className={`flex-1 rounded-md px-3 py-2 font-medium transition-all duration-200 ${
+                                        tab === language ? 'bg-[#212529] text-white shadow-sm' : 'bg-transparent text-gray-600 hover:bg-gray-200'
+                                    }`}
                                     type="button"
                                 >
                                     {language}
                                 </button>
                             ))}
                         </div>
-
 
                         {tab === 'English' && (
                             <div className="space-y-4">
@@ -158,7 +151,6 @@ export default function ProjectModal({ project }) {
                             </div>
                         )}
 
-
                         {tab === 'Français' && (
                             <div className="space-y-4">
                                 <div>
@@ -178,7 +170,6 @@ export default function ProjectModal({ project }) {
                                 </div>
                             </div>
                         )}
-
 
                         {tab === 'العربية' && (
                             <div className="space-y-4 text-right" dir="rtl">
@@ -200,11 +191,8 @@ export default function ProjectModal({ project }) {
                             </div>
                         )}
 
-
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-[#212529]">
-                                Project Logo *
-                            </label>
+                            <label className="block text-sm font-medium text-[#212529]">Project Logo *</label>
                             <label
                                 htmlFor="logo"
                                 className="group flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-4 transition-all duration-200 hover:border-[#212529]"
@@ -213,9 +201,7 @@ export default function ProjectModal({ project }) {
                                     <Upload className="h-5 w-5" />
                                 </div>
                                 <div>
-                                    <p className="font-medium text-[#212529]">
-                                        {data.logo ? 'Logo selected' : 'Upload project logo'}
-                                    </p>
+                                    <p className="font-medium text-[#212529]">{data.logo ? 'Logo selected' : 'Upload project logo'}</p>
                                     <p className="text-sm text-gray-500">PNG, JPG or JPEG (Max 10MB)</p>
                                 </div>
                             </label>
@@ -230,11 +216,8 @@ export default function ProjectModal({ project }) {
                             />
                         </div>
 
-
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-[#212529]">
-                                Project Preview (Optional)
-                            </label>
+                            <label className="block text-sm font-medium text-[#212529]">Project Preview (Optional)</label>
                             <label
                                 htmlFor="preview"
                                 className="group flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-4 transition-all duration-200 hover:border-[#212529]"
@@ -243,9 +226,7 @@ export default function ProjectModal({ project }) {
                                     <FolderOpen className="h-5 w-5" />
                                 </div>
                                 <div>
-                                    <p className="font-medium text-[#212529]">
-                                        {data.preview ? 'Preview selected' : 'Upload project preview'}
-                                    </p>
+                                    <p className="font-medium text-[#212529]">{data.preview ? 'Preview selected' : 'Upload project preview'}</p>
                                     <p className="text-sm text-gray-500">PNG, JPG or JPEG (Optional)</p>
                                 </div>
                             </label>
@@ -258,7 +239,6 @@ export default function ProjectModal({ project }) {
                                 className="hidden"
                             />
                         </div>
-
 
                         <div className="flex gap-3 pt-4">
                             <Button
@@ -280,5 +260,5 @@ export default function ProjectModal({ project }) {
                 </div>
             </DialogContent>
         </Dialog>
-    )
+    );
 }

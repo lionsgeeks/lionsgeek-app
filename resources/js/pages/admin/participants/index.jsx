@@ -1,12 +1,11 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
-import { Users, Download, Clock, CheckCircle2, Presentation, Filter, Search, RotateCcw, XCircle } from 'lucide-react';
+import { CheckCircle2, Clock, Download, Filter, Presentation, Users, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from './partials/ParticipantCard';
 
@@ -27,11 +26,11 @@ export default function Participants() {
     const getFilteredParticipants = (status) => {
         switch (status) {
             case 'pending':
-                return participants.filter(p => p.status === 'pending');
+                return participants.filter((p) => p.status === 'pending');
             case 'rejected':
-                return participants.filter(p => p.status === 'rejected');
+                return participants.filter((p) => p.status === 'rejected');
             case 'approved':
-                return participants.filter(p => p.status === 'approved');
+                return participants.filter((p) => p.status === 'approved');
             case 'all':
             default:
                 return participants;
@@ -49,10 +48,10 @@ export default function Participants() {
     // Calculate statistics with safe access
     const totalParticipants = currentParticipants?.length || 0;
     const stepsCount = {
-        info_session: currentParticipants?.filter(p => p?.current_step === 'info_session')?.length || 0,
-        interview: currentParticipants?.filter(p => p?.current_step === 'interview')?.length || 0,
-        jungle: currentParticipants?.filter(p => p?.current_step === 'jungle')?.length || 0,
-        school: currentParticipants?.filter(p => p?.current_step?.includes('school'))?.length || 0,
+        info_session: currentParticipants?.filter((p) => p?.current_step === 'info_session')?.length || 0,
+        interview: currentParticipants?.filter((p) => p?.current_step === 'interview')?.length || 0,
+        jungle: currentParticipants?.filter((p) => p?.current_step === 'jungle')?.length || 0,
+        school: currentParticipants?.filter((p) => p?.current_step?.includes('school'))?.length || 0,
     };
     const hasSearch = search.length > 0;
 
@@ -82,13 +81,13 @@ export default function Participants() {
                             <div className="flex gap-3">
                                 <a href="/admin/questions/export">
                                     <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                                        <Download className="h-4 w-4 mr-2" />
+                                        <Download className="mr-2 h-4 w-4" />
                                         Export Questions
                                     </Button>
                                 </a>
                                 <a href={'/admin/participant/export'}>
                                     <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                                        <Download className="h-4 w-4 mr-2" />
+                                        <Download className="mr-2 h-4 w-4" />
                                         Export Students
                                     </Button>
                                 </a>
@@ -176,7 +175,7 @@ export default function Participants() {
                                         <SelectContent>
                                             <SelectItem value="approved">
                                                 <div className="flex items-center gap-2">
-                                                    <CheckCircle2 className="h-4 w-4" style={{color: '#51b04f'}} />
+                                                    <CheckCircle2 className="h-4 w-4" style={{ color: '#51b04f' }} />
                                                     Approved ({statusCounts.approved || 0})
                                                 </div>
                                             </SelectItem>
@@ -188,7 +187,7 @@ export default function Participants() {
                                             </SelectItem>
                                             <SelectItem value="rejected">
                                                 <div className="flex items-center gap-2">
-                                                    <XCircle className="h-4 w-4" style={{color: '#ff7376'}} />
+                                                    <XCircle className="h-4 w-4" style={{ color: '#ff7376' }} />
                                                     Rejected ({statusCounts.rejected || 0})
                                                 </div>
                                             </SelectItem>
@@ -228,7 +227,9 @@ export default function Participants() {
                                     <Users className="h-12 w-12 text-gray-400" />
                                 </div>
                                 <h2 className="mb-3 text-2xl font-bold text-[#212529]">No Participants Found</h2>
-                                <p className="mb-6 text-gray-600">No participants match your filter criteria. Try adjusting your filters or search terms.</p>
+                                <p className="mb-6 text-gray-600">
+                                    No participants match your filter criteria. Try adjusting your filters or search terms.
+                                </p>
                             </CardContent>
                         </Card>
                     ) : (
