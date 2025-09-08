@@ -41,9 +41,13 @@ export default function GalleryAdmin() {
 
     const confirmDeletion = () => {
         if (!galleryToDelete) return;
-        destroy(route('gallery.destroy', galleryToDelete));
-        setConfirmOpen(false);
-        setGalleryToDelete(null);
+        destroy(route('gallery.destroy', galleryToDelete), {
+            onSuccess: () => {
+                setConfirmOpen(false);
+                setGalleryToDelete(null);
+                router.reload({ only: ['galleries'] });
+            },
+        });
     };
 
     const totalImages = galleries.reduce((sum, gallery) => sum + (gallery.images?.length || 0), 0);

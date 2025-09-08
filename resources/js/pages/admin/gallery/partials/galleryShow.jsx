@@ -18,9 +18,14 @@ export default function GalleryShow({ gallery }) {
 
     const confirmDeletion = () => {
         if (!imageToDelete) return;
-        destroy(route('images.destroy', imageToDelete));
-        setConfirmOpen(false);
-        setImageToDelete(null);
+        destroy(route('images.destroy', imageToDelete), {
+            onSuccess: () => {
+                setConfirmOpen(false);
+                setImageToDelete(null);
+                // Reload current page props to update images list
+                router.reload({ only: ['galleries'] });
+            },
+        });
     };
 
     return (
