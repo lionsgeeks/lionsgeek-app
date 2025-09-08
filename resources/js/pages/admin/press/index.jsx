@@ -1,15 +1,17 @@
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import AppLayout from '@/layouts/app-layout';
-import { Head, useForm, usePage } from '@inertiajs/react';
-import { Image as ImageIcon, Newspaper, Plus, Trash2, Upload, X } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useRef, useState } from "react";
+import { Head, useForm, usePage, router } from "@inertiajs/react";
+import AppLayout from "@/layouts/app-layout";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { X, Newspaper, Upload, Image as ImageIcon, Plus, Images, Trash2 } from "lucide-react";
+
 
 const breadcrumbs = [{ title: 'Press', href: '/admin/press' }];
 
 export default function Press() {
     const { presses } = usePage().props;
+    const { delete: destroy } = useForm();
     const [isOpen, setIsOpen] = useState(false);
     const [tab, setTab] = useState('English');
     const [coverPreview, setCoverPreview] = useState(null);
@@ -50,13 +52,13 @@ export default function Press() {
         if (data.logo) formData.append('logo', data.logo);
         formData.append('link', data.link);
 
-        post(route('press.store'), {
-            data: formData,
+        router.post(route("press.store"), formData, {
             onSuccess: () => {
                 reset();
                 setCoverPreview(null);
                 setLogoPreview(null);
                 setIsOpen(false);
+                router.reload({ only: ['presses'] });
             },
         });
     };
@@ -72,6 +74,14 @@ export default function Press() {
             onDeletePress(selectedPress.id);
         }
         setIsDeleteOpen(false);
+    };
+
+    const onDeletePress = (pressId) => {
+        destroy(route('press.destroy', pressId), {
+            onSuccess: () => {
+                router.reload({ only: ['presses'] });
+            },
+        });
     };
 
     return (

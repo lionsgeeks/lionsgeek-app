@@ -85,9 +85,15 @@ class PressController extends Controller
     }
 
 
-    public function destroy(Press $press)
+ public function destroy(Press $press)
     {
+        if ($press->cover) {
+            Storage::disk('public')->delete('images/press/' . $press->cover);
+        }
+        if ($press->logo) {
+            Storage::disk('public')->delete('images/press/' . $press->logo);
+        }
         $press->delete();
-        return to_route('press.index');
+        return back()->with('success', 'Press deleted');
     }
 }
