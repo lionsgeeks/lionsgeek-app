@@ -17,6 +17,7 @@ import Step5BackgroundAvailability from './partials/Step5BackgroundAvailability'
 import Step6CVUpload from './partials/Step6CVUpload';
 import { PatternGame } from '../game/partials/pattern-game';
 import GameIntro from '../game/intro';
+import StepSummary from './partials/StepSummary';
 
 
 const InfoSession = ({ trainingType = 'digital' }) => {
@@ -84,6 +85,20 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
     // Multi-step form state
     const [currentStep, setCurrentStep] = useState(1);
+    // Prefill data from sessionStorage when returning from summary
+    useEffect(() => {
+        try {
+            const raw = sessionStorage.getItem('formData');
+            if (raw) {
+                const stored = JSON.parse(raw);
+                // Only set known keys
+                Object.keys(data).forEach((k) => {
+                    if (stored[k] !== undefined) setData(k, stored[k]);
+                });
+            }
+        } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const [stepValidation, setStepValidation] = useState({
         1: false, 2: false, 3: false, 4: false, 5: false, 6: false
     });
@@ -190,7 +205,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
     // Game redirect function
     const handleGameRedirect = () => {
-        // Stay on the same page and proceed to the embedded game to retain the uploaded CV file
+        // Move to summary before game
         setCurrentStep(7);
     };
 
@@ -410,9 +425,12 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                         />
                                     )}
                                     {currentStep === 7 && (
-                                        <GameIntro setCurrentStep={setCurrentStep} />
+                                        <StepSummary data={data} errors={{ ...errors, ...validationErrors }} setCurrentStep={setCurrentStep} />
                                     )}
                                     {currentStep === 8 && (
+                                        <GameIntro setCurrentStep={setCurrentStep} />
+                                    )}
+                                    {currentStep === 9 && (
                                         <PatternGame data={data} />
                                     )}
                                 </div>

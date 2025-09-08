@@ -599,7 +599,7 @@ class ParticipantController extends Controller
             'prefecture' => 'required|string|max:255',
             'session' => 'required|exists:info_sessions,id',
             'step' => 'required|string|in:info_session,interview,interview_pending,interview_failed,jungle,jungle_failed,coding_school,media_school',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|48',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], $messages);
 
         try {

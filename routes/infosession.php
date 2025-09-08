@@ -19,6 +19,10 @@ Route::get('/postuler', function () {
             ->get(),
     ]);
 })->name('postuler');
+// Summary page after finishing the game
+Route::get('/postuler/summary', function () {
+    return Inertia::render('client/infoSession/summary');
+})->name('postuler.summary');
 Route::get('/private-session', function () {
     return Inertia::render('client/infoSession/privatesession');
 })->name('privateSession');

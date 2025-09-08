@@ -43,6 +43,14 @@ export default function ParticipantEdit() {
         }
     }, [participant]);
 
+    // Clear prefecture when city is not Casablanca
+    useEffect(() => {
+        const city = (data.city || '').toString().trim().toLowerCase();
+        if (city !== 'casablanca' && data.prefecture) {
+            setData('prefecture', '');
+        }
+    }, [data.city]);
+
     const breadcrumbs = [
         {
             title: 'Participants',
@@ -210,34 +218,56 @@ export default function ParticipantEdit() {
                                         <Label htmlFor="city" className="text-sm font-semibold text-[#212529] mb-2 block">
                                             City:
                                         </Label>
-                                        <Input
-                                            id="city"
-                                            type="text"
-                                            value={data.city}
-                                            onChange={(e) => setData('city', e.target.value)}
-                                            className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819] capitalize"
-                                            required
-                                        />
+                                        <Select value={(data.city || '').toString()} onValueChange={(value) => setData('city', value)}>
+                                            <SelectTrigger className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819] capitalize">
+                                                <SelectValue placeholder="Select your city" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="casablanca">Casablanca</SelectItem>
+                                                <SelectItem value="rabat">Rabat</SelectItem>
+                                                <SelectItem value="marrakech">Marrakech</SelectItem>
+                                                <SelectItem value="fes">Fès</SelectItem>
+                                                <SelectItem value="tanger">Tanger</SelectItem>
+                                                <SelectItem value="agadir">Agadir</SelectItem>
+                                                <SelectItem value="meknes">Meknès</SelectItem>
+                                                <SelectItem value="oujda">Oujda</SelectItem>
+                                                <SelectItem value="kenitra">Kenitra</SelectItem>
+                                                <SelectItem value="tetouan">Tétouan</SelectItem>
+                                                <SelectItem value="other">Other</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                         {errors.city && (
                                             <p className="mt-1 text-sm text-red-600">{errors.city}</p>
                                         )}
                                     </div>
-                                    <div>
-                                        <Label htmlFor="prefecture" className="text-sm font-semibold text-[#212529] mb-2 block">
-                                            Prefecture:
-                                        </Label>
-                                        <Input
-                                            id="prefecture"
-                                            type="text"
-                                            value={data.prefecture}
-                                            onChange={(e) => setData('prefecture', e.target.value)}
-                                            className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819] capitalize"
-                                            required
-                                        />
-                                        {errors.prefecture && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.prefecture}</p>
-                                        )}
-                                    </div>
+                                    {(data.city || '').toString().trim().toLowerCase() === 'casablanca' && (
+                                        <div>
+                                            <Label htmlFor="prefecture" className="text-sm font-semibold text-[#212529] mb-2 block">
+                                                Prefecture:
+                                            </Label>
+                                            <Select value={data.prefecture || ''} onValueChange={(value) => setData('prefecture', value)}>
+                                                <SelectTrigger className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]">
+                                                    <SelectValue placeholder="Select prefecture" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="ain_chock">Aïn Chock</SelectItem>
+                                                    <SelectItem value="ain_sebaa_hay_mohammadi">Aïn Sebaâ - Hay Mohammadi</SelectItem>
+                                                    <SelectItem value="al_fida_mers_sultan">Al Fida - Mers Sultan</SelectItem>
+                                                    <SelectItem value="anfa">Anfa</SelectItem>
+                                                    <SelectItem value="ben_msick">Ben M'Sick</SelectItem>
+                                                    <SelectItem value="bernoussi">Bernoussi</SelectItem>
+                                                    <SelectItem value="hay_hassani">Hay Hassani</SelectItem>
+                                                    <SelectItem value="mohammedia">Mohammedia</SelectItem>
+                                                    <SelectItem value="nouaceur">Nouaceur</SelectItem>
+                                                    <SelectItem value="sidi_bernoussi">Sidi Bernoussi</SelectItem>
+                                                    <SelectItem value="sidi_othmane">Sidi Othmane</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            {errors.prefecture && (
+                                                <p className="mt-1 text-sm text-red-600">{errors.prefecture}</p>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Session and Current Step Row */}

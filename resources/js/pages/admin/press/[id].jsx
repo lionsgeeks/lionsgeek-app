@@ -154,27 +154,27 @@ const ShowPress = () => {
                             <div className="flex items-center justify-between mb-8">
                                 <div className="flex items-center gap-4">
                                     <h2 className="text-xl font-semibold text-[#212529]">Press Information</h2>
-                                    <select
-                                        value={activeTab}
-                                        onChange={(e) => setActiveTab(e.target.value)}
+                            <select
+                                value={activeTab}
+                                onChange={(e) => setActiveTab(e.target.value)}
                                         className="rounded-lg border-gray-300 px-3 py-2 text-sm focus:border-[#fee819] focus:ring-[#fee819]"
-                                    >
-                                        <option value="en">English</option>
-                                        <option value="fr">Français</option>
-                                        <option value="ar">العربية</option>
-                                    </select>
-                                </div>
-                                
-                                <button
-                                    type="submit"
+                            >
+                                <option value="en">English</option>
+                                <option value="fr">Français</option>
+                                <option value="ar">العربية</option>
+                            </select>
+                        </div>
+                        
+                        <button
+                            type="submit"
                                     form="press-form"
-                                    disabled={processing}
+                            disabled={processing}
                                     className="flex items-center gap-2 rounded-lg bg-[#212529] px-6 py-3 text-white transition-all duration-200 hover:bg-[#212529]/90 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
+                        >
                                     <Save className="h-4 w-4" />
                                     {processing ? 'Saving...' : 'Save Changes'}
-                                </button>
-                            </div>
+                        </button>
+                </div>
 
                             <form id="press-form" onSubmit={handleSubmit} className="space-y-8">
                                 {/* Name Field */}
@@ -182,22 +182,22 @@ const ShowPress = () => {
                                     <label className="block text-sm font-medium text-gray-700">
                                         {translations[activeTab].name}
                                     </label>
-                                    <input
-                                        type="text"
-                                        value={data.name[activeTab]}
-                                        onChange={(e) => setData(`name.${activeTab}`, e.target.value)}
+                        <input
+                            type="text"
+                            value={data.name[activeTab]}
+                            onChange={(e) => setData(`name.${activeTab}`, e.target.value)}
                                         className={`w-full px-4 py-3 rounded-lg border transition-colors focus:ring-2 focus:ring-[#fee819] focus:border-transparent ${
                                             errors[`name.${activeTab}`] ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400'
                                         }`}
-                                        placeholder={translations[activeTab].namePlaceholder}
-                                        dir={activeTab === 'ar' ? 'rtl' : 'ltr'}
-                                    />
+                            placeholder={translations[activeTab].namePlaceholder}
+                            dir={activeTab === 'ar' ? 'rtl' : 'ltr'}
+                        />
                                     {errors[`name.${activeTab}`] && (
                                         <p className="text-sm text-red-600 flex items-center gap-1">
                                             {errors[`name.${activeTab}`]}
                                         </p>
                                     )}
-                                </div>
+                    </div>
 
                                 {/* Website Link Field */}
                                 <div className="space-y-2">
@@ -205,15 +205,15 @@ const ShowPress = () => {
                                         {translations[activeTab].link}
                                     </label>
                                     <div className="relative">
-                                        <input
-                                            type="url"
-                                            value={data.link}
-                                            onChange={(e) => setData('link', e.target.value)}
+                        <input
+                            type="url"
+                            value={data.link}
+                            onChange={(e) => setData('link', e.target.value)}
                                             className={`w-full px-4 py-3 pr-12 rounded-lg border transition-colors focus:ring-2 focus:ring-[#fee819] focus:border-transparent ${
                                                 errors.link ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400'
                                             }`}
-                                            placeholder="https://example.com"
-                                        />
+                            placeholder="https://example.com"
+                        />
                                         {data.link && (
                                             <button
                                                 type="button"
@@ -230,19 +230,19 @@ const ShowPress = () => {
                                             {errors.link}
                                         </p>
                                     )}
-                                </div>
+                    </div>
 
                                 {/* Cover Image */}
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                                        {translations[activeTab].cover}
+                            {translations[activeTab].cover}
 
-                                    </label>
-                                    {coverPreview && (
+                        </label>
+                        {coverPreview && (
                                         <div className="relative group">
-                                            <img
-                                                src={coverPreview}
-                                                alt="Cover"
+                                <img
+                                    src={coverPreview}
+                                    alt="Cover"
                                                 className="w-full h-80 object-cover rounded-lg border-2 border-gray-200 shadow-sm"
                                             />
                                             {/* Always visible edit indicator */}
@@ -260,16 +260,16 @@ const ShowPress = () => {
                                                     <div className="text-sm opacity-90">Click to upload new image</div>
                                                     <div className="text-xs opacity-75 mt-1">Recommended: 1200x600px</div>
                                                 </div>
-                                                <input
-                                                    type="file"
-                                                    onChange={handleFileChange('cover')}
-                                                    className="hidden"
-                                                    accept="image/*"
-                                                />
-                                            </label>
-                                        </div>
-                                    )}
-                                    {!coverPreview && (
+                                    <input
+                                        type="file"
+                                        onChange={handleFileChange('cover')}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
+                                </label>
+                            </div>
+                        )}
+                        {!coverPreview && (
                                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-[#fee819] hover:bg-yellow-50 transition-all duration-200 cursor-pointer">
                                             <label className="cursor-pointer block">
                                                 <Upload className="h-12 w-12 mx-auto text-gray-400 mb-4" />
@@ -288,7 +288,7 @@ const ShowPress = () => {
                                     {errors.cover && (
                                         <p className="text-sm text-red-600">{errors.cover}</p>
                                     )}
-                                </div>
+                    </div>
 
                                 {/* Logo */}
                                 <div className="space-y-2">
@@ -331,14 +331,14 @@ const ShowPress = () => {
                                                 <div className="text-sm font-medium text-gray-600 mb-1">Upload Logo</div>
                                                 <div className="text-xs text-gray-500 mb-2">Click to browse</div>
                                                 <div className="text-xs text-gray-400">Square 200x200px • PNG preferred</div>
-                                                <input 
-                                                    type="file" 
-                                                    onChange={handleFileChange('logo')}
-                                                    className="hidden"
-                                                    accept="image/*"
-                                                />
-                                            </label>
-                                        </div>
+                                    <input
+                                        type="file"
+                                        onChange={handleFileChange('logo')}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
+                                </label>
+                        </div>
                                     )}
                                     {errors.logo && (
                                         <p className="text-sm text-red-600">{errors.logo}</p>

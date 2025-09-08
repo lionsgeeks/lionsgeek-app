@@ -66,7 +66,7 @@ export default function GameIntro({ setCurrentStep }) {
                     className={`rounded-md px-5 py-2.5 font-semibold hover:opacity-90 ${darkMode ? 'bg-white text-black' : 'bg-beta text-white'}`}
                     onClick={() => {
                         if (typeof setCurrentStep === 'function') {
-                            setCurrentStep(8);
+                            setCurrentStep(9);
                         } else {
                             router.visit('/game');
                         }
