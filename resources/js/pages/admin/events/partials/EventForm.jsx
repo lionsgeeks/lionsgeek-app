@@ -24,6 +24,7 @@ export default function EventForm({ event = null, onClose, onSuccess }) {
         },
         date: event?.date || "",
         capacity: event?.capacity || "",
+        location: event?.location || "",
         cover: null
     });
 
@@ -39,6 +40,7 @@ export default function EventForm({ event = null, onClose, onSuccess }) {
         formData.append('description', JSON.stringify(data.description));
         formData.append('date', data.date);
         formData.append('capacity', data.capacity);
+        formData.append('location', data.location);
 
         if (data.cover) {
             formData.append('cover', data.cover);
@@ -238,6 +240,20 @@ export default function EventForm({ event = null, onClose, onSuccess }) {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="location">Location</Label>
+                            <Input
+                                id="location"
+                                type="text"
+                                value={data.location}
+                                onChange={(e) => setData('location', e.target.value)}
+                                placeholder="Enter event location"
+                                required
+                            />
+                            {errors.location && (
+                                <p className="text-sm text-red-600">{errors.location}</p>
+                            )}
+                        </div>
                         <div className="space-y-2">
                             <Label htmlFor="date">Event Date & Time</Label>
                             <Input

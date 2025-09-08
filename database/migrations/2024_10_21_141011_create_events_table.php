@@ -17,6 +17,7 @@ return new class extends Migration
             $table->json("description");
             $table->dateTime("date");
             $table->integer("capacity");
+            $table->string("location");
             $table->string("cover");
             $table->timestamps();
         });
