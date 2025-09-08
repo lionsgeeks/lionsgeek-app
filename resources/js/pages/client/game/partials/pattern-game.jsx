@@ -330,7 +330,23 @@ export function PatternGame({ data: formDataProp }) {
         clearInterval(timerRef.current);
         setTimeout(() => setShowEnd(true), 0);
         setCompletedFlag(completed);
-        // clear session flag after finishing (optional: just redirect home)
+        // Persist game metrics to sessionStorage so summary can show them
+        try {
+            const elapsedMs = Date.now() - startTime;
+            const gameData = {
+                game_completed: completed,
+                correct_answers: correctAnswers,
+                levels_completed: currentLevel,
+                total_attempts: attempts,
+                wrong_attempts: Math.max(0, attempts - correctAnswers),
+                time_spent: Math.floor(elapsedMs / 1000),
+                time_spent_formatted: formatElapsed(elapsedMs),
+            };
+            const raw = sessionStorage.getItem('formData');
+            const existing = raw ? JSON.parse(raw) : {};
+            sessionStorage.setItem('formData', JSON.stringify({ ...existing, ...gameData }));
+        } catch {}
+        // clear session flag after finishing (optional)
     }
 
     const [showEnd, setShowEnd] = useState(false);
