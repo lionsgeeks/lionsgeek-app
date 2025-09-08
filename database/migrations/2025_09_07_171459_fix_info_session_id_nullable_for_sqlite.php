@@ -79,9 +79,34 @@ return new class extends Migration
                 )
             ');
 
-            // Copy data from old table to new table
+            // Copy data from old table to new table (only existing columns)
             DB::statement('
-                INSERT INTO participants_new SELECT * FROM participants
+                INSERT INTO participants_new (
+                    id, info_session_id, full_name, email, birthday, age, phone, city, 
+                    prefecture, gender, motivation, source, code, image, current_step, 
+                    is_visited, created_at, updated_at, status, approved_by, approved_at,
+                    education_level, diploma_institution, diploma_specialty, current_situation,
+                    other_status, has_referring_organization, referring_organization, 
+                    other_organization, has_training, previous_training_details, 
+                    why_join_formation, participated_lionsgeek, lionsgeek_activity, 
+                    other_activity, objectives_after_formation, priority_learning_topics,
+                    last_self_learned, arabic_level, french_level, english_level,
+                    other_language, other_language_level, how_heard_about_formation,
+                    current_commitments, cv_file, formation_field, game_completed, other_city
+                )
+                SELECT 
+                    id, info_session_id, full_name, email, birthday, age, phone, city, 
+                    prefecture, gender, motivation, source, code, image, current_step, 
+                    is_visited, created_at, updated_at, status, approved_by, approved_at,
+                    education_level, diploma_institution, diploma_specialty, current_situation,
+                    other_status, has_referring_organization, referring_organization, 
+                    other_organization, has_training, previous_training_details, 
+                    why_join_formation, participated_lionsgeek, lionsgeek_activity, 
+                    other_activity, objectives_after_formation, priority_learning_topics,
+                    last_self_learned, arabic_level, french_level, english_level,
+                    other_language, other_language_level, how_heard_about_formation,
+                    current_commitments, cv_file, formation_field, game_completed, other_city
+                FROM participants
             ');
 
             // Drop the old table

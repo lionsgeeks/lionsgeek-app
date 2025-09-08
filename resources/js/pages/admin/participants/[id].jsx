@@ -390,10 +390,6 @@ export default function ParticipantProfilePage() {
                                     <div className="text-sm font-medium text-[#212529]">{participant.game_completed ? 'Yes' : 'No'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Final Score</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.final_score ?? '-'}</div>
-                                </div>
-                                <div>
                                     <div className="text-xs text-gray-500 mb-1">Correct Answers</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.correct_answers ?? '-'}</div>
                                 </div>
