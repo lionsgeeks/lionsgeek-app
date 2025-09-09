@@ -103,18 +103,12 @@ class ParticipantController extends Controller
             // 6. Send confirmation email
             $this->sendConfirmationEmail($participant);
 
-            Log::info('Participants.store: Registration completed successfully', [
-                'participant_id' => $participant->id,
-                'email' => $participant->email
-            ]);
+
 
             // 7. Return appropriate response
             return $this->handleSuccessResponse($request, $participant);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
-            Log::error('Participants.store: Validation failed', [
-                'errors' => $validationException->errors(),
-                'message' => $validationException->getMessage()
-            ]);
+
 
             // Check if this is an email validation error (already exists)
             $errors = $validationException->errors();
@@ -150,10 +144,7 @@ class ParticipantController extends Controller
 
             return back()->withErrors($validationException->errors())->withInput();
         } catch (\Throwable $th) {
-            Log::error('Participants.store: Registration failed', [
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
-            ]);
+
 
             return $this->handleErrorResponse($request, $th);
         }
@@ -281,11 +272,6 @@ class ParticipantController extends Controller
         $email = $request->email;
         $currentFormationField = $request->formation_field;
 
-        Log::info('validateEmailWithTimeRestriction called', [
-            'email' => $email,
-            'current_formation_field' => $currentFormationField,
-            'request_data' => $request->all()
-        ]);
 
         // Check if email already exists - get the MOST RECENT registration
         $existingParticipant = \App\Models\Participant::where('email', $email)
@@ -300,37 +286,19 @@ class ParticipantController extends Controller
             $today = now();
             $daysDifference = $registrationDate->diffInDays($today);
 
-            Log::info('Email validation check', [
-                'email' => $email,
-                'existing_participant_id' => $existingParticipant->id,
-                'previous_formation_field' => $previousFormationField,
-                'current_formation_field' => $currentFormationField,
-                'registration_date' => $registrationDate,
-                'today' => $today,
-                'days_difference' => $daysDifference
-            ]);
-
             // Check if formation fields are different (coding <-> media)
             $isDifferentFormation = ($previousFormationField === 'coding' && $currentFormationField === 'media') ||
                 ($previousFormationField === 'media' && $currentFormationField === 'coding');
 
             if ($isDifferentFormation) {
                 // Allow cross-registration between coding and media regardless of time
-                Log::info('Allowing cross-formation registration', [
-                    'email' => $email,
-                    'from' => $previousFormationField,
-                    'to' => $currentFormationField
-                ]);
+
                 return; // Allow registration
             }
 
             // Same formation field - apply 180-day rule
             if ($daysDifference <= 180) {
-                Log::info('Blocking registration - same formation field registered recently', [
-                    'email' => $email,
-                    'formation_field' => $currentFormationField,
-                    'days_since_registration' => $daysDifference
-                ]);
+
 
                 $validator = Validator::make($request->all(), [
                     'email' => 'required'
@@ -346,16 +314,8 @@ class ParticipantController extends Controller
                     throw new \Illuminate\Validation\ValidationException($validator);
                 }
             } else {
-                Log::info('Allowing registration - same formation field but registered long ago', [
-                    'email' => $email,
-                    'formation_field' => $currentFormationField,
-                    'days_since_registration' => $daysDifference
-                ]);
             }
         } else {
-            Log::info('Email not found in database - allowing registration', [
-                'email' => $email
-            ]);
         }
     }
 
@@ -568,12 +528,6 @@ class ParticipantController extends Controller
         try {
             Mail::to($participant->email)->send(new RegistrationReceived($participant));
         } catch (\Exception $emailError) {
-            Log::error('Failed to send registration confirmation email', [
-                'participant_id' => $participant->id,
-                'email' => $participant->email,
-                'error' => $emailError->getMessage()
-            ]);
-            // Don't fail the registration if email fails
         }
     }
 
@@ -582,13 +536,13 @@ class ParticipantController extends Controller
      */
     private function handleSuccessResponse(Request $request, Participant $participant)
     {
-            if ($request->expectsJson() && !$request->header('X-Inertia')) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Participant created successfully!',
-                    'participant' => $participant
-                ], 201);
-            }
+        if ($request->expectsJson() && !$request->header('X-Inertia')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Participant created successfully!',
+                'participant' => $participant
+            ], 201);
+        }
 
         return back();
     }
@@ -598,21 +552,21 @@ class ParticipantController extends Controller
      */
     private function handleErrorResponse(Request $request, \Throwable $th)
     {
-            // For Inertia requests, return back with error
-            if ($request->header('X-Inertia')) {
-                return back()->withErrors(['general' => 'Submission failed. Please try again.']);
-            }
+        // For Inertia requests, return back with error
+        if ($request->header('X-Inertia')) {
+            return back()->withErrors(['general' => 'Submission failed. Please try again.']);
+        }
 
-            // For AJAX/JSON requests (like from the game component)
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Submission failed. Please try again.',
-                    'errors' => ['general' => 'Submission failed. Please try again.']
-                ], 500);
-            }
+        // For AJAX/JSON requests (like from the game component)
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Submission failed. Please try again.',
+                'errors' => ['general' => 'Submission failed. Please try again.']
+            ], 500);
+        }
 
-            return back();
+        return back();
     }
 
     /**
@@ -932,9 +886,6 @@ class ParticipantController extends Controller
                 }
                 $emailStatus = 'and email sent';
             } catch (\Exception $emailError) {
-                // Log email error but don't fail the approval
-                Log::error('Failed to send approval email: ' . $emailError->getMessage());
-                $emailStatus = 'but email failed to send';
             }
 
             // Check if session is now full (only count approved participants)
@@ -979,9 +930,6 @@ class ParticipantController extends Controller
                 Mail::to($participant->email)->send(new RegistrationRejected($participant));
                 $emailStatus = 'and email sent';
             } catch (\Exception $emailError) {
-                // Log email error but don't fail the rejection
-                Log::error('Failed to send rejection email: ' . $emailError->getMessage());
-                $emailStatus = 'but email failed to send';
             }
 
             flash()
@@ -1092,7 +1040,9 @@ class ParticipantController extends Controller
                 $qrTempPath = storage_path('app/qr_' . $participant->id . '_' . time() . '.png');
                 QRCode::text($qrPayload)->setOutfile($qrTempPath)->png();
                 $qrBinary = is_file($qrTempPath) ? file_get_contents($qrTempPath) : '';
-                if (is_file($qrTempPath)) { @unlink($qrTempPath); }
+                if (is_file($qrTempPath)) {
+                    @unlink($qrTempPath);
+                }
                 $qrBase64 = base64_encode($qrBinary);
 
                 $mailData = [
@@ -1112,7 +1062,6 @@ class ParticipantController extends Controller
                 $mailData['pdf'] = $pdf;
                 Mail::to($participant->email)->send(new CodeMail($mailData, $qrBase64));
             } catch (\Throwable $mailError) {
-                Log::error('Failed to send reservation QR email: ' . $mailError->getMessage());
             }
 
             return Inertia::render('client/infoSession/ReservationResult', [
