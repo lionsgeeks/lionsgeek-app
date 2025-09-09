@@ -60,6 +60,9 @@ export function PatternGame({ data: formDataProp }) {
             setTimeRemaining((t) => {
                 if (t <= 1) {
                     clearInterval(timerRef.current);
+                    // Time is up - show loading page and set processing
+                    setIsSubmitting(true);
+                    showLoadingPage();
                     setTimeOver(true);
                     return 0;
                 }
@@ -373,9 +376,21 @@ export function PatternGame({ data: formDataProp }) {
                 return next;
             });
             setCorrectAnswers((c) => c + 1);
-            setFeedback('Correct! Moving to next level...');
-            setFeedbackType('success');
-            setTimeout(() => setCurrentLevel((l) => l + 1), 800);
+            
+            // Check if this is the last level
+            if (currentLevel >= gamePlan.length - 1) {
+                // This is the last question - show loading page immediately and set processing
+                setIsSubmitting(true);
+                showLoadingPage();
+                setFeedback('Correct! Submitting your application...');
+                setFeedbackType('success');
+                // End game immediately without delay
+                endGame(true);
+            } else {
+                setFeedback('Correct! Moving to next level...');
+                setFeedbackType('success');
+                setTimeout(() => setCurrentLevel((l) => l + 1), 800);
+            }
         } else {
             setSelectedChoice(null);
             setFeedback('Incorrect! Try again.');
@@ -630,14 +645,21 @@ export function PatternGame({ data: formDataProp }) {
                         <button
                             type="button"
                             className={`rounded-md px-6 py-2.5 font-medium transition-all duration-150 ${
-                                selectedChoice
-                                    ? 'bg-alpha text-black border border-alpha hover:bg-yellow-400 hover:text-black hover:border-alpha active:scale-[0.98]'
-                                    : 'bg-alpha text-black/80 border border-white/20 cursor-not-allowed'
+                                selectedChoice && !processing
+                                    ? 'bg-yellow-400 text-black border border-yellow-400 hover:bg-transparent hover:text-white hover:border-yellow-400 active:scale-[0.98]'
+                                    : 'bg-transparent text-white/80 border border-white/20 cursor-not-allowed'
                             }`}
                             onClick={submitAnswer}
-                            disabled={!selectedChoice}
+                            disabled={!selectedChoice || processing}
                         >
-                            <TransText en="Submit Answer" fr="Valider la réponse" ar="إرسال الإجابة" />
+                            {processing ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                                    <TransText en="Submitting..." fr="Soumission..." ar="جاري الإرسال..." />
+                                </div>
+                            ) : (
+                                <TransText en="Submit Answer" fr="Valider la réponse" ar="إرسال الإجابة" />
+                            )}
                         </button>
                     </div>
 
