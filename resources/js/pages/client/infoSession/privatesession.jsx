@@ -464,6 +464,7 @@ const Privatesession = () => {
                         // bach mankhalich l user idir copy past  l l motivation 
                         onPaste={handlePaste}
                         className="border border-gray-400 rounded p-[6px]"
+                        style={{ wordWrap: 'break-word', wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
                         onChange={(e) => {
                           // Prevent dangerous characters
                           let value = e.target.value;

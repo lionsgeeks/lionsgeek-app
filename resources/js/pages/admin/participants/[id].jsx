@@ -111,8 +111,8 @@ export default function ParticipantProfilePage() {
             <Head title={`${participant.full_name} - Participant Details`} />
 
             <div className="min-h-screen bg-white">
-                {/* Header Banner */}
-                <div className="bg-[#212529] text-white">
+               {/* Header Banner */}
+               <div className="bg-[#212529] text-white">
                     <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
                             <Button

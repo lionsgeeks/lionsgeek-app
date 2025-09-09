@@ -122,6 +122,7 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                                 ? 'border-gray-600 bg-[#57646e] text-white placeholder-gray-400'
                                 : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                         }`}
+                        style={{ wordWrap: 'break-word', wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
                         placeholder={
                             selectedLanguage === 'en'
                                 ? 'Please provide a detailed explanation of your motivation (minimum 100 characters, spaces not counted)'
