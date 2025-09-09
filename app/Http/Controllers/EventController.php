@@ -84,7 +84,7 @@ class EventController extends Controller
             'cover' => $coverPath,
         ]);
 
-        return redirect()->route('admin.events.index')->with('success', 'Event created successfully!');
+        return redirect()->route('admin.events.index');
     }
 
     /**
@@ -155,7 +155,7 @@ class EventController extends Controller
 
         $event->update($updateData);
 
-        return redirect()->route('admin.events.index')->with('success', 'Event updated successfully!');
+        return redirect()->route('admin.events.index');
     }
 
     /**
@@ -169,6 +169,6 @@ class EventController extends Controller
 
         $event->delete();
 
-        return redirect()->route('admin.events.index')->with('success', 'Event deleted successfully!');
+        return redirect()->route('admin.events.index');
     }
 }

@@ -64,6 +64,6 @@ class CustomEmailController extends Controller
             $mailer->send(new CustomEmailMail($request->subject, $request->content));
         }
 
-        return back()->with('success', 'Email Sent Successfully!');
+        return back();
     }
 }

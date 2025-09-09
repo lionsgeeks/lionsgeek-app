@@ -46,7 +46,7 @@ class NewsletterController extends Controller
 
         $visitors = Subscriber::all();
         Notification::send($visitors, new NotificationsSubscriber($request->subject, $request->content));
-        return back()->with('success', 'Newsletter sent succefully!');
+        return back();
     }
 
 

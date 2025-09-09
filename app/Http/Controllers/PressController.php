@@ -46,7 +46,7 @@ class PressController extends Controller
             'link' => $data['link'],
         ]);
 
-        return redirect()->back()->with('success', 'Press created successfully.');
+        return redirect()->back();
     }
 
 
@@ -81,7 +81,7 @@ class PressController extends Controller
 
         $press->update($updateData);
 
-        return back()->with('success', 'Updated!');
+        return back();
     }
 
 
@@ -94,6 +94,6 @@ class PressController extends Controller
             Storage::disk('public')->delete('images/press/' . $press->logo);
         }
         $press->delete();
-        return back()->with('success', 'Press deleted');
+        return back();
     }
 }

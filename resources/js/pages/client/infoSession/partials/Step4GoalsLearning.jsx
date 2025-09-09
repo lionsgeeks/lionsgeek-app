@@ -33,33 +33,33 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                         value={data.objectives_after_formation}
                         onChange={handleChange}
                         className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                            darkMode ? 'border-gray-600 bg-[#57646e] text-white' : 'border-gray-300 bg-white text-gray-900'
                         }`}
                         required
                     >
-                        <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Select your main objective" fr="Sélectionnez votre objectif principal" ar="اختر هدفك الرئيسي" />
                         </option>
-                        <option value="find_job" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="find_job" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText
                                 en={isMedia ? 'Find a job in digital marketing' : 'Find a job in programming'}
                                 fr={isMedia ? 'Trouver un emploi en marketing digital' : 'Trouver un emploi en programmation'}
                                 ar={isMedia ? 'العثور على وظيفة في التسويق الرقمي' : 'العثور على وظيفة في البرمجة'}
                             />
                         </option>
-                        <option value="start_business" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="start_business" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Start my own business" fr="Créer ma propre entreprise" ar="بدء عملي الخاص" />
                         </option>
-                        <option value="improve_skills" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="improve_skills" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Improve my current skills" fr="Améliorer mes compétences actuelles" ar="تحسين مهاراتي الحالية" />
                         </option>
-                        <option value="career_change" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="career_change" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Change my career path" fr="Changer de parcours professionnel" ar="تغيير مساري المهني" />
                         </option>
-                        <option value="freelance" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="freelance" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Work as a freelancer" fr="Travailler en freelance" ar="العمل كمستقل" />
                         </option>
-                        <option value="personal_projects" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="personal_projects" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Develop personal projects" fr="Développer des projets personnels" ar="تطوير مشاريع شخصية" />
                         </option>
                     </select>
@@ -82,37 +82,37 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                             value={data.priority_learning_topics}
                             onChange={handleChange}
                             className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                                darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                                darkMode ? 'border-gray-600 bg-[#57646e] text-white' : 'border-gray-300 bg-white text-gray-900'
                             }`}
                             required
                         >
-                            <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 <TransText en="Select your priority" fr="Sélectionnez votre priorité" ar="اختر أولويتك" />
                             </option>
                             {isMedia ? (
                                 <>
-                                    <option value="marketing_digital" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                    <option value="marketing_digital" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                         Marketing Digital
                                     </option>
-                                    <option value="adobe_suite" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                    <option value="adobe_suite" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                         Adobe (Premiere Pro, Photoshop, Illustrator, After Effects)
                                     </option>
-                                    <option value="audiovisuel" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                    <option value="audiovisuel" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                         AudioVisuel (Camera, Son, Éclairage, Journalisme)
                                     </option>
                                 </>
                             ) : (
                                 <>
-                                    <option value="web_development" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                    <option value="web_development" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                         <TransText en="Web Development" fr="Développement Web" ar="تطوير المواقع" />
                                     </option>
-                                    <option value="frontend_development" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                    <option value="frontend_development" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                         <TransText en="Frontend Development" fr="Développement Frontend" ar="تطوير الواجهة الأمامية" />
                                     </option>
-                                    <option value="backend_development" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                    <option value="backend_development" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                         <TransText en="BAckend Development" fr="Développement Back End" ar="تطوير الواجهة الأمامية" />
                                     </option>
-                                    <option value="database_management" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                    <option value="database_management" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                         <TransText en="Database Management" fr="Gestion de base de données" ar="إدارة قواعد البيانات" />
                                     </option>
                                 </>
@@ -139,7 +139,7 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                         rows={3}
                         className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
                             darkMode
-                                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                ? 'border-gray-600 bg-[#57646e] text-white placeholder-gray-400'
                                 : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                         }`}
                         placeholder={
@@ -176,23 +176,23 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                                 value={data.arabic_level}
                                 onChange={handleChange}
                                 className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                                    darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                                    darkMode ? 'border-gray-600 bg-[#57646e] text-white' : 'border-gray-300 bg-white text-gray-900'
                                 }`}
                                 required
                             >
-                                <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Select level" fr="Sélectionnez le niveau" ar="اختر المستوى" />
                                 </option>
-                                <option value="beginner" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="beginner" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Beginner" fr="Débutant" ar="مبتدئ" />
                                 </option>
-                                <option value="intermediate" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="intermediate" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Intermediate" fr="Intermédiaire" ar="متوسط" />
                                 </option>
-                                <option value="advanced" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="advanced" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Advanced" fr="Avancé" ar="متقدم" />
                                 </option>
-                                <option value="fluent" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="fluent" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Fluent" fr="Courant" ar="بطلاقة" />
                                 </option>
                             </select>
@@ -208,23 +208,23 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                                 value={data.french_level}
                                 onChange={handleChange}
                                 className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                                    darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                                    darkMode ? 'border-gray-600 bg-[#57646e] text-white' : 'border-gray-300 bg-white text-gray-900'
                                 }`}
                                 required
                             >
-                                <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Select level" fr="Sélectionnez le niveau" ar="اختر المستوى" />
                                 </option>
-                                <option value="beginner" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="beginner" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Beginner" fr="Débutant" ar="مبتدئ" />
                                 </option>
-                                <option value="intermediate" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="intermediate" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Intermediate" fr="Intermédiaire" ar="متوسط" />
                                 </option>
-                                <option value="advanced" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="advanced" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Advanced" fr="Avancé" ar="متقدم" />
                                 </option>
-                                <option value="fluent" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="fluent" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Fluent" fr="Courant" ar="بطلاقة" />
                                 </option>
                             </select>
@@ -240,23 +240,23 @@ const Step4GoalsLearning = ({ data, handleChange, errors, darkMode, selectedLang
                                 value={data.english_level}
                                 onChange={handleChange}
                                 className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                                    darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                                    darkMode ? 'border-gray-600 bg-[#57646e] text-white' : 'border-gray-300 bg-white text-gray-900'
                                 }`}
                                 required
                             >
-                                <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Select level" fr="Sélectionnez le niveau" ar="اختر المستوى" />
                                 </option>
-                                <option value="beginner" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="beginner" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Beginner" fr="Débutant" ar="مبتدئ" />
                                 </option>
-                                <option value="intermediate" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="intermediate" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Intermediate" fr="Intermédiaire" ar="متوسط" />
                                 </option>
-                                <option value="advanced" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="advanced" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Advanced" fr="Avancé" ar="متقدم" />
                                 </option>
-                                <option value="fluent" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                                <option value="fluent" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                     <TransText en="Fluent" fr="Courant" ar="بطلاقة" />
                                 </option>
                             </select>

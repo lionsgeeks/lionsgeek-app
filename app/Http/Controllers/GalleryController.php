@@ -99,7 +99,7 @@ class GalleryController extends Controller
             }
         }
 
-        return back()->with('success', 'Gallery Has Been Created Successfully!');
+        return back();
     }
 
 
@@ -152,7 +152,7 @@ class GalleryController extends Controller
             }
         }
 
-        return back()->with('success', 'Gallery Has Been Updated Successfully!');
+        return back();
     }
 
 
@@ -168,11 +168,11 @@ class GalleryController extends Controller
                 $image->erase();
             }
             $gallery->delete();
-            return back()->with('success', 'Gallery Has Been Deleted Successfully!');
+            return back();
         }
 
         if (!$gallery) {
-            return back()->with('error', 'Gallery Does Not Exist or Has Been Deleted!');
+            return back();
         }
     }
 }

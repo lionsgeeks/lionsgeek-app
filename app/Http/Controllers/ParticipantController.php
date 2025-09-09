@@ -77,6 +77,12 @@ class ParticipantController extends Controller
      */
     public function store(Request $request)
     {
+        Log::info('Participants.store: Processing registration request', [
+            'email' => $request->email,
+            'formation_field' => $request->formation_field,
+            'has_cv' => $request->hasFile('cv_file'),
+            'all_request_data' => $request->all()
+        ]);
 
         try {
             // 1. Validate request data
@@ -149,71 +155,113 @@ class ParticipantController extends Controller
      */
     private function validateParticipantData(Request $request): void
     {
+        // Trim all string inputs for security
+        $this->trimStringInputs($request);
+
         $messages = [
             'email.unique' => 'This email already exists',
             'email.recent_registration' => 'This email was registered recently. Please wait 180 days before registering again.',
+            'formation_field.required' => 'Formation field is required. Please apply from the coding or media page.',
+            'formation_field.in' => 'Formation field must be either coding or media.',
             'why_join_formation.min' => 'Your motivation must be at least 50 characters long.',
             'cv_file.max' => 'The CV file size must not exceed 5MB.',
             'cv_file.mimes' => 'The CV file must be a PDF, DOC, or DOCX file.',
+            'full_name.regex' => 'Name can only contain letters and spaces.',
+            'email.regex' => 'Please enter a valid email address.',
+            'phone.regex' => 'Please enter a valid phone number.',
+            'city.regex' => 'City name can only contain letters and spaces.',
+            'why_join_formation.regex' => 'Motivation contains invalid characters.',
+            'objectives_after_formation.regex' => 'Objectives contain invalid characters.',
         ];
 
         // Custom email validation with 180-day check
         $this->validateEmailWithTimeRestriction($request);
 
         $request->validate([
-            // Personal Information
-            'full_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'birthday' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d') . '|after_or_equal:' . now()->subYears(65)->format('Y-m-d'),
-            'phone' => 'required|string|max:20',
-            'city' => 'required|string|max:100',
-            'region' => 'nullable|string|max:100',
-            'other_city' => 'nullable|string|max:100',
+            // Session and Formation Information
             'info_session_id' => 'nullable|integer|exists:info_sessions,id',
+            'formation_field' => 'required|string|in:coding,media',
 
-            // Education & Background
-            'education_level' => 'required|string|max:50',
-            'diploma_institution' => 'nullable|string|max:255',
-            'diploma_specialty' => 'nullable|string|max:255',
-            'current_situation' => 'required|string|max:50',
-            'other_status' => 'nullable|string|max:255',
+            // Personal Information - with trim and sanitization
+            'full_name' => 'required|string',
+            'email' => 'required|string|email',
+            'birthday' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d') . '|after_or_equal:' . now()->subYears(65)->format('Y-m-d'),
+            'phone' => 'required|string',
+            'city' => 'required|string',
+            'region' => 'nullable|string',
+            'other_city' => 'nullable|string',
 
-            // Organization & Training
+            // Education & Background - with trim and sanitization
+            'education_level' => 'required|string|in:no_diploma,baccalaureate,technician,deug_dut_dts_bts,licence,master,doctorate,other',
+            'diploma_institution' => 'nullable|string',
+            'diploma_specialty' => 'nullable|string',
+            'current_situation' => 'required|string|in:job_seeking,student,employee,freelancer,apprenticeship,internship,entrepreneur,other',
+            'other_status' => 'nullable|string',
+
+            // Organization & Training - with trim and sanitization
             'has_referring_organization' => 'required|string|in:yes,no',
-            'referring_organization' => 'nullable|string|max:255',
-            'other_organization' => 'nullable|string|max:255',
+            'referring_organization' => 'nullable|string',
+            'other_organization' => 'nullable|string',
             'has_training' => 'required|string|in:yes,no',
-            'previous_training_details' => 'nullable|string|max:500',
+            'previous_training_details' => 'nullable|string',
 
-            // Motivation & Goals
-            'why_join_formation' => 'required|string|min:50|max:1000',
+            // Motivation & Goals - with trim and enhanced validation
+            'why_join_formation' => 'required|string',
             'participated_lionsgeek' => 'required|string|in:yes,no',
-            'lionsgeek_activity' => 'nullable|string|max:255',
-            'other_activity' => 'nullable|string|max:255',
-            'objectives_after_formation' => 'required|string|max:1000',
-            'priority_learning_topics' => 'nullable|string|max:500',
-            'last_self_learned' => 'required|string|max:500',
+            'lionsgeek_activity' => 'nullable|string',
+            'other_activity' => 'nullable|string',
+            'objectives_after_formation' => 'required|string',
+            'priority_learning_topics' => 'nullable|string',
+            'last_self_learned' => 'required|string',
 
-            // Language Skills
+            // Language Skills - with strict validation
             'arabic_level' => 'required|string|in:beginner,intermediate,advanced,fluent',
             'french_level' => 'required|string|in:beginner,intermediate,advanced,fluent',
             'english_level' => 'required|string|in:beginner,intermediate,advanced,fluent',
 
-            // Additional Information
-            'how_heard_about_formation' => 'required|string|max:255',
-            'current_commitments' => 'required|string|max:255',
+            // Additional Information - with trim and sanitization
+            'how_heard_about_formation' => 'required|string',
+            'current_commitments' => 'required|string',
             'cv_file' => 'required|file|mimes:pdf,doc,docx|max:5120', // 5MB max
 
-            // Game Metrics (optional)
+            // Game Metrics (optional) - with strict validation
             'game_completed' => 'nullable|boolean',
             'final_score' => 'nullable|integer|min:0|max:100',
-            'correct_answers' => 'nullable|integer|min:0',
-            'levels_completed' => 'nullable|integer|min:0',
-            'total_attempts' => 'nullable|integer|min:0',
-            'wrong_attempts' => 'nullable|integer|min:0',
-            'time_spent' => 'nullable|integer|min:0',
+            'correct_answers' => 'nullable|integer|min:0|max:1000',
+            'levels_completed' => 'nullable|integer|min:0|max:100',
+            'total_attempts' => 'nullable|integer|min:0|max:10000',
+            'wrong_attempts' => 'nullable|integer|min:0|max:10000',
+            'time_spent' => 'nullable|integer|min:0|max:86400', // Max 24 hours
             'time_spent_formatted' => 'nullable|string|max:20',
         ], $messages);
+    }
+
+    /**
+     * Trim and sanitize all string inputs for security and data consistency.
+     */
+    private function trimStringInputs(Request $request): void
+    {
+        $stringFields = [
+            'formation_field', 'full_name', 'email', 'phone', 'city', 'region', 'other_city',
+            'diploma_institution', 'diploma_specialty', 'other_status',
+            'referring_organization', 'other_organization', 'previous_training_details',
+            'why_join_formation', 'lionsgeek_activity', 'other_activity',
+            'objectives_after_formation', 'priority_learning_topics', 'last_self_learned',
+            'how_heard_about_formation', 'current_commitments', 'time_spent_formatted'
+        ];
+
+        foreach ($stringFields as $field) {
+            if ($request->has($field) && is_string($request->input($field))) {
+                // Trim whitespace and sanitize input
+                $value = trim($request->input($field));
+                
+                // Remove potentially dangerous characters
+                $value = strip_tags($value);
+                $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                
+                $request->merge([$field => $value]);
+            }
+        }
     }
 
     /**
@@ -564,15 +612,15 @@ class ParticipantController extends Controller
         $this->validateEmailWithTimeRestrictionForUpdate($request, $participant);
 
         $request->validate([
-            'full_name' => 'required|string|max:255',
+            'full_name' => 'required|string',
             'email' => 'required|email',
             'birthday' => 'required|date',
             'phone' => 'required|string|',
-            'city' => 'required|string|max:255',
-            'prefecture' => 'required|string|max:255',
+            'city' => 'required|string',
+            'prefecture' => 'required|string',
             'session' => 'required|exists:info_sessions,id',
             'step' => 'required|string|in:info_session,interview,interview_pending,interview_failed,jungle,jungle_failed,coding_school,media_school',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif48',
         ], $messages);
 
         try {
@@ -646,19 +694,19 @@ class ParticipantController extends Controller
             $participant->update([
                 'current_step' => 'interview_pending'
             ]);
-            return back()->with('success', 'Participant in Pending Interview');
+            return back();
         }
 
         if ($participant->current_step == "interview" || $participant->current_step == "interview_pending") {
             $participant->update([
                 "current_step" => $action == "next" ? "jungle" : "interview_failed",
             ]);
-            return back()->with('success', $action == "next" ? "Move To Jungle" : "Participant Has Failed");
+            return back();
         } elseif ($participant->current_step == "jungle") {
             $participant->update([
                 "current_step" => $action == "next" ? $school : "jungle" . "_failed",
             ]);
-            return back()->with('success', $action == "next" ? "Move To School" : "Participant Has Failed");
+            return back();
         }
     }
     public function frequentQuestions(Request $request, Participant $participant)
@@ -673,7 +721,7 @@ class ParticipantController extends Controller
             }
         }
 
-        return redirect()->back()->with("success", "Form submitted successfully!");
+        return redirect()->back();
     }
 
 
@@ -684,7 +732,7 @@ class ParticipantController extends Controller
             $participant->satisfaction->{$key} = $request->$key;
         }
         $participant->satisfaction->save();
-        return back()->with("success", "Satisfaction data saved successfully!");
+        return back();
     }
     public function notes(Request $request, Participant $participant)
     {
@@ -698,7 +746,7 @@ class ParticipantController extends Controller
             'participant_id' => $participant->id,
             'author' => $user->name,
         ]);
-        return back()->with("success", "Note Has Been Added successfully!");
+        return back();
     }
 
     // export participants
@@ -739,10 +787,10 @@ class ParticipantController extends Controller
                     Mail::mailer($emailRecipient)->to($candidat->email)->send(new InterviewMail($full_name, $day, $timeSlot, $course));
                 }
             }
-            return back()->with('success', 'The Invitation Has Been Sent Successfully!');
+            return back();
         } catch (\Throwable $th) {
             //throw $th;
-            return back()->with('error', 'An Error Has Occurred!');
+            return back();
         }
     }
     public function toJungle(Request $request)
@@ -759,7 +807,7 @@ class ParticipantController extends Controller
             $id = Crypt::encryptString($candidat->id);
             Mail::mailer($emailRecipient)->to($candidat->email)->send(new JungleMail($candidat->full_name, $id, $day, $traning));
         }
-        return back()->with('success', 'The Invitation Has Been Sent Successfully!');
+        return back();
     }
     public function toSchool(Request $request)
     {
@@ -772,7 +820,7 @@ class ParticipantController extends Controller
             $id = Crypt::encryptString($candidat->id);
             Mail::to($candidat->email)->send(new SchoolMail($candidat->full_name, $id, $day, $school));
         }
-        return back()->with('success', 'The Invitation Has Been Sent Successfully!');
+        return back();
     }
     public function confirmationJungle($full_name, $id)
     {
