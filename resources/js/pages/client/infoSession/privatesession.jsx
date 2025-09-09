@@ -75,7 +75,7 @@ const Privatesession = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (motivation && motivation.length < 150) {
+    if (motivation && motivation.replace(/\s/g, '').length < 150) {
     } else {
       window.scrollTo(0, 0);
       setSending(true);
@@ -449,13 +449,13 @@ const Privatesession = () => {
                         :
                         <Required />
                         <span
-                          className={`text-sm ${motivation.length < 150
+                          className={`text-sm ${motivation.replace(/\s/g, '').length < 150
                             ? "text-red-600"
                             : "text-green-500"
                             } `}
                         >
                           {" "}
-                          {motivation.length}/150
+                          {motivation.replace(/\s/g, '').length}/150
                         </span>
                       </label>
                       <textarea
@@ -465,8 +465,8 @@ const Privatesession = () => {
                         onPaste={handlePaste}
                         className="border border-gray-400 rounded p-[6px]"
                         onChange={(e) => {
-                          // Trim whitespace and prevent dangerous characters
-                          let value = e.target.value.trim();
+                          // Prevent dangerous characters
+                          let value = e.target.value;
                           // Remove HTML tags and script content
                           value = value.replace(/<[^>]*>/g, '');
                           value = value.replace(/javascript:/gi, '');
@@ -476,7 +476,6 @@ const Privatesession = () => {
                         placeholder={selectedLanguage == "en" ? "Motivation" : selectedLanguage == "fr" ? "Motivation" : "دافع"}
                         value={motivation}
                         required
-                        minLength={150}
                         maxLength={1000}
                       ></textarea>
                     </div>

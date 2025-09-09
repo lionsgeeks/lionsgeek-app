@@ -57,13 +57,13 @@ export default function StepSummary({ data, errors, setCurrentStep, darkMode }) 
 
     return (
         <div className="space-y-6">
-            <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6">
+            <div className="rounded-lg border border-gray-200 bg-white dark:bg-beta dark:shadow-none p-4 sm:p-6">
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="text-lg font-semibold text-[#212529]">Review your details</h3>
                     <button
                         type="button"
                         onClick={() => setCurrentStep(8)}
-                        className="w-full rounded-lg bg-[#212529] px-4 py-2 text-white transition-all duration-200 hover:bg-[#212529]/90 hover:shadow sm:w-auto"
+                        className="w-full rounded-lg bg-alpha px-4 py-2 text-black hover:text-white transition-all duration-200 hover:bg-[#212529]/90 hover:shadow sm:w-auto"
                     >
                         Proceed to Game Intro
                     </button>
@@ -74,7 +74,7 @@ export default function StepSummary({ data, errors, setCurrentStep, darkMode }) 
                             {/* Mobile Layout */}
                             <div className="block sm:hidden">
                                 <div className="mb-2 flex items-center justify-between">
-                                    <div className="text-sm font-medium text-black">{label}</div>
+                                    <h1 className="text-sm font-medium text-black dark:text-white">{label}</h1>
                                     <Button
                                         type="button"
                                         onClick={() => goToField(key)}
@@ -86,10 +86,10 @@ export default function StepSummary({ data, errors, setCurrentStep, darkMode }) 
                                 <div className={`break-words ${darkMode ? 'text-white' : 'text-[#212529]'}`}>{String(data[key])}</div>
                                 {errors[key] && <p className="mt-1 text-sm text-red-600">{errors[key]}</p>}
                             </div>
-                            
+
                             {/* Desktop Layout */}
                             <div className="hidden sm:flex sm:items-start sm:justify-between sm:gap-4">
-                                <div className="min-w-[200px] text-sm font-medium text-black lg:min-w-[220px]">{label}</div>
+                                <div className="min-w-[200px] text-sm font-medium text-black dark:text-white lg:min-w-[220px]">{label}</div>
                                 <div className="flex-1">
                                     <div className={`break-words ${darkMode ? 'text-white' : 'text-[#212529]'}`}>{String(data[key])}</div>
                                     {errors[key] && <p className="mt-1 text-sm text-red-600">{errors[key]}</p>}

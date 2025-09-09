@@ -97,9 +97,9 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                         />
                         <Required />
                         <span
-                            className={`ml-2 text-sm ${data.why_join_formation && data.why_join_formation.length < 100 ? 'text-red-500' : 'text-alpha'}`}
+                            className={`ml-2 text-sm ${data.why_join_formation && data.why_join_formation.replace(/\s/g, '').length < 100 ? 'text-red-500' : 'text-alpha'}`}
                         >
-                            ({data.why_join_formation ? data.why_join_formation.length : 0}/100{' '}
+                            ({data.why_join_formation ? data.why_join_formation.replace(/\s/g, '').length : 0}/100{' '}
                             <TransText en="characters minimum" fr="caractères minimum" ar="حرف كحد أدنى" />)
                         </span>
                     </label>
@@ -107,8 +107,8 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                         name="why_join_formation"
                         value={data.why_join_formation}
                         onChange={(e) => {
-                            // Trim whitespace and prevent dangerous characters
-                            let value = e.target.value.trim();
+                            // Prevent dangerous characters
+                            let value = e.target.value;
                             // Remove HTML tags and script content
                             value = value.replace(/<[^>]*>/g, '');
                             value = value.replace(/javascript:/gi, '');
@@ -124,13 +124,12 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                         }`}
                         placeholder={
                             selectedLanguage === 'en'
-                                ? 'Please provide a detailed explanation of your motivation (minimum 100 characters)'
+                                ? 'Please provide a detailed explanation of your motivation (minimum 100 characters, spaces not counted)'
                                 : selectedLanguage === 'fr'
-                                  ? 'Veuillez fournir une explication détaillée de votre motivation (minimum 100 caractères)'
-                                  : 'يرجى تقديم شرح مفصل لدافعك (100 حرف كحد أدنى)'
+                                  ? 'Veuillez fournir une explication détaillée de votre motivation (minimum 100 caractères, espaces non comptés)'
+                                  : 'يرجى تقديم شرح مفصل لدافعك (100 حرف كحد أدنى، المسافات لا تحتسب)'
                         }
                         required
-                        minLength={100}
                         maxLength={1000}
                     />
                     {errors.why_join_formation && <span className="mt-1 text-sm text-red-500">{errors.why_join_formation}</span>}
