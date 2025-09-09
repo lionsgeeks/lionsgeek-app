@@ -183,7 +183,7 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                             className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
                                 darkMode
                                     ? 'bg-[#57646e] border-gray-600 text-white placeholder-gray-400'
-                                    : 'bg-[#57646e] border-gray-300 text-white placeholder-gray-500'
+                                    : 'bg-white border-gray-300  placeholder-gray-500'
                             }`}
                             placeholder={
                                 selectedLanguage === 'en'
@@ -297,7 +297,7 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                             className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-alpha focus:border-alpha ${
                                 darkMode
                                     ? 'bg-[#57646e] border-gray-600 text-white placeholder-gray-400'
-                                    : 'bg-[#57646e] border-gray-300 text-white placeholder-gray-500'
+                                    : 'bg-white border-gray-300  placeholder-gray-500'
                             }`}
                             placeholder={selectedLanguage === 'en' ? 'Organization name' : selectedLanguage === 'fr' ? 'Nom de l\'organisation' : 'اسم المنظمة'}
                             required
