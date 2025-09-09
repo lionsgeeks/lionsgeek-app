@@ -29,8 +29,16 @@ class RegistrationRejected extends Mailable
      */
     public function envelope(): Envelope
     {
+        $formationField = $this->participant->formation_field ?? 'general';
+        
         return new Envelope(
-            subject: 'Registration Update - ' . ($this->participant->formation_field ?? 'LionsGeek') . ' Program',
+            subject: 'Registration Update - ' . ucfirst($formationField) . ' Program',
+            from: new \Illuminate\Mail\Mailables\Address(
+                $formationField === 'coding' ? 'coding@lionsgeek.ma' : 
+                ($formationField === 'media' ? 'media@lionsgeek.ma' : 'info@lionsgeek.ma'), 
+                $formationField === 'coding' ? 'LionsGeek Coding Team' : 
+                ($formationField === 'media' ? 'LionsGeek Media Team' : 'LionsGeek')
+            ),
         );
     }
 

@@ -969,22 +969,43 @@ class ParticipantController extends Controller
                 ]);
             }
 
-            // One-choice-only: if already reserved a session, block
-            if ($participant->info_session_id && $participant->info_session_id !== $session->id) {
-                return Inertia::render('client/infoSession/ReservationResult', [
-                    'type' => 'error',
-                    'title' => [
-                        'en' => 'Already reserved',
-                        'fr' => 'Déjà réservé',
-                        'ar' => 'تم الحجز مسبقًا',
-                    ],
-                    'message' => [
-                        'en' => 'You have already reserved an info session.',
-                        'fr' => 'Vous avez déjà réservé une séance d\'information.',
-                        'ar' => 'لقد حجزت بالفعل جلسة معلومات.'
-                    ],
-                    'redirectUrl' => config('app.url')
-                ]);
+            // Check if already reserved any session
+            if ($participant->info_session_id) {
+                // If already reserved a different session, block
+                if ($participant->info_session_id !== $session->id) {
+                    return Inertia::render('client/infoSession/ReservationResult', [
+                        'type' => 'error',
+                        'title' => [
+                            'en' => 'Already reserved',
+                            'fr' => 'Déjà réservé',
+                            'ar' => 'تم الحجز مسبقًا',
+                        ],
+                        'message' => [
+                            'en' => 'You have already reserved an info session.',
+                            'fr' => 'Vous avez déjà réservé une séance d\'information.',
+                            'ar' => 'لقد حجزت بالفعل جلسة معلومات.'
+                        ],
+                        'redirectUrl' => config('app.url')
+                    ]);
+                }
+                
+                // If already reserved THIS session, show success without sending another email
+                if ($participant->info_session_id === $session->id) {
+                    return Inertia::render('client/infoSession/ReservationResult', [
+                        'type' => 'success',
+                        'title' => [
+                            'en' => 'Already Reserved',
+                            'fr' => 'Déjà réservé',
+                            'ar' => 'تم الحجز مسبقًا',
+                        ],
+                        'message' => [
+                            'en' => 'You have already reserved this info session. Check your email for the QR code.',
+                            'fr' => 'Vous avez déjà réservé cette séance d\'information. Vérifiez votre email pour le code QR.',
+                            'ar' => 'لقد حجزت هذه الجلسة بالفعل. تحقق من بريدك الإلكتروني للحصول على رمز QR.'
+                        ],
+                        'redirectUrl' => config('app.url')
+                    ]);
+                }
             }
 
             // Validate session matches participant track and is available and upcoming
