@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
-import { CheckCircle2, Clock, Download, Filter, Presentation, Users, XCircle } from 'lucide-react';
+import { CheckCircle2, Clock, Download, Filter, Presentation, Users, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from './partials/ParticipantCard';
@@ -12,8 +12,11 @@ import ParticipantCard from './partials/ParticipantCard';
 export default function Participants() {
     const { participants = [], infosessions = [], statusCounts = {} } = usePage().props;
     const [filtredParticipants, setFiltredParticipants] = useState(participants);
-    const [search, setSearch] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('approved');
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const participantsPerPage = 24
 
     const breadcrumbs = [
         {
@@ -22,8 +25,8 @@ export default function Participants() {
         },
     ];
 
-    // Filter participants based on selected status
-    const getFilteredParticipants = (status) => {
+    // Filter participants based on selected status only
+    const getStatusFilteredParticipants = (status) => {
         switch (status) {
             case 'pending':
                 return participants.filter((p) => p.status === 'pending');
@@ -37,27 +40,58 @@ export default function Participants() {
         }
     };
 
-    // Calculate current participants based on status
-    const currentParticipants = getFilteredParticipants(selectedStatus);
+    // Get participants filtered by status only (FilterHeader will handle other filters)
+    const statusFilteredParticipants = getStatusFilteredParticipants(selectedStatus);
 
     // Update filtered participants when status changes
     useEffect(() => {
-        setFiltredParticipants(currentParticipants);
+        const filtered = getStatusFilteredParticipants(selectedStatus);
+        setFiltredParticipants(filtered);
+        setCurrentPage(1); // Reset to first page when filters change
     }, [selectedStatus, participants]);
 
+    // Reset to first page when filtered participants change (from FilterHeader)
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filtredParticipants]);
+
     // Calculate statistics with safe access
-    const totalParticipants = currentParticipants?.length || 0;
     const stepsCount = {
-        info_session: currentParticipants?.filter((p) => p?.current_step === 'info_session')?.length || 0,
-        interview: currentParticipants?.filter((p) => p?.current_step === 'interview')?.length || 0,
-        jungle: currentParticipants?.filter((p) => p?.current_step === 'jungle')?.length || 0,
-        school: currentParticipants?.filter((p) => p?.current_step?.includes('school'))?.length || 0,
+        info_session: filtredParticipants?.filter((p) => p?.current_step === 'info_session')?.length || 0,
+        interview: filtredParticipants?.filter((p) => p?.current_step === 'interview')?.length || 0,
+        jungle: filtredParticipants?.filter((p) => p?.current_step === 'jungle')?.length || 0,
+        school: filtredParticipants?.filter((p) => p?.current_step?.includes('school'))?.length || 0,
     };
-    const hasSearch = search.length > 0;
+
+    // Pagination calculations
+    const totalParticipants = filtredParticipants.length;
+    const totalPages = Math.ceil(totalParticipants / participantsPerPage);
+    const startIndex = (currentPage - 1) * participantsPerPage;
+    const endIndex = startIndex + participantsPerPage;
+    const paginatedParticipants = filtredParticipants.slice(startIndex, endIndex);
 
     // Handle status change without page refresh
     const handleStatusChange = (newStatus) => {
         setSelectedStatus(newStatus);
+        setCurrentPage(1); // Reset to first page when changing status
+    };
+
+    // Pagination handlers
+    const goToPage = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            goToPage(currentPage - 1);
+        }
+    };
+
+    const goToNextPage = () => {
+        if (currentPage < totalPages) {
+            goToPage(currentPage + 1);
+        }
     };
 
     return (
@@ -209,7 +243,7 @@ export default function Participants() {
                             </div>
                             <div className="mt-4">
                                 <FilterHeader
-                                    participants={currentParticipants}
+                                    participants={statusFilteredParticipants}
                                     infosessions={infosessions}
                                     setFiltredParticipants={setFiltredParticipants}
                                 />
@@ -220,6 +254,18 @@ export default function Participants() {
 
                 {/* Participants Grid */}
                 <div className="mx-auto max-w-7xl px-6 pb-8">
+                    {/* Pagination Info */}
+                    {totalParticipants > 0 && (
+                        <div className="mb-6 flex items-center justify-between">
+                            <p className="text-sm text-gray-600">
+                                Showing {startIndex + 1} to {Math.min(endIndex, totalParticipants)} of {totalParticipants} participants
+                            </p>
+                            <p className="text-sm text-gray-600">
+                                Page {currentPage} of {totalPages}
+                            </p>
+                        </div>
+                    )}
+
                     {filtredParticipants?.length === 0 ? (
                         <Card className="border-0 bg-white shadow-lg">
                             <CardContent className="p-12 text-center">
@@ -233,11 +279,91 @@ export default function Participants() {
                             </CardContent>
                         </Card>
                     ) : (
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {filtredParticipants?.map((participant) => (
-                                <ParticipantCard key={participant.id} participant={participant} />
-                            ))}
-                        </div>
+                        <>
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                {paginatedParticipants?.map((participant) => (
+                                    <ParticipantCard key={participant.id} participant={participant} />
+                                ))}
+                            </div>
+
+                            {/* Pagination Controls */}
+                            {totalPages > 1 && (
+                                <div className="mt-8 flex items-center justify-center space-x-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={goToPreviousPage}
+                                        disabled={currentPage === 1}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <ChevronLeft className="h-4 w-4" />
+                                        Previous
+                                    </Button>
+
+                                    <div className="flex items-center space-x-1">
+                                        {/* First page */}
+                                        {currentPage > 3 && (
+                                            <>
+                                                <Button
+                                                    variant={1 === currentPage ? "default" : "outline"}
+                                                    size="sm"
+                                                    onClick={() => goToPage(1)}
+                                                    className="min-w-[40px]"
+                                                >
+                                                    1
+                                                </Button>
+                                                {currentPage > 4 && <span className="px-2 text-gray-500">...</span>}
+                                            </>
+                                        )}
+
+                                        {/* Page numbers around current page */}
+                                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                            const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                                            if (pageNum <= totalPages) {
+                                                return (
+                                                    <Button
+                                                        key={pageNum}
+                                                        variant={pageNum === currentPage ? "default" : "outline"}
+                                                        size="sm"
+                                                        onClick={() => goToPage(pageNum)}
+                                                        className="min-w-[40px]"
+                                                    >
+                                                        {pageNum}
+                                                    </Button>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+
+                                        {/* Last page */}
+                                        {currentPage < totalPages - 2 && (
+                                            <>
+                                                {currentPage < totalPages - 3 && <span className="px-2 text-gray-500">...</span>}
+                                                <Button
+                                                    variant={totalPages === currentPage ? "default" : "outline"}
+                                                    size="sm"
+                                                    onClick={() => goToPage(totalPages)}
+                                                    className="min-w-[40px]"
+                                                >
+                                                    {totalPages}
+                                                </Button>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={goToNextPage}
+                                        disabled={currentPage === totalPages}
+                                        className="flex items-center gap-2"
+                                    >
+                                        Next
+                                        <ChevronRight className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
