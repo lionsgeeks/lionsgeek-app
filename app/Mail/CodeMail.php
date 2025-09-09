@@ -22,7 +22,7 @@ class CodeMail extends Mailable
     }
     public function build()
     {
-        return $this->subject('Invitation to Our Info Session -' . $this->data['infosession'])
+        return $this->subject('Invitation to Our Info Session - ' . $this->data['infosession'])
             ->view('maizzlMails.infoSessionInvi')
             ->attachData($this->data['pdf']->output(), 'Qrcode.pdf', [
                 'mime' => 'application/pdf',

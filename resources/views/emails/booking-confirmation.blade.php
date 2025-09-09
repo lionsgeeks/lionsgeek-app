@@ -49,18 +49,32 @@
         .btn {
             display: inline-block;
             padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
+            background-color: #ffc107;
+            color: #000;
             text-decoration: none;
             border-radius: 5px;
             margin: 10px 0;
+            font-weight: bold;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 15px;
+        }
+        .divider {
+            margin: 30px 0;
+            border-top: 2px solid #e9ecef;
+        }
+        .rtl {
+            direction: rtl;
+            text-align: right;
         }
     </style>
 </head>
 <body>
     <div class="header">
+        <img src="https://media.licdn.com/dms/image/v2/D4E0BAQEI5pl3PyS-Eg/company-logo_200_200/company-logo_200_200/0/1734088749325/lionsgeek_logo?e=2147483647&v=beta&t=2tZP_cpgMZO4IFtfyB0GNKXIrPO5I5w6a8iUlnrhntQ" width="90" alt="LionsGeek Logo" class="logo">
         <h1>🎉 Booking Confirmation</h1>
-        <p>Thank you for booking with us!</p>
+        <p>Thank You For Booking With Us!</p>
     </div>
 
     <div class="content">
@@ -78,7 +92,6 @@
                 @endif
             </p>
             <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->date)->format('l, F j, Y \a\t g:i A') }}</p>
-            <p><strong>Capacity:</strong> {{ $event->capacity }} attendees</p>
             @if(is_array($event->description))
                 <p><strong>Description:</strong> {{ $event->description['en'] ?? $event->description['fr'] ?? $event->description['ar'] ?? '' }}</p>
             @else
@@ -105,6 +118,52 @@
 
         <div style="text-align: center; margin: 30px 0;">
             <a href="{{ config('app.url') }}" class="btn">Visit Our Website</a>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="rtl">
+            <h2>مرحبًا {{ $booking->name }}!</h2>
+            
+            <p>يسعدنا تأكيد حجزك للفعالية التالية:</p>
+
+            <div class="event-details">
+                <h3>📅 تفاصيل الفعالية</h3>
+                <p><strong>الفعالية:</strong> 
+                    @if(is_array($event->name))
+                        {{ $event->name['ar'] ?? $event->name['en'] ?? $event->name['fr'] ?? 'فعالية' }}
+                    @else
+                        {{ $event->name }}
+                    @endif
+                </p>
+                <p><strong>التاريخ:</strong> {{ \Carbon\Carbon::parse($event->date)->format('l, F j, Y \a\t g:i A') }}</p>
+                @if(is_array($event->description))
+                    <p><strong>الوصف:</strong> {{ $event->description['ar'] ?? $event->description['en'] ?? $event->description['fr'] ?? '' }}</p>
+                @else
+                    <p><strong>الوصف:</strong> {{ $event->description }}</p>
+                @endif
+            </div>
+
+            <div class="booking-details">
+                <h3>👤 تفاصيل الحجز</h3>
+                <p><strong>الاسم:</strong> {{ $booking->name }}</p>
+                <p><strong>البريد الإلكتروني:</strong> {{ $booking->email }}</p>
+                <p><strong>الهاتف:</strong> {{ $booking->phone }}</p>
+                <p><strong>تاريخ الحجز:</strong> {{ $booking->created_at->format('F j, Y \a\t g:i A') }}</p>
+            </div>
+
+            <p>يرجى حفظ هذا البريد الإلكتروني كتأكيد للحجز. قد تحتاج إلى تقديمه في الفعالية.</p>
+
+            <p><strong>ملاحظات مهمة:</strong></p>
+            <ul>
+                <li>يرجى الوصول قبل 15 دقيقة من بداية الفعالية</li>
+                <li>احضر هوية صالحة للتحقق</li>
+                <li>إذا كنت تحتاج إلى الإلغاء، يرجى التواصل معنا قبل 24 ساعة على الأقل</li>
+            </ul>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{{ config('app.url') }}" class="btn">زيارة موقعنا</a>
+            </div>
         </div>
     </div>
 

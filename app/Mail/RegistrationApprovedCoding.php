@@ -32,7 +32,8 @@ class RegistrationApprovedCoding extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to LionsGeek Coding Program - You\'re In!',
+            subject: 'Invitation to LionsGeek Coding Program Info Session',
+            from: new \Illuminate\Mail\Mailables\Address('coding@lionsgeek.ma', 'LionsGeek Coding Team'),
         );
     }
 

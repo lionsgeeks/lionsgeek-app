@@ -32,7 +32,8 @@ class RegistrationApprovedMedia extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to LionsGeek Media Program - You\'re In!',
+            subject: 'Invitation to LionsGeek Media Program Info Session',
+            from: new \Illuminate\Mail\Mailables\Address('media@lionsgeek.ma', 'LionsGeek Media Team'),
         );
     }
 
