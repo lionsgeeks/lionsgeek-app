@@ -17,17 +17,17 @@ import {
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const adminNavItems: NavItem[] = [
+// Dashboard - Main overview
+const dashboardItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/admin/dashboard',
         icon: LayoutGrid,
     },
-    {
-        title: 'Events',
-        href: '/admin/events',
-        icon: Calendar,
-    },
+];
+
+// Content Management - Blog, Press, Gallery
+const contentItems: NavItem[] = [
     {
         title: 'Blogs',
         href: '/admin/blogs',
@@ -39,29 +39,18 @@ const adminNavItems: NavItem[] = [
         icon: MicVocal,
     },
     {
-        title: 'ContactUs',
-        href: '/admin/contactus',
-        icon: Contact,
-    },
-    {
-        title: 'Coworking',
-        href: '/admin/coworking',
-        icon: HeartHandshake,
-    },
-    {
-        title: 'Newsletter',
-        href: '/admin/newsletter',
-        icon: Mail,
-    },
-    {
         title: 'Gallery',
         href: '/admin/gallery',
         icon: GalleryHorizontalEnd,
     },
+];
+
+
+const eventsItems: NavItem[] = [
     {
-        title: 'Projects',
-        href: '/admin/projects',
-        icon: BriefcaseBusiness,
+        title: 'Events',
+        href: '/admin/events',
+        icon: Calendar,
     },
     {
         title: 'Infosessions',
@@ -75,61 +64,36 @@ const adminNavItems: NavItem[] = [
     },
 ];
 
-// const userNavItems: NavItem[] = [
-//     {
-//         title: 'Home',
-//         href: '/',
-//         icon: Home,
-//     },
-//     {
-//         title: 'Coding',
-//         href: '/coding',
-//         icon: Code,
-//     },
-//     {
-//         title: 'Media',
-//         href: '/media',
-//         icon: Camera,
-//     },
-//     {
-//         title: 'Coworking',
-//         href: '/coworking',
-//         icon: HeartHandshake,
-//     },
-//     {
-//         title: 'Events',
-//         href: '/events',
-//         icon: Calendar,
-//     },
-//     {
-//         title: 'LionsGeek Pro',
-//         href: '/pro',
-//         icon: FolderKanban,
-//     },
-//     {
-//         title: 'About',
-//         href: '/about',
-//         icon: MessageCircleQuestion,
-//     },
-//     {
-//         title: 'Blogs',
-//         href: '/blogs',
-//         icon: BookOpen,
-//     },
-//     {
-//         title: 'Gallery',
-//         href: '/gallery',
-//         icon: GalleryHorizontal,
-//     },
-//     {
-//         title: 'Contact',
-//         href: '/contact',
-//         icon: UserPen,
-//     },
-// ]
+// Business & Projects - Projects, Coworking, Newsletter
+const businessItems: NavItem[] = [
+    {
+        title: 'Projects',
+        href: '/admin/projects',
+        icon: BriefcaseBusiness,
+    },
+    {
+        title: 'Coworking',
+        href: '/admin/coworking',
+        icon: HeartHandshake,
+    },
+
+];
+
+// Communications - ContactUs
+const communicationItems: NavItem[] = [
+    {
+        title: 'ContactUs',
+        href: '/admin/contactus',
+        icon: Contact,
+    },
+    {
+        title: 'Newsletter',
+        href: '/admin/newsletter',
+        icon: Mail,
+    },
+];
 
 export function AppSidebar() {
-    // const [showUserItems, setShowUserItems] = useState(false);
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -145,26 +109,15 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent className="no-scrollbar overflow-auto">
-                <NavMain items={adminNavItems} title="" />
+                <NavMain items={dashboardItems} title="dashboard" />
 
-                {/* <div className='flex items-center justify-center gap-2 cursor-pointer mt-2'
-                    onClick={() => { setShowUserItems(!showUserItems) }}
-                >
-                    <p className='underline text-center'>
-                        {showUserItems ? 'Hide' : 'Show'} Front Pages
-                    </p>
-                    {
-                        showUserItems ?
-                            <CircleArrowUp size={16} />
-                            :
+                <NavMain items={contentItems} title="Content Management" />
 
-                            <CircleArrowDown size={16} />
-                    }
-                </div>
-                {
-                    showUserItems &&
-                    <NavMain items={userNavItems} />
-                } */}
+                <NavMain items={eventsItems} title="Events & Sessions" />
+
+                <NavMain items={businessItems} title="Business & Projects" />
+
+                <NavMain items={communicationItems} title="Communications" />
             </SidebarContent>
 
             <SidebarFooter>{/* <NavUser /> */}</SidebarFooter>
