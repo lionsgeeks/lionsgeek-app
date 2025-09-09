@@ -263,7 +263,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                 if (data.has_training === 'yes' && !data.previous_training_details.trim())
                     newErrors.previous_training_details = 'Please provide training details';
                 if (!data.why_join_formation.trim()) newErrors.why_join_formation = 'Motivation is required';
-                if (data.why_join_formation.length < 100) newErrors.why_join_formation = 'Motivation must be at least 100 characters';
+                if (data.why_join_formation.replace(/\s/g, '').length < 100) newErrors.why_join_formation = 'Motivation must be at least 100 characters (spaces not counted)';
                 if (!data.participated_lionsgeek) newErrors.participated_lionsgeek = 'Please select if you participated in LionsGEEK';
                 if (data.participated_lionsgeek === 'yes' && !data.lionsgeek_activity)
                     newErrors.lionsgeek_activity = 'Please select your LionsGEEK activity';
