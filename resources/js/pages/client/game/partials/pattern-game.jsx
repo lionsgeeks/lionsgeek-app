@@ -390,9 +390,7 @@ export function PatternGame({ data: formDataProp }) {
     function endGame(completed) {
         setGameCompleted(true);
         clearInterval(timerRef.current);
-        setTimeout(() => {
-            setShowEnd(true);
-        }, 0);
+        setShowEnd(true);
         setCompletedFlag(completed);
         // Persist game metrics to sessionStorage so summary can show them
         try {
@@ -425,6 +423,7 @@ export function PatternGame({ data: formDataProp }) {
         if ((showEnd || timeOver) && !submittedRef.current) {
             submittedRef.current = true;
             setSubmitted(true);
+            // Submit immediately without delay
             handleFormSubmission();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -432,6 +431,9 @@ export function PatternGame({ data: formDataProp }) {
 
     // Handle form submission when user clicks "Postuler"
     const handleFormSubmission = () => {
+        // Show loading page only when actually submitting data
+        showLoadingPage();
+        
         // Get form data from sessionStorage (without cv_file)
         const rawData = sessionStorage.getItem('formData');
         const formData = JSON.parse(rawData);
@@ -458,6 +460,9 @@ export function PatternGame({ data: formDataProp }) {
             // Submit the form data to create participant
            router.post('/participants/store', submissionData, {
                 onSuccess: (response) => {
+                    // Hide loading page
+                    hideLoadingPage();
+                    
                     // Clear session storage after successful submission
                     sessionStorage.removeItem('formData');
 
@@ -466,6 +471,9 @@ export function PatternGame({ data: formDataProp }) {
                     setShowModal(true);
                 },
                 onError: (errors) => {
+                    // Hide loading page
+                    hideLoadingPage();
+                    
                     // Show error modal with details
                     setErrorDetails(errors);
                     setModalType('error');
@@ -473,9 +481,78 @@ export function PatternGame({ data: formDataProp }) {
                 }
             });
         } else {
+            // Hide loading page
+            hideLoadingPage();
+            
             setErrorDetails('No form data found. Please try again.');
             setModalType('error');
             setShowModal(true);
+        }
+    };
+
+    // Functions to show/hide loading page
+    const showLoadingPage = () => {
+        // Create loading screen element
+        const loadingScreen = document.createElement('div');
+        loadingScreen.id = 'loading-screen';
+        loadingScreen.innerHTML = `
+            <svg
+                version="1.0"
+                xmlns="http://www.w3.org/2000/svg"
+                width="120"
+                height="120"
+                viewBox="0 0 280 280"
+                preserveAspectRatio="xMidYMid meet"
+                class="loading-svg"
+            >
+                <g
+                    transform="translate(0.000000,302.000000) scale(0.100000,-0.100000)"
+                    stroke="none"
+                >
+                    <path d="M705 3008 c-41 -120 -475 -1467 -475 -1474 1 -9 1238 -910 1257 -916 6 -2 294 203 640 454 l631 458 -84 257 c-46 142 -154 477 -241 745 l-158 488 -783 0 c-617 0 -784 -3 -787 -12z m1265 -412 c0 -3 65 -205 145 -451 80 -245 145 -448 145 -450 0 -2 -173 -130 -384 -283 l-384 -280 -384 279 c-283 207 -382 284 -380 297 5 22 283 875 289 885 4 7 953 10 953 3z" 
+                          fill="oklch(0.145 0 0)" style="transition: fill 0.3s ease;"></path>
+                    <path d="M1176 1661 c21 -15 101 -74 178 -130 l139 -101 31 23 c17 13 92 68 166 122 74 54 139 102 144 106 6 5 -145 9 -344 9 l-354 0 40 -29z" 
+                          fill="oklch(0.145 0 0)" style="transition: fill 0.3s ease;"></path>
+                </g>
+            </svg>
+        `;
+        
+        // Apply styles
+        loadingScreen.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: oklch(1 0 0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out, background-color 0.3s ease;
+        `;
+        
+        // Apply dark mode if needed
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+            loadingScreen.style.backgroundColor = 'oklch(0.145 0 0)';
+            const svgPaths = loadingScreen.querySelectorAll('path');
+            svgPaths.forEach(path => {
+                path.setAttribute('fill', 'oklch(1 0 0)');
+            });
+        }
+        
+        document.body.appendChild(loadingScreen);
+    };
+
+    const hideLoadingPage = () => {
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.remove();
+            }, 500);
         }
     };
 
