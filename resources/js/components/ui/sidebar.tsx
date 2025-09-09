@@ -14,6 +14,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import * as SheetPrimitive from "@radix-ui/react-dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
@@ -177,14 +178,25 @@ function Sidebar({
           <SheetTitle>Sidebar</SheetTitle>
           <SheetDescription>Displays the sidebar.</SheetDescription>
         </SheetHeader>
-        <SheetContent
-          data-sidebar="sidebar"
-          data-slot="sidebar"
-          className="bg-sidebar text-sidebar-foreground w-72 p-0 [&>button]:hidden md:hidden"
-          side={side}
-        >
-          <div className="flex h-full w-full flex-col">{children}</div>
-        </SheetContent>
+        <SheetPrimitive.Portal>
+          {/* Only show overlay on mobile */}
+          <SheetPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 md:hidden" />
+          <SheetPrimitive.Content
+            data-sidebar="sidebar"
+            data-slot="sidebar"
+            className={cn(
+              "bg-sidebar text-sidebar-foreground w-72 p-0 [&>button]:hidden md:hidden",
+              "data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+              side === "left" && "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm"
+            )}
+            side={side}
+          >
+            <div className="flex h-full w-full flex-col">{children}</div>
+            <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
+              <span className="sr-only">Close</span>
+            </SheetPrimitive.Close>
+          </SheetPrimitive.Content>
+        </SheetPrimitive.Portal>
       </Sheet>
 
       {/* Desktop Sidebar */}

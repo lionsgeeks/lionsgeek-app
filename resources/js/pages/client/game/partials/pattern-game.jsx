@@ -390,9 +390,7 @@ export function PatternGame({ data: formDataProp }) {
     function endGame(completed) {
         setGameCompleted(true);
         clearInterval(timerRef.current);
-        setTimeout(() => {
-            setShowEnd(true);
-        }, 0);
+        setShowEnd(true);
         setCompletedFlag(completed);
         // Persist game metrics to sessionStorage so summary can show them
         try {
