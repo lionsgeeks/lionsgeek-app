@@ -471,9 +471,10 @@ export function PatternGame({ data: formDataProp }) {
                 time_spent_formatted: formatElapsed(elapsedMs),
             };
 
+console.log(formData);
 
             // Submit the form data to create participant
-           router.post('/participants/store', submissionData, {
+           router.post(`/participants/store?type=${formData.formation_field}`, submissionData, {
                 onSuccess: (response) => {
                     // Hide loading page
                     hideLoadingPage();
@@ -646,7 +647,7 @@ export function PatternGame({ data: formDataProp }) {
                             type="button"
                             className={`rounded-md px-6 py-2.5 font-medium transition-all duration-150 ${
                                 selectedChoice && !processing
-                                    ? 'bg-yellow-400 text-black border border-yellow-400 hover:bg-transparent hover:text-white hover:border-yellow-400 active:scale-[0.98]'
+                                    ? 'bg-yellow-400 text-black border border-yellow-400 hover:bg-yellow-500 active:scale-[0.98]'
                                     : 'bg-transparent text-white/80 border border-white/20 cursor-not-allowed'
                             }`}
                             onClick={submitAnswer}

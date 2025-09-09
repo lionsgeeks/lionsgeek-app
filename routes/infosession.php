@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\InfosessionController;
+use App\Http\Middleware\InfoSessionMiddleware;
 use App\Models\InfoSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -13,20 +14,21 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 });
 
 // Grant access to postuler route
-Route::post('/grant-postuler-access', function (Request $request) {
-    $formationField = $request->input('type'); // 'coding' or 'media'
+// Route::post('/grant-postuler-access', function (Request $request) {
+//     $formationField = $request->input('type'); // 'coding' or 'media'
     
-    // Redirect to postuler with formation field as URL parameter
-    return redirect()->route('postuler', ['type' => $formationField]);
-})->name('grant.postuler.access');
+//     // Redirect to postuler with formation field as URL parameter
+//     return redirect()->route('postuler', ['type' => $formationField]);
+// })->name('grant.postuler.access');
 
 Route::get('/postuler', function (Request $request) {
-    $formationField = $request->input('type');
+    $formationField = $request->type;
+    // dd($formationField);
     
     // Check if type parameter is present and valid
-    if (!$formationField || !in_array($formationField, ['coding', 'media'])) {
-        return redirect('/');
-    }
+    // if (!$formationField || !in_array($formationField, ['coding', 'media'])) {
+    //     return redirect('/');
+    // }
     
     return Inertia::render('client/infoSession/index', [
         'sessions' => InfoSession::where('isAvailable', true)
@@ -36,7 +38,7 @@ Route::get('/postuler', function (Request $request) {
             ->get(),
         'formation_field' => $formationField, // Pass formation field to frontend
     ]);
-})->name('postuler');
+})->name('postuler')->middleware("infoSession");
 // Summary page after finishing the game
 Route::get('/postuler/summary', function () {
     return Inertia::render('client/infoSession/summary');
