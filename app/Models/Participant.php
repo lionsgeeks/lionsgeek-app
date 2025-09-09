@@ -60,6 +60,7 @@ class Participant extends Model
         'wrong_attempts',
         'time_spent',
         'time_spent_formatted',
+        'intelligence_level',
 
         // Approval workflow
         'status',
