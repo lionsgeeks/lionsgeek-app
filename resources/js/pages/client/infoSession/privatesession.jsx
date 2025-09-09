@@ -76,7 +76,6 @@ const Privatesession = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (motivation && motivation.length < 150) {
-      // alert("Please Write 150 Characters in Your Motivation");
     } else {
       window.scrollTo(0, 0);
       setSending(true);
@@ -465,10 +464,20 @@ const Privatesession = () => {
                         // bach mankhalich l user idir copy past  l l motivation 
                         onPaste={handlePaste}
                         className="border border-gray-400 rounded p-[6px]"
-                        onChange={(e) => setMotivation(e.target.value)}
+                        onChange={(e) => {
+                          // Trim whitespace and prevent dangerous characters
+                          let value = e.target.value.trim();
+                          // Remove HTML tags and script content
+                          value = value.replace(/<[^>]*>/g, '');
+                          value = value.replace(/javascript:/gi, '');
+                          value = value.replace(/on\w+\s*=/gi, '');
+                          setMotivation(value);
+                        }}
                         placeholder={selectedLanguage == "en" ? "Motivation" : selectedLanguage == "fr" ? "Motivation" : "دافع"}
                         value={motivation}
                         required
+                        minLength={150}
+                        maxLength={1000}
                       ></textarea>
                     </div>
                   </div>

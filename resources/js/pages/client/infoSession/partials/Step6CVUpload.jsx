@@ -22,13 +22,13 @@ const Step6CVUpload = ({ data, handleChange, errors, darkMode, selectedLanguage,
                     </label>
                     <div
                         className={`rounded-lg border-2 border-dashed p-6 text-center transition-all duration-200 hover:border-alpha ${
-                            darkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-gray-50'
+                            darkMode ? 'border-gray-600 bg-[#57646e]' : 'border-gray-300 bg-white'
                         }`}
                     >
                         <input type="file" name="cv_file" onChange={handleChange} accept=".pdf,.doc,.docx" className="hidden" id="cv-upload" />
                         <label htmlFor="cv-upload" className="cursor-pointer">
                             <FileText className={`mx-auto mb-4 h-12 w-12 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                            <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gstepray-600'}`}>
+                            <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                                 <TransText en="Click to upload your CV" fr="Cliquez pour télécharger votre CV" ar="انقر لرفع سيرتك الذاتية" />
                             </p>
                             <p className={`mt-1 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>PDF, DOC, DOCX (Max 5MB)</p>

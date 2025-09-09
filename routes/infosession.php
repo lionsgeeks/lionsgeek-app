@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\InfosessionController;
 use App\Models\InfoSession;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -10,13 +11,30 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::patch('infosessions/change-availabilty/{id}', [InfosessionController::class, 'availabilityStatus'])->name('infosession.availability');
     Route::patch('infosessions/change-status/{id}', [InfosessionController::class, 'completeStatus'])->name('infosession.status');
 });
-Route::get('/postuler', function () {
+
+// Grant access to postuler route
+Route::post('/grant-postuler-access', function (Request $request) {
+    $formationField = $request->input('type'); // 'coding' or 'media'
+    
+    // Redirect to postuler with formation field as URL parameter
+    return redirect()->route('postuler', ['type' => $formationField]);
+})->name('grant.postuler.access');
+
+Route::get('/postuler', function (Request $request) {
+    $formationField = $request->input('type');
+    
+    // Check if type parameter is present and valid
+    if (!$formationField || !in_array($formationField, ['coding', 'media'])) {
+        return redirect('/');
+    }
+    
     return Inertia::render('client/infoSession/index', [
         'sessions' => InfoSession::where('isAvailable', true)
             ->where('name', '!=', 'private session')
             ->where('isFinish', false)
             ->where('isFull', false)
             ->get(),
+        'formation_field' => $formationField, // Pass formation field to frontend
     ]);
 })->name('postuler');
 // Summary page after finishing the game

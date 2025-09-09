@@ -32,31 +32,31 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                         }`}
                         required
                     >
-                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Select your education level" fr="Sélectionnez votre niveau d'études" ar="اختر مستوى تعليمك" />
                         </option>
-                        <option value="no_diploma" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="no_diploma" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="No diploma" fr="Je n'ai aucun diplôme" ar="ليس لدي أي شهادة" />
                         </option>
-                        <option value="baccalaureate" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="baccalaureate" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Baccalaureate" fr="Baccalauréat" ar="البكالوريا" />
                         </option>
-                        <option value="technician" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="technician" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Technician Diploma" fr="Diplôme Technicien (sans bac)" ar="شهادة التكوين المهني" />
                         </option>
-                        <option value="deug_dut_dts_bts" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="deug_dut_dts_bts" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             DEUG / DUT / DTS / BTS
                         </option>
-                        <option value="licence" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="licence" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Bachelor / Licence" fr="Licence / Licence Pro / Bachelor" ar="الإجازة" />
                         </option>
-                        <option value="master" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="master" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Master / Engineer" fr="Master / Ingénieur / Diplôme équivalent" ar="الماجستير / مهندس" />
                         </option>
-                        <option value="doctorate" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="doctorate" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Doctorate" fr="Doctorat" ar="الدكتوراه" />
                         </option>
-                        <option value="other" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="other" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Other" fr="Autre" ar="أخرى" />
                         </option>
                     </select>
@@ -83,7 +83,7 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                                 className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
                                     darkMode
                                         ? 'bg-[#57646e] border-gray-600 text-white placeholder-gray-400'
-                                        : 'bg-[#57646e] border-gray-300 text-white placeholder-gray-500'
+                                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                                 }`}
                                 placeholder={
                                     selectedLanguage === 'en'
@@ -110,7 +110,7 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                                 className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
                                     darkMode
                                         ? 'bg-[#57646e] border-gray-600 text-white placeholder-gray-400'
-                                        : 'bg-[#57646e] border-gray-300 text-white placeholder-gray-500'
+                                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                                 }`}
                                 placeholder={selectedLanguage === 'en' ? 'Your specialty' : selectedLanguage === 'fr' ? 'Votre spécialité' : 'تخصصك'}
                                 required
@@ -137,31 +137,31 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                         }`}
                         required
                     >
-                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Select your current situation" fr="Sélectionnez votre situation actuelle" ar="اختر وضعك الحالي" />
                         </option>
-                        <option value="job_seeking" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="job_seeking" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Looking for opportunities" fr="En recherche d'opportunité" ar="أبحث عن فرص" />
                         </option>
-                        <option value="student" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="student" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Student" fr="Étudiant" ar="طالب" />
                         </option>
-                        <option value="employee" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="employee" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Employee" fr="Salarié" ar="موظف" />
                         </option>
-                        <option value="freelancer" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="freelancer" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Freelancer" fr="Freelancer" ar="عامل حر" />
                         </option>
-                        <option value="apprenticeship" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="apprenticeship" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="In apprenticeship" fr="En apprentissage" ar="في التدريب المهني" />
                         </option>
-                        <option value="internship" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="internship" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="In internship" fr="En stage en entreprise" ar="في تدريب بالشركة" />
                         </option>
-                        <option value="entrepreneur" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="entrepreneur" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Self-employed" fr="Auto-entrepreneur" ar="مقاول ذاتي" />
                         </option>
-                        <option value="other" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="other" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Other" fr="Autre" ar="أخرى" />
                         </option>
                     </select>
@@ -219,13 +219,13 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                         }`}
                         required
                     >
-                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Select an option" fr="Sélectionnez une option" ar="اختر خياراً" />
                         </option>
-                        <option value="yes" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="yes" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Yes" fr="Oui" ar="نعم" />
                         </option>
-                        <option value="no" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                        <option value="no" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="No" fr="Non" ar="لا" />
                         </option>
                     </select>
@@ -250,31 +250,31 @@ const Step2EducationSituation = ({ data, handleChange, errors, darkMode, selecte
                             }`}
                             required
                         >
-                            <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                            <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 <TransText en="Select organization" fr="Sélectionnez l'organisation" ar="اختر المنظمة" />
                             </option>
-                            <option value="anapec" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                            <option value="anapec" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 الوكالة الوطنية لإنعاش التشغيل والكفاءات (أنابيك) - Anapec
                             </option>
-                            <option value="heure_joyeuse" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                            <option value="heure_joyeuse" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 Heure Joyeuse / جمعية ساعة الفرح
                             </option>
-                            <option value="fondation_jadara" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                            <option value="fondation_jadara" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 Fondation Jadara / مؤسسة جدارة
                             </option>
-                            <option value="plateforme_ain_sbaa" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                            <option value="plateforme_ain_sbaa" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 Plateforme des Jeunes Ain Sbaa / منصة شباب عين السبع
                             </option>
-                            <option value="plateforme_hay_mohammadi" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                            <option value="plateforme_hay_mohammadi" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 Plateforme des Jeunes Hay Mohammadi / منصة شباب الحي المحمدي
                             </option>
-                            <option value="plateforme_roches_noires" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                            <option value="plateforme_roches_noires" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 Plateforme des Jeunes Roches Noires / منصة شباب الصخور السوداء
                             </option>
-                            <option value="autre_plateforme" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                            <option value="autre_plateforme" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 Autre Plateforme des Jeunes / منصة شباب أخرى
                             </option>
-                            <option value="autre_association" className={darkMode ? 'bg-[#57646e]' : 'bg-[#57646e]'}>
+                            <option value="autre_association" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 Autre Association / جمعية أخرى
                             </option>
                         </select>

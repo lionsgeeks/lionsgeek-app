@@ -35,6 +35,6 @@ class UserController extends Controller
         Mail::to($request->email)->send(new AddAdminMail($randomPassword));
 
 
-        return back()->with("success", "Admin has been added successfully!");
+        return back();
     }
 }

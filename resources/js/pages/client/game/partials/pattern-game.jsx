@@ -30,6 +30,7 @@ const SYMBOLS = ['●', '■', '▲', '♦', '★', '◆', '◇', '♠', '♥', 
 
 export function PatternGame({ data: formDataProp }) {
     const { post, processing, errors } = useForm();
+    
 
     const { darkMode, selectedLanguage } = useAppContext();
     const [currentLevel, setCurrentLevel] = useState(0);
@@ -452,6 +453,7 @@ export function PatternGame({ data: formDataProp }) {
                 time_spent: Math.floor(elapsedMs / 1000),
                 time_spent_formatted: formatElapsed(elapsedMs),
             };
+
 
             // Submit the form data to create participant
            router.post('/participants/store', submissionData, {

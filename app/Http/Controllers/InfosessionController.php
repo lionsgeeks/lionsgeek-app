@@ -46,10 +46,10 @@ class InfosessionController extends Controller
                 'start_date' => $request->start_date,
                 'places' => $request->places,
             ]);
-            return back()->with('success', 'Session Has Been Created Successfully!');
+            return back();
         } catch (\Throwable $th) {
             //throw $th;
-            return back()->with('error', 'Something went wrong');
+            return back();
         }
     }
 
@@ -89,7 +89,7 @@ class InfosessionController extends Controller
             'start_date' => $request->start_date,
             'places' => $request->places,
         ]);
-        return back()->with('success', 'Session Has Been Updated Successfully!');
+        return back();
     }
 
     /**
@@ -100,7 +100,7 @@ class InfosessionController extends Controller
         try {
             $infosession = InfoSession::where('id', $id)->first();
             if (!$infosession) {
-                return back()->with('error', 'Info session not found');
+                return back();
             }
 
             // Delete related participants (all of them)
@@ -109,9 +109,9 @@ class InfosessionController extends Controller
             // Delete the info session
             $infosession->delete();
 
-            return back()->with('success', 'Info session deleted successfully');
+            return back();
         } catch (\Throwable $th) {
-            return back()->with('error', 'Failed to delete the info session');
+            return back();
         }
     }
     public function availabilityStatus($id)
@@ -122,10 +122,10 @@ class InfosessionController extends Controller
             $infosession->update([
                 'isAvailable' => !$infosession->isAvailable
             ]);
-            return back()->with($infosession->isAvailable ? 'success' : 'info', 'Session ' . ($infosession->isAvailable ? 'is available' : 'is not available'));
+            return back();
         } catch (\Throwable $th) {
             //throw $th;
-            return back()->with('error', 'Something went wrong');
+            return back();
         }
     }
     public function completeStatus($id)
@@ -153,7 +153,7 @@ class InfosessionController extends Controller
             return back()->with($messageType, $message);
         } catch (\Throwable $th) {
             //throw $th;
-            return back()->with('error', 'Something went wrong');
+            return back();
         }
     }
 }

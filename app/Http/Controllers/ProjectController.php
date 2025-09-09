@@ -51,7 +51,7 @@ class ProjectController extends Controller
             "preview" => $request->hasFile("preview") ? $previewName : null
         ]);
 
-        return back()->with('success', 'Project Has Been Added Successfully!');
+        return back();
     }
 
     /**
@@ -86,7 +86,7 @@ class ProjectController extends Controller
             "preview" => $request->hasFile("preview") ? $previewName : null
         ]);
 
-        return back()->with('success', 'Project Has Been Updated Successfully!');
+        return back();
     }
 
     /**
@@ -100,6 +100,6 @@ class ProjectController extends Controller
         }
 
         $project->delete();
-        return back()->with("success", "Project has been deleted successfully!");
+        return back();
     }
 }

@@ -36,29 +36,29 @@ const Step5BackgroundAvailability = ({ data, handleChange, errors, darkMode, sel
                         }`}
                         required
                     >
-                        <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText
                                 en="Select how you heard about us"
                                 fr="Sélectionnez comment vous avez entendu parler de nous"
                                 ar="اختر كيف سمعت عنا"
                             />
                         </option>
-                        <option value="social_media" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="social_media" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Social Media" fr="Réseaux sociaux" ar="وسائل التواصل الاجتماعي" />
                         </option>
-                        <option value="friend" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="friend" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Friend" fr="Ami" ar="صديق" />
                         </option>
-                        <option value="former_student" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="former_student" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Former Lionsgeek student" fr="Ancien étudiant à Lionsgeek" ar="طالب سابق في Lionsgeek" />
                         </option>
-                        <option value="google_search" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="google_search" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Google Search" fr="Recherche Google" ar="بحث جوجل" />
                         </option>
-                        <option value="website" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="website" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Lionsgeek Website" fr="Site web Lionsgeek" ar="موقع Lionsgeek" />
                         </option>
-                        <option value="event" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="event" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Event/Workshop" fr="Événement/Atelier" ar="حدث/ورشة عمل" />
                         </option>
                     </select>
@@ -86,19 +86,19 @@ const Step5BackgroundAvailability = ({ data, handleChange, errors, darkMode, sel
                         }`}
                         required
                     >
-                        <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Select your availability" fr="Sélectionnez votre disponibilité" ar="اختر توفرك" />
                         </option>
-                        <option value="no_commitments" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="no_commitments" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="No, I can be 100% present" fr="Non, je peux être présent à 100%" ar="لا، يمكنني الحضور بنسبة 100%" />
                         </option>
-                        <option value="part_time_studies" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="part_time_studies" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Yes, I have part-time studies" fr="Oui, j'ai des études à temps partiel" ar="نعم، لدي دراسات بدوام جزئي" />
                         </option>
-                        <option value="part_time_job" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="part_time_job" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Yes, I have a part-time job" fr="Oui, j'ai un emploi à temps partiel" ar="نعم، لدي وظيفة بدوام جزئي" />
                         </option>
-                        <option value="other_commitments" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="other_commitments" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Yes, I have other commitments" fr="Oui, j'ai d'autres engagements" ar="نعم، لدي التزامات أخرى" />
                         </option>
                     </select>

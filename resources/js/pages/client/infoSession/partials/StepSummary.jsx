@@ -1,4 +1,6 @@
-export default function StepSummary({ data, errors, setCurrentStep }) {
+import { Button } from '../../../../components/Button';
+
+export default function StepSummary({ data, errors, setCurrentStep, darkMode }) {
     const fields = [
         { key: 'full_name', label: 'Full name' },
         { key: 'email', label: 'Email' },
@@ -72,34 +74,34 @@ export default function StepSummary({ data, errors, setCurrentStep }) {
                             {/* Mobile Layout */}
                             <div className="block sm:hidden">
                                 <div className="mb-2 flex items-center justify-between">
-                                    <div className="text-sm font-medium text-gray-600">{label}</div>
-                                    <button
+                                    <div className="text-sm font-medium text-black">{label}</div>
+                                    <Button
                                         type="button"
                                         onClick={() => goToField(key)}
-                                        className="rounded-lg bg-gray-100 px-3 py-1 text-xs hover:bg-gray-200"
+                                        className="px-3 py-1 text-xs"
                                     >
                                         Edit
-                                    </button>
+                                    </Button>
                                 </div>
-                                <div className="text-[#212529] break-words">{String(data[key])}</div>
+                                <div className={`break-words ${darkMode ? 'text-white' : 'text-[#212529]'}`}>{String(data[key])}</div>
                                 {errors[key] && <p className="mt-1 text-sm text-red-600">{errors[key]}</p>}
                             </div>
                             
                             {/* Desktop Layout */}
                             <div className="hidden sm:flex sm:items-start sm:justify-between sm:gap-4">
-                                <div className="min-w-[200px] text-sm font-medium text-gray-600 lg:min-w-[220px]">{label}</div>
+                                <div className="min-w-[200px] text-sm font-medium text-black lg:min-w-[220px]">{label}</div>
                                 <div className="flex-1">
-                                    <div className="text-[#212529] break-words">{String(data[key])}</div>
+                                    <div className={`break-words ${darkMode ? 'text-white' : 'text-[#212529]'}`}>{String(data[key])}</div>
                                     {errors[key] && <p className="mt-1 text-sm text-red-600">{errors[key]}</p>}
                                 </div>
                                 <div className="min-w-[80px] text-right">
-                                    <button
+                                    <Button
                                         type="button"
                                         onClick={() => goToField(key)}
-                                        className="rounded-lg bg-gray-100 px-3 py-2 text-sm hover:bg-gray-200"
+                                        className="px-3 py-2 text-sm"
                                     >
                                         Edit
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </div>

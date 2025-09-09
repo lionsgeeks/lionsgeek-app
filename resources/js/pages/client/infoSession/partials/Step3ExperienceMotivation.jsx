@@ -40,17 +40,17 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                         value={data.has_training}
                         onChange={handleChange}
                         className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                            darkMode ? 'border-gray-600 bg-[#57646e] text-white' : 'border-gray-300 bg-white text-gray-900'
                         }`}
                         required
                     >
-                        <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Select an option" fr="Sélectionnez une option" ar="اختر خياراً" />
                         </option>
-                        <option value="yes" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="yes" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Yes (please specify which one)" fr="Oui (préciser laquelle)" ar="نعم (يرجى التحديد)" />
                         </option>
-                        <option value="no" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="no" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="No" fr="Non" ar="لا" />
                         </option>
                     </select>
@@ -71,7 +71,7 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                             onChange={handleChange}
                             className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
                                 darkMode
-                                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                    ? 'border-gray-600 bg-[#57646e] text-white placeholder-gray-400'
                                     : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                             }`}
                             placeholder={
@@ -106,12 +106,20 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                     <textarea
                         name="why_join_formation"
                         value={data.why_join_formation}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                            // Trim whitespace and prevent dangerous characters
+                            let value = e.target.value.trim();
+                            // Remove HTML tags and script content
+                            value = value.replace(/<[^>]*>/g, '');
+                            value = value.replace(/javascript:/gi, '');
+                            value = value.replace(/on\w+\s*=/gi, '');
+                            handleChange({ target: { name: 'why_join_formation', value } });
+                        }}
                         onPaste={(e) => e.preventDefault()}
                         rows={5}
                         className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
                             darkMode
-                                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                ? 'border-gray-600 bg-[#57646e] text-white placeholder-gray-400'
                                 : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                         }`}
                         placeholder={
@@ -123,6 +131,7 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                         }
                         required
                         minLength={100}
+                        maxLength={1000}
                     />
                     {errors.why_join_formation && <span className="mt-1 text-sm text-red-500">{errors.why_join_formation}</span>}
                 </div>
@@ -142,17 +151,17 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                         value={data.participated_lionsgeek}
                         onChange={handleChange}
                         className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                            darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                            darkMode ? 'border-gray-600 bg-[#57646e] text-white' : 'border-gray-300 bg-white text-gray-900'
                         }`}
                         required
                     >
-                        <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Select an option" fr="Sélectionnez une option" ar="اختر خياراً" />
                         </option>
-                        <option value="yes" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="yes" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="Yes" fr="Oui" ar="نعم" />
                         </option>
-                        <option value="no" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                        <option value="no" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                             <TransText en="No" fr="Non" ar="لا" />
                         </option>
                     </select>
@@ -171,32 +180,32 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                             value={data.lionsgeek_activity}
                             onChange={handleChange}
                             className={`w-full appearance-none rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
-                                darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white text-gray-900'
+                                darkMode ? 'border-gray-600 bg-[#57646e] text-white' : 'border-gray-300 bg-white text-gray-900'
                             }`}
                             required
                         >
-                            <option value="" disabled className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="" disabled className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 <TransText en="Select activity" fr="Sélectionnez l'activité" ar="اختر النشاط" />
                             </option>
-                            <option value="hackanews" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="hackanews" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 HackaNews / هاكا نيوز
                             </option>
-                            <option value="we_choose_art" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="we_choose_art" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 We Choose Art / وي تشوز آرت
                             </option>
-                            <option value="media_week" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="media_week" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 Media WEEK
                             </option>
-                            <option value="jungle" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="jungle" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 Jungle
                             </option>
-                            <option value="hackathon" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="hackathon" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 Hackathon / هاكاثون
                             </option>
-                            <option value="visit" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="visit" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 <TransText en="Visit" fr="Visite" ar="زيارة" />
                             </option>
-                            <option value="other" className={darkMode ? 'bg-gray-700' : 'bg-white'}>
+                            <option value="other" className={darkMode ? 'bg-[#57646e]' : 'bg-white'}>
                                 <TransText en="Other" fr="Autre" ar="أخرى" />
                             </option>
                         </select>
@@ -218,7 +227,7 @@ const Step3ExperienceMotivation = ({ data, handleChange, errors, darkMode, selec
                             onChange={handleChange}
                             className={`w-full rounded-lg border px-4 py-3 transition-all duration-200 focus:border-alpha focus:ring-2 focus:ring-alpha ${
                                 darkMode
-                                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                                    ? 'border-gray-600 bg-[#57646e] text-white placeholder-gray-400'
                                     : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                             }`}
                             placeholder={selectedLanguage === 'en' ? 'Activity name' : selectedLanguage === 'fr' ? "Nom de l'activité" : 'اسم النشاط'}

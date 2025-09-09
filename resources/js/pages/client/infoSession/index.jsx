@@ -21,12 +21,13 @@ import StepSummary from './partials/StepSummary';
 
 const InfoSession = ({ trainingType = 'digital' }) => {
     const { selectedLanguage, darkMode } = useAppContext();
-    const { sessions } = usePage().props;
+    const { sessions, formation_field } = usePage().props;
     const { url } = usePage();
 
-    // Extract formation type from URL parameter
+    // Use formation_field from session (passed from backend) or fallback to URL parameter
     const urlParams = new URLSearchParams(url.split('?')[1] || '');
-    const formationType = urlParams.get('type') || '';
+    const formationType = formation_field || urlParams.get('type') || 'coding';
+    
 
     const { data, setData, post, processing, errors } = useForm({
         // Session and formation info
@@ -90,13 +91,21 @@ const InfoSession = ({ trainingType = 'digital' }) => {
             const raw = sessionStorage.getItem('formData');
             if (raw) {
                 const stored = JSON.parse(raw);
-                // Only set known keys
+                // Only set known keys, but exclude formation_field (should always come from URL)
                 Object.keys(data).forEach((k) => {
-                    if (stored[k] !== undefined) setData(k, stored[k]);
+                    if (stored[k] !== undefined && k !== 'formation_field') {
+                        setData(k, stored[k]);
+                    }
                 });
             }
         } catch {}
         // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Clear any old sessionStorage data on component mount to prevent conflicts
+    useEffect(() => {
+        // Clear old session data to prevent formation_field conflicts
+        sessionStorage.removeItem('formData');
     }, []);
     const [stepValidation, setStepValidation] = useState({
         1: false,
@@ -123,22 +132,8 @@ const InfoSession = ({ trainingType = 'digital' }) => {
             }));
         }
 
-        // Extract formation field from selected session
-        if (name === 'info_session_id' && value) {
-            const selectedSession = sessions.find((session) => session.id == value);
-            if (selectedSession && selectedSession.formation) {
-                const formationType = selectedSession.formation.toLowerCase();
-                setData((prevData) => ({
-                    ...prevData,
-                    formation_field: formationType,
-                }));
-            } else {
-                setData((prevData) => ({
-                    ...prevData,
-                    formation_field: '',
-                }));
-            }
-        }
+        // Note: formation_field should always come from URL parameter, not from session selection
+        // The formation_field is set during form initialization and should not be changed
 
         // Clear conditional fields when parent field changes
         if (name === 'city' && value !== 'casablanca') {
@@ -210,6 +205,8 @@ const InfoSession = ({ trainingType = 'digital' }) => {
     const handleGameRedirect = () => {
         // Store form data in sessionStorage before proceeding to game (excluding cv_file)
         const { cv_file, ...dataWithoutFile } = data;
+        
+        
         sessionStorage.setItem('formData', JSON.stringify(dataWithoutFile));
         // Stay on the same page and proceed to the embedded game to retain the uploaded CV file
         setCurrentStep(7);
@@ -440,7 +437,7 @@ const InfoSession = ({ trainingType = 'digital' }) => {
                                         />
                                     )}
                                     {currentStep === 7 && (
-                                        <StepSummary data={data} errors={{ ...errors, ...validationErrors }} setCurrentStep={setCurrentStep} />
+                                        <StepSummary data={data} errors={{ ...errors, ...validationErrors }} setCurrentStep={setCurrentStep} darkMode={darkMode} />
                                     )}
                                     {currentStep === 8 && <GameIntro setCurrentStep={setCurrentStep} />}
                                     {currentStep === 9 && <PatternGame data={data} />}

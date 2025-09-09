@@ -79,7 +79,7 @@ class CoworkingController extends Controller
                 "status" => "2"
             ]);
         }
-        return back()->with('success', $coworking->full_name . "'s request has been " . $status . " successfully.");
+        return back();
     }
 
     public function destroy(Coworking $coworking)
