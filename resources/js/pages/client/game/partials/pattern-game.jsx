@@ -357,14 +357,13 @@ export function PatternGame({ data: formDataProp }) {
         }
         return choices.sort(() => Math.random() - 0.5);
     }
-
-    function calculateIntelligenceLevel() {
-        const totalScore = levelAttempts.reduce((sum, lvl) => sum + (lvl.totalScore || 0), 0);
-        if (totalScore > 90) return 'Very High';
-        else if (totalScore > 60) return 'High';
-        else if (totalScore > 30) return 'Medium';
-        else return 'Low';
-    }
+    // function calculateIntelligenceLevel() {
+    //     const totalScore = levelAttempts.reduce((sum, lvl) => sum + (lvl.totalScore || 0), 0);
+    //     if (totalScore > 90) setIntelligenceLevel('Very High');
+    //     else if (totalScore > 60) setIntelligenceLevel('High'); 
+    //     else if (totalScore > 30) setIntelligenceLevel('Medium'); 
+    //     else return setIntelligenceLevel('Low');
+    // }
 
 
 
@@ -385,6 +384,16 @@ export function PatternGame({ data: formDataProp }) {
         setAttempts((a) => a + 1);
         setLevelAttempts((prev) => {
             const next = [...prev];
+            if (!next[currentLevel]) {
+                next[currentLevel] = {
+                    attempts: 0,
+                    correct: false,
+                    totalScore: 0,
+                    timeSpent: 0,
+                    startTime: Date.now(),
+                };
+            }
+
             next[currentLevel].attempts += 1;
 
             next[currentLevel].totalScore = (next[currentLevel].totalScore || 0) + score;
@@ -435,6 +444,7 @@ export function PatternGame({ data: formDataProp }) {
             setShowEnd(true);
         }, 0);
         setCompletedFlag(completed);
+        // calculateIntelligenceLevel();
         // Persist game metrics to sessionStorage so summary can show them
         try {
             const elapsedMs = Date.now() - startTime;
@@ -446,6 +456,7 @@ export function PatternGame({ data: formDataProp }) {
                 wrong_attempts: Math.max(0, attempts - correctAnswers),
                 time_spent: Math.floor(elapsedMs / 1000),
                 time_spent_formatted: formatElapsed(elapsedMs),
+                intelligenceLevel: intelligenceLevel
             };
             const raw = sessionStorage.getItem('formData');
             const existing = raw ? JSON.parse(raw) : {};
@@ -480,7 +491,7 @@ export function PatternGame({ data: formDataProp }) {
         if (formData && formDataProp) {
             // Calculate elapsed time
             const elapsedMs = Date.now() - startTime;
-            
+            const totalScore = levelAttempts.reduce((sum, lvl) => sum + (lvl.totalScore || 0), 0);
             // Combine sessionStorage data with props data (which includes cv_file)
             const submissionData = {
                 ...formData,
@@ -493,6 +504,7 @@ export function PatternGame({ data: formDataProp }) {
                 wrong_attempts: Math.max(0, attempts - correctAnswers),
                 time_spent: Math.floor(elapsedMs / 1000),
                 time_spent_formatted: formatElapsed(elapsedMs),
+                intelligence_level: totalScore,
             };
 
 

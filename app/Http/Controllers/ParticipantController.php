@@ -233,6 +233,7 @@ class ParticipantController extends Controller
             'wrong_attempts' => 'nullable|integer|min:0|max:10000',
             'time_spent' => 'nullable|integer|min:0|max:86400', // Max 24 hours
             'time_spent_formatted' => 'nullable|string|max:20',
+            'intelligence_level' => 'integer|min:0|max:1000',
         ], $messages);
     }
 
@@ -443,7 +444,7 @@ class ParticipantController extends Controller
 
         // Generate unique code
         $code = $request->full_name . Carbon::now()->format('h:i:s');
-
+        // dd($request->all());
         return Participant::create([
             // Basic Information
             'info_session_id' => $request->info_session_id,
