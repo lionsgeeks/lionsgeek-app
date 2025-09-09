@@ -66,7 +66,7 @@ export default function GameIntro({ setCurrentStep }) {
                     <div className="px-6 sm:px-8 py-6">
                         <div className={`space-y-5 ${selectedLanguage === 'ar' ? 'text-right' : 'text-left'} max-w-2xl mx-auto`}>
                             <div className="flex items-center sm:justify-start justify-center gap-4">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-yellow-400 text-black flex-shrink-0`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-alpha text-black flex-shrink-0`}>
                                     1
                                 </div>
                                 <div className="flex items-center">
@@ -77,7 +77,7 @@ export default function GameIntro({ setCurrentStep }) {
                             </div>
                             
                             <div className="flex items-center sm:justify-start justify-center gap-4">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-yellow-400 text-black flex-shrink-0`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-alpha text-black flex-shrink-0`}>
                                     2
                                 </div>
                                 <div className="flex items-center">
@@ -88,7 +88,7 @@ export default function GameIntro({ setCurrentStep }) {
                             </div>
                             
                             <div className="flex items-center sm:justify-start justify-center gap-4">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-yellow-400 text-black flex-shrink-0`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-alpha text-black flex-shrink-0`}>
                                     3
                                 </div>
                                 <div className="flex items-center">
@@ -102,7 +102,7 @@ export default function GameIntro({ setCurrentStep }) {
                         <div className="mt-8 text-center">
                             <button
                                 type="button"
-                                className="bg-yellow-400 text-black px-8 py-3 rounded-lg font-medium transition-all duration-200 border border-yellow-400 hover:bg-transparent hover:text-white hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 active:scale-[0.98]"
+                                className="bg-alpha text-black px-8 py-3 rounded-lg font-medium transition-all duration-200 border border-alpha hover:bg-yellow-400 hover:text-black hover:border-transparent focus:outline-none focus:ring-2 focus:ring-alpha focus:ring-opacity-50 active:scale-[0.98]"
                                 onClick={() => {
                                     if (typeof setCurrentStep === 'function') {
                                         setCurrentStep(9);

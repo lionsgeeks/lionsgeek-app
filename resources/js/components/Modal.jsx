@@ -53,7 +53,7 @@ const Modal = ({ validate, confirm, action, title, message, submessage, errorDet
 
   return (
     <div className="fixed z-50 inset-0 p-3 sm:p-5 transition-shadow w-full h-screen bg-gray-600/90 flex justify-center items-center" dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-lg sm:rounded-xl py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-3 sm:gap-4 max-h-[90vh] overflow-y-auto`}>
+      <div className={`${darkMode ? "bg-beta border border-gray-600" : "bg-white border border-gray-200"} w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-lg sm:rounded-xl py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-3 sm:gap-4 max-h-[90vh] overflow-y-auto`}>
         {validate ? validIcon : notValidIcon}
         
         <h1 className={`text-lg sm:text-xl lg:text-2xl font-medium ${darkMode ? "text-white" : "text-gray-900"}`}>
