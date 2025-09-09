@@ -684,6 +684,7 @@ export function PatternGame({ data: formDataProp }) {
             {/* Success/Error Modal - Always visible when showModal is true */}
             {showModal && (
                 <Modal
+                
                     validate={modalType === 'success'}
                     confirm={showModal}
                     title={
@@ -716,7 +717,7 @@ export function PatternGame({ data: formDataProp }) {
                                     router.visit('/');
                                 }
                             }}
-                            className="rounded px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base text-white bg-beta hover:bg-beta/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-beta focus:ring-opacity-50 min-w-[120px]"
+                            className="rounded-lg px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base text-black bg-alpha hover:bg-alpha/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-alpha focus:ring-opacity-50 min-w-[120px]"
                             disabled={isSubmitting}
                         >
                             {modalType === 'success' ? (
@@ -753,7 +754,7 @@ function ChoiceItem({ item, selected, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className={`grid h-16 w-16 place-items-center rounded-xl border-2 transition-all duration-150 ${selected ? 'ring-2 ring-yellow-400 border-yellow-400' : 'hover:scale-[1.03] hover:ring-2 hover:ring-yellow-300'}`}
+            className={`grid h-16 w-16 place-items-center rounded-xl border-2 transition-all duration-150 ${selected ? 'ring-2 ring-alpha border-alpha' : 'hover:scale-[1.03] hover:ring-2 hover:ring-yellow-300'}`}
             style={{ backgroundColor: item.color, borderColor: selected ? '#f59e0b' : item.color }}
         >
             <span className="text-lg font-bold">{item.symbol}</span>
