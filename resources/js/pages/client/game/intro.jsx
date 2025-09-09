@@ -43,35 +43,79 @@ export default function GameIntro({ setCurrentStep }) {
     };
 
     const t = (key) => translations[key]?.[selectedLanguage] ?? translations[key]?.en ?? '';
+    
     return (
-        <div className={`space-y-6 text-center ${selectedLanguage === 'ar' ? 'rtl' : ''}`} dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
-            <div>
-                <h1 className="text-2xl font-extrabold text-beta sm:text-3xl">{t('heading')}</h1>
-                <p className={`mt-2 text-sm opacity-90 sm:text-base ${darkMode ? 'text-white' : 'text-black'}`}>{t('description')}</p>
-            </div>
+        <div className={`${selectedLanguage === 'ar' ? 'rtl' : ''}`} dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="max-w-4xl mx-auto px-6 py-8">
+                <div className="text-center mb-10">
+                    <h1 className={`text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-[#212529]'}`}>
+                        {t('heading')}
+                    </h1>
+                    <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto leading-relaxed`}>
+                        {t('description')}
+                    </p>
+                </div>
 
-            <div className={`${selectedLanguage === 'ar' ? 'text-right' : 'text-left'} ${darkMode ? 'text-white' : 'text-black'}`}>
-                <ul className="list-disc space-y-1 pl-5 text-sm sm:text-base">
-                    <li>{t('bullet1')}</li>
-                    <li>{t('bullet2')}</li>
-                    <li>{t('bullet3')}</li>
-                </ul>
-            </div>
-
-            <div className="flex justify-center">
-                <button
-                    type="button"
-                    className={`rounded-md px-5 py-2.5 font-semibold hover:opacity-90 ${darkMode ? 'bg-white text-black' : 'bg-beta text-white'}`}
-                    onClick={() => {
-                        if (typeof setCurrentStep === 'function') {
-                            setCurrentStep(9);
-                        } else {
-                            router.visit('/game');
-                        }
-                    }}
-                >
-                    {t('start')}
-                </button>
+                <div className={`rounded-2xl ${darkMode ? 'bg-[#1a1a1a]' : 'bg-white'} shadow-lg overflow-hidden`}>
+                    <div className={`px-8 py-5 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-gray-50'}`}>
+                        <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-[#212529]'}`}>
+                            Game Instructions
+                        </h2>
+                    </div>
+                    
+                    <div className="px-6 sm:px-8 py-6">
+                        <div className={`space-y-5 ${selectedLanguage === 'ar' ? 'text-right' : 'text-left'} max-w-2xl mx-auto`}>
+                            <div className="flex items-center sm:justify-start justify-center gap-4">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-yellow-400 text-black flex-shrink-0`}>
+                                    1
+                                </div>
+                                <div className="flex items-center">
+                                    <p className={`text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
+                                        {t('bullet1')}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center sm:justify-start justify-center gap-4">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-yellow-400 text-black flex-shrink-0`}>
+                                    2
+                                </div>
+                                <div className="flex items-center">
+                                    <p className={`text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
+                                        {t('bullet2')}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center sm:justify-start justify-center gap-4">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-yellow-400 text-black flex-shrink-0`}>
+                                    3
+                                </div>
+                                <div className="flex items-center">
+                                    <p className={`text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
+                                        {t('bullet3')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="mt-8 text-center">
+                            <button
+                                type="button"
+                                className="bg-yellow-400 text-black px-8 py-3 rounded-lg font-medium transition-all duration-200 border border-yellow-400 hover:bg-transparent hover:text-white hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 active:scale-[0.98]"
+                                onClick={() => {
+                                    if (typeof setCurrentStep === 'function') {
+                                        setCurrentStep(9);
+                                    } else {
+                                        router.visit('/game');
+                                    }
+                                }}
+                            >
+                                {t('start')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

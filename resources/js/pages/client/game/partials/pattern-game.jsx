@@ -508,28 +508,36 @@ export function PatternGame({ data: formDataProp }) {
     return (
         <div className="space-y-6">
             <div className="text-center">
-                <h1 className="mb-2 text-2xl font-extrabold text-beta">Pattern Master</h1>
-                <h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-black'}`}>Find the Pattern</h2>
+                <h1 className="mb-2 text-2xl font-extrabold text-beta">
+                    <TransText en="Pattern Master" fr="Maître des motifs" ar="سيد الأنماط" />
+                </h1>
+                <h2 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-black'}`}>
+                    <TransText en="Find the Pattern" fr="Trouvez le motif" ar="اكتشف النمط" />
+                </h2>
             </div>
 
             {!showEnd && (
                 <div className="space-y-6">
-                    <p className={`${darkMode ? 'text-white' : 'text-black'} mb-6 text-center`}>Study the sequence and determine what comes next</p>
+                    <p className={`${darkMode ? 'text-white' : 'text-black'} mb-6 text-center`}>
+                        <TransText en="Study the sequence and determine what comes next" fr="Étudiez la séquence et déterminez ce qui vient ensuite" ar="ادرس التتابع وحدد ما الذي يأتي بعد ذلك" />
+                    </p>
 
                     <div className="mb-6 flex min-h-[120px] flex-wrap items-center justify-center gap-4">
                         {currentPuzzle?.sequence?.map((item, i) => (
                             <PatternItem key={i} item={item} />
                         ))}
                         <div
-                            className={`grid h-20 w-20 place-items-center rounded-xl border-2 border-dashed ${darkMode ? 'border-beta/50 text-white/60' : 'border-beta text-black/60'}`}
+                            className={`grid h-20 w-20 place-items-center rounded-xl border-2 border-dashed ${darkMode ? 'border-white/70 text-white' : 'border-beta text-black/60'}`}
                         >
                             ?
                         </div>
                     </div>
 
                     <div className="space-y-4">
-                        <div className={`text-center font-medium ${darkMode ? 'text-white' : 'text-black'}`}>Choose the next item:</div>
-                        <div className="grid grid-cols-2 items-center justify-center gap-3 sm:flex sm:flex-wrap">
+                        <div className={`text-center font-medium ${darkMode ? 'text-white' : 'text-black'}`}>
+                            <TransText en="Choose the next item:" fr="Choisissez l'élément suivant :" ar=":اختر العنصر التالي" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 place-items-center max-w-xs mx-auto sm:grid-cols-4 sm:max-w-md">
                             {choices.map((choice, idx) => (
                                 <ChoiceItem
                                     key={idx}
@@ -541,21 +549,23 @@ export function PatternGame({ data: formDataProp }) {
                         </div>
                     </div>
 
-                    <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                    <div className="mt-6 flex items-center justify-center">
                         <button
                             type="button"
-                            className={`pointer-events-auto rounded-md px-4 py-2 font-medium text-white ${selectedChoice ? 'bg-beta hover:opacity-90' : 'cursor-not-allowed bg-beta/50'}`}
+                            className={`rounded-md px-6 py-2.5 font-medium transition-all duration-150 ${
+                                selectedChoice
+                                    ? 'bg-yellow-400 text-black border border-yellow-400 hover:bg-transparent hover:text-white hover:border-yellow-400 active:scale-[0.98]'
+                                    : 'bg-transparent text-white/80 border border-white/20 cursor-not-allowed'
+                            }`}
                             onClick={submitAnswer}
                             disabled={!selectedChoice}
                         >
-                            Submit Answer
+                            <TransText en="Submit Answer" fr="Valider la réponse" ar="إرسال الإجابة" />
                         </button>
                     </div>
 
                     {feedback && (
-                        <div
-                            className={`mt-4 text-center text-sm ${feedbackType === 'success' ? 'text-green-500' : feedbackType === 'error' ? 'text-red-500' : darkMode ? 'text-white' : 'text-black'}`}
-                        >
+                        <div className={`mt-3 text-center text-sm ${feedbackType === 'success' ? 'text-green-500' : feedbackType === 'error' ? 'text-red-500' : darkMode ? 'text-white' : 'text-black'}`}>
                             {feedback}
                         </div>
                     )}
@@ -611,7 +621,7 @@ export function PatternGame({ data: formDataProp }) {
                             disabled={isSubmitting}
                         >
                             {modalType === 'success' ? (
-                                <TransText en="Go to Home" fr="Aller à l'accueil" ar="الذهاب للرئيسية" />
+                                <TransText en="Done" fr="Aller à l'accueil" ar="الذهاب للرئيسية" />
                             ) : (
                                 <TransText en="Try Again" fr="Réessayer" ar="حاول مرة أخرى" />
                             )}
@@ -644,8 +654,8 @@ function ChoiceItem({ item, selected, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className={`grid h-16 w-16 place-items-center rounded-xl border-2 transition ${selected ? 'ring-2 ring-beta' : ''}`}
-            style={{ backgroundColor: item.color, borderColor: item.color }}
+            className={`grid h-16 w-16 place-items-center rounded-xl border-2 transition-all duration-150 ${selected ? 'ring-2 ring-yellow-400 border-yellow-400' : 'hover:scale-[1.03] hover:ring-2 hover:ring-yellow-300'}`}
+            style={{ backgroundColor: item.color, borderColor: selected ? '#f59e0b' : item.color }}
         >
             <span className="text-lg font-bold">{item.symbol}</span>
         </button>
