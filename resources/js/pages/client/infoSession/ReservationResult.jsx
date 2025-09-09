@@ -110,35 +110,7 @@ export default function ReservationResult() {
                 </div>
               )}
 
-              {/* Action Button */}
-              <div className={`text-center transition-all duration-700 delay-500 transform ${
-                showContent ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-              }`}>
-                <a
-                  href={redirectUrl || '/'}
-                  className={`inline-flex items-center justify-center px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 ${
-                    type === 'success'
-                      ? 'bg-yellow-400 hover:bg-yellow-500 text-black shadow-lg hover:shadow-xl'
-                      : darkMode
-                        ? 'bg-gray-600 hover:bg-gray-700 text-white'
-                        : 'bg-gray-800 hover:bg-gray-900 text-white'
-                  } ${isRTL ? 'font-arabic' : ''}`}
-                >
-                  {type === 'success' 
-                    ? (selectedLanguage === 'ar' ? 'متابعة' : selectedLanguage === 'fr' ? 'Continuer' : 'Continue')
-                    : (selectedLanguage === 'ar' ? 'رجوع' : selectedLanguage === 'fr' ? 'Retour' : 'Back')
-                  }
-                  <svg 
-                    className={`w-5 h-5 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </a>
-              </div>
+              
 
               {/* Success celebration text */}
               {type === 'success' && (
