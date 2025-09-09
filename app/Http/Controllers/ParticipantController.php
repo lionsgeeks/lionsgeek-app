@@ -388,8 +388,8 @@ class ParticipantController extends Controller
         // Generate unique filename with timestamp
         $cvFileName = time() . '_' . $cvFile->getClientOriginalName();
 
-        // Store the file
-        $cvFile->storeAs('public/cvs', $cvFileName);
+        // Store the file in the public disk
+        $cvFile->storeAs('cvs', $cvFileName, 'public');
 
         return $cvFileName;
     }

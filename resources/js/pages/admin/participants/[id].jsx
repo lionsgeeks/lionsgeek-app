@@ -354,7 +354,7 @@ export default function ParticipantProfilePage() {
                                     <div className="text-sm font-medium text-[#212529]">
                                         {participant.cv_file ? (
                                             <a
-                                                href={`/storage/${participant.cv_file}`}
+                                                href={`/storage/cvs/${participant.cv_file}`}
                                                 target="_blank"
                                                 rel="noreferrer"
                                                 className="text-[#212529] underline hover:text-[#fee819]"
