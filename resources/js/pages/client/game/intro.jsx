@@ -46,63 +46,63 @@ export default function GameIntro({ setCurrentStep }) {
     
     return (
         <div className={`${selectedLanguage === 'ar' ? 'rtl' : ''}`} dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
-            <div className="max-w-4xl mx-auto px-6 py-8">
-                <div className="text-center mb-10">
-                    <h1 className={`text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-[#212529]'}`}>
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+                <div className="text-center mb-8 sm:mb-10">
+                    <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 ${darkMode ? 'text-white' : 'text-[#212529]'}`}>
                         {t('heading')}
                     </h1>
-                    <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto leading-relaxed`}>
+                    <p className={`text-base sm:text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto leading-relaxed px-2`}>
                         {t('description')}
                     </p>
                 </div>
 
-                <div className={`rounded-2xl ${darkMode ? 'bg-[#1a1a1a]' : 'bg-white'} shadow-lg overflow-hidden`}>
-                    <div className={`px-8 py-5 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-gray-50'}`}>
-                        <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-[#212529]'}`}>
+                <div className={`rounded-xl sm:rounded-2xl ${darkMode ? 'bg-[#1a1a1a]' : 'bg-white'} shadow-lg overflow-hidden`}>
+                    <div className={`px-4 sm:px-6 lg:px-8 py-4 sm:py-5 ${darkMode ? 'bg-[#0f0f0f]' : 'bg-gray-50'}`}>
+                        <h2 className={`text-lg sm:text-xl font-semibold text-center sm:text-left ${darkMode ? 'text-white' : 'text-[#212529]'}`}>
                             Game Instructions
                         </h2>
                     </div>
                     
-                    <div className="px-6 sm:px-8 py-6">
-                        <div className={`space-y-5 ${selectedLanguage === 'ar' ? 'text-right' : 'text-left'} max-w-2xl mx-auto`}>
-                            <div className="flex items-center sm:justify-start justify-center gap-4">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-alpha text-black flex-shrink-0`}>
+                    <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+                        <div className={`space-y-4 sm:space-y-5 ${selectedLanguage === 'ar' ? 'text-right' : 'text-left'} max-w-2xl mx-auto`}>
+                            <div className="flex items-start gap-3 sm:gap-4">
+                                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium bg-alpha text-black flex-shrink-0 mt-0.5`}>
                                     1
                                 </div>
-                                <div className="flex items-center">
-                                    <p className={`text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
+                                <div className="flex-1 min-w-0">
+                                    <p className={`text-sm sm:text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
                                         {t('bullet1')}
                                     </p>
                                 </div>
                             </div>
                             
-                            <div className="flex items-center sm:justify-start justify-center gap-4">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-alpha text-black flex-shrink-0`}>
+                            <div className="flex items-start gap-3 sm:gap-4">
+                                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium bg-alpha text-black flex-shrink-0 mt-0.5`}>
                                     2
                                 </div>
-                                <div className="flex items-center">
-                                    <p className={`text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
+                                <div className="flex-1 min-w-0">
+                                    <p className={`text-sm sm:text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
                                         {t('bullet2')}
                                     </p>
                                 </div>
                             </div>
                             
-                            <div className="flex items-center sm:justify-start justify-center gap-4">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-alpha text-black flex-shrink-0`}>
+                            <div className="flex items-start gap-3 sm:gap-4">
+                                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium bg-alpha text-black flex-shrink-0 mt-0.5`}>
                                     3
                                 </div>
-                                <div className="flex items-center">
-                                    <p className={`text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
+                                <div className="flex-1 min-w-0">
+                                    <p className={`text-sm sm:text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
                                         {t('bullet3')}
                                     </p>
                                 </div>
                             </div>
                         </div>
                         
-                        <div className="mt-8 text-center">
+                        <div className="mt-6 sm:mt-8 text-center">
                             <button
                                 type="button"
-                                className="bg-alpha text-black px-8 py-3 rounded-lg font-medium transition-all duration-200 border border-alpha hover:bg-yellow-400 hover:text-black hover:border-transparent focus:outline-none focus:ring-2 focus:ring-alpha focus:ring-opacity-50 active:scale-[0.98]"
+                                className="w-full sm:w-auto bg-alpha text-black px-6 sm:px-8 py-3 sm:py-3 rounded-lg font-medium transition-all duration-200 border border-alpha hover:bg-yellow-400 hover:text-black hover:border-transparent focus:outline-none focus:ring-2 focus:ring-alpha focus:ring-opacity-50 active:scale-[0.98] text-sm sm:text-base"
                                 onClick={() => {
                                     if (typeof setCurrentStep === 'function') {
                                         setCurrentStep(9);
