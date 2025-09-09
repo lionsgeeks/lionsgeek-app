@@ -170,7 +170,7 @@
     <div class="footer">
         <p>This is an automated message. Please do not reply to this email.</p>
         <p>If you have any questions, please contact us at {{ config('mail.from.address') }}</p>
-        <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+        <p>&copy; {{ date('Y') }} LionsGeek. All rights reserved.</p>
     </div>
 </body>
 </html>
