@@ -33,6 +33,7 @@ class BookingConfirmation extends Mailable
     {
         return new Envelope(
             subject: 'Event Booking Confirmation - ' . $this->getEventName(),
+            from: new \Illuminate\Mail\Mailables\Address('info@lionsgeek.ma', 'LionsGeek'),
         );
     }
 
