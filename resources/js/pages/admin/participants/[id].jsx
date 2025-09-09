@@ -443,6 +443,12 @@ export default function ParticipantProfilePage() {
                                     <div className="text-sm font-medium text-[#212529]">{participant.time_spent_formatted || (participant.time_spent ? `${participant.time_spent}s` : '-')}</div>
                                 </div>
                             </CardContent>
+                            <CardContent>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Intelligence level</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.intelligence_level}</div>
+                                </div>
+                            </CardContent>
                         </Card>
 
                         {/* Languages */}

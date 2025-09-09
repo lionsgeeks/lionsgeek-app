@@ -29,6 +29,9 @@ const SHAPES = ['square', 'circle', 'triangle', 'diamond'];
 const SYMBOLS = ['●', '■', '▲', '♦', '★', '◆', '◇', '♠', '♥', '♣'];
 
 export function PatternGame({ data: formDataProp }) {
+    const [intelligenceLevel, setIntelligenceLevel] = useState(null);
+
+
     const { post, processing, errors } = useForm();
     
 
@@ -355,16 +358,54 @@ export function PatternGame({ data: formDataProp }) {
         return choices.sort(() => Math.random() - 0.5);
     }
 
+    function calculateIntelligenceLevel() {
+        const totalScore = levelAttempts.reduce((sum, lvl) => sum + (lvl.totalScore || 0), 0);
+        if (totalScore > 90) return 'Very High';
+        else if (totalScore > 60) return 'High';
+        else if (totalScore > 30) return 'Medium';
+        else return 'Low';
+    }
+
+
+
+    function getScoreForAnswer(isCorrect, timeTakenMs) { 
+        if (!isCorrect) return -2;
+        if (timeTakenMs <= 5000) return 7;
+        if (timeTakenMs <= 10000 && timeTakenMs >= 5000) return 5;
+        return 4;
+    }
+
     function submitAnswer() {
         if (!selectedChoice || !currentPuzzle) return;
+
+        const isCorrect = isEqual(selectedChoice, currentPuzzle.correct);
+        const timeTaken = Date.now() - (levelAttempts[currentLevel]?.startTime || 0 );
+        const score = getScoreForAnswer(isCorrect, timeTaken);
+
         setAttempts((a) => a + 1);
         setLevelAttempts((prev) => {
             const next = [...prev];
             next[currentLevel].attempts += 1;
+
+            next[currentLevel].totalScore = (next[currentLevel].totalScore || 0) + score;
+            if (isCorrect) {
+                next[currentLevel].correct = true;
+                next[currentLevel].timeSpent = timeTaken;
+            }
+
+
+            const totalCorrectAnswers = next.filter(level => level.correct).length;
+            const totalPoints = next.reduce((acc, level) => acc + (level.totalScore || 0), 0);
+
+            // logggggggggggggggggggggggggggggg
+            console.log('Total Correct Answers:', totalCorrectAnswers);
+            console.log('Total Points:', totalPoints);
+            console.log('Score:', score, 'Correct:', isCorrect, 'Time:', timeTaken);
+            // logggggggggggggggggggggggggggggg
+
             return next;
         });
 
-        const isCorrect = isEqual(selectedChoice, currentPuzzle.correct);
         if (isCorrect) {
             setLevelAttempts((prev) => {
                 const next = [...prev];

@@ -9,6 +9,9 @@ import { useState } from 'react';
 // import { useToast } from "@/hooks/use-toast"
 
 export function FrequentQuestionsSection({ participant }) {
+    // if (!participant.questions) {
+    //     return <div>No Questions Data Available</div>;
+    // }
     //   const { toast } = useToast()
     const [openSections, setOpenSections] = useState({
         background: false,
@@ -25,6 +28,8 @@ export function FrequentQuestionsSection({ participant }) {
 
     const { data, setData, processing, post } = useForm({
         participant_id: participant.id,
+        // mode_of_transportation: participant.questions?.mode_of_transportation || '',
+        // living_situation: participant.questions?.living_situation || '',
         mode_of_transportation: participant.questions.mode_of_transportation,
         living_situation: participant.questions.living_situation,
         where_have_you_heard_of_lionsgeek: participant.questions.where_have_you_heard_of_lionsgeek,
