@@ -60,6 +60,9 @@ export function PatternGame({ data: formDataProp }) {
             setTimeRemaining((t) => {
                 if (t <= 1) {
                     clearInterval(timerRef.current);
+                    // Time is up - show loading page and set processing
+                    setIsSubmitting(true);
+                    showLoadingPage();
                     setTimeOver(true);
                     return 0;
                 }
@@ -376,7 +379,8 @@ export function PatternGame({ data: formDataProp }) {
             
             // Check if this is the last level
             if (currentLevel >= gamePlan.length - 1) {
-                // This is the last question - show loading page immediately
+                // This is the last question - show loading page immediately and set processing
+                setIsSubmitting(true);
                 showLoadingPage();
                 setFeedback('Correct! Submitting your application...');
                 setFeedbackType('success');
