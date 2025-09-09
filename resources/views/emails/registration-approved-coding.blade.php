@@ -83,14 +83,14 @@
     </div>
 
     <div class="content">
-        <h2>Hello {{ $participant->full_name }}!</h2>
+    <h2>Hello {{ $participant->full_name }}!</h2>
         
         <p>Great news! You're invited to attend an info session for the LionsGeek Coding Program. Please choose one of the available info sessions below to reserve your place.</p>
 
         <p>During the info session, you'll learn more about the program structure, meet our team, and get all the details you need for the next steps.</p>
 
-        <div class="divider"></div>
-
+            <div class="divider"></div>
+            
         <div class="rtl">
             <h2>مرحبًا {{ $participant->full_name }}!</h2>
             
@@ -108,20 +108,20 @@
                 <h3>⏰ No Available Sessions</h3>
                 <p><strong>No available Coding info sessions right now.</strong></p>
                 <p class="muted">Please check back later. We will notify you once new sessions are available.</p>
-            </div>
-        @else
-            @foreach ($sessions as $session)
+        </div>
+    @else
+        @foreach ($sessions as $session)
                 <div class="session-details">
-                    <h3>📅 {{ $session->name }}</h3>
+                <h3>📅 {{ $session->name }}</h3>
                     <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($session->start_date)->format('l, F j, Y \a\t g:i A') }}</p>
                     
                     <div style="text-align: center; margin: 15px 0;">
-                        <a href="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('participants.reserve', now()->addDays(3), ['participant' => $participant->id, 'session' => $session->id]) }}"
+                    <a href="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('participants.reserve', now()->addDays(3), ['participant' => $participant->id, 'session' => $session->id]) }}"
                             class="btn">Reserve My Place</a>
                     </div>
-                </div>
-            @endforeach
-        @endif
+            </div>
+        @endforeach
+    @endif
 
         <p><strong>Important Notes:</strong></p>
         <ul>
