@@ -867,13 +867,15 @@ class ParticipantController extends Controller
                 // Normalize formation field
                 $formation = strtolower((string) $participant->formation_field);
 
-                // Fetch all available upcoming sessions for the participant's track
-                $sessions = \App\Models\InfoSession::where('formation', $formation === 'coding' ? 'Coding' : 'Media')
-                    ->where('isFull', false)
-                    ->where('isFinish', false)
+                // Robust, timezone-aware, case-insensitive session fetch for emails
+                $todayTz = \Carbon\Carbon::now(config('app.timezone'))->toDateString();
+                $sessions = \App\Models\InfoSession::query()
+                    ->whereRaw('LOWER(formation) = ?', [$formation === 'coding' ? 'coding' : 'media'])
                     ->where('isAvailable', true)
-                    ->where('start_date', '>=', now())
-                    ->orderBy('start_date')
+                    ->where('isFinish', false)
+                    ->where('isFull', false)
+                    ->whereDate('start_date', '>=', $todayTz)
+                    ->orderBy('start_date', 'asc')
                     ->get();
 
                 if ($formation === 'coding') {
