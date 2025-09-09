@@ -7,40 +7,44 @@ use App\Models\Participant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image;
 
 class ParticipantController extends Controller
 {
     //
+
     public function setPhoto(Request $request)
-    {
-        $request->validate([
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif',
-            "id" => "required"
-        ]);
-
-        $profile = Participant::find($request->id);
-
-        if ($request->hasFile('photo')) {
-            $file = $request->file('photo');
-            $filePath = $file->store('images/participants', 'public');
-
-            $oldFilePath = storage_path('app/public/images/participants/' . $profile->image);
-
-            if ($profile->image) {
-                unlink($oldFilePath);
-            }
-
-            $profile->image = basename($filePath);
-            $profile->save();
-
-            return response()->json([
-                'message' => 'Photo uploaded successfully!',
-                'profile' => $profile,
+        {
+            $request->validate([
+                'photo' => 'required|image|mimes:jpeg,png,jpg,gif',
+                "id" => "required"
             ]);
+
+            $profile = Participant::find($request->id);
+
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
+
+                // Load the image
+                $image = Image::make($file);
+
+                // Compress by reducing quality (0-100)
+                $imagePath = 'images/participants/' . time() . '_' . $file->getClientOriginalName();
+                $image->save(storage_path('app/public/' . $imagePath), 60); // 60% quality
+
+
+                $profile->image = basename($imagePath);
+                $profile->save();
+
+                return response()->json([
+                    'message' => 'Photo uploaded and compressed successfully!',
+                    'profile' => $profile,
+                ]);
         }
 
         return response()->json(['message' => "Error"], 400);
     }
+
     public function runQueue()
     {
         Artisan::call('queue:work --stop-when-empty');

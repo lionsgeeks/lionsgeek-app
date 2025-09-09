@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, usePage } from '@inertiajs/react';
-import { ArrowLeft, Calendar, Code2, GraduationCap, Palette, Presentation, TrendingUp, UserCheck, Users } from 'lucide-react';
+import { ArrowLeft, Calendar, Code2, GraduationCap, Palette, Presentation, TrendingUp, UserCheck, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from '../participants/partials/ParticipantCard';
@@ -11,6 +11,10 @@ import ParticipantCard from '../participants/partials/ParticipantCard';
 const InfosessionDetails = () => {
     const { infosession } = usePage().props;
     const [filtredParticipants, setFiltredParticipants] = useState(infosession?.participants);
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const participantsPerPage = 24;
 
     const dispatchParticipant = (step) => {
         return infosession?.participants.filter((p) => p.current_step === step).length;
@@ -39,6 +43,31 @@ const InfosessionDetails = () => {
     const totalParticipants = infosession.participants.length;
     const completedParticipants = dispatchParticipant('coding_school') + dispatchParticipant('media_school');
     const completionRate = totalParticipants > 0 ? ((completedParticipants / totalParticipants) * 100).toFixed(1) : 0;
+
+    // Pagination calculations
+    const totalFilteredParticipants = filtredParticipants?.length || 0;
+    const totalPages = Math.ceil(totalFilteredParticipants / participantsPerPage);
+    const startIndex = (currentPage - 1) * participantsPerPage;
+    const endIndex = startIndex + participantsPerPage;
+    const paginatedParticipants = filtredParticipants?.slice(startIndex, endIndex) || [];
+
+    // Pagination handlers
+    const goToPage = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            goToPage(currentPage - 1);
+        }
+    };
+
+    const goToNextPage = () => {
+        if (currentPage < totalPages) {
+            goToPage(currentPage + 1);
+        }
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -201,6 +230,18 @@ const InfosessionDetails = () => {
                         </p>
                     </div>
 
+                    {/* Pagination Info */}
+                    {totalFilteredParticipants > 0 && (
+                        <div className="mb-6 flex items-center justify-between">
+                            <p className="text-sm text-gray-600">
+                                Showing {startIndex + 1} to {Math.min(endIndex, totalFilteredParticipants)} of {totalFilteredParticipants} participants
+                            </p>
+                            <p className="text-sm text-gray-600">
+                                Page {currentPage} of {totalPages}
+                            </p>
+                        </div>
+                    )}
+
                     {filtredParticipants?.length === 0 ? (
                         <Card className="border-0 bg-white shadow-lg">
                             <CardContent className="p-12 text-center">
@@ -216,11 +257,91 @@ const InfosessionDetails = () => {
                             </CardContent>
                         </Card>
                     ) : (
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {filtredParticipants?.map((participant) => (
-                                <ParticipantCard key={participant.id} participant={participant} />
-                            ))}
-                        </div>
+                        <>
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                {paginatedParticipants?.map((participant) => (
+                                    <ParticipantCard key={participant.id} participant={participant} />
+                                ))}
+                            </div>
+
+                            {/* Pagination Controls */}
+                            {totalPages > 1 && (
+                                <div className="mt-8 flex items-center justify-center space-x-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={goToPreviousPage}
+                                        disabled={currentPage === 1}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <ChevronLeft className="h-4 w-4" />
+                                        Previous
+                                    </Button>
+
+                                    <div className="flex items-center space-x-1">
+                                        {/* First page */}
+                                        {currentPage > 3 && (
+                                            <>
+                                                <Button
+                                                    variant={1 === currentPage ? "default" : "outline"}
+                                                    size="sm"
+                                                    onClick={() => goToPage(1)}
+                                                    className="min-w-[40px]"
+                                                >
+                                                    1
+                                                </Button>
+                                                {currentPage > 4 && <span className="px-2 text-gray-500">...</span>}
+                                            </>
+                                        )}
+
+                                        {/* Page numbers around current page */}
+                                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                            const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                                            if (pageNum <= totalPages) {
+                                                return (
+                                                    <Button
+                                                        key={pageNum}
+                                                        variant={pageNum === currentPage ? "default" : "outline"}
+                                                        size="sm"
+                                                        onClick={() => goToPage(pageNum)}
+                                                        className="min-w-[40px]"
+                                                    >
+                                                        {pageNum}
+                                                    </Button>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+
+                                        {/* Last page */}
+                                        {currentPage < totalPages - 2 && (
+                                            <>
+                                                {currentPage < totalPages - 3 && <span className="px-2 text-gray-500">...</span>}
+                                                <Button
+                                                    variant={totalPages === currentPage ? "default" : "outline"}
+                                                    size="sm"
+                                                    onClick={() => goToPage(totalPages)}
+                                                    className="min-w-[40px]"
+                                                >
+                                                    {totalPages}
+                                                </Button>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={goToNextPage}
+                                        disabled={currentPage === totalPages}
+                                        className="flex items-center gap-2"
+                                    >
+                                        Next
+                                        <ChevronRight className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
