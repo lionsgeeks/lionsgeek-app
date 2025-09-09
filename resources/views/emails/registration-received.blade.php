@@ -97,7 +97,7 @@
             <p>Please check your inbox regularly. If you don't see our email, please check your spam/junk folder just in case.</p>
         </div>
 
-        <p><strong>Have questions?</strong> Feel free to <a href="{{ rtrim(config('app.url'), '/') }}/contact" class="contact-link">contact us</a> anytime.</p>
+        <p><strong>Have questions?</strong> Feel free to <a href="https://lionsgeek.ma/contact" class="contact-link">contact us</a> anytime.</p>
         
         <p>We're looking forward to potentially having you join our community!</p>
         
@@ -132,7 +132,7 @@
     <div class="footer">
         <p>This is an automated message. Please do not reply to this email.</p>
         <p>If you have any questions, please contact us at {{ config('mail.from.address') }}</p>
-        <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+        <p>&copy; {{ date('Y') }} LionsGeek. All rights reserved.</p>
     </div>
 </body>
 </html>
