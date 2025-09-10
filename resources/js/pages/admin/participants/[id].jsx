@@ -92,6 +92,29 @@ export default function ParticipantProfilePage() {
         });
     };
 
+    // Display helper: turn snake_case or lowercased values into Title Case
+    const humanize = (val) => {
+        if (val === null || val === undefined) return '';
+        const str = String(val).replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+        if (!str) return '';
+        return str
+            .split(' ')
+            .map(w => (w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w))
+            .join(' ');
+    };
+
+    // Helper: interpret various yes/true representations
+    const isAffirmative = (val) => {
+        if (val === true) return true;
+        if (val === false) return false;
+        if (val == null) return false;
+        const s = String(val).trim().toLowerCase();
+        return s === 'yes' || s === 'true' || s === '1' || s === 'oui';
+    };
+
+
+
+
     const getStepColor = (step) => {
         switch (step) {
             case 'info_session':
@@ -246,12 +269,12 @@ export default function ParticipantProfilePage() {
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <Target className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Gender</div>
-                                    <div className="text-sm font-medium capitalize">{participant.gender}</div>
+                                    <div className="text-sm font-medium capitalize">{humanize(participant.gender)}</div>
                                 </div>
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <GraduationCap className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Program</div>
-                                    <div className="text-sm font-medium">{participant.info_session?.formation || participant.formation_field || 'Not assigned'}</div>
+                                    <div className="text-sm font-medium">{humanize(participant.info_session?.formation || participant.formation_field) || 'Not assigned'}</div>
                                 </div>
                             </div>
                         </div>
@@ -288,7 +311,7 @@ export default function ParticipantProfilePage() {
                                     <MapPin className="w-4 h-4 text-[#212529] flex-shrink-0" />
                                     <div className="min-w-0 flex-1">
                                         <div className="text-xs text-gray-500 mb-1">Address</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.city}, {participant.prefecture?.replaceAll('_', ' ')}</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.city}, {humanize(participant.prefecture)}</div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -324,14 +347,14 @@ export default function ParticipantProfilePage() {
                                         <Separator />
                                         <div>
                                             <div className="text-xs text-gray-500 mb-1">Formation Type</div>
-                                            <div className="text-sm font-medium text-[#212529]">{participant.info_session.formation}</div>
+                                            <div className="text-sm font-medium text-[#212529]">{humanize(participant.info_session.formation)}</div>
                                         </div>
                                     </>
                                 ) : (
                                     <div className="text-center py-4">
                                         <div className="text-sm text-gray-500 mb-2">No session assigned yet</div>
                                         <div className="text-xs text-gray-400">
-                                            {participant.formation_field && `Applied for: ${participant.formation_field}`}
+                                            {participant.formation_field && `Applied for: ${humanize(participant.formation_field)}`}
                                         </div>
                                     </div>
                                 )}
@@ -349,11 +372,11 @@ export default function ParticipantProfilePage() {
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Formation Field</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.formation_field || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.formation_field) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Region</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.region?.replaceAll('_', ' ') || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.region) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Other City</div>
@@ -361,24 +384,22 @@ export default function ParticipantProfilePage() {
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Gender</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.gender || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.gender) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Source</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.source || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.source) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">CV</div>
                                     <div className="text-sm font-medium text-[#212529]">
                                         {participant.cv_file ? (
-                                            <a
-                                                href={`/storage/cvs/${participant.cv_file}`}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="text-[#212529] underline hover:text-[#fee819]"
-                                            >
-                                                View CV
-                                            </a>
+                                            <Button asChild size="sm" className="bg-[#fee819] text-[#212529] hover:bg-[#212529] hover:text-white rounded-md transition-colors inline-flex items-center gap-2">
+                                                <a href={`/storage/cvs/${participant.cv_file}`} target="_blank" rel="noreferrer">
+                                                    <FileText className="h-4 w-4" />
+                                                    View CV
+                                                </a>
+                                            </Button>
                                         ) : (
                                             '-'
                                         )}
@@ -398,7 +419,7 @@ export default function ParticipantProfilePage() {
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Education Level</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.education_level || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.education_level) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Institution</div>
@@ -410,19 +431,19 @@ export default function ParticipantProfilePage() {
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Current Situation</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.current_situation || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.current_situation) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Other Status</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.other_status || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_status) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Referring Organization</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.has_referring_organization ? `${participant.has_referring_organization} - ${participant.referring_organization || '-'}` : '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529]">{isAffirmative(participant.has_referring_organization) ? `Yes - ${humanize(participant.referring_organization) || '-'}` : 'No'}</div>
                                 </div>
                                 <div className="md:col-span-2">
                                     <div className="text-xs text-gray-500 mb-1">Other Organization</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.other_organization || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_organization) || '-'}</div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -482,15 +503,15 @@ export default function ParticipantProfilePage() {
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Arabic</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.arabic_level || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.arabic_level) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">French</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.french_level || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.french_level) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">English</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.english_level || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.english_level) || '-'}</div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -506,11 +527,11 @@ export default function ParticipantProfilePage() {
                             <CardContent className="space-y-4">
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">How heard about formation</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.how_heard_about_formation || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.how_heard_about_formation) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Current Commitments</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.current_commitments || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.current_commitments) || '-'}</div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -527,11 +548,11 @@ export default function ParticipantProfilePage() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <div className="text-xs text-gray-500 mb-1">Has Training</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.has_training || '-'}</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.has_training) || '-'}</div>
                                     </div>
                                     <div>
                                         <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.participated_lionsgeek || '-'}</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.participated_lionsgeek) || '-'}</div>
                                     </div>
                                 </div>
                                 <div>
@@ -541,25 +562,25 @@ export default function ParticipantProfilePage() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
-                                        <div className="text-sm font-medium text-[#212529]">{participant.lionsgeek_activity || '-'}</div>
+                                        <div className="text-sm font-medium text-[#212529]">{humanize(participant.lionsgeek_activity) || '-'}</div>
                                     </div>
                                     <div>
                                         <div className="text-xs text-gray-500 mb-1">Other Activity</div>
-                                        <div className="text-sm font-medium text-[#212529]">{participant.other_activity || '-'}</div>
+                                        <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_activity) || '-'}</div>
                                     </div>
                                 </div>
                                 <Separator />
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Objectives After Formation</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.objectives_after_formation || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.objectives_after_formation) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Priority Learning Topics</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.priority_learning_topics || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.priority_learning_topics) || '-'}</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Last Self Learned</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.last_self_learned || '-'}</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.last_self_learned) || '-'}</div>
                                 </div>
                             </CardContent>
                         </Card>
