@@ -33,6 +33,7 @@ use App\Models\Satisfaction;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ParticipantController extends Controller
@@ -751,11 +752,21 @@ class ParticipantController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
+    public function destroy($id)
+{
+    $participant = Participant::findOrFail($id);
+
+    if ($participant->image && Storage::exists('public/images/participants/' . $participant->image)) {
+        Storage::delete('public/images/participants/' . $participant->image);
     }
-    // Change participant current step
+
+    $participant->delete();
+
+    return redirect()->back()->with('success', 'Participant deleted successfully!');
+}
+
+
+    // Change participant current step 
     public function step(Request $request, Participant $participant)
     {
         $request->validate([
@@ -1229,4 +1240,6 @@ class ParticipantController extends Controller
             ]);
         }
     }
+  
+
 }
