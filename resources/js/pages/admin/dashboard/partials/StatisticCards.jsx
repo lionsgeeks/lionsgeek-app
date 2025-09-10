@@ -33,18 +33,18 @@ const StatisticCards = () => {
     ];
 
     return (
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="mb-8 grid lg:grid-cols-4 grid-cols-2 gap-6 md:grid-cols-4">
             {cards.map((card, index) => {
                 const IconComponent = card.icon;
                 return (
                     <Card key={index} className="border-0 bg-white shadow-lg">
                         <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
+                            <div className="flex lg:flex-row flex-col-reverse gap-5 justify-between">
+                                <div className='flex flex-col'>
                                     <p className="text-sm font-medium text-gray-600">{card.title}</p>
                                     <p className="text-3xl font-bold text-[#212529]">{card.value}</p>
                                 </div>
-                                <div className="rounded-lg bg-gray-100 p-3">
+                                <div className="rounded-lg bg-gray-100 p-3 w-fit">
                                     <IconComponent className="h-6 w-6 text-[#212529]" />
                                 </div>
                             </div>
