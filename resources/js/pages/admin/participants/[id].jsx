@@ -411,10 +411,20 @@ export default function ParticipantProfilePage() {
 
                         {/* Game Results */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                            <CardHeader className="pb-3 flex items-center justify-between">
+                                <CardTitle className="flex items-center text-[#212529]">
                                     <Star className="w-5 h-5" />
                                     Game Results
+                                </CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-[#212529] pr-5">
+                                    <div className="text-sm font-medium text-[#212529] flex gap-1 px-5 py-1.5 rounded-full bg-black/5">
+                                        <h1>
+                                            {participant.intelligence_level}
+                                        </h1>
+                                        <h1>
+                                            points
+                                        </h1>
+                                    </div>
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -442,7 +452,21 @@ export default function ParticipantProfilePage() {
                                     <div className="text-xs text-gray-500 mb-1">Time Spent</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.time_spent_formatted || (participant.time_spent ? `${participant.time_spent}s` : '-')}</div>
                                 </div>
-                            </CardContent>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Intelligence level</div>
+                                    <div className="flex gap-5">
+                                        <div className="text-sm font-medium text-[#212529]">
+                                        {(() => {
+                                            const points = Number(participant.intelligence_level) || 0;
+                                            if (points > 90) return "Very High";
+                                            else if (points > 60) return "High";
+                                            else if (points > 30) return "Medium";
+                                            else return "Low";
+                                        })()}
+                                        </div>
+                                    </div>
+                                </div>
+                                </CardContent>
                         </Card>
 
                         {/* Languages */}

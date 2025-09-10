@@ -233,6 +233,7 @@ class ParticipantController extends Controller
             'wrong_attempts' => 'nullable|integer|min:0|max:10000',
             'time_spent' => 'nullable|integer|min:0|max:86400', // Max 24 hours
             'time_spent_formatted' => 'nullable|string|max:20',
+            'intelligence_level' => 'integer|min:0|max:1000',
         ], $messages);
     }
 
@@ -443,7 +444,7 @@ class ParticipantController extends Controller
 
         // Generate unique code
         $code = $request->full_name . Carbon::now()->format('h:i:s');
-
+        // dd($request->all());
         return Participant::create([
             // Basic Information
             'info_session_id' => $request->info_session_id,
@@ -496,14 +497,15 @@ class ParticipantController extends Controller
             'cv_file' => $cvFileName,
 
             // Game Metrics
-            'game_completed' => $request->boolean('game_completed'),
-            'final_score' => $request->input('final_score'),
-            'correct_answers' => $request->input('correct_answers'),
-            'levels_completed' => $request->input('levels_completed'),
-            'total_attempts' => $request->input('total_attempts'),
-            'wrong_attempts' => $request->input('wrong_attempts'),
-            'time_spent' => $request->input('time_spent'),
-            'time_spent_formatted' => $request->input('time_spent_formatted'),
+                'game_completed' => $request->boolean('game_completed'),
+                'final_score' => $request->input('final_score'),
+                'correct_answers' => $request->input('correct_answers'),
+                'levels_completed' => $request->input('levels_completed'),
+                'total_attempts' => $request->input('total_attempts'),
+                'wrong_attempts' => $request->input('wrong_attempts'),
+                'time_spent' => $request->input('time_spent'),
+                'time_spent_formatted' => $request->input('time_spent_formatted'),
+                'intelligence_level' => $request->input('intelligence_level'),
 
             // Status
             'status' => Participant::STATUS_PENDING,
