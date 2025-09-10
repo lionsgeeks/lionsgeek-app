@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
-// Dashboard - Main overview
+// Dashboard section
 const dashboardItems: NavItem[] = [
     {
         title: 'Dashboard',
@@ -26,7 +26,7 @@ const dashboardItems: NavItem[] = [
     },
 ];
 
-// Content Management - Blog, Press, Gallery
+// Content Management section
 const contentItems: NavItem[] = [
     {
         title: 'Blogs',
@@ -45,7 +45,7 @@ const contentItems: NavItem[] = [
     },
 ];
 
-
+// Events & Sessions section
 const eventsItems: NavItem[] = [
     {
         title: 'Events',
@@ -64,7 +64,7 @@ const eventsItems: NavItem[] = [
     },
 ];
 
-// Business & Projects - Projects, Coworking, Newsletter
+// Business & Projects section
 const businessItems: NavItem[] = [
     {
         title: 'Projects',
@@ -76,10 +76,9 @@ const businessItems: NavItem[] = [
         href: '/admin/coworking',
         icon: HeartHandshake,
     },
-
 ];
 
-// Communications - ContactUs
+// Communications section
 const communicationItems: NavItem[] = [
     {
         title: 'ContactUs',
@@ -93,7 +92,61 @@ const communicationItems: NavItem[] = [
     },
 ];
 
+// const userNavItems: NavItem[] = [
+//     {
+//         title: 'Home',
+//         href: '/',
+//         icon: Home,
+//     },
+//     {
+//         title: 'Coding',
+//         href: '/coding',
+//         icon: Code,
+//     },
+//     {
+//         title: 'Media',
+//         href: '/media',
+//         icon: Camera,
+//     },
+//     {
+//         title: 'Coworking',
+//         href: '/coworking',
+//         icon: HeartHandshake,
+//     },
+//     {
+//         title: 'Events',
+//         href: '/events',
+//         icon: Calendar,
+//     },
+//     {
+//         title: 'LionsGeek Pro',
+//         href: '/pro',
+//         icon: FolderKanban,
+//     },
+//     {
+//         title: 'About',
+//         href: '/about',
+//         icon: MessageCircleQuestion,
+//     },
+//     {
+//         title: 'Blogs',
+//         href: '/blogs',
+//         icon: BookOpen,
+//     },
+//     {
+//         title: 'Gallery',
+//         href: '/gallery',
+//         icon: GalleryHorizontal,
+//     },
+//     {
+//         title: 'Contact',
+//         href: '/contact',
+//         icon: UserPen,
+//     },
+// ]
+
 export function AppSidebar() {
+    // const [showUserItems, setShowUserItems] = useState(false);
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -109,7 +162,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent className="no-scrollbar overflow-auto">
-                <NavMain items={dashboardItems} title="dashboard" />
+                <NavMain items={dashboardItems} />
 
                 <NavMain items={contentItems} title="Content Management" />
 

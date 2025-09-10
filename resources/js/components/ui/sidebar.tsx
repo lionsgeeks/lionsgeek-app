@@ -35,6 +35,7 @@ type SidebarContext = {
   open: boolean
   setOpen: (open: boolean) => void
   toggleSidebar: () => void
+  isMobile: boolean
 }
 
 const SidebarContext = React.createContext<SidebarContext | null>(null)
@@ -61,6 +62,24 @@ function SidebarProvider({
   open?: boolean
   onOpenChange?: (open: boolean) => void
 }) {
+
+  // Mobile detection for initial state
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768
+      setIsMobile(mobile)
+      // Set initial state based on device type if no prop is provided
+      if (openProp === undefined) {
+        _setOpen(mobile ? false : defaultOpen) // Mobile closed by default, desktop open
+      }
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [defaultOpen, openProp])
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -112,8 +131,9 @@ function SidebarProvider({
       open,
       setOpen,
       toggleSidebar,
+      isMobile,
     }),
-    [state, open, setOpen, toggleSidebar]
+    [state, open, setOpen, toggleSidebar, isMobile]
   )
 
   return (
@@ -153,7 +173,7 @@ function Sidebar({
   variant?: "sidebar" | "floating" | "inset"
   collapsible?: "offcanvas" | "icon" | "none"
 }) {
-  const { state, open, setOpen } = useSidebar()
+  const { state, open, setOpen, isMobile } = useSidebar()
 
   if (collapsible === "none") {
     return (
@@ -170,34 +190,31 @@ function Sidebar({
     )
   }
 
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile overlay */}
+        {open && (
+          <div
+            className="fixed inset-0 z-40 bg-black/50"
+            onClick={() => setOpen(false)}
+          />
+        )}
+        {/* Mobile sidebar */}
+        <div
+          className={cn(
+            "fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-col bg-gray-900 text-gray-300 border-r border-gray-800 transition-transform duration-200 ease-in-out",
+            open ? "translate-x-0" : "-translate-x-full"
+          )}
+        >
+          {children}
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
-      {/* Mobile Sidebar - Sheet overlay */}
-      <Sheet open={open} onOpenChange={setOpen} {...props}>
-        <SheetHeader className="sr-only">
-          <SheetTitle>Sidebar</SheetTitle>
-          <SheetDescription>Displays the sidebar.</SheetDescription>
-        </SheetHeader>
-        <SheetPrimitive.Portal>
-          {/* Only show overlay on mobile */}
-          <SheetPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 md:hidden" />
-          <SheetPrimitive.Content
-            data-sidebar="sidebar"
-            data-slot="sidebar"
-            className={cn(
-              "bg-sidebar text-sidebar-foreground w-72 p-0 [&>button]:hidden md:hidden",
-              "data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
-              side === "left" && "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm"
-            )}
-            side={side}
-          >
-            <div className="flex h-full w-full flex-col">{children}</div>
-            <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
-              <span className="sr-only">Close</span>
-            </SheetPrimitive.Close>
-          </SheetPrimitive.Content>
-        </SheetPrimitive.Portal>
-      </Sheet>
 
       {/* Desktop Sidebar */}
       <div
@@ -466,7 +483,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md px-2 py-4 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md px-2 py-5 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
