@@ -1,11 +1,12 @@
+import { router, useForm } from '@inertiajs/react';
+import { ArrowRight, CheckCircle2, Clock, Edit, Loader2, Mail, MapPin, Trash, User, X, XCircle } from 'lucide-react';
+import { useState } from 'react';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/dialog';
-import { router, useForm } from '@inertiajs/react';
-import { ArrowRight, CheckCircle2, Clock, Edit, Mail, MapPin, Trash, User, X, XCircle, Loader2 } from 'lucide-react';
-import { useState } from 'react';
 
 const ParticipantCard = ({ participant }) => {
     if (!participant) return null;
@@ -17,7 +18,7 @@ const ParticipantCard = ({ participant }) => {
     const formationRaw = (participant?.formation_field ?? participant?.info_session?.formation)?.toString().toLowerCase();
     const formationLabel = formationRaw === 'coding' ? 'Coding' : formationRaw === 'media' ? 'Media' : null;
     const formationBadgeClass = 'bg-[#fee819] text-[#212529] border-[#fee819]';
-    
+
     const changeStep = (action) => {
         router.patch(`/admin/participant/current-step/${participant.id}`, {
             action: action,
@@ -99,7 +100,7 @@ const ParticipantCard = ({ participant }) => {
                                     {participant?.status === 'pending' ? (
                                         <>
                                             {formationLabel && (
-                                                <Badge className={`rounded-lg text-xs font-medium border ${formationBadgeClass}`}>
+                                                <Badge className={`rounded-lg border text-xs font-medium ${formationBadgeClass}`}>
                                                     {formationLabel}
                                                 </Badge>
                                             )}
@@ -121,8 +122,8 @@ const ParticipantCard = ({ participant }) => {
                                                 </Badge>
                                             )}
                                             {participant?.status === 'approved' && participant?.current_step === 'info_session' && (
-                                                <Badge className="bg-[#51b04f] text-white rounded-lg text-xs font-medium">
-                                                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                                                <Badge className="rounded-lg bg-[#51b04f] text-xs font-medium text-white">
+                                                    <CheckCircle2 className="mr-1 h-3 w-3" />
                                                     Approved
                                                 </Badge>
                                             )}
@@ -159,7 +160,7 @@ const ParticipantCard = ({ participant }) => {
                                         <MapPin className="mr-2 h-4 w-4 flex-shrink-0" />
                                         <span className="truncate capitalize">
                                             {participant?.city || 'Unknown'}, {participant?.prefecture?.replaceAll('_', ' ') || 'Unknown'}
- </span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>

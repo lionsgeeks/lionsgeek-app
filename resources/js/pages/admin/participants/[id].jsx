@@ -221,7 +221,7 @@ export default function ParticipantProfilePage() {
                                             className="border-[#ff7376] bg-[#ff7376] text-white hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
                                             size="sm"
                                         >
-                                            <X className="h-4 w-4 mr-1" />
+                                            <XCircle className="h-4 w-4 mr-1" />
                                             Deny
                                         </Button>
                                     </div>
