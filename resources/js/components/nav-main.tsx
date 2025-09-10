@@ -9,7 +9,7 @@ type NavMainProps = {
 
 export function NavMain({ items = [], title = '' }: NavMainProps) {
     const page = usePage();
-    const { isMobile, setOpen } = useSidebar();
+    const { isMobile, setOpen , open} = useSidebar();
 
     const handleLinkClick = () => {
         // Auto-close sidebar on mobile when clicking navigation links
@@ -20,7 +20,7 @@ export function NavMain({ items = [], title = '' }: NavMainProps) {
 
     return (
         <SidebarGroup className="px-2 py-0">
-            {title && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
+            {(title && open) && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
             <SidebarMenu>
                 {items.map((item) => (
                     <SidebarMenuItem key={item.title}>
