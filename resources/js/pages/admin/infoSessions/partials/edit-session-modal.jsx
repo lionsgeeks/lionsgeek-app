@@ -19,11 +19,24 @@ export function EditSessionModal({ open, onOpenChange, session, loading = false 
 
     useEffect(() => {
         if (session) {
+            // Format the date to YYYY-MM-DDTHH:MM for HTML datetime-local input
+            const formatDateTime = (dateString) => {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                // Get local datetime in YYYY-MM-DDTHH:MM format
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            };
+
             setData({
-                name: session.name,
-                start_date: session.start_date,
-                places: session.places,
-                formation: session.formation,
+                name: session.name || '',
+                start_date: formatDateTime(session.start_date),
+                places: session.places || '',
+                formation: session.formation || '',
             });
         }
     }, [session]);
@@ -118,19 +131,18 @@ export function EditSessionModal({ open, onOpenChange, session, loading = false 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="edit-date" className="text-sm font-medium text-[#212529]">
-                                    Start Date <span className="text-[#ff7376]">*</span>
+                                    Start Date & Time <span className="text-[#ff7376]">*</span>
                                 </Label>
                                 <div className="relative">
                                     <Calendar className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                                     <Input
                                         id="edit-date"
-                                        type="date"
+                                        type="datetime-local"
                                         value={data.start_date}
                                         onChange={(e) => handleChange('start_date', e.target.value)}
                                         className="rounded-lg border pl-10 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
                                         required
                                         disabled={loading}
-                                        min={new Date().toISOString().split('T')[0]}
                                     />
                                 </div>
                                 {errors.start_date && <p className="text-sm text-[#ff7376]">{errors.start_date}</p>}
