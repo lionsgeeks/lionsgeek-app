@@ -59,8 +59,8 @@ const Chart = () => {
             .catch((err) => console.error('Error fetching chart data:', err));
     }, [selectedSession]);
 
-    console.log('Selected Session:', selectedSession);
-    console.log('Selected Promo:', selectedPromo);
+    // console.log('Selected Session:', selectedSession);
+    // console.log('Selected Promo:', selectedPromo);
 
     return (
         <Card className="w-full">

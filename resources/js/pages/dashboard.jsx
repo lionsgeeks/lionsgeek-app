@@ -101,7 +101,7 @@ const Dashboard = () => {
                 router.reload({ only: ['users'] });
             },
             onError: (errors) => {
-                console.log('Validation errors:', errors);
+                // console.log('Validation errors:', errors);
             }
         });
     };
@@ -143,7 +143,7 @@ const Dashboard = () => {
 
 
 
-    console.log(auth);
+    // console.log(auth);
 
     return (
         <>
@@ -444,7 +444,7 @@ const Dashboard = () => {
                                             {/* ======= Users Table ======= */}
                                             <div className=" ">
                                                 <div className="">
-                                                
+
                                                 </div>
                                             </div>
                                         </div>
