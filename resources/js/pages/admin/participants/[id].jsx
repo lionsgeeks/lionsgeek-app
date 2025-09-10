@@ -19,17 +19,14 @@ import {
     FileText,
     TrendingUp,
     Star,
-    Award,
     BookOpen,
     Edit,
-    XCircle,
     ArrowRight,
     X
 } from 'lucide-react';
 import { AdminNotesSection } from './partials/admin-notes-section';
 import { FrequentQuestionsSection } from './partials/frequent-questions-section';
 import { MotivationSection } from './partials/motivation-section';
-import { ParticipantProfileHeader } from './partials/participant-profile-header';
 import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-section';
 export default function ParticipantProfilePage() {
     const { participant } = usePage().props;
@@ -134,6 +131,11 @@ export default function ParticipantProfilePage() {
         }
     };
 
+    // Age helper (prefer backend age, fallback to calculating from birthday)
+    const ageValue = (participant?.age && !isNaN(Number(participant.age)))
+        ? Number(participant.age)
+        : (participant?.birthday ? Math.floor((Date.now() - new Date(participant.birthday).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null);
+
     function getConfirmationStatus(participant) {
         const step = participant?.current_step;
         if (step === 'jungle') return participant?.confirmation?.jungle;
@@ -230,15 +232,6 @@ export default function ParticipantProfilePage() {
                                         <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1 font-medium`}>
                                             {participant.current_step.replaceAll('_', ' ')}
                                         </Badge>
-                                        {participant.info_session ? (
-                                            <Badge className="bg-[#fee819] text-[#212529] rounded-lg px-3 py-1 font-medium">
-                                                {participant.info_session.formation}
-                                            </Badge>
-                                        ) : (
-                                            <Badge className="bg-gray-500 text-white rounded-lg px-3 py-1 font-medium">
-                                                {participant.formation_field || 'No Session'}
-                                            </Badge>
-                                        )}
                                         {(participant.current_step === 'jungle' || participant.current_step?.includes('school')) && (
                                             <Badge
                                                 className={`${getConfirmationStatus(participant)
@@ -254,22 +247,22 @@ export default function ParticipantProfilePage() {
                                 </div>
                             </div>
 
-                            {/* Quick Stats */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:ml-auto">
+                            {/* Quick Stats (hidden on phone) */}
+                            <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 lg:ml-auto">
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <Calendar className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
-                                    <div className="text-sm text-white/80">Birthday</div>
-                                    <div className="text-sm font-medium">{formatDate(participant.birthday)}</div>
+                                    <div className="text-sm text-white/80">Age</div>
+                                    <div className="text-sm font-medium">{ageValue != null ? `${ageValue} years` : '-'}</div>
                                 </div>
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
-                                    <MapPin className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
-                                    <div className="text-sm text-white/80">Location</div>
-                                    <div className="text-sm font-medium capitalize">{participant.city}</div>
+                                    <BookOpen className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
+                                    <div className="text-sm text-white/80">Education</div>
+                                    <div className="text-sm font-medium capitalize">{humanize(participant.education_level) || '-'}</div>
                                 </div>
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <Target className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
-                                    <div className="text-sm text-white/80">Gender</div>
-                                    <div className="text-sm font-medium capitalize">{humanize(participant.gender)}</div>
+                                    <div className="text-sm text-white/80">Situation</div>
+                                    <div className="text-sm font-medium capitalize">{humanize(participant.current_situation) || '-'}</div>
                                 </div>
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <GraduationCap className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
@@ -324,40 +317,43 @@ export default function ParticipantProfilePage() {
                             </CardContent>
                         </Card>
 
-                        {/* Session Details */}
+                        {/* Education & Situation */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <BookOpen className="w-5 h-5" />
-                                    Session Details
+                                    <GraduationCap className="w-5 h-5" />
+                                    Education & Situation
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-3">
-                                {participant.info_session ? (
-                                    <>
-                                        <div>
-                                            <div className="text-xs text-gray-500 mb-1">Session Name</div>
-                                            <div className="text-sm font-medium text-[#212529]">{participant.info_session.name}</div>
-                                        </div>
-                                        <Separator />
-                                        <div>
-                                            <div className="text-xs text-gray-500 mb-1">Start Date</div>
-                                            <div className="text-sm font-medium text-[#212529]">{participant.info_session.start_date}</div>
-                                        </div>
-                                        <Separator />
-                                        <div>
-                                            <div className="text-xs text-gray-500 mb-1">Formation Type</div>
-                                            <div className="text-sm font-medium text-[#212529]">{humanize(participant.info_session.formation)}</div>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <div className="text-center py-4">
-                                        <div className="text-sm text-gray-500 mb-2">No session assigned yet</div>
-                                        <div className="text-xs text-gray-400">
-                                            {participant.formation_field && `Applied for: ${humanize(participant.formation_field)}`}
-                                        </div>
-                                    </div>
-                                )}
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Education Level</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.education_level) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Institution</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.diploma_institution || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Specialty</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.diploma_specialty || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Current Situation</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.current_situation) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Other Status</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_status) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Referring Organization</div>
+                                    <div className="text-sm font-medium text-[#212529]">{isAffirmative(participant.has_referring_organization) ? `Yes - ${humanize(participant.referring_organization) || '-'}` : 'No'}</div>
+                                </div>
+                                <div className="md:col-span-2">
+                                    <div className="text-xs text-gray-500 mb-1">Other Organization</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_organization) || '-'}</div>
+                                </div>
                             </CardContent>
                         </Card>
 
@@ -408,89 +404,44 @@ export default function ParticipantProfilePage() {
                             </CardContent>
                         </Card>
 
-                        {/* Education & Situation */}
+                        {/* Session Details */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <GraduationCap className="w-5 h-5" />
-                                    Education & Situation
+                                    <BookOpen className="w-5 h-5" />
+                                    Session Details
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Education Level</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.education_level) || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Institution</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.diploma_institution || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Specialty</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.diploma_specialty || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Current Situation</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.current_situation) || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Other Status</div>
-                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_status) || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Referring Organization</div>
-                                    <div className="text-sm font-medium text-[#212529]">{isAffirmative(participant.has_referring_organization) ? `Yes - ${humanize(participant.referring_organization) || '-'}` : 'No'}</div>
-                                </div>
-                                <div className="md:col-span-2">
-                                    <div className="text-xs text-gray-500 mb-1">Other Organization</div>
-                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_organization) || '-'}</div>
-                                </div>
+                            <CardContent className="space-y-3">
+                                {participant.info_session ? (
+                                    <>
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Session Name</div>
+                                            <div className="text-sm font-medium text-[#212529]">{participant.info_session.name}</div>
+                                        </div>
+                                        <Separator />
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Start Date</div>
+                                            <div className="text-sm font-medium text-[#212529]">{participant.info_session.start_date}</div>
+                                        </div>
+                                        <Separator />
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Formation Type</div>
+                                            <div className="text-sm font-medium text-[#212529]">{humanize(participant.info_session.formation)}</div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="text-center py-4">
+                                        <div className="text-sm text-gray-500 mb-2">No session assigned yet</div>
+                                        <div className="text-xs text-gray-400">
+                                            {participant.formation_field && `Applied for: ${humanize(participant.formation_field)}`}
+                                        </div>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
 
-                        {/* Game Results */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="flex items-center text-[#212529]">
-                                    <Star className="w-5 h-5" />
-                                    Game Results
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Completed</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.game_completed ? 'Yes' : 'No'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Correct Answers</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.correct_answers ?? '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Levels Completed</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.levels_completed ?? '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Total Attempts</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.total_attempts ?? '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Wrong Attempts</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.wrong_attempts ?? '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Time Spent</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.time_spent_formatted || (participant.time_spent ? `${participant.time_spent}s` : '-')}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Accuracy</div>
-                                    <div className="text-sm font-medium text-[#212529]">{accuracyPct.toFixed(2)}%</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Final Score</div>
-                                    <div className="text-sm font-medium text-[#212529]">{displayFinalScore}</div>
-                                </div>
-                                </CardContent>
-                        </Card>
+
 
                         {/* Languages */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
@@ -581,6 +532,51 @@ export default function ParticipantProfilePage() {
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Last Self Learned</div>
                                     <div className="text-sm font-medium text-[#212529]">{humanize(participant.last_self_learned) || '-'}</div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+
+                        {/* Game Results */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <Star className="w-5 h-5" />
+                                    Game Results
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Completed</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.game_completed ? 'Yes' : 'No'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Correct Answers</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.correct_answers ?? '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Levels Completed</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.levels_completed ?? '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Total Attempts</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.total_attempts ?? '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Wrong Attempts</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.wrong_attempts ?? '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Time Spent</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.time_spent_formatted || (participant.time_spent ? `${participant.time_spent}s` : '-')}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Accuracy</div>
+                                    <div className="text-sm font-medium text-[#212529]">{accuracyPct.toFixed(2)}%</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Final Score</div>
+                                    <div className="text-sm font-medium text-[#212529]">{displayFinalScore}</div>
                                 </div>
                             </CardContent>
                         </Card>
