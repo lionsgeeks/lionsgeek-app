@@ -11,15 +11,41 @@ import { DonutChart } from './components/PieChart.js';
 const Chart = () => {
     const { allsessions } = usePage().props;
 
-    const sessions = allsessions.filter((session) => session.name.toLowerCase() !== 'private session');
-    const defaultSessionID = sessions[sessions.length - 1]?.id || null;
+    // const sessions = allsessions.filter((session) => session.name.toLowerCase() !== 'private session');
 
-    const [selectedSession, setSelectedSession] = useState(defaultSessionID);
+    const [selectedSession, setSelectedSession] = useState(null);
     const [AllPromo, setAllPromo] = useState([]);
     const [AllSessions, setAllSessions] = useState([]);
-    const [selectedPromo, setSelectedPromo] = useState(AllPromo[0]);
+    const [selectedPromo, setSelectedPromo] = useState(null);
     const [barChart, setBarChart] = useState([]);
     const [pieChart, setPieChart] = useState([]);
+    useEffect(() => {
+        const allPromo = [
+            ...new Set(
+                allsessions
+                    .filter((e) => e.name.includes(':'))
+                    .map((promo) => promo.name.slice(0, promo.name.indexOf(':')).trim())
+            ),
+        ];
+        setAllPromo(allPromo);
+
+        if (allPromo.length > 0 && !selectedPromo) {
+            setSelectedPromo(allPromo[0]);
+        }
+    }, [allsessions]);
+    useEffect(() => {
+        if (!selectedPromo) return;
+
+        const filteredSessions = allsessions.filter((session) =>
+            session.name.includes(selectedPromo)
+        );
+        setAllSessions(filteredSessions);
+
+        if (filteredSessions.length > 0) {
+            const defaultSessionId = filteredSessions[filteredSessions.length - 1]?.id;
+            setSelectedSession(defaultSessionId);
+        }
+    }, [selectedPromo, allsessions]);
 
     useEffect(() => {
         if (!selectedSession) return;
@@ -33,29 +59,8 @@ const Chart = () => {
             .catch((err) => console.error('Error fetching chart data:', err));
     }, [selectedSession]);
 
-    useEffect(() => {
-        const allPromo = [
-            ...new Set(
-                allsessions
-                    .filter((e) => e.name.includes(':'))
-                    .map((promo) => promo.name.slice(0, promo.name.indexOf(':')).trim())
-            ),
-        ];
-        setAllPromo(allPromo);
-    }, [allsessions]);
-
-    useEffect(() => {
-        if (AllPromo.length > 0) {
-            setSelectedPromo(AllPromo[0]);
-        }
-    }, [AllPromo]);
-
-    useEffect(() => {
-        if (!selectedPromo) return;
-
-        const newtab = allsessions.filter((session) => session.name.includes(selectedPromo));
-        setAllSessions(newtab);
-    }, [selectedPromo, allsessions]);
+    console.log('Selected Session:', selectedSession);
+    console.log('Selected Promo:', selectedPromo);
 
     return (
         <Card className="w-full">
@@ -68,7 +73,7 @@ const Chart = () => {
                 </div>
 
                 <div className="flex flex-col lg:w-[30%] w-full gap-5">
-                    <Select value={selectedPromo} onValueChange={(value) => setSelectedPromo(value)}>
+                    <Select value={selectedPromo || ''} onValueChange={(value) => setSelectedPromo(value)}>
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select Promo" />
                         </SelectTrigger>
@@ -81,13 +86,13 @@ const Chart = () => {
                         </SelectContent>
                     </Select>
 
-                    <Select value={selectedSession} onValueChange={(value) => setSelectedSession(value)}>
+                    <Select value={selectedSession?.toString() || ''} onValueChange={(value) => setSelectedSession(value)}>
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select Session" />
                         </SelectTrigger>
                         <SelectContent>
                             {AllSessions?.map((session) => (
-                                <SelectItem key={session.id} value={session.id}>
+                                <SelectItem key={session.id} value={session.id.toString()}>
                                     {session.name}
                                 </SelectItem>
                             ))}
