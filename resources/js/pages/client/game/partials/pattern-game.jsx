@@ -410,9 +410,9 @@ export function PatternGame({ data: formDataProp }) {
             const totalPoints = next.reduce((acc, level) => acc + (level.totalScore || 0), 0);
 
             // logggggggggggggggggggggggggggggg
-            console.log('Total Correct Answers:', totalCorrectAnswers);
-            console.log('Total Points:', totalPoints);
-            console.log('Score:', score, 'Correct:', isCorrect, 'Time:', timeTaken);
+            // console.log('Total Correct Answers:', totalCorrectAnswers);
+            // console.log('Total Points:', totalPoints);
+            // console.log('Score:', score, 'Correct:', isCorrect, 'Time:', timeTaken);
             // logggggggggggggggggggggggggggggg
 
             return next;
@@ -524,7 +524,7 @@ export function PatternGame({ data: formDataProp }) {
                 intelligence_level: totalScore,
             };
 
-console.log(formData);
+// console.log(formData);
 
             // Submit the form data to create participant
            router.post(`/participants/store?type=${formData.formation_field}`, submissionData, {
