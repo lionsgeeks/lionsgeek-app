@@ -24,7 +24,8 @@ import {
     Edit,
     XCircle,
     ArrowRight,
-    X
+    X,
+    XCircle
 } from 'lucide-react';
 import { AdminNotesSection } from './partials/admin-notes-section';
 import { FrequentQuestionsSection } from './partials/frequent-questions-section';
