@@ -92,18 +92,18 @@ export default function Press() {
                 <div className="bg-[#212529] py-8 text-white">
                     <div className="flex items-center justify-between px-6">
                         <div className="flex items-center gap-3">
-                            <div className="rounded-lg bg-[#fee819] p-3">
+                            <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
                                 <Newspaper className="h-8 w-8 text-[#212529]" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold">Press Releases</h1>
-                                <p className="mt-1 text-gray-300">Manage and showcase all your press coverage and media mentions</p>
+                                <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Press Releases</h1>
+                                <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage and showcase all your press coverage and media mentions</p>
                             </div>
                         </div>
                         {/* Modal Add press*/}
                         <Dialog open={isOpen} onOpenChange={setIsOpen}>
                             <DialogTrigger asChild>
-                                <Button className="flex transform cursor-pointer items-center rounded-lg bg-[#fee819] p-2 text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
                                     <Plus className="mr-2 h-4 w-4" />
                                     Add Press
                                 </Button>
@@ -138,11 +138,10 @@ export default function Press() {
                                                     key={language}
                                                     type="button"
                                                     onClick={() => setTab(language)}
-                                                    className={`flex-1 rounded-md px-3 py-2 font-medium transition-all duration-200 ${
-                                                        tab === language
+                                                    className={`flex-1 rounded-md px-3 py-2 font-medium transition-all duration-200 ${tab === language
                                                             ? 'bg-[#212529] text-white shadow-sm'
                                                             : 'bg-transparent text-gray-600 hover:bg-gray-200'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     {language}
                                                 </button>

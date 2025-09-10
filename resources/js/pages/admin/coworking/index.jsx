@@ -62,12 +62,12 @@ export default function CoworkingAdmin() {
                     <div className="mx-auto max-w-7xl px-6">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3">
+                                <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
                                     <Briefcase className="h-8 w-8 text-[#212529]" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold">Coworking Management</h1>
-                                    <p className="mt-1 text-gray-300">Manage coworking space requests and applications</p>
+                                    <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Coworking Management</h1>
+                                    <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage coworking space requests and applications</p>
                                 </div>
                             </div>
                             <div className="flex gap-3">

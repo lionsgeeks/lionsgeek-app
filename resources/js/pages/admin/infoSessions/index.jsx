@@ -97,12 +97,12 @@ export default function InfoSessions() {
                         <div className="mx-auto max-w-7xl px-6">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <div className="rounded-lg bg-[#fee819] p-3">
+                                    <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
                                         <GraduationCap className="h-8 w-8 text-[#212529]" />
                                     </div>
                                     <div>
-                                        <h1 className="text-3xl font-bold">Info Sessions Management</h1>
-                                        <p className="mt-1 text-gray-300">Manage informational sessions and training programs</p>
+                                        <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Info Sessions Management</h1>
+                                        <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage informational sessions and training programs</p>
                                     </div>
                                 </div>
                                 <CreateSessionModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
