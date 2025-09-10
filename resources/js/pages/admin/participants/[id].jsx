@@ -22,6 +22,7 @@ import {
     Star,
     BookOpen,
     Edit,
+    XCircle,
     ArrowRight,
     X
 } from 'lucide-react';

@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { router, useForm } from '@inertiajs/react';
+import { router, useForm, Link } from '@inertiajs/react';
 import { ArrowRight, CheckCircle2, Clock, Mail, MapPin, User, X, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
@@ -78,10 +78,10 @@ const ParticipantCard = ({ participant }) => {
     };
 
     return (
-        <Card
-            className="flex h-full transform cursor-pointer flex-col overflow-hidden rounded-lg border bg-white p-0 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl"
-            onClick={() => router.visit(`/admin/participants/${participant.id}`)}
-        >
+        <Link href={`/admin/participants/${participant.id}`} className="block">
+            <Card
+                className="flex h-full transform cursor-pointer flex-col overflow-hidden rounded-lg border bg-white p-0 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl"
+            >
             <div className="relative">
                 {participant.image ? (
                     <img
@@ -164,7 +164,7 @@ const ParticipantCard = ({ participant }) => {
                 </div>
 
                 {/* Action Buttons - Always same height */}
-                <div className="mt-4 flex min-h-[44px] items-center border-t pt-3" onClick={(e) => e.stopPropagation()}>
+                <div className="mt-4 flex min-h-[44px] items-center border-t pt-3" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                     {participant?.status === 'pending' ? (
                         <div className="flex w-full gap-2">
                             <Button
@@ -228,7 +228,8 @@ const ParticipantCard = ({ participant }) => {
                     )}
                 </div>
             </CardContent>
-        </Card>
+            </Card>
+        </Link>
     );
 };
 
