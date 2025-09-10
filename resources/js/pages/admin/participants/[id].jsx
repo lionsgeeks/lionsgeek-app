@@ -34,6 +34,24 @@ import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-sect
 export default function ParticipantProfilePage() {
     const { participant } = usePage().props;
 
+    // Compute derived game metrics for display
+    const totalLevelsConst = 20; // matches game plan length
+    const maxSpeedLevelsPerMin = 5; // as specified
+    const levelsCompletedVal = Number(participant?.levels_completed || 0);
+    const correctAnswersVal = Number(participant?.correct_answers || 0);
+    const totalAttemptsVal = Number(participant?.total_attempts || 0);
+    const timeSpentSecVal = Number(participant?.time_spent || 0);
+
+    const accuracyPct = totalAttemptsVal > 0 ? (correctAnswersVal / totalAttemptsVal) * 100 : 0;
+    const progressPct = totalLevelsConst > 0 ? (levelsCompletedVal / totalLevelsConst) * 100 : 0;
+    const timeSpentMin = Math.max(0.001, timeSpentSecVal / 60);
+    const rawSpeed = levelsCompletedVal / timeSpentMin; // levels per minute
+    const normalizedSpeedPct = maxSpeedLevelsPerMin > 0 ? (rawSpeed / maxSpeedLevelsPerMin) * 100 : 0;
+
+    const displayFinalScore = participant?.final_score ?? Math.round(
+        Math.max(0, Math.min(100, (accuracyPct * 0.5) + (progressPct * 0.3) + (normalizedSpeedPct * 0.2)))
+    );
+
     if (!participant) {
         return (
             <AppLayout>
@@ -411,20 +429,10 @@ export default function ParticipantProfilePage() {
 
                         {/* Game Results */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardHeader className="pb-3 flex items-center justify-between">
+                            <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center text-[#212529]">
                                     <Star className="w-5 h-5" />
                                     Game Results
-                                </CardTitle>
-                                <CardTitle className="flex items-center gap-2 text-[#212529] pr-5">
-                                    <div className="text-sm font-medium text-[#212529] flex gap-1 px-5 py-1.5 rounded-full bg-black/5">
-                                        <h1>
-                                            {participant.intelligence_level}
-                                        </h1>
-                                        <h1>
-                                            points
-                                        </h1>
-                                    </div>
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -453,18 +461,12 @@ export default function ParticipantProfilePage() {
                                     <div className="text-sm font-medium text-[#212529]">{participant.time_spent_formatted || (participant.time_spent ? `${participant.time_spent}s` : '-')}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Intelligence level</div>
-                                    <div className="flex gap-5">
-                                        <div className="text-sm font-medium text-[#212529]">
-                                        {(() => {
-                                            const points = Number(participant.intelligence_level) || 0;
-                                            if (points > 90) return "Very High";
-                                            else if (points > 60) return "High";
-                                            else if (points > 30) return "Medium";
-                                            else return "Low";
-                                        })()}
-                                        </div>
-                                    </div>
+                                    <div className="text-xs text-gray-500 mb-1">Accuracy</div>
+                                    <div className="text-sm font-medium text-[#212529]">{accuracyPct.toFixed(2)}%</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Final Score</div>
+                                    <div className="text-sm font-medium text-[#212529]">{displayFinalScore}</div>
                                 </div>
                                 </CardContent>
                         </Card>
