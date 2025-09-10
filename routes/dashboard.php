@@ -12,11 +12,13 @@ use Inertia\Inertia;
 
 use App\Models\Newsletter;
 use App\Models\Participant;
+use App\Models\User;
 
 use App\Http\Controllers\CustomEmailController;
 use App\Models\InfoSession;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
+use App\Http\Controllers\UserController;
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::get('dashboard', function () {
@@ -42,6 +44,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
         $allSessions = InfoSession::all();
         $coworkingsRequest = Coworking::all();
         $newsLetter = Newsletter::all();
+        $users = User::orderBy('created_at', 'asc')->get(['id','name','email','created_at','last_login_at']);
+
         return Inertia::render('dashboard', [
             'totalContacts' => $totalContacts,
             'members' => $members,
@@ -54,9 +58,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
             'allsessions' => $allSessions,
             'coworkingsRequest' => $coworkingsRequest,
             'newsLetter' => $newsLetter,
-            'participants' => $participants
+            'participants' => $participants,
+            'users' => $users
         ]);
     })->name('dashboard');
+
+    Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('admin.reset-password');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('user.delete');
 
     Route::put('/email/markread/{message}', [ContactController::class, 'toggleRead'])->name('email.markread');
     Route::post('/messages/send', [CustomEmailController::class, 'store'])->name('messages.send');
