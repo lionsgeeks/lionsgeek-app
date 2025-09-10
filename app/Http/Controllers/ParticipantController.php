@@ -242,12 +242,28 @@ class ParticipantController extends Controller
     private function trimStringInputs(Request $request): void
     {
         $stringFields = [
-            'formation_field', 'full_name', 'email', 'phone', 'city', 'region', 'other_city',
-            'diploma_institution', 'diploma_specialty', 'other_status',
-            'referring_organization', 'other_organization', 'previous_training_details',
-            'why_join_formation', 'lionsgeek_activity', 'other_activity',
-            'objectives_after_formation', 'priority_learning_topics', 'last_self_learned',
-            'how_heard_about_formation', 'current_commitments', 'time_spent_formatted'
+            'formation_field',
+            'full_name',
+            'email',
+            'phone',
+            'city',
+            'region',
+            'other_city',
+            'diploma_institution',
+            'diploma_specialty',
+            'other_status',
+            'referring_organization',
+            'other_organization',
+            'previous_training_details',
+            'why_join_formation',
+            'lionsgeek_activity',
+            'other_activity',
+            'objectives_after_formation',
+            'priority_learning_topics',
+            'last_self_learned',
+            'how_heard_about_formation',
+            'current_commitments',
+            'time_spent_formatted'
         ];
 
         foreach ($stringFields as $field) {
@@ -388,8 +404,8 @@ class ParticipantController extends Controller
         // Generate unique filename with timestamp
         $cvFileName = time() . '_' . $cvFile->getClientOriginalName();
 
-        // Store the file
-        $cvFile->storeAs('/cvs', $cvFileName);
+        // Store the file in the public disk
+        $cvFile->storeAs('cvs', $cvFileName, 'public');
 
         return $cvFileName;
     }
@@ -552,7 +568,9 @@ class ParticipantController extends Controller
         $normalizedSpeed = $maxSpeed > 0 ? ($rawSpeed / $maxSpeed) * 100.0 : 0.0;
 
         // Clamp helper
-        $clamp = function (float $v): float { return max(0.0, min(100.0, $v)); };
+        $clamp = function (float $v): float {
+            return max(0.0, min(100.0, $v));
+        };
 
         $accuracy = $clamp($accuracy);
         $progress = $clamp($progress);
