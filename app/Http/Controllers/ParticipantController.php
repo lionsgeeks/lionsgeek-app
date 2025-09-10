@@ -71,7 +71,7 @@ class ParticipantController extends Controller
 
     /**
      * Store a newly created participant in storage.
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
@@ -233,7 +233,6 @@ class ParticipantController extends Controller
             'wrong_attempts' => 'nullable|integer|min:0|max:10000',
             'time_spent' => 'nullable|integer|min:0|max:86400', // Max 24 hours
             'time_spent_formatted' => 'nullable|string|max:20',
-            'intelligence_level' => 'integer|min:0|max:1000',
         ], $messages);
     }
 
@@ -255,11 +254,11 @@ class ParticipantController extends Controller
             if ($request->has($field) && is_string($request->input($field))) {
                 // Trim whitespace and sanitize input
                 $value = trim($request->input($field));
-                
+
                 // Remove potentially dangerous characters
                 $value = strip_tags($value);
                 $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-                
+
                 $request->merge([$field => $value]);
             }
         }
@@ -389,8 +388,8 @@ class ParticipantController extends Controller
         // Generate unique filename with timestamp
         $cvFileName = time() . '_' . $cvFile->getClientOriginalName();
 
-        // Store the file in the public disk
-        $cvFile->storeAs('cvs', $cvFileName, 'public');
+        // Store the file
+        $cvFile->storeAs('/cvs', $cvFileName);
 
         return $cvFileName;
     }
@@ -444,7 +443,14 @@ class ParticipantController extends Controller
 
         // Generate unique code
         $code = $request->full_name . Carbon::now()->format('h:i:s');
-        // dd($request->all());
+
+        // Compute game scoring if metrics are present
+        $levelsCompleted = (int) $request->input('levels_completed', 0);
+        $correctAnswers = (int) $request->input('correct_answers', 0);
+        $totalAttempts = (int) $request->input('total_attempts', 0);
+        $timeSpentSeconds = (int) $request->input('time_spent', 0);
+        $scoring = $this->calculateFinalScore($levelsCompleted, $correctAnswers, $totalAttempts, $timeSpentSeconds);
+
         return Participant::create([
             // Basic Information
             'info_session_id' => $request->info_session_id,
@@ -497,19 +503,71 @@ class ParticipantController extends Controller
             'cv_file' => $cvFileName,
 
             // Game Metrics
-                'game_completed' => $request->boolean('game_completed'),
-                'final_score' => $request->input('final_score'),
-                'correct_answers' => $request->input('correct_answers'),
-                'levels_completed' => $request->input('levels_completed'),
-                'total_attempts' => $request->input('total_attempts'),
-                'wrong_attempts' => $request->input('wrong_attempts'),
-                'time_spent' => $request->input('time_spent'),
-                'time_spent_formatted' => $request->input('time_spent_formatted'),
-                'intelligence_level' => $request->input('intelligence_level'),
+            'game_completed' => $request->boolean('game_completed'),
+            'final_score' => $scoring['finalScore'],
+            'correct_answers' => $correctAnswers,
+            'levels_completed' => $levelsCompleted,
+            'total_attempts' => $totalAttempts,
+            'wrong_attempts' => (int) $request->input('wrong_attempts', max(0, $totalAttempts - $correctAnswers)),
+            'time_spent' => $timeSpentSeconds,
+            'time_spent_formatted' => $request->input('time_spent_formatted'),
 
             // Status
             'status' => Participant::STATUS_PENDING,
         ]);
+    }
+
+
+    /**
+     * Calculate game scoring metrics and final score.
+     *
+     * @return array{accuracy: float, progress: float, speed: float, finalScore: int}
+     */
+    private function calculateFinalScore(
+        int $levelsCompleted,
+        int $correctAnswers,
+        int $totalAttempts,
+        int $timeSpentSeconds,
+        int $totalLevels = 20,
+        float $maxSpeed = 5.0
+    ): array {
+        $totalAttempts = max(0, $totalAttempts);
+        $correctAnswers = max(0, $correctAnswers);
+        $levelsCompleted = max(0, min($levelsCompleted, $totalLevels));
+        $timeSpentSeconds = max(0, $timeSpentSeconds);
+
+        // 1) Accuracy
+        $accuracy = $totalAttempts > 0
+            ? ($correctAnswers / $totalAttempts) * 100.0
+            : 0.0;
+
+        // 2) Progress
+        $progress = $totalLevels > 0
+            ? ($levelsCompleted / $totalLevels) * 100.0
+            : 0.0;
+
+        // 3) Speed (normalized)
+        $timeSpentMinutes = max(0.001, $timeSpentSeconds / 60.0); // avoid division by zero
+        $rawSpeed = $levelsCompleted / $timeSpentMinutes; // levels per minute
+        $normalizedSpeed = $maxSpeed > 0 ? ($rawSpeed / $maxSpeed) * 100.0 : 0.0;
+
+        // Clamp helper
+        $clamp = function (float $v): float { return max(0.0, min(100.0, $v)); };
+
+        $accuracy = $clamp($accuracy);
+        $progress = $clamp($progress);
+        $normalizedSpeed = $clamp($normalizedSpeed);
+
+        // 4) Final score with weights
+        $finalScoreFloat = ($accuracy * 0.5) + ($progress * 0.3) + ($normalizedSpeed * 0.2);
+        $finalScore = (int) round($clamp($finalScoreFloat));
+
+        return [
+            'accuracy' => round($accuracy, 2),
+            'progress' => round($progress, 2),
+            'speed' => round($normalizedSpeed, 2),
+            'finalScore' => $finalScore,
+        ];
     }
 
     /**
@@ -679,7 +737,7 @@ class ParticipantController extends Controller
     {
         //
     }
-    // Change participant current step 
+    // Change participant current step
     public function step(Request $request, Participant $participant)
     {
         $request->validate([
@@ -992,7 +1050,7 @@ class ParticipantController extends Controller
                         'redirectUrl' => config('app.url')
                     ]);
                 }
-                
+
                 // If already reserved THIS session, show success without sending another email
                 if ($participant->info_session_id === $session->id) {
                     return Inertia::render('client/infoSession/ReservationResult', [
