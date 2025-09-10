@@ -1141,11 +1141,8 @@ class ParticipantController extends Controller
             // Build and send QR-coded invitation email
             try {
                 $qrPayload = json_encode([
-                    'participant_id' => $participant->id,
-                    'participant_name' => $participant->full_name,
-                    'info_session_id' => $session->id,
-                    'info_session_name' => $session->name,
-                    'start_date' => $session->start_date,
+                   "code" => $participant->code,
+                    "email" => $participant->email,
                 ]);
 
                 // Generate QR to a temporary file to avoid binary output leaking into the response

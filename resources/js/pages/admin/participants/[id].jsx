@@ -20,10 +20,11 @@ import {
     FileText,
     TrendingUp,
     Star,
+    Trash,
     BookOpen,
     Edit,
     ArrowRight,
-    Trash,
+    X,
     XCircle
 } from 'lucide-react';
 import { AdminNotesSection } from './partials/admin-notes-section';

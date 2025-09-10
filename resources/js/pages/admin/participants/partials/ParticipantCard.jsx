@@ -1,12 +1,38 @@
-import { router, useForm } from '@inertiajs/react';
-import { ArrowRight, CheckCircle2, Clock, Edit, Loader2, Mail, MapPin, Trash, User, X, XCircle } from 'lucide-react';
 import { useState } from 'react';
+import { router, useForm } from '@inertiajs/react';
+import { 
+  ArrowRight, 
+  CheckCircle2, 
+  Clock, 
+  Edit, 
+  Mail, 
+  MapPin, 
+  Trash, 
+  User, 
+  X, 
+  XCircle, 
+  Loader2 
+} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/dialog';
+import { 
+  ContextMenu, 
+  ContextMenuContent, 
+  ContextMenuItem, 
+  ContextMenuSeparator, 
+  ContextMenuTrigger 
+} from '@/components/ui/context-menu';
+import { 
+  Dialog, 
+  DialogClose, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader 
+} from '@/components/ui/dialog';
+
 
 const ParticipantCard = ({ participant }) => {
     if (!participant) return null;
