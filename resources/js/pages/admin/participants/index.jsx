@@ -12,7 +12,10 @@ import ParticipantCard from './partials/ParticipantCard';
 export default function Participants() {
     const { participants = [], infosessions = [], statusCounts = {} } = usePage().props;
     const [filtredParticipants, setFiltredParticipants] = useState(participants);
-    const [selectedStatus, setSelectedStatus] = useState('approved');
+    const params = new URLSearchParams(window.location.search);
+    const statusFromUrl = params.get('status');
+    const initialStatus = ['approved', 'pending', 'rejected', 'all'].includes(statusFromUrl) ? statusFromUrl : 'approved';
+    const [selectedStatus, setSelectedStatus] = useState(initialStatus);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -73,7 +76,10 @@ export default function Participants() {
     // Handle status change without page refresh
     const handleStatusChange = (newStatus) => {
         setSelectedStatus(newStatus);
-        setCurrentPage(1); // Reset to first page when changing status
+        setCurrentPage(1);
+        const params = new URLSearchParams(window.location.search);
+        params.set('status', newStatus);
+        window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
     };
 
     // Pagination handlers
