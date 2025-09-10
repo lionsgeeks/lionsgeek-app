@@ -22,6 +22,7 @@ export default function ParticipantEdit() {
         prefecture: participant?.prefecture || '',
         session: participant?.info_session?.id?.toString() || '',
         step: participant?.current_step || '',
+        formation_field: participant?.formation_field || '',
         image: null,
     });
 
@@ -38,6 +39,7 @@ export default function ParticipantEdit() {
                 prefecture: participant.prefecture || '',
                 session: participant.info_session?.id?.toString() || '',
                 step: participant.current_step || '',
+                formation_field: participant.formation_field || '',
                 image: null,
             });
         }
@@ -69,7 +71,7 @@ export default function ParticipantEdit() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        post(route('participants.update', participant.id), {
+        post(`/admin/participants/${participant.id}`, {
             forceFormData: true,
             onSuccess: () => {
                 router.visit(`/admin/participants/${participant.id}`);
@@ -151,7 +153,6 @@ export default function ParticipantEdit() {
                                             value={data.full_name}
                                             onChange={(e) => setData('full_name', e.target.value)}
                                             className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]"
-                                            required
                                         />
                                         {errors.full_name && <p className="mt-1 text-sm text-red-600">{errors.full_name}</p>}
                                     </div>
@@ -165,7 +166,6 @@ export default function ParticipantEdit() {
                                             value={data.birthday}
                                             onChange={(e) => setData('birthday', e.target.value)}
                                             className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]"
-                                            required
                                         />
                                         {errors.birthday && <p className="mt-1 text-sm text-red-600">{errors.birthday}</p>}
                                     </div>
@@ -183,7 +183,6 @@ export default function ParticipantEdit() {
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
                                             className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]"
-                                            required
                                         />
                                         {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                                     </div>
@@ -197,7 +196,6 @@ export default function ParticipantEdit() {
                                             value={data.phone}
                                             onChange={(e) => setData('phone', e.target.value)}
                                             className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]"
-                                            required
                                         />
                                         {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
                                     </div>
@@ -301,6 +299,23 @@ export default function ParticipantEdit() {
                                         </Select>
                                         {errors.step && <p className="mt-1 text-sm text-red-600">{errors.step}</p>}
                                     </div>
+                                </div>
+
+                                {/* Formation Field */}
+                                <div>
+                                    <Label htmlFor="formation_field" className="mb-2 block text-sm font-semibold text-[#212529]">
+                                        Formation Field:
+                                    </Label>
+                                    <Select value={data.formation_field || ''} onValueChange={(value) => setData('formation_field', value)}>
+                                        <SelectTrigger className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]">
+                                            <SelectValue placeholder="Select formation field" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="coding">Coding</SelectItem>
+                                            <SelectItem value="media">Media</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.formation_field && <p className="mt-1 text-sm text-red-600">{errors.formation_field}</p>}
                                 </div>
 
                                 {/* Profile Image */}

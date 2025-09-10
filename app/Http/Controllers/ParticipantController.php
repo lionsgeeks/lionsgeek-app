@@ -672,15 +672,16 @@ class ParticipantController extends Controller
         $this->validateEmailWithTimeRestrictionForUpdate($request, $participant);
 
         $request->validate([
-            'full_name' => 'required|string',
-            'email' => 'required|email',
-            'birthday' => 'required|date',
-            'phone' => 'required|string|',
-            'city' => 'required|string',
-            'prefecture' => 'required|string',
-            'session' => 'required|exists:info_sessions,id',
-            'step' => 'required|string|in:info_session,interview,interview_pending,interview_failed,jungle,jungle_failed,coding_school,media_school',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif48',
+            'full_name' => 'nullable|string',
+            'email' => 'nullable|email',
+            'birthday' => 'nullable|date',
+            'phone' => 'nullable|string',
+            'city' => 'nullable|string',
+            'prefecture' => 'nullable|string',
+            'session' => 'nullable|exists:info_sessions,id',
+            'step' => 'nullable|string|in:info_session,interview,interview_pending,interview_failed,jungle,jungle_failed,coding_school,media_school',
+            'formation_field' => 'nullable|string|in:coding,media',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ], $messages);
 
         try {
@@ -693,6 +694,7 @@ class ParticipantController extends Controller
                 'prefecture' => $request->prefecture,
                 'info_session_id' => $request->session,
                 'current_step' => $request->step,
+                'formation_field' => $request->formation_field,
             ];
 
             // Calculate age from birthday
