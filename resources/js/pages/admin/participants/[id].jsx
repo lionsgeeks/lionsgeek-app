@@ -23,8 +23,8 @@ import {
     BookOpen,
     Edit,
     ArrowRight,
-    X,
-    Trash
+    Trash,
+    XCircle
 } from 'lucide-react';
 import { AdminNotesSection } from './partials/admin-notes-section';
 import { FrequentQuestionsSection } from './partials/frequent-questions-section';
