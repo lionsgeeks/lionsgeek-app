@@ -53,10 +53,10 @@
         'actionText' => $actionText,
     ]
 ) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
-<p style="text-align: center; font-size:smaller; ">
+{{-- <p style="text-align: center; font-size:smaller; ">
     If you no longer wish to receive these emails, you can
     <a href="{{ $unsubscribeUrl }}">unsubscribe here</a>.
-</p>
+</p> --}}
 </x-slot:subcopy>
 @endisset
 </x-mail::message>
