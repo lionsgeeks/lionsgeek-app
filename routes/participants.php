@@ -20,6 +20,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/participants/{participant}/approve', [ParticipantController::class, 'approve'])->name('participants.approve');
     Route::post('/participants/{participant}/reject', [ParticipantController::class, 'reject'])->name('participants.reject');
 
+    // route delete
+    Route::delete('/participants/{id}', [ParticipantController::class, 'destroy'])
+    ->name('participants.destroy');
+
+
+
     Route::resource('participants', ParticipantController::class)->except(['store']);
 });
 Route::post('/participants/store', [ParticipantController::class, 'store'])->name('participants.store')->middleware("infoSession");

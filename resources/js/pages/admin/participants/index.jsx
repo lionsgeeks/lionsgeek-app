@@ -20,6 +20,7 @@ export default function Participants() {
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const participantsPerPage = 24
+    const { participant } = usePage().props;
 
     const breadcrumbs = [
         {

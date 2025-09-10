@@ -20,6 +20,7 @@ import {
     FileText,
     TrendingUp,
     Star,
+    Trash,
     BookOpen,
     Edit,
     ArrowRight,
@@ -139,6 +140,14 @@ export default function ParticipantProfilePage() {
         ? Number(participant.age)
         : (participant?.birthday ? Math.floor((Date.now() - new Date(participant.birthday).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null);
 
+    const handleDelete = (e) => {
+  e.stopPropagation();
+  router.delete(route("participants.destroy", participant.id), {
+    onSuccess: () => {
+      router.visit("/admin/participants");
+    },
+  });
+};
     function getConfirmationStatus(participant) {
         const step = participant?.current_step;
         if (step === 'jungle') return participant?.confirmation?.jungle;
@@ -213,7 +222,7 @@ export default function ParticipantProfilePage() {
                                             className="border-[#ff7376] bg-[#ff7376] text-white hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
                                             size="sm"
                                         >
-                                            <X className="h-4 w-4 mr-1" />
+                                            <XCircle className="h-4 w-4 mr-1" />
                                             Deny
                                         </Button>
                                     </div>
@@ -262,9 +271,12 @@ export default function ParticipantProfilePage() {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="absolute -bottom-2 -right-2">
+                                    <div className="absolute -bottom-2 -right-2 flex flex-col gap-15">
                                         <div onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)} className="bg-[#fee819] rounded-full p-1">
                                             <Edit className="w-4 h-4 text-[#212529] cursor-pointer" />
+                                        </div>
+                                        <div onClick={handleDelete} className="bg-[#fee819] rounded-full p-1">
+                                            <Trash className="w-4 h-4 text-[#292121] cursor-pointer" />
                                         </div>
                                     </div>
                                 </div>
