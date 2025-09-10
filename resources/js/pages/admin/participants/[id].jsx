@@ -22,7 +22,6 @@ import {
     Star,
     BookOpen,
     Edit,
-    XCircle,
     ArrowRight,
     X,
     XCircle
