@@ -50,23 +50,23 @@ const Dashboard = () => {
                     {/* Header Section */}
                     <div className="bg-[#212529] py-8 text-white">
                         <div className="mx-auto max-w-7xl px-6">
-                            <div className="flex items-center justify-between">
+                            <div className="flex items- justify-between">
                                 <div className="flex items-center gap-3">
-                                    <div className="rounded-lg bg-[#fee819] p-3">
-                                        <BarChart3 className="h-8 w-8 text-[#212529]" />
+                                    <div className="rounded-lg bg-[#fee819] lg:flex hidden p-3">
+                                        <BarChart3 className="lg:h-8 h-4 lg:w-8 w-4 text-[#212529]" />
                                     </div>
                                     <div>
-                                        <h1 className="text-3xl font-bold capitalize">Hello {auth.user.name}</h1>
-                                        <p className="mt-1 text-gray-300">Overview of your system metrics and activities</p>
+                                        <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Hello {auth.user.name}</h1>
+                                        <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] ">Overview of your system metrics and activities</p>
                                     </div>
                                 </div>
 
                                 {/* Dialog outside of Select for admin info */}
                                 <Dialog open={isOpen} onOpenChange={setIsOpen}>
                                     <DialogTrigger asChild>
-                                        <Button className="flex transform cursor-pointer items-center rounded-lg bg-[#fee819] p-2 text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                                            <Plus className="mr-2 h-4 w-4" />
-                                            Add Admin
+                                        <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit w-1/3 text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                            <Plus className="mr-2 h-4 w-4 lg:flex hidden" />
+                                            <p className=''>Add Admin</p>
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent>

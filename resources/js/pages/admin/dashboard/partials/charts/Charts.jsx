@@ -36,7 +36,7 @@ const Chart = () => {
     return (
         <Card className="w-full">
             {/* Header with title + select */}
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex lg:flex-row flex-col lg:gap-5 gap-10 lg:items-center justify-between">
                 {/* <div className="flex items-center gap-2">
                     <BarChart2 color="#ffc803" className="h-6 w-6" />
                     </div> */}
@@ -49,7 +49,7 @@ const Chart = () => {
                 </div>
 
                 <Select value={selectedSession} onValueChange={(value) => setSelectedSession(value)}>
-                    <SelectTrigger className="w-[20%]">
+                    <SelectTrigger className="lg:w-[20%] w-full">
                         <SelectValue placeholder="Select Session" />
                     </SelectTrigger>
                     <SelectContent>
@@ -64,7 +64,7 @@ const Chart = () => {
 
             {/* Content with charts */}
             <CardContent>
-                <div className="flex flex-row-reverse gap-5">
+                <div className="flex lg:flex-row-reverse gap-5 flex-col ">
                     <DonutChart pieChart={pieChart} id={selectedSession} />
                     <BarChart barChart={barChart} />
                 </div>

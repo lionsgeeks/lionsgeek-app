@@ -19,7 +19,7 @@ const NewsLetter = () => {
                         <h2 className="text-lg font-semibold text-[#212529]">Recent Newsletters</h2>
                     </div>
                     <Link href="/admin/newsletter">
-                        <Button variant="outline" size="sm" className="bg-beta text-white hover:bg-alpha hover:text-beta">
+                        <Button variant="outline" size="sm" className="bg-beta lg:flex hidden text-white hover:bg-alpha hover:text-beta">
                             View All
                         </Button>
                     </Link>
@@ -44,7 +44,7 @@ const NewsLetter = () => {
                                     <h3 className="truncate font-semibold text-[#212529]">{item.subject}</h3>
                                     <p className="mt-1 line-clamp-2 text-sm text-gray-600">{item.content}</p>
                                 </div>
-                                <div className="flex-shrink-0 text-xs text-gray-400">{dayjs(item.created_at).format('YYYY-MM-DD')}</div>
+                                <div className="flex-shrink-0 lg:flex hidden text-xs text-gray-400">{dayjs(item.created_at).format('YYYY-MM-DD')}</div>
                             </div>
                         </Link>
                     ))}

@@ -32,7 +32,7 @@ type ChartBarStackedProps = {
 
 export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
     return (
-        <div className="w-1/2">
+        <div className="w-full lg:w-1/2">
             <Card>
                 {/* <CardHeader>
                         <CardTitle>Bar Chart - Stacked + Legend</CardTitle>

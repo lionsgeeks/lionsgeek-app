@@ -14,7 +14,7 @@ const CoworkingRequests = () => {
                     </div>
                     <h2 className="text-lg font-semibold text-[#212529]">Coworking Requests</h2>
                 </div>
-                <Link href="/admin/coworking" className="rounded-lg bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black">
+                <Link href="/admin/coworking" className="rounded-lg bg-beta px-3 py-1 lg:flex hidden text-white hover:bg-alpha hover:text-black">
                     View All
                 </Link>{' '}
             </div>

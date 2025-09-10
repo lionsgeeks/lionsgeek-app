@@ -19,7 +19,7 @@ const UnreadMessages = () => {
                         <h2 className="text-lg font-semibold text-[#212529]">Recent Messages</h2>
                     </div>
                     <Link href="/admin/contacts">
-                        <Button variant="outline" size="sm" className="bg-beta text-white hover:bg-alpha hover:text-beta">
+                        <Button variant="outline" size="sm" className="bg-beta lg:flex hidden text-white hover:bg-alpha hover:text-beta">
                             View All
                         </Button>
                     </Link>
@@ -39,7 +39,7 @@ const UnreadMessages = () => {
                             href={'/admin/contacts?message=' + message.id}
                             className="block rounded-lg border-b-2 p-4 transition-all duration-300 hover:bg-gray-200"
                         >
-                            <div className="flex items-start justify-between gap-4">
+                            <div className="flex lg:flex-row flex-col-reverse items-start justify-between gap-4">
                                 <div className="min-w-0 flex-1">
                                     <h3 className="truncate font-semibold text-[#212529]">{message.full_name}</h3>
                                     <p className="mt-1 line-clamp-2 text-sm text-gray-600">{message.message}</p>
