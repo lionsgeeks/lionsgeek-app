@@ -1,5 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage, router } from '@inertiajs/react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,7 @@ import { MotivationSection } from './partials/motivation-section';
 import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-section';
 export default function ParticipantProfilePage() {
     const { participant } = usePage().props;
+    const [isProcessing, setIsProcessing] = useState(false);
 
     // Compute derived game metrics for display
     const totalLevelsConst = 20; // matches game plan length
@@ -149,6 +151,22 @@ export default function ParticipantProfilePage() {
         });
     };
 
+    const handleApprove = () => {
+        setIsProcessing(true);
+        router.post(`/admin/participants/${participant.id}/approve`, {}, {
+            onFinish: () => setIsProcessing(false),
+            onError: () => setIsProcessing(false)
+        });
+    };
+
+    const handleReject = () => {
+        setIsProcessing(true);
+        router.post(`/admin/participants/${participant.id}/reject`, {}, {
+            onFinish: () => setIsProcessing(false),
+            onError: () => setIsProcessing(false)
+        });
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${participant.full_name} - Participant Details`} />
@@ -199,6 +217,30 @@ export default function ParticipantProfilePage() {
                                         </Button>
                                     </div>
                                 )}
+
+                            {participant?.status === 'pending' && (
+                                <div className="flex w-full gap-2">
+                                    <Button
+                                        onClick={handleApprove}
+                                        disabled={isProcessing}
+                                        className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
+                                        size="sm"
+                                    >
+                                        <CheckCircle2 className="mr-1 h-4 w-4" />
+                                        {isProcessing ? 'Approving...' : 'Approve'}
+                                    </Button>
+                                    <Button
+                                        onClick={handleReject}
+                                        disabled={isProcessing}
+                                        variant="outline"
+                                        className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
+                                        size="sm"
+                                    >
+                                        <XCircle className="mr-1 h-4 w-4" />
+                                        {isProcessing ? 'Rejecting...' : 'Reject'}
+                                    </Button>
+                                </div>
+                            )}
                             </div>
                         </div>
 
