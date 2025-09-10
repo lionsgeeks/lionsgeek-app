@@ -80,7 +80,7 @@ const Chart = () => {
                         <SelectContent>
                             {AllPromo?.map((promo, index) => (
                                 <SelectItem key={index} value={promo}>
-                                    {promo}
+                                    {promo[0].toUpperCase()+promo.slice(1)}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -93,7 +93,7 @@ const Chart = () => {
                         <SelectContent>
                             {AllSessions?.map((session) => (
                                 <SelectItem key={session.id} value={session.id.toString()}>
-                                    {session.name}
+                                    {session.name.slice(session.name.indexOf(':')+1)}
                                 </SelectItem>
                             ))}
                         </SelectContent>
