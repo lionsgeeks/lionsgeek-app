@@ -48,32 +48,18 @@ const Chart = () => {
                     <CardTitle className="text-xl font-semibold">Analyse</CardTitle>
                 </div>
 
-                <div className='w-full'>
-                    <Select value={selectedSession} onValueChange={(value) => setSelectedSession(value)}>
-                        <SelectTrigger className="lg:w-[20%] w-full">
-                            <SelectValue placeholder="Select Session" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {sessions.map((session) => (
-                                <SelectItem key={session.id} value={session.id}>
-                                    {session.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <Select value={selectedSession} onValueChange={(value) => setSelectedSession(value)}>
-                        <SelectTrigger className="lg:w-[20%] w-full">
-                            <SelectValue placeholder="Select Session" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {sessions.map((session) => (
-                                <SelectItem key={session.id} value={session.id}>
-                                    {session.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
+                <Select value={selectedSession} onValueChange={(value) => setSelectedSession(value)}>
+                    <SelectTrigger className="lg:w-[20%] w-full">
+                        <SelectValue placeholder="Select Session" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {sessions.map((session) => (
+                            <SelectItem key={session.id} value={session.id}>
+                                {session.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </CardHeader>
 
             {/* Content with charts */}
