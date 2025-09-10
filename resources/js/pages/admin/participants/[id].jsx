@@ -1,10 +1,18 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head, usePage, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { 
+  Dialog, 
+  DialogClose, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader 
+} from '@/components/ui/dialog';
 import {
     ArrowLeft,
     User,
@@ -34,6 +42,12 @@ import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-sect
 export default function ParticipantProfilePage() {
     const { participant } = usePage().props;
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isDeleteOpened, setIsDeleteOpened] = useState(false);
+    const [selectedParticipant, setSelectedParticipant] = useState(null);
+    const { post, processing } = useForm();
+    
+    
+    
 
     // Compute derived game metrics for display
     const totalLevelsConst = 20; // matches game plan length
@@ -140,9 +154,9 @@ export default function ParticipantProfilePage() {
         ? Number(participant.age)
         : (participant?.birthday ? Math.floor((Date.now() - new Date(participant.birthday).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null);
 
-    const handleDelete = (e) => {
+   const handleDelete = (e) => {
   e.stopPropagation();
-  router.delete(route("participants.destroy", participant.id), {
+ router.delete(`/admin/participants/${participant.id}`, {
     onSuccess: () => {
       router.visit("/admin/participants");
     },
@@ -275,7 +289,7 @@ export default function ParticipantProfilePage() {
                                         <div onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)} className="bg-[#fee819] rounded-full p-1">
                                             <Edit className="w-4 h-4 text-[#212529] cursor-pointer" />
                                         </div>
-                                        <div onClick={handleDelete} className="bg-[#fee819] rounded-full p-1">
+                                        <div onClick={() => setIsDeleteOpened(true)}  className="bg-[#fee819] rounded-full p-1">
                                             <Trash className="w-4 h-4 text-[#292121] cursor-pointer" />
                                         </div>
                                     </div>
@@ -590,6 +604,30 @@ export default function ParticipantProfilePage() {
                                 </div>
                             </CardContent>
                         </Card>
+                        <Dialog open={isDeleteOpened} onOpenChange={setIsDeleteOpened}>
+                                        <DialogContent className="sm:max-w-md">
+                                            <DialogHeader>
+                                                <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
+                                            </DialogHeader>
+                        
+                                            <DialogFooter className="sm:justify-end">
+                                                <DialogClose asChild>
+                                                    <Button onClick={() => setIsUpdateOpened(false)} type="button" variant="secondary">
+                                                        Close
+                                                    </Button>
+                                                </DialogClose>
+                                                <Button onClick={handleDelete} type="button" variant="destructive">
+                                                    {processing ? (
+                                                        <div className="flex gap-3">
+                                                            <Loader2 className="animate-spin" /> Deleting ...{' '}
+                                                        </div>
+                                                    ) : (
+                                                        'Delete'
+                                                    )}
+                                                </Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
 
 
                         {/* Game Results */}
