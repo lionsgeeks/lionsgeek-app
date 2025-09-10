@@ -13,6 +13,12 @@ const ParticipantCard = ({ participant }) => {
     const { post } = useForm();
     const [isProcessing, setIsProcessing] = useState(false);
 
+    // Formation track (coding/media)
+    const formationRaw = (participant?.formation_field ?? participant?.info_session?.formation)?.toString().toLowerCase();
+    const formationLabel = formationRaw === 'coding' ? 'Coding' : formationRaw === 'media' ? 'Media' : null;
+    // Match Export Questions button brand color
+    const formationBadgeClass = 'bg-[#fee819] text-[#212529] border-[#fee819]';
+
     const changeStep = (action) => {
         router.patch(`/admin/participant/current-step/${participant.id}`, {
             action: action,
@@ -91,28 +97,37 @@ const ParticipantCard = ({ participant }) => {
 
                 <div className="absolute top-3 right-3 left-3 flex items-start justify-between">
                     <div className="flex flex-wrap gap-1.5">
-                        <Badge className={`${getStepBadge(participant?.current_step)} w-fit rounded-lg text-xs font-medium`}>
-                            {participant?.current_step?.replaceAll('_', ' ') || 'Unknown'}
-                        </Badge>
+                        {participant?.status === 'pending' ? (
+                            <>
+                                {formationLabel && (
+                                    <Badge className={`rounded-lg text-xs font-medium border ${formationBadgeClass}`}>
+                                        {formationLabel}
+                                    </Badge>
+                                )}
+                                <Badge className="rounded-lg bg-orange-600 text-xs font-medium text-white">
+                                    <Clock className="mr-1 h-3 w-3" />
+                                    Pending Approval
+                                </Badge>
+                            </>
+                        ) : (
+                            <>
+                                <Badge className={`${getStepBadge(participant?.current_step)} w-fit rounded-lg text-xs font-medium`}>
+                                    {participant?.current_step?.replaceAll('_', ' ') || 'Unknown'}
+                                </Badge>
 
-                        {/* Status Badge */}
-                        {participant?.status === 'pending' && (
-                            <Badge className="rounded-lg bg-orange-600 text-xs font-medium text-white">
-                                <Clock className="mr-1 h-3 w-3" />
-                                Pending Approval
-                            </Badge>
-                        )}
-                        {participant?.status === 'rejected' && (
-                            <Badge className="rounded-lg bg-[#ff7376] text-xs font-medium text-white">
-                                <XCircle className="mr-1 h-3 w-3" />
-                                Rejected
-                            </Badge>
-                        )}
-                        {participant?.status === 'approved' && participant?.current_step == 'info_session' &&  (
-                            <Badge className="bg-[#51b04f] text-white rounded-lg text-xs font-medium">
-                                <CheckCircle2 className="h-3 w-3 mr-1" />
-                                Approved
-                            </Badge>
+                                {participant?.status === 'rejected' && (
+                                    <Badge className="rounded-lg bg-[#ff7376] text-xs font-medium text-white">
+                                        <XCircle className="mr-1 h-3 w-3" />
+                                        Rejected
+                                    </Badge>
+                                )}
+                                {participant?.status === 'approved' && participant?.current_step == 'info_session' &&  (
+                                    <Badge className="bg-[#51b04f] text-white rounded-lg text-xs font-medium">
+                                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                                        Approved
+                                    </Badge>
+                                )}
+                            </>
                         )}
                     </div>
                     <div className="flex flex-wrap gap-1.5">
