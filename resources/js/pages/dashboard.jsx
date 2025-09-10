@@ -145,8 +145,8 @@ console.log(auth);
                                 <Dialog open={isOpen} onOpenChange={setIsOpen}> 
                                     <DialogTrigger asChild>
                                         <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit w-1/3 text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                                            <Plus className="mr-2 h-4 w-4 lg:flex hidden" />
-                                            <p className=''>Add Admin</p>
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            <p>Add Admin</p>
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent className="w-[85vw] max-h-[90vh] overflow-y-auto overflow-auto p-3 sm:p-6">

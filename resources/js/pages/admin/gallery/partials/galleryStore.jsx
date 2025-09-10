@@ -73,8 +73,8 @@ export default function GalleryStore({ gallery }) {
                             <Edit className="h-4 w-4" />
                         </div>
                     ) : (
-                        <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                            <Plus className="mr-2 h-4 w-4" />
+                        <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-alpha px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                    <Plus className="mr-2 h-4 w-4 lg:flex hidden" />
                             Create Gallery
                         </Button>
                     )}
