@@ -67,8 +67,8 @@ export default function ProjectModal({ project }) {
                         <Edit className="h-4 w-4" />
                     </div>
                 ) : (
-                    <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                        <Plus className="mr-2 h-4 w-4" />
+                    <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                        <Plus className="mr-2 h-4 w-4 lg:flex hidden" />
                         Create Project
                     </Button>
                 )}
@@ -121,9 +121,8 @@ export default function ProjectModal({ project }) {
                                 <button
                                     key={language}
                                     onClick={() => setTab(language)}
-                                    className={`flex-1 rounded-md px-3 py-2 font-medium transition-all duration-200 ${
-                                        tab === language ? 'bg-[#212529] text-white shadow-sm' : 'bg-transparent text-gray-600 hover:bg-gray-200'
-                                    }`}
+                                    className={`flex-1 rounded-md px-3 py-2 font-medium transition-all duration-200 ${tab === language ? 'bg-[#212529] text-white shadow-sm' : 'bg-transparent text-gray-600 hover:bg-gray-200'
+                                        }`}
                                     type="button"
                                 >
                                     {language}

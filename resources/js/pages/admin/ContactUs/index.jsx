@@ -113,27 +113,25 @@ export default function Index() {
                     <div className="mx-auto max-w-7xl px-6">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3">
+                                <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
                                     <MessageCircle className="h-8 w-8 text-[#212529]" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold">Contact Messages</h1>
-                                    <p className="mt-1 text-gray-300">Manage customer inquiries and communications</p>
+                                    <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Contact Messages</h1>
+                                    <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage customer inquiries and communications</p>
                                 </div>
                             </div>
-                            <div className="flex flex-row-reverse gap-3">
+                            <div className="flex lg:flex-row-reverse flex-col gap-3">
                                 <Button
                                     onClick={handleComposeClick}
-                                    className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
-                                >
-                                    <Plus className="mr-2 h-4 w-4" />
+                                    className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                    <Download className="mr-2 h-4 w-4 lg:flex hidden" />
                                     Compose
                                 </Button>
                                 <Button
                                     onClick={() => (window.location.href = route('messages.export'))}
-                                    className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
-                                >
-                                    <Download className="mr-2 h-4 w-4" />
+                                    className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                    <Download className="mr-2 h-4 w-4 lg:flex hidden" />
                                     Export Excel
                                 </Button>
                             </div>

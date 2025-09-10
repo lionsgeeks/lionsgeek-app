@@ -92,7 +92,7 @@ const Chart = () => {
                         </SelectTrigger>
                         <SelectContent>
                             {AllSessions?.map((session) => (
-                                <SelectItem key={session.id} value={session.id.toString()}>
+                                <SelectItem className='capitalize' key={session.id} value={session.id.toString()}>
                                     {session.name.slice(session.name.indexOf(':')+1)}
                                 </SelectItem>
                             ))}

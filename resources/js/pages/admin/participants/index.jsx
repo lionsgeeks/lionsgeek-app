@@ -110,24 +110,24 @@ export default function Participants() {
                 <div className="bg-[#212529] py-8 text-white">
                     <div className="mx-auto max-w-7xl px-6">
                         <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3">
+                            <div className="flex lg:items-center gap-3">
+                                <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
                                     <Users className="h-8 w-8 text-[#212529]" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold">Participants Management</h1>
-                                    <p className="mt-1 text-gray-300">Manage and track participant progress</p>
+                                    <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Participants Management</h1>
+                                    <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage and track participant progress</p>
                                 </div>
                             </div>
-                            <div className="flex gap-3">
+                            <div className="flex lg:flex-row flex-col items-start gap-3">
                                 <a href="/admin/questions/export">
-                                    <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                    <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
                                         <Download className="mr-2 h-4 w-4" />
                                         Export Questions
                                     </Button>
                                 </a>
                                 <a href={'/admin/participant/export'}>
-                                    <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                    <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
                                         <Download className="mr-2 h-4 w-4" />
                                         Export Students
                                     </Button>
