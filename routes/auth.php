@@ -16,15 +16,15 @@ Route::middleware('guest')->group(function () {
 
     // Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
+    Route::get('geek-in', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('geek-in', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+    Route::get('geek-reset', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+    Route::post('geek-reset', [PasswordResetLinkController::class, 'store'])
         ->name('password.email');
 
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])

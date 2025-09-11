@@ -12,7 +12,7 @@ class DashboardTest extends TestCase
 
     public function test_guests_are_redirected_to_the_login_page()
     {
-        $this->get('/admin/dashboard')->assertRedirect('/login');
+        $this->get('/admin/dashboard')->assertRedirect('/geek-in');
     }
 
     public function test_authenticated_users_can_visit_the_dashboard()
