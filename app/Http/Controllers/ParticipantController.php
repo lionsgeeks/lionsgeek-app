@@ -656,6 +656,11 @@ class ParticipantController extends Controller
     $participants = Participant::where('status', 'pending')
         ->orderBy('id')
         ->get(['id', 'full_name']);
+         $stepParticipant = Participant::where('current_step', '!=', 'info_session') 
+    ->where('current_step', 'not like', '%school%')
+    ->where('current_step', 'not like', '%failed%') 
+    ->orderBy('id')
+    ->get(['id', 'full_name', 'current_step']);
 
     return Inertia::render('admin/participants/[id]', [
         'participant' => $participant->load([
@@ -666,6 +671,7 @@ class ParticipantController extends Controller
             'confirmation'
         ]),
         'participants' => $participants,
+        'stepParticipant' => $stepParticipant,
     ]);
 }
 
