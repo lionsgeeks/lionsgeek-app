@@ -138,10 +138,20 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 	return (
 		<div className="relative space-y-4">
 			{/* Copy Emails aligned with title (top-right) */}
-			<div className="absolute right-0 -top-12">
+			<div className="absolute right-0 -top-12 hidden sm:block">
 				<Button
 					onClick={handleCopyEmails}
 					className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+				>
+					{copy ? <Copy className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
+					{copy ? 'Copy Emails' : 'Copied!'}
+				</Button>
+			</div>
+			{/* Mobile: Copy Emails under the title */}
+			<div className="sm:hidden mt-2">
+				<Button
+					onClick={handleCopyEmails}
+					className="rounded-lg bg-[#212529] text-white transition-colors hover:bg-[#fee819] hover:text-[#212529]"
 				>
 					{copy ? <Copy className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
 					{copy ? 'Copy Emails' : 'Copied!'}
