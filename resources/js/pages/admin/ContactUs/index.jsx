@@ -11,7 +11,9 @@ import { useState } from 'react';
 
 export default function Index() {
     const { messages, selected } = usePage().props;
-    const [activeId, setActiveId] = useState(selected?.id || null);
+    const messageParam = window.location.href.slice(window.location.href.indexOf('=')+1, window.location.href.length);
+    const [activeId, setActiveId] = useState(messageParam || selected?.id || null);
+
     const [isComposing, setIsComposing] = useState(false);
     const [filter, setFilter] = useState('all');
     const [showCc, setShowCc] = useState(false);
@@ -65,7 +67,7 @@ export default function Index() {
         });
     };
 
-    const selectedMessage = activeId ? messages.find((message) => message.id === activeId) : null;
+    const selectedMessage = activeId ? messages.find((message) => message.id == activeId) : null;
 
     const toggleReadStatus = () => {
         router.put(
