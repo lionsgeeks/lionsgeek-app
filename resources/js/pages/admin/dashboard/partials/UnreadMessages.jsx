@@ -36,7 +36,7 @@ const UnreadMessages = () => {
                     {unreadMessages?.map((message) => (
                         <Link
                             key={message.id}
-                            href={'/admin/contacts?message=' + message.id}
+                            href={'/admin/contactus?message='+message.id}
                             className="block rounded-lg border-b-2 p-4 transition-all duration-300 hover:bg-gray-200"
                         >
                             <div className="flex lg:flex-row flex-col-reverse items-start justify-between gap-4">
