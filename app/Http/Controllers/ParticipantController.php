@@ -33,6 +33,7 @@ use App\Models\Satisfaction;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ParticipantController extends Controller
@@ -71,7 +72,7 @@ class ParticipantController extends Controller
 
     /**
      * Store a newly created participant in storage.
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
@@ -242,23 +243,39 @@ class ParticipantController extends Controller
     private function trimStringInputs(Request $request): void
     {
         $stringFields = [
-            'formation_field', 'full_name', 'email', 'phone', 'city', 'region', 'other_city',
-            'diploma_institution', 'diploma_specialty', 'other_status',
-            'referring_organization', 'other_organization', 'previous_training_details',
-            'why_join_formation', 'lionsgeek_activity', 'other_activity',
-            'objectives_after_formation', 'priority_learning_topics', 'last_self_learned',
-            'how_heard_about_formation', 'current_commitments', 'time_spent_formatted'
+            'formation_field',
+            'full_name',
+            'email',
+            'phone',
+            'city',
+            'region',
+            'other_city',
+            'diploma_institution',
+            'diploma_specialty',
+            'other_status',
+            'referring_organization',
+            'other_organization',
+            'previous_training_details',
+            'why_join_formation',
+            'lionsgeek_activity',
+            'other_activity',
+            'objectives_after_formation',
+            'priority_learning_topics',
+            'last_self_learned',
+            'how_heard_about_formation',
+            'current_commitments',
+            'time_spent_formatted'
         ];
 
         foreach ($stringFields as $field) {
             if ($request->has($field) && is_string($request->input($field))) {
                 // Trim whitespace and sanitize input
                 $value = trim($request->input($field));
-                
+
                 // Remove potentially dangerous characters
                 $value = strip_tags($value);
                 $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-                
+
                 $request->merge([$field => $value]);
             }
         }
@@ -444,6 +461,13 @@ class ParticipantController extends Controller
         // Generate unique code
         $code = $request->full_name . Carbon::now()->format('h:i:s');
 
+        // Compute game scoring if metrics are present
+        $levelsCompleted = (int) $request->input('levels_completed', 0);
+        $correctAnswers = (int) $request->input('correct_answers', 0);
+        $totalAttempts = (int) $request->input('total_attempts', 0);
+        $timeSpentSeconds = (int) $request->input('time_spent', 0);
+        $scoring = $this->calculateFinalScore($levelsCompleted, $correctAnswers, $totalAttempts, $timeSpentSeconds);
+
         return Participant::create([
             // Basic Information
             'info_session_id' => $request->info_session_id,
@@ -497,17 +521,72 @@ class ParticipantController extends Controller
 
             // Game Metrics
             'game_completed' => $request->boolean('game_completed'),
-            'final_score' => $request->input('final_score'),
-            'correct_answers' => $request->input('correct_answers'),
-            'levels_completed' => $request->input('levels_completed'),
-            'total_attempts' => $request->input('total_attempts'),
-            'wrong_attempts' => $request->input('wrong_attempts'),
-            'time_spent' => $request->input('time_spent'),
+            'final_score' => $scoring['finalScore'],
+            'correct_answers' => $correctAnswers,
+            'levels_completed' => $levelsCompleted,
+            'total_attempts' => $totalAttempts,
+            'wrong_attempts' => (int) $request->input('wrong_attempts', max(0, $totalAttempts - $correctAnswers)),
+            'time_spent' => $timeSpentSeconds,
             'time_spent_formatted' => $request->input('time_spent_formatted'),
 
             // Status
             'status' => Participant::STATUS_PENDING,
         ]);
+    }
+
+
+    /**
+     * Calculate game scoring metrics and final score.
+     *
+     * @return array{accuracy: float, progress: float, speed: float, finalScore: int}
+     */
+    private function calculateFinalScore(
+        int $levelsCompleted,
+        int $correctAnswers,
+        int $totalAttempts,
+        int $timeSpentSeconds,
+        int $totalLevels = 20,
+        float $maxSpeed = 5.0
+    ): array {
+        $totalAttempts = max(0, $totalAttempts);
+        $correctAnswers = max(0, $correctAnswers);
+        $levelsCompleted = max(0, min($levelsCompleted, $totalLevels));
+        $timeSpentSeconds = max(0, $timeSpentSeconds);
+
+        // 1) Accuracy
+        $accuracy = $totalAttempts > 0
+            ? ($correctAnswers / $totalAttempts) * 100.0
+            : 0.0;
+
+        // 2) Progress
+        $progress = $totalLevels > 0
+            ? ($levelsCompleted / $totalLevels) * 100.0
+            : 0.0;
+
+        // 3) Speed (normalized)
+        $timeSpentMinutes = max(0.001, $timeSpentSeconds / 60.0); // avoid division by zero
+        $rawSpeed = $levelsCompleted / $timeSpentMinutes; // levels per minute
+        $normalizedSpeed = $maxSpeed > 0 ? ($rawSpeed / $maxSpeed) * 100.0 : 0.0;
+
+        // Clamp helper
+        $clamp = function (float $v): float {
+            return max(0.0, min(100.0, $v));
+        };
+
+        $accuracy = $clamp($accuracy);
+        $progress = $clamp($progress);
+        $normalizedSpeed = $clamp($normalizedSpeed);
+
+        // 4) Final score with weights
+        $finalScoreFloat = ($accuracy * 0.5) + ($progress * 0.3) + ($normalizedSpeed * 0.2);
+        $finalScore = (int) round($clamp($finalScoreFloat));
+
+        return [
+            'accuracy' => round($accuracy, 2),
+            'progress' => round($progress, 2),
+            'speed' => round($normalizedSpeed, 2),
+            'finalScore' => $finalScore,
+        ];
     }
 
     /**
@@ -572,19 +651,25 @@ class ParticipantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Participant $participant)
-    {
-        // dd($participant);
-        return Inertia::render('admin/participants/[id]', [
-            'participant' => $participant->load([
-                'infoSession',
-                'notes',
-                'questions',
-                'satisfaction',
-                'confirmation'
-            ])
-        ]);
-    }
+   public function show(Participant $participant)
+{
+    $participants = Participant::where('status', 'pending')
+        ->orderBy('id')
+        ->get(['id', 'full_name']);
+
+    return Inertia::render('admin/participants/[id]', [
+        'participant' => $participant->load([
+            'infoSession',
+            'notes',
+            'questions',
+            'satisfaction',
+            'confirmation'
+        ]),
+        'participants' => $participants,
+    ]);
+}
+
+    
 
     /**
      * Show the form for editing the specified resource.
@@ -673,10 +758,21 @@ class ParticipantController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
+    public function destroy($id)
+{
+    $participant = Participant::findOrFail($id);
+
+    if ($participant->image && Storage::exists('public/images/participants/' . $participant->image)) {
+        Storage::delete('public/images/participants/' . $participant->image);
     }
+
+    $participant->delete();
+
+return redirect()->route('participants.index')
+                 ->with('success', 'Participant deleted successfully!');
+}
+
+
     // Change participant current step 
     public function step(Request $request, Participant $participant)
     {
@@ -990,7 +1086,7 @@ class ParticipantController extends Controller
                         'redirectUrl' => config('app.url')
                     ]);
                 }
-                
+
                 // If already reserved THIS session, show success without sending another email
                 if ($participant->info_session_id === $session->id) {
                     return Inertia::render('client/infoSession/ReservationResult', [
@@ -1052,11 +1148,8 @@ class ParticipantController extends Controller
             // Build and send QR-coded invitation email
             try {
                 $qrPayload = json_encode([
-                    'participant_id' => $participant->id,
-                    'participant_name' => $participant->full_name,
-                    'info_session_id' => $session->id,
-                    'info_session_name' => $session->name,
-                    'start_date' => $session->start_date,
+                   "code" => $participant->code,
+                    "email" => $participant->email,
                 ]);
 
                 // Generate QR to a temporary file to avoid binary output leaking into the response
@@ -1151,4 +1244,6 @@ class ParticipantController extends Controller
             ]);
         }
     }
+  
+
 }

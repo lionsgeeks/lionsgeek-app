@@ -174,7 +174,7 @@ export const FirstSection = () => {
                             />
                         </div>
                     ) : (
-                        <Button onClick={() => router.post('/grant-postuler-access', { type: 'coding' })}>
+                        <Button onClick={() => router.visit("/postuler?type=coding")}>
                             <TransText fr="Postuler" en="Apply" ar="تقدم بطلب" />
                         </Button>
                     )}

@@ -207,11 +207,11 @@ const Coworking = () => {
                         </div>
 
                         <div className="order-1 flex w-full justify-center lg:order-2 lg:justify-end" ref={rightside}>
-                            <img
+                            {/* <img
                                 src="https://lionsgeek.ma/static/media/Coworking-pana.54ca50c5174b93da3b62.png"
                                 alt="coworking illustration"
                                 className="object-contain"
-                            />
+                            /> */}
                         </div>
                     </div>
 

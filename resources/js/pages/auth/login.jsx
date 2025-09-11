@@ -170,14 +170,14 @@ export default function Login({ status, canResetPassword }) {
                                         <div className="mt-4 flex items-center justify-end">
                                             <a
                                                 href={route('password.request')}
-                                                className="rounded-md text-sm text-gray-300 underline hover:text-gray-900 focus:ring-2 focus:ring-alpha focus:ring-offset-2 focus:outline-none"
+                                                className="rounded-md text-sm text-gray-300 underline hover:text-gray-400 focus:ring-2 focus:ring-alpha focus:ring-offset-2 focus:outline-none transition-all"
                                             >
                                                 Forgot your password?
                                             </a>
 
                                             <button
                                                 type="submit"
-                                                className="ms-3 rounded bg-[#fee819] px-4 py-2 font-semibold text-black disabled:opacity-50"
+                                                className="ms-3 rounded bg-[#fee819] px-4 py-2 font-semibold text-black disabled:opacity-50 cursor-pointer"
                                                 disabled={processing}
                                             >
                                                 Log in

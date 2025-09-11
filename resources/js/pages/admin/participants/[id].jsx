@@ -1,9 +1,18 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head, usePage, router, useForm } from '@inertiajs/react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { 
+  Dialog, 
+  DialogClose, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader 
+} from '@/components/ui/dialog';
 import {
     ArrowLeft,
     User,
@@ -19,20 +28,44 @@ import {
     FileText,
     TrendingUp,
     Star,
-    Award,
+    Trash,
     BookOpen,
     Edit,
-    XCircle,
     ArrowRight,
-    X
+    X,
+    XCircle
 } from 'lucide-react';
 import { AdminNotesSection } from './partials/admin-notes-section';
 import { FrequentQuestionsSection } from './partials/frequent-questions-section';
 import { MotivationSection } from './partials/motivation-section';
-import { ParticipantProfileHeader } from './partials/participant-profile-header';
 import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-section';
 export default function ParticipantProfilePage() {
-    const { participant } = usePage().props;
+const { participant, participants } = usePage().props;
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [isDeleteOpened, setIsDeleteOpened] = useState(false);
+    const [selectedParticipant, setSelectedParticipant] = useState(null);
+    const { post, processing } = useForm();
+    
+    
+    
+
+    // Compute derived game metrics for display
+    const totalLevelsConst = 20; // matches game plan length
+    const maxSpeedLevelsPerMin = 5; // as specified
+    const levelsCompletedVal = Number(participant?.levels_completed || 0);
+    const correctAnswersVal = Number(participant?.correct_answers || 0);
+    const totalAttemptsVal = Number(participant?.total_attempts || 0);
+    const timeSpentSecVal = Number(participant?.time_spent || 0);
+
+    const accuracyPct = totalAttemptsVal > 0 ? (correctAnswersVal / totalAttemptsVal) * 100 : 0;
+    const progressPct = totalLevelsConst > 0 ? (levelsCompletedVal / totalLevelsConst) * 100 : 0;
+    const timeSpentMin = Math.max(0.001, timeSpentSecVal / 60);
+    const rawSpeed = levelsCompletedVal / timeSpentMin; // levels per minute
+    const normalizedSpeedPct = maxSpeedLevelsPerMin > 0 ? (rawSpeed / maxSpeedLevelsPerMin) * 100 : 0;
+
+    const displayFinalScore = participant?.final_score ?? Math.round(
+        Math.max(0, Math.min(100, (accuracyPct * 0.5) + (progressPct * 0.3) + (normalizedSpeedPct * 0.2)))
+    );
 
     if (!participant) {
         return (
@@ -74,6 +107,29 @@ export default function ParticipantProfilePage() {
         });
     };
 
+    // Display helper: turn snake_case or lowercased values into Title Case
+    const humanize = (val) => {
+        if (val === null || val === undefined) return '';
+        const str = String(val).replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+        if (!str) return '';
+        return str
+            .split(' ')
+            .map(w => (w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w))
+            .join(' ');
+    };
+
+    // Helper: interpret various yes/true representations
+    const isAffirmative = (val) => {
+        if (val === true) return true;
+        if (val === false) return false;
+        if (val == null) return false;
+        const s = String(val).trim().toLowerCase();
+        return s === 'yes' || s === 'true' || s === '1' || s === 'oui';
+    };
+
+
+
+
     const getStepColor = (step) => {
         switch (step) {
             case 'info_session':
@@ -93,6 +149,19 @@ export default function ParticipantProfilePage() {
         }
     };
 
+    // Age helper (prefer backend age, fallback to calculating from birthday)
+    const ageValue = (participant?.age && !isNaN(Number(participant.age)))
+        ? Number(participant.age)
+        : (participant?.birthday ? Math.floor((Date.now() - new Date(participant.birthday).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null);
+
+   const handleDelete = (e) => {
+  e.stopPropagation();
+ router.delete(`/admin/participants/${participant.id}`, {
+    onSuccess: () => {
+      router.visit("/admin/participants");
+    },
+  });
+};
     function getConfirmationStatus(participant) {
         const step = participant?.current_step;
         if (step === 'jungle') return participant?.confirmation?.jungle;
@@ -105,6 +174,40 @@ export default function ParticipantProfilePage() {
             action: action,
         });
     };
+   
+   
+const handleNavigation = () => {
+  const currentIndex = participants.findIndex(p => p.id === participant.id);
+  const nextParticipant = participants[currentIndex + 1];
+
+  if (nextParticipant) {
+    router.visit(`/admin/participants/${nextParticipant.id}`);
+  } else {
+    router.visit("/admin/participants");
+  }
+};
+const handleApprove = () => {
+  setIsProcessing(true);
+  router.post(`/admin/participants/${participant.id}/approve`, {}, {
+    onFinish: () => {
+      setIsProcessing(false);
+      handleNavigation(); 
+    },
+    onError: () => setIsProcessing(false),
+  });
+};
+
+const handleReject = () => {
+  setIsProcessing(true);
+  router.post(`/admin/participants/${participant.id}/reject`, {}, {
+    onFinish: () => {
+      setIsProcessing(false);
+      handleNavigation(); 
+    },
+    onError: () => setIsProcessing(false),
+  });
+};
+
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -151,11 +254,35 @@ export default function ParticipantProfilePage() {
                                             className="border-[#ff7376] bg-[#ff7376] text-white hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
                                             size="sm"
                                         >
-                                            <X className="h-4 w-4 mr-1" />
+                                            <XCircle className="h-4 w-4 mr-1" />
                                             Deny
                                         </Button>
                                     </div>
                                 )}
+
+                            {participant?.status === 'pending' && (
+                                <div className="flex w-full gap-2">
+                                    <Button
+                                        onClick={handleApprove}
+                                        disabled={isProcessing}
+                                        className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
+                                        size="sm"
+                                    >
+                                        <CheckCircle2 className="mr-1 h-4 w-4" />
+                                        {isProcessing ? 'Approving...' : 'Approve'}
+                                    </Button>
+                                    <Button
+                                        onClick={handleReject}
+                                        disabled={isProcessing}
+                                        variant="outline"
+                                        className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
+                                        size="sm"
+                                    >
+                                        <XCircle className="mr-1 h-4 w-4" />
+                                        {isProcessing ? 'Rejecting...' : 'Reject'}
+                                    </Button>
+                                </div>
+                            )}
                             </div>
                         </div>
 
@@ -176,9 +303,12 @@ export default function ParticipantProfilePage() {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="absolute -bottom-2 -right-2">
+                                    <div className="absolute -bottom-2 -right-2 flex flex-col gap-15">
                                         <div onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)} className="bg-[#fee819] rounded-full p-1">
                                             <Edit className="w-4 h-4 text-[#212529] cursor-pointer" />
+                                        </div>
+                                        <div onClick={() => setIsDeleteOpened(true)}  className="bg-[#fee819] rounded-full p-1">
+                                            <Trash className="w-4 h-4 text-[#292121] cursor-pointer" />
                                         </div>
                                     </div>
                                 </div>
@@ -189,15 +319,6 @@ export default function ParticipantProfilePage() {
                                         <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1 font-medium`}>
                                             {participant.current_step.replaceAll('_', ' ')}
                                         </Badge>
-                                        {participant.info_session ? (
-                                            <Badge className="bg-[#fee819] text-[#212529] rounded-lg px-3 py-1 font-medium">
-                                                {participant.info_session.formation}
-                                            </Badge>
-                                        ) : (
-                                            <Badge className="bg-gray-500 text-white rounded-lg px-3 py-1 font-medium">
-                                                {participant.formation_field || 'No Session'}
-                                            </Badge>
-                                        )}
                                         {(participant.current_step === 'jungle' || participant.current_step?.includes('school')) && (
                                             <Badge
                                                 className={`${getConfirmationStatus(participant)
@@ -213,27 +334,27 @@ export default function ParticipantProfilePage() {
                                 </div>
                             </div>
 
-                            {/* Quick Stats */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:ml-auto">
+                            {/* Quick Stats (hidden on phone) */}
+                            <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 lg:ml-auto">
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <Calendar className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
-                                    <div className="text-sm text-white/80">Birthday</div>
-                                    <div className="text-sm font-medium">{formatDate(participant.birthday)}</div>
+                                    <div className="text-sm text-white/80">Age</div>
+                                    <div className="text-sm font-medium">{ageValue != null ? `${ageValue} years` : '-'}</div>
                                 </div>
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
-                                    <MapPin className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
-                                    <div className="text-sm text-white/80">Location</div>
-                                    <div className="text-sm font-medium capitalize">{participant.city}</div>
+                                    <BookOpen className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
+                                    <div className="text-sm text-white/80">Education</div>
+                                    <div className="text-sm font-medium capitalize">{humanize(participant.education_level) || '-'}</div>
                                 </div>
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <Target className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
-                                    <div className="text-sm text-white/80">Gender</div>
-                                    <div className="text-sm font-medium capitalize">{participant.gender}</div>
+                                    <div className="text-sm text-white/80">Situation</div>
+                                    <div className="text-sm font-medium capitalize">{humanize(participant.current_situation) || '-'}</div>
                                 </div>
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <GraduationCap className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Program</div>
-                                    <div className="text-sm font-medium">{participant.info_session?.formation || participant.formation_field || 'Not assigned'}</div>
+                                    <div className="text-sm font-medium">{humanize(participant.info_session?.formation || participant.formation_field) || 'Not assigned'}</div>
                                 </div>
                             </div>
                         </div>
@@ -270,7 +391,7 @@ export default function ParticipantProfilePage() {
                                     <MapPin className="w-4 h-4 text-[#212529] flex-shrink-0" />
                                     <div className="min-w-0 flex-1">
                                         <div className="text-xs text-gray-500 mb-1">Address</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.city}, {participant.prefecture?.replaceAll('_', ' ')}</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.city}, {humanize(participant.prefecture)}</div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -278,6 +399,93 @@ export default function ParticipantProfilePage() {
                                     <div className="min-w-0 flex-1">
                                         <div className="text-xs text-gray-500 mb-1">Birthday</div>
                                         <div className="text-sm font-medium text-[#212529]">{formatDate(participant.birthday)}</div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Education & Situation */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <GraduationCap className="w-5 h-5" />
+                                    Education & Situation
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Education Level</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.education_level) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Institution</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.diploma_institution || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Specialty</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.diploma_specialty || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Current Situation</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.current_situation) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Other Status</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_status) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Referring Organization</div>
+                                    <div className="text-sm font-medium text-[#212529]">{isAffirmative(participant.has_referring_organization) ? `Yes - ${humanize(participant.referring_organization) || '-'}` : 'No'}</div>
+                                </div>
+                                <div className="md:col-span-2">
+                                    <div className="text-xs text-gray-500 mb-1">Other Organization</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_organization) || '-'}</div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Application Details */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <FileText className="w-5 h-5" />
+                                    Application Details
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Formation Field</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.formation_field) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Region</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.region) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Other City</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.other_city || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Gender</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.gender) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Source</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.source) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">CV</div>
+                                    <div className="text-sm font-medium text-[#212529]">
+                                        {participant.cv_file ? (
+                                            <Button asChild size="sm" className="bg-[#fee819] text-[#212529] hover:bg-[#212529] hover:text-white rounded-md transition-colors inline-flex items-center gap-2">
+                                                <a href={`/storage/cvs/${participant.cv_file}`} target="_blank" rel="noreferrer">
+                                                    <FileText className="h-4 w-4" />
+                                                    View CV
+                                                </a>
+                                            </Button>
+                                        ) : (
+                                            '-'
+                                        )}
                                     </div>
                                 </div>
                             </CardContent>
@@ -306,108 +514,139 @@ export default function ParticipantProfilePage() {
                                         <Separator />
                                         <div>
                                             <div className="text-xs text-gray-500 mb-1">Formation Type</div>
-                                            <div className="text-sm font-medium text-[#212529]">{participant.info_session.formation}</div>
+                                            <div className="text-sm font-medium text-[#212529]">{humanize(participant.info_session.formation)}</div>
                                         </div>
                                     </>
                                 ) : (
                                     <div className="text-center py-4">
                                         <div className="text-sm text-gray-500 mb-2">No session assigned yet</div>
                                         <div className="text-xs text-gray-400">
-                                            {participant.formation_field && `Applied for: ${participant.formation_field}`}
+                                            {participant.formation_field && `Applied for: ${humanize(participant.formation_field)}`}
                                         </div>
                                     </div>
                                 )}
                             </CardContent>
                         </Card>
 
-                        {/* Application Details */}
+
+
+                        {/* Languages */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <FileText className="w-5 h-5" />
-                                    Application Details
+                                    <MessageSquare className="w-5 h-5" />
+                                    Languages
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Formation Field</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.formation_field || '-'}</div>
+                                    <div className="text-xs text-gray-500 mb-1">Arabic</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.arabic_level) || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Region</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.region?.replaceAll('_', ' ') || '-'}</div>
+                                    <div className="text-xs text-gray-500 mb-1">French</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.french_level) || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Other City</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.other_city || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Gender</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.gender || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Source</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.source || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">CV</div>
-                                    <div className="text-sm font-medium text-[#212529]">
-                                        {participant.cv_file ? (
-                                            <a
-                                                href={`/storage/cvs/${participant.cv_file}`}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="text-[#212529] underline hover:text-[#fee819]"
-                                            >
-                                                View CV
-                                            </a>
-                                        ) : (
-                                            '-'
-                                        )}
-                                    </div>
+                                    <div className="text-xs text-gray-500 mb-1">English</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.english_level) || '-'}</div>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        {/* Education & Situation */}
+                        {/* Background & Availability */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <GraduationCap className="w-5 h-5" />
-                                    Education & Situation
+                                    <Clock className="w-5 h-5" />
+                                    Background & Availability
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <CardContent className="space-y-4">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Education Level</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.education_level || '-'}</div>
+                                    <div className="text-xs text-gray-500 mb-1">How heard about formation</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.how_heard_about_formation) || '-'}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Institution</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.diploma_institution || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Specialty</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.diploma_specialty || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Current Situation</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.current_situation || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Other Status</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.other_status || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Referring Organization</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.has_referring_organization ? `${participant.has_referring_organization} - ${participant.referring_organization || '-'}` : '-'}</div>
-                                </div>
-                                <div className="md:col-span-2">
-                                    <div className="text-xs text-gray-500 mb-1">Other Organization</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.other_organization || '-'}</div>
+                                    <div className="text-xs text-gray-500 mb-1">Current Commitments</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.current_commitments) || '-'}</div>
                                 </div>
                             </CardContent>
                         </Card>
+
+                        {/* Training & Experience */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <TrendingUp className="w-5 h-5" />
+                                    Training & Experience
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <div className="text-xs text-gray-500 mb-1">Has Training</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.has_training) || '-'}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
+                                        <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.participated_lionsgeek) || '-'}</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Previous Training Details</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.previous_training_details || '-'}</div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
+                                        <div className="text-sm font-medium text-[#212529]">{humanize(participant.lionsgeek_activity) || '-'}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-xs text-gray-500 mb-1">Other Activity</div>
+                                        <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_activity) || '-'}</div>
+                                    </div>
+                                </div>
+                                <Separator />
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Objectives After Formation</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.objectives_after_formation) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Priority Learning Topics</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.priority_learning_topics) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Last Self Learned</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.last_self_learned) || '-'}</div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Dialog open={isDeleteOpened} onOpenChange={setIsDeleteOpened}>
+                                        <DialogContent className="sm:max-w-md">
+                                            <DialogHeader>
+                                                <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
+                                            </DialogHeader>
+                        
+                                            <DialogFooter className="sm:justify-end">
+                                                <DialogClose asChild>
+                                                    <Button onClick={() => setIsUpdateOpened(false)} type="button" variant="secondary">
+                                                        Close
+                                                    </Button>
+                                                </DialogClose>
+                                                <Button onClick={handleDelete} type="button" variant="destructive">
+                                                    {processing ? (
+                                                        <div className="flex gap-3">
+                                                            <Loader2 className="animate-spin" /> Deleting ...{' '}
+                                                        </div>
+                                                    ) : (
+                                                        'Delete'
+                                                    )}
+                                                </Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+
 
                         {/* Game Results */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
@@ -442,98 +681,13 @@ export default function ParticipantProfilePage() {
                                     <div className="text-xs text-gray-500 mb-1">Time Spent</div>
                                     <div className="text-sm font-medium text-[#212529]">{participant.time_spent_formatted || (participant.time_spent ? `${participant.time_spent}s` : '-')}</div>
                                 </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Languages */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <MessageSquare className="w-5 h-5" />
-                                    Languages
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Arabic</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.arabic_level || '-'}</div>
+                                    <div className="text-xs text-gray-500 mb-1">Accuracy</div>
+                                    <div className="text-sm font-medium text-[#212529]">{accuracyPct.toFixed(2)}%</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">French</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.french_level || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">English</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.english_level || '-'}</div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Background & Availability */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <Clock className="w-5 h-5" />
-                                    Background & Availability
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">How heard about formation</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.how_heard_about_formation || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Current Commitments</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.current_commitments || '-'}</div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Training & Experience */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <TrendingUp className="w-5 h-5" />
-                                    Training & Experience
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <div className="text-xs text-gray-500 mb-1">Has Training</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.has_training || '-'}</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.participated_lionsgeek || '-'}</div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Previous Training Details</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.previous_training_details || '-'}</div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
-                                        <div className="text-sm font-medium text-[#212529]">{participant.lionsgeek_activity || '-'}</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-xs text-gray-500 mb-1">Other Activity</div>
-                                        <div className="text-sm font-medium text-[#212529]">{participant.other_activity || '-'}</div>
-                                    </div>
-                                </div>
-                                <Separator />
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Objectives After Formation</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.objectives_after_formation || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Priority Learning Topics</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.priority_learning_topics || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Last Self Learned</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.last_self_learned || '-'}</div>
+                                    <div className="text-xs text-gray-500 mb-1">Final Score</div>
+                                    <div className="text-sm font-medium text-[#212529]">{displayFinalScore}</div>
                                 </div>
                             </CardContent>
                         </Card>

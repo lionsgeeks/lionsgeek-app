@@ -15,8 +15,8 @@ export default function CreateEventDialog({ onSuccess }) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button className="flex transform cursor-pointer items-center rounded-lg bg-[#fee819] p-2 text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                    <Plus className="mr-2 h-4 w-4" />
+                <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                    <Plus className="mr-2 h-4 w-4 lg:flex hidden" />
                     Create Event
                 </Button>
                 {/* {events.length == 0 ? (

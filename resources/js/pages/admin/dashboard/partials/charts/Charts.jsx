@@ -11,15 +11,56 @@ import { DonutChart } from './components/PieChart.js';
 const Chart = () => {
     const { allsessions } = usePage().props;
 
-    // remove private sessions
-    const sessions = allsessions.filter((session) => session.name.toLowerCase() !== 'private session');
-
-    // default session is the last one
-    const defaultSessionID = sessions[sessions.length - 1]?.id || null;
-
-    const [selectedSession, setSelectedSession] = useState(defaultSessionID);
+    const [selectedSession, setSelectedSession] = useState(null);
+    const [AllPromo, setAllPromo] = useState([]);
+    const [AllSessions, setAllSessions] = useState([]);
+    const [selectedPromo, setSelectedPromo] = useState(null);
     const [barChart, setBarChart] = useState([]);
     const [pieChart, setPieChart] = useState([]);
+
+    useEffect(() => {
+        // Debug: Log the session data to understand the structure
+        // console.log('All sessions:', allsessions);
+
+        // More robust promo extraction
+        const promoNames = allsessions
+            .filter((session) => session.name && session.name.includes(':'))
+            .map((session) => {
+                const colonIndex = session.name.indexOf(':');
+                return session.name.slice(0, colonIndex).trim().toLowerCase();
+            })
+            .filter((promo) => promo.length > 0); // Remove empty strings
+
+        // Remove duplicates and sort
+        const uniquePromos = [...new Set(promoNames)].sort();
+
+        // console.log('Extracted promos:', uniquePromos);
+        setAllPromo(uniquePromos);
+
+        if (uniquePromos.length > 0 && !selectedPromo) {
+            setSelectedPromo(uniquePromos[0]);
+        }
+    }, [allsessions]);
+
+    useEffect(() => {
+        if (!selectedPromo) return;
+
+        // More precise filtering - match the exact promo name (case-insensitive)
+        const filteredSessions = allsessions.filter((session) => {
+            if (!session.name || !session.name.includes(':')) return false;
+
+            const sessionPromo = session.name.slice(0, session.name.indexOf(':')).trim().toLowerCase();
+            return sessionPromo === selectedPromo.toLowerCase();
+        });
+
+        // console.log('Filtered sessions for promo:', selectedPromo, filteredSessions);
+        setAllSessions(filteredSessions);
+
+        if (filteredSessions.length > 0) {
+            const defaultSessionId = filteredSessions[filteredSessions.length - 1]?.id;
+            setSelectedSession(defaultSessionId);
+        }
+    }, [selectedPromo, allsessions]);
 
     useEffect(() => {
         if (!selectedSession) return;
@@ -35,36 +76,45 @@ const Chart = () => {
 
     return (
         <Card className="w-full">
-            {/* Header with title + select */}
-            <CardHeader className="flex flex-row items-center justify-between">
-                {/* <div className="flex items-center gap-2">
-                    <BarChart2 color="#ffc803" className="h-6 w-6" />
-                    </div> */}
+            <CardHeader className="flex lg:flex-row flex-col lg:gap-5 gap-10 lg:items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="rounded-lg bg-gray-100 p-2">
                         <BarChart2 className="h-5 w-5 text-[#212529]" />
                     </div>
-                    {/* <h2 className="text-lg font-semibold text-[#212529]">Recent Newsletters</h2> */}
                     <CardTitle className="text-xl font-semibold">Analyse</CardTitle>
                 </div>
 
-                <Select value={selectedSession} onValueChange={(value) => setSelectedSession(value)}>
-                    <SelectTrigger className="w-[20%]">
-                        <SelectValue placeholder="Select Session" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {sessions.map((session) => (
-                            <SelectItem key={session.id} value={session.id}>
-                                {session.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                <div className="flex flex-col lg:w-[30%] w-full gap-5">
+                    <Select value={selectedPromo || ''} onValueChange={(value) => setSelectedPromo(value)}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Promo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {AllPromo?.map((promo, index) => (
+                                <SelectItem key={`promo-${index}-${promo}`} value={promo}>
+                                    {promo.charAt(0).toUpperCase() + promo.slice(1)}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select value={selectedSession?.toString() || ''} onValueChange={(value) => setSelectedSession(value)}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Session" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {AllSessions?.map((session) => (
+                                <SelectItem className='capitalize' key={`session-${session.id}`} value={session.id.toString()}>
+                                    {session.name.slice(session.name.indexOf(':') + 1).trim()}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </CardHeader>
 
-            {/* Content with charts */}
             <CardContent>
-                <div className="flex flex-row-reverse gap-5">
+                <div className="flex lg:flex-row-reverse gap-5 flex-col">
                     <DonutChart pieChart={pieChart} id={selectedSession} />
                     <BarChart barChart={barChart} />
                 </div>

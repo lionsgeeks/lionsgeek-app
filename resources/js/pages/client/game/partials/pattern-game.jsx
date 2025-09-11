@@ -29,6 +29,9 @@ const SHAPES = ['square', 'circle', 'triangle', 'diamond'];
 const SYMBOLS = ['●', '■', '▲', '♦', '★', '◆', '◇', '♠', '♥', '♣'];
 
 export function PatternGame({ data: formDataProp }) {
+    const [intelligenceLevel, setIntelligenceLevel] = useState(null);
+
+
     const { post, processing, errors } = useForm();
     
 
@@ -357,17 +360,64 @@ export function PatternGame({ data: formDataProp }) {
         }
         return choices.sort(() => Math.random() - 0.5);
     }
+    // function calculateIntelligenceLevel() {
+    //     const totalScore = levelAttempts.reduce((sum, lvl) => sum + (lvl.totalScore || 0), 0);
+    //     if (totalScore > 90) setIntelligenceLevel('Very High');
+    //     else if (totalScore > 60) setIntelligenceLevel('High'); 
+    //     else if (totalScore > 30) setIntelligenceLevel('Medium'); 
+    //     else return setIntelligenceLevel('Low');
+    // }
+
+
+
+    function getScoreForAnswer(isCorrect, timeTakenMs) { 
+        if (!isCorrect) return -2;
+        if (timeTakenMs <= 5000) return 7;
+        if (timeTakenMs <= 10000 && timeTakenMs >= 5000) return 5;
+        return 4;
+    }
 
     function submitAnswer() {
         if (!selectedChoice || !currentPuzzle) return;
+
+        const isCorrect = isEqual(selectedChoice, currentPuzzle.correct);
+        const timeTaken = Date.now() - (levelAttempts[currentLevel]?.startTime || 0 );
+        const score = getScoreForAnswer(isCorrect, timeTaken);
+
         setAttempts((a) => a + 1);
         setLevelAttempts((prev) => {
             const next = [...prev];
+            if (!next[currentLevel]) {
+                next[currentLevel] = {
+                    attempts: 0,
+                    correct: false,
+                    totalScore: 0,
+                    timeSpent: 0,
+                    startTime: Date.now(),
+                };
+            }
+
             next[currentLevel].attempts += 1;
+
+            next[currentLevel].totalScore = (next[currentLevel].totalScore || 0) + score;
+            if (isCorrect) {
+                next[currentLevel].correct = true;
+                next[currentLevel].timeSpent = timeTaken;
+            }
+
+
+            const totalCorrectAnswers = next.filter(level => level.correct).length;
+            const totalPoints = next.reduce((acc, level) => acc + (level.totalScore || 0), 0);
+
+            // logggggggggggggggggggggggggggggg
+            // console.log('Total Correct Answers:', totalCorrectAnswers);
+            // console.log('Total Points:', totalPoints);
+            // console.log('Score:', score, 'Correct:', isCorrect, 'Time:', timeTaken);
+            // logggggggggggggggggggggggggggggg
+
             return next;
         });
 
-        const isCorrect = isEqual(selectedChoice, currentPuzzle.correct);
         if (isCorrect) {
             setLevelAttempts((prev) => {
                 const next = [...prev];
@@ -407,6 +457,7 @@ export function PatternGame({ data: formDataProp }) {
         clearInterval(timerRef.current);
         setShowEnd(true);
         setCompletedFlag(completed);
+        // calculateIntelligenceLevel();
         // Persist game metrics to sessionStorage so summary can show them
         try {
             const elapsedMs = Date.now() - startTime;
@@ -418,6 +469,7 @@ export function PatternGame({ data: formDataProp }) {
                 wrong_attempts: Math.max(0, attempts - correctAnswers),
                 time_spent: Math.floor(elapsedMs / 1000),
                 time_spent_formatted: formatElapsed(elapsedMs),
+                intelligenceLevel: intelligenceLevel
             };
             const raw = sessionStorage.getItem('formData');
             const existing = raw ? JSON.parse(raw) : {};
@@ -456,7 +508,7 @@ export function PatternGame({ data: formDataProp }) {
         if (formData && formDataProp) {
             // Calculate elapsed time
             const elapsedMs = Date.now() - startTime;
-            
+            const totalScore = levelAttempts.reduce((sum, lvl) => sum + (lvl.totalScore || 0), 0);
             // Combine sessionStorage data with props data (which includes cv_file)
             const submissionData = {
                 ...formData,
@@ -469,11 +521,13 @@ export function PatternGame({ data: formDataProp }) {
                 wrong_attempts: Math.max(0, attempts - correctAnswers),
                 time_spent: Math.floor(elapsedMs / 1000),
                 time_spent_formatted: formatElapsed(elapsedMs),
+                intelligence_level: totalScore,
             };
 
+// console.log(formData);
 
             // Submit the form data to create participant
-           router.post('/participants/store', submissionData, {
+           router.post(`/participants/store?type=${formData.formation_field}`, submissionData, {
                 onSuccess: (response) => {
                     // Hide loading page
                     hideLoadingPage();
@@ -646,7 +700,7 @@ export function PatternGame({ data: formDataProp }) {
                             type="button"
                             className={`rounded-md px-6 py-2.5 font-medium transition-all duration-150 ${
                                 selectedChoice && !processing
-                                    ? 'bg-yellow-400 text-black border border-yellow-400 hover:bg-transparent hover:text-white hover:border-yellow-400 active:scale-[0.98]'
+                                    ? 'bg-yellow-400 text-black border border-yellow-400 hover:bg-yellow-500 active:scale-[0.98]'
                                     : 'bg-transparent text-white/80 border border-white/20 cursor-not-allowed'
                             }`}
                             onClick={submitAnswer}

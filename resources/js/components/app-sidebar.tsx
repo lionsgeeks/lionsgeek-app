@@ -17,17 +17,17 @@ import {
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const adminNavItems: NavItem[] = [
+// Dashboard section
+const dashboardItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/admin/dashboard',
         icon: LayoutGrid,
     },
-    {
-        title: 'Events',
-        href: '/admin/events',
-        icon: Calendar,
-    },
+];
+
+// Content Management section
+const contentItems: NavItem[] = [
     {
         title: 'Blogs',
         href: '/admin/blogs',
@@ -39,29 +39,18 @@ const adminNavItems: NavItem[] = [
         icon: MicVocal,
     },
     {
-        title: 'ContactUs',
-        href: '/admin/contactus',
-        icon: Contact,
-    },
-    {
-        title: 'Coworking',
-        href: '/admin/coworking',
-        icon: HeartHandshake,
-    },
-    {
-        title: 'Newsletter',
-        href: '/admin/newsletter',
-        icon: Mail,
-    },
-    {
         title: 'Gallery',
         href: '/admin/gallery',
         icon: GalleryHorizontalEnd,
     },
+];
+
+// Events & Sessions section
+const eventsItems: NavItem[] = [
     {
-        title: 'Projects',
-        href: '/admin/projects',
-        icon: BriefcaseBusiness,
+        title: 'Events',
+        href: '/admin/events',
+        icon: Calendar,
     },
     {
         title: 'Infosessions',
@@ -72,6 +61,34 @@ const adminNavItems: NavItem[] = [
         title: 'Participants',
         href: '/admin/participants',
         icon: Users,
+    },
+];
+
+// Business & Projects section
+const businessItems: NavItem[] = [
+    {
+        title: 'Projects',
+        href: '/admin/projects',
+        icon: BriefcaseBusiness,
+    },
+    {
+        title: 'Coworking',
+        href: '/admin/coworking',
+        icon: HeartHandshake,
+    },
+];
+
+// Communications section
+const communicationItems: NavItem[] = [
+    {
+        title: 'ContactUs',
+        href: '/admin/contactus',
+        icon: Contact,
+    },
+    {
+        title: 'Newsletter',
+        href: '/admin/newsletter',
+        icon: Mail,
     },
 ];
 
@@ -145,26 +162,15 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent className="no-scrollbar overflow-auto">
-                <NavMain items={adminNavItems} title="" />
+                <NavMain items={dashboardItems} />
 
-                {/* <div className='flex items-center justify-center gap-2 cursor-pointer mt-2'
-                    onClick={() => { setShowUserItems(!showUserItems) }}
-                >
-                    <p className='underline text-center'>
-                        {showUserItems ? 'Hide' : 'Show'} Front Pages
-                    </p>
-                    {
-                        showUserItems ?
-                            <CircleArrowUp size={16} />
-                            :
+                <NavMain items={contentItems} title="Content Management" />
 
-                            <CircleArrowDown size={16} />
-                    }
-                </div>
-                {
-                    showUserItems &&
-                    <NavMain items={userNavItems} />
-                } */}
+                <NavMain items={eventsItems} title="Events & Sessions" />
+
+                <NavMain items={businessItems} title="Business & Projects" />
+
+                <NavMain items={communicationItems} title="Communications" />
             </SidebarContent>
 
             <SidebarFooter>{/* <NavUser /> */}</SidebarFooter>

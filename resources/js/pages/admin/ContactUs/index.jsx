@@ -10,12 +10,16 @@ import { Download, FileMinus, Inbox, Mail, MailOpen, MessageCircle, Plus, Send, 
 import { useState } from 'react';
 
 export default function Index() {
-    const { messages, selected } = usePage().props;
-    const [activeId, setActiveId] = useState(selected?.id || null);
+    const { messages, selected, sendedMessage } = usePage().props;
+    const messageParam = window.location.href.slice(window.location.href.indexOf('=') + 1, window.location.href.length);
+    const [activeId, setActiveId] = useState(messageParam || selected?.id || null);
+
     const [isComposing, setIsComposing] = useState(false);
     const [filter, setFilter] = useState('all');
     const [showCc, setShowCc] = useState(false);
     const [showBcc, setShowBcc] = useState(false);
+    const allMessages = messages.concat(sendedMessage)
+    console.log(allMessages);
 
     const [emailData, setEmailData] = useState({
         receiver: '',
@@ -65,7 +69,10 @@ export default function Index() {
         });
     };
 
-    const selectedMessage = activeId ? messages.find((message) => message.id === activeId) : null;
+    // FIXED: Look in both messages and sendedMessage arrays
+    const selectedMessage = activeId
+        ? allMessages.find((message) => message.id == activeId)
+        : null;
 
     const toggleReadStatus = () => {
         router.put(
@@ -84,7 +91,6 @@ export default function Index() {
     };
 
     const filteredMessages = messages.filter((message) => {
-        if (filter === 'sended') return message.sender;
         if (filter === 'received') return !message.sender;
         return true;
     });
@@ -113,27 +119,25 @@ export default function Index() {
                     <div className="mx-auto max-w-7xl px-6">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3">
+                                <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
                                     <MessageCircle className="h-8 w-8 text-[#212529]" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold">Contact Messages</h1>
-                                    <p className="mt-1 text-gray-300">Manage customer inquiries and communications</p>
+                                    <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Contact Messages</h1>
+                                    <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage customer inquiries and communications</p>
                                 </div>
                             </div>
-                            <div className="flex flex-row-reverse gap-3">
+                            <div className="flex lg:flex-row-reverse flex-col gap-3">
                                 <Button
                                     onClick={handleComposeClick}
-                                    className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
-                                >
-                                    <Plus className="mr-2 h-4 w-4" />
+                                    className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                    <Download className="mr-2 h-4 w-4 lg:flex hidden" />
                                     Compose
                                 </Button>
                                 <Button
                                     onClick={() => (window.location.href = route('messages.export'))}
-                                    className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
-                                >
-                                    <Download className="mr-2 h-4 w-4" />
+                                    className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                    <Download className="mr-2 h-4 w-4 lg:flex hidden" />
                                     Export Excel
                                 </Button>
                             </div>
@@ -247,40 +251,126 @@ export default function Index() {
 
                                     {/* Messages List */}
                                     <div className="max-h-96 overflow-y-auto">
-                                        {filteredMessages.length === 0 ? (
-                                            <div className="p-8 text-center">
-                                                <Mail className="mx-auto mb-3 h-12 w-12 text-gray-400" />
-                                                <p className="text-gray-500">No messages found</p>
-                                            </div>
-                                        ) : (
-                                            filteredMessages.map((message) => (
-                                                <div
-                                                    key={message.id}
-                                                    onClick={() => handleSelect(message.id)}
-                                                    className={`cursor-pointer border-b border-gray-100 p-4 transition-colors hover:bg-gray-50 ${activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''} ${!message.mark_as_read ? 'bg-blue-50/30' : ''} `}
-                                                >
-                                                    <div className="flex items-start justify-between gap-3">
-                                                        <div className="min-w-0 flex-1">
-                                                            <div className="mb-1 flex items-center gap-2">
-                                                                <h3 className="truncate font-semibold text-[#212529]">{message.full_name}</h3>
-                                                                {!message.mark_as_read && (
-                                                                    <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">New</Badge>
-                                                                )}
+                                        {filter === 'all' && (
+                                            <>
+                                                {allMessages?.map((message, index) =>
+                                                    <div
+                                                        key={message.id}
+                                                        onClick={() => handleSelect(message.id)}
+                                                        className={`cursor-pointer border-b border-gray-100 p-4 transition-colors hover:bg-gray-50 ${activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''} ${!message.mark_as_read ? 'bg-blue-50/30' : ''} `}
+                                                    >
+                                                        <div className="flex items-start justify-between gap-3">
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="mb-1 flex items-center gap-2">
+                                                                    <h3 className="truncate font-semibold text-[#212529]">{message.full_name}</h3>
+                                                                    {!message.mark_as_read && (
+                                                                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">New</Badge>
+                                                                    )}
+                                                                </div>
+                                                                <p className="truncate text-sm text-gray-600">{message.email}</p>
+                                                                <p className="mt-1 truncate text-sm text-gray-500">{message.message}</p>
                                                             </div>
-                                                            <p className="truncate text-sm text-gray-600">{message.email}</p>
-                                                            <p className="mt-1 truncate text-sm text-gray-500">{message.message}</p>
+                                                            <div className="flex-shrink-0 text-xs text-gray-400">
+                                                                {new Date(message.created_at).toLocaleDateString('en-GB', {
+                                                                    day: '2-digit',
+                                                                    month: '2-digit',
+                                                                })}
+                                                            </div>
                                                         </div>
-                                                        <div className="flex-shrink-0 text-xs text-gray-400">
-                                                            {new Date(message.created_at).toLocaleDateString('en-GB', {
-                                                                day: '2-digit',
-                                                                month: '2-digit',
-                                                            })}
+                                                    </div>)}
+                                            </>
+                                        )}
+                                        {filter === 'received' && (
+                                            <>
+                                                {messages?.map((message =>
+                                                    <div
+                                                        key={message.id}
+                                                        onClick={() => handleSelect(message.id)}
+                                                        className={`cursor-pointer border-b border-gray-100 p-4 transition-colors hover:bg-gray-50 ${activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''} ${!message.mark_as_read ? 'bg-blue-50/30' : ''} `}
+                                                    >
+                                                        <div className="flex items-start justify-between gap-3">
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="mb-1 flex items-center gap-2">
+                                                                    <h3 className="truncate font-semibold text-[#212529]">{message.full_name}</h3>
+                                                                    {!message.mark_as_read && (
+                                                                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">New</Badge>
+                                                                    )}
+                                                                </div>
+                                                                <p className="truncate text-sm text-gray-600">{message.email}</p>
+                                                                <p className="mt-1 truncate text-sm text-gray-500">{message.message}</p>
+                                                            </div>
+                                                            <div className="flex-shrink-0 text-xs text-gray-400">
+                                                                {new Date(message.created_at).toLocaleDateString('en-GB', {
+                                                                    day: '2-digit',
+                                                                    month: '2-digit',
+                                                                })}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ))
+                                                ))}
+                                            </>
                                         )}
+                                        {filter === 'sended' && (
+                                            <>
+                                                {sendedMessage.map((message) => (
+                                                    <div
+                                                        key={message.id}
+                                                        onClick={() => handleSelect(message.id)}
+                                                        className={`cursor-pointer border-b border-gray-100 p-4 transition-colors duration-200 ease-in-out hover:bg-gray-50 
+      ${activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''}`}
+                                                    >
+                                                        <div className="flex items-start justify-between gap-3">
+                                                            {/* Left side (main content) */}
+                                                            <div className="min-w-0 flex-1">
+                                                                {/* Sender + subject on first row */}
+                                                                <div className="mb-1 flex items-center gap-2">
+                                                                    <h3 className="truncate font-semibold text-[#212529] text-sm md:text-base">
+                                                                        {message.sender}@gmail.com
+                                                                    </h3>
+                                                                    {message.subject && (
+                                                                        <span className="truncate text-xs text-gray-500 font-medium">
+                                                                            — {message.subject}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+
+                                                                {/* Receiver */}
+                                                                {message.receiver && (
+                                                                    <p className="truncate text-sm text-gray-600">
+                                                                        To: {message.receiver}
+                                                                    </p>
+                                                                )}
+
+                                                                {/* CC + BCC (only if available) */}
+                                                                {message.cc && (
+                                                                    <p className="truncate text-sm text-gray-500">CC: {message.cc}</p>
+                                                                )}
+                                                                {message.bcc && (
+                                                                    <p className="truncate text-sm text-gray-500">BCC: {message.bcc}</p>
+                                                                )}
+
+                                                                {/* Content preview */}
+                                                                <p className="mt-1 line-clamp-2 text-sm text-gray-500">
+                                                                    {message.content}
+                                                                </p>
+                                                            </div>
+
+                                                            {/* Right side (date) */}
+                                                            <div className="flex-shrink-0 text-xs text-gray-400 whitespace-nowrap">
+                                                                {new Date(message.created_at).toLocaleDateString('en-GB', {
+                                                                    day: '2-digit',
+                                                                    month: '2-digit',
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+
+                                            </>
+                                        )}
+
                                     </div>
+
                                 </CardContent>
                             </Card>
                         </div>
@@ -430,33 +520,52 @@ export default function Index() {
                                             </form>
                                         </div>
                                     ) : selectedMessage ? (
-                                        /* Message Details */
+                                        /* Message Details - UPDATED to handle both received and sent messages */
                                         <div className="space-y-6">
                                             {/* Message Header */}
                                             <div className="flex items-center justify-between border-b border-gray-200 pb-4">
                                                 <div>
-                                                    <h2 className="text-lg font-semibold text-[#212529]">{selectedMessage.full_name}</h2>
-                                                    <p className="text-sm text-gray-600">{selectedMessage.email}</p>
+                                                    {/* Display different info based on message type */}
+                                                    {selectedMessage.sender ? (
+                                                        // Sent message
+                                                        <>
+                                                            <h2 className="text-lg font-semibold text-[#212529]">
+                                                                {selectedMessage.subject || 'No Subject'}
+                                                            </h2>
+                                                            <p className="text-sm text-gray-600">
+                                                                From: {selectedMessage.sender}@gmail.com → To: {selectedMessage.receiver}
+                                                            </p>
+                                                        </>
+                                                    ) : (
+                                                        // Received message
+                                                        <>
+                                                            <h2 className="text-lg font-semibold text-[#212529]">{selectedMessage.full_name}</h2>
+                                                            <p className="text-sm text-gray-600">{selectedMessage.email}</p>
+                                                        </>
+                                                    )}
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        onClick={toggleReadStatus}
-                                                        className="border-gray-300 text-gray-600"
-                                                    >
-                                                        {selectedMessage.mark_as_read ? (
-                                                            <>
-                                                                <MailOpen className="mr-2 h-4 w-4" />
-                                                                Mark Unread
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Mail className="mr-2 h-4 w-4" />
-                                                                Mark Read
-                                                            </>
-                                                        )}
-                                                    </Button>
+                                                    {/* Only show mark read/unread for received messages */}
+                                                    {!selectedMessage.sender && (
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            onClick={toggleReadStatus}
+                                                            className="border-gray-300 text-gray-600"
+                                                        >
+                                                            {selectedMessage.mark_as_read ? (
+                                                                <>
+                                                                    <MailOpen className="mr-2 h-4 w-4" />
+                                                                    Mark Unread
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Mail className="mr-2 h-4 w-4" />
+                                                                    Mark Read
+                                                                </>
+                                                            )}
+                                                        </Button>
+                                                    )}
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
@@ -472,7 +581,17 @@ export default function Index() {
                                             <div className="space-y-4">
                                                 <div className="flex items-center justify-between text-sm text-gray-600">
                                                     <span>
-                                                        From: <span className="font-medium text-[#212529]">{selectedMessage.email}</span>
+                                                        {selectedMessage.sender ? (
+                                                            // Sent message
+                                                            <>
+                                                                From: <span className="font-medium text-[#212529]">{selectedMessage.sender}@gmail.com</span>
+                                                            </>
+                                                        ) : (
+                                                            // Received message
+                                                            <>
+                                                                From: <span className="font-medium text-[#212529]">{selectedMessage.email}</span>
+                                                            </>
+                                                        )}
                                                     </span>
                                                     <span>
                                                         {new Date(selectedMessage.created_at).toLocaleString('en-US', {
@@ -485,19 +604,48 @@ export default function Index() {
                                                     </span>
                                                 </div>
 
+                                                {/* Additional info for sent messages */}
+                                                {selectedMessage.sender && (
+                                                    <div className="space-y-1 text-sm text-gray-600">
+                                                        <div>
+                                                            <span className="font-medium">To:</span> {selectedMessage.receiver}
+                                                        </div>
+                                                        {selectedMessage.cc && (
+                                                            <div>
+                                                                <span className="font-medium">CC:</span> {selectedMessage.cc}
+                                                            </div>
+                                                        )}
+                                                        {selectedMessage.bcc && (
+                                                            <div>
+                                                                <span className="font-medium">BCC:</span> {selectedMessage.bcc}
+                                                            </div>
+                                                        )}
+                                                        {selectedMessage.subject && (
+                                                            <div>
+                                                                <span className="font-medium">Subject:</span> {selectedMessage.subject}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+
                                                 <div className="rounded-lg bg-gray-50 p-4">
-                                                    <p className="whitespace-pre-wrap text-gray-800">{selectedMessage.message}</p>
+                                                    <p className="whitespace-pre-wrap text-gray-800">
+                                                        {selectedMessage.sender ? selectedMessage.content : selectedMessage.message}
+                                                    </p>
                                                 </div>
 
-                                                <div className="flex gap-3 pt-4">
-                                                    <Button
-                                                        onClick={handleReply}
-                                                        className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]"
-                                                    >
-                                                        <Mail className="mr-2 h-4 w-4" />
-                                                        Reply
-                                                    </Button>
-                                                </div>
+                                                {/* Only show reply for received messages */}
+                                                {!selectedMessage.sender && (
+                                                    <div className="flex gap-3 pt-4">
+                                                        <Button
+                                                            onClick={handleReply}
+                                                            className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]"
+                                                        >
+                                                            <Mail className="mr-2 h-4 w-4" />
+                                                            Reply
+                                                        </Button>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     ) : (

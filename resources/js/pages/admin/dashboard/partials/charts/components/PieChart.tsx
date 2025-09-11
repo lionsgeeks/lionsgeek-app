@@ -57,7 +57,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
     }
 
     return (
-        <div className="w-1/2">
+        <div className="lg:w-1/2 w-full">
             <Card className="flex flex-col">
                 <CardContent className="flex-1 pb-0">
                     <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
@@ -88,7 +88,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
 
                 {/* Step selection radios */}
                 <CardFooter className="flex-col gap-5 text-sm">
-                    <div className="flex items-center gap-10">
+                    <div className="grid lg:grid-cols-4 grid-cols-2 gap-10">
                         {pieChart.map((step) => (
                             <div key={step.step} className="flex items-center gap-x-1">
                                 <input

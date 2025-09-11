@@ -15,7 +15,7 @@ const UpcomingEvents = () => {
                     </div>
                     <h2 className="text-lg font-semibold text-[#212529]">Upcoming Events</h2>
                 </div>
-                <Link href="/admin/events" className="rounded-lg bg-beta px-3 py-1 text-white hover:bg-alpha hover:text-black">
+                <Link href="/admin/events" className="rounded-lg bg-beta lg:flex hidden px-3 py-1 text-white hover:bg-alpha hover:text-black">
                     View All
                 </Link>
             </div>
