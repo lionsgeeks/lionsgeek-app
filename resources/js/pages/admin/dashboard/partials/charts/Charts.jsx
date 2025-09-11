@@ -11,34 +11,49 @@ import { DonutChart } from './components/PieChart.js';
 const Chart = () => {
     const { allsessions } = usePage().props;
 
-    // const sessions = allsessions.filter((session) => session.name.toLowerCase() !== 'private session');
-
     const [selectedSession, setSelectedSession] = useState(null);
     const [AllPromo, setAllPromo] = useState([]);
     const [AllSessions, setAllSessions] = useState([]);
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [barChart, setBarChart] = useState([]);
     const [pieChart, setPieChart] = useState([]);
-    useEffect(() => {
-        const allPromo = [
-            ...new Set(
-                allsessions
-                    .filter((e) => e.name.includes(':'))
-                    .map((promo) => promo.name.slice(0, promo.name.indexOf(':')).trim())
-            ),
-        ];
-        setAllPromo(allPromo);
 
-        if (allPromo.length > 0 && !selectedPromo) {
-            setSelectedPromo(allPromo[0]);
+    useEffect(() => {
+        // Debug: Log the session data to understand the structure
+        // console.log('All sessions:', allsessions);
+
+        // More robust promo extraction
+        const promoNames = allsessions
+            .filter((session) => session.name && session.name.includes(':'))
+            .map((session) => {
+                const colonIndex = session.name.indexOf(':');
+                return session.name.slice(0, colonIndex).trim().toLowerCase();
+            })
+            .filter((promo) => promo.length > 0); // Remove empty strings
+
+        // Remove duplicates and sort
+        const uniquePromos = [...new Set(promoNames)].sort();
+
+        // console.log('Extracted promos:', uniquePromos);
+        setAllPromo(uniquePromos);
+
+        if (uniquePromos.length > 0 && !selectedPromo) {
+            setSelectedPromo(uniquePromos[0]);
         }
     }, [allsessions]);
+
     useEffect(() => {
         if (!selectedPromo) return;
 
-        const filteredSessions = allsessions.filter((session) =>
-            session.name.includes(selectedPromo)
-        );
+        // More precise filtering - match the exact promo name (case-insensitive)
+        const filteredSessions = allsessions.filter((session) => {
+            if (!session.name || !session.name.includes(':')) return false;
+
+            const sessionPromo = session.name.slice(0, session.name.indexOf(':')).trim().toLowerCase();
+            return sessionPromo === selectedPromo.toLowerCase();
+        });
+
+        // console.log('Filtered sessions for promo:', selectedPromo, filteredSessions);
         setAllSessions(filteredSessions);
 
         if (filteredSessions.length > 0) {
@@ -59,9 +74,6 @@ const Chart = () => {
             .catch((err) => console.error('Error fetching chart data:', err));
     }, [selectedSession]);
 
-    // console.log('Selected Session:', selectedSession);
-    // console.log('Selected Promo:', selectedPromo);
-
     return (
         <Card className="w-full">
             <CardHeader className="flex lg:flex-row flex-col lg:gap-5 gap-10 lg:items-center justify-between">
@@ -79,8 +91,8 @@ const Chart = () => {
                         </SelectTrigger>
                         <SelectContent>
                             {AllPromo?.map((promo, index) => (
-                                <SelectItem key={index} value={promo}>
-                                    {promo[0].toUpperCase()+promo.slice(1)}
+                                <SelectItem key={`promo-${index}-${promo}`} value={promo}>
+                                    {promo.charAt(0).toUpperCase() + promo.slice(1)}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -92,8 +104,8 @@ const Chart = () => {
                         </SelectTrigger>
                         <SelectContent>
                             {AllSessions?.map((session) => (
-                                <SelectItem className='capitalize' key={session.id} value={session.id.toString()}>
-                                    {session.name.slice(session.name.indexOf(':')+1)}
+                                <SelectItem className='capitalize' key={`session-${session.id}`} value={session.id.toString()}>
+                                    {session.name.slice(session.name.indexOf(':') + 1).trim()}
                                 </SelectItem>
                             ))}
                         </SelectContent>
