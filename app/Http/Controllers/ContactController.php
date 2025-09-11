@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\CustomEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -19,6 +20,7 @@ class ContactController extends Controller
     public function show(Request $request)
     {
         $messages = Contact::latest()->get();
+        $sendedMessage = CustomEmail::latest()->get();
 
         $selected = null;
         if ($request->has('id')) {
@@ -26,8 +28,9 @@ class ContactController extends Controller
         }
         return Inertia::render('admin/ContactUs/index', [
             'messages' => $messages,
+            'messages' => $messages,
             'selected' => $selected,
-
+            'sendedMessage' => $sendedMessage,
         ]);
     }
 
