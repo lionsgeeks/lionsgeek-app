@@ -1,7 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
 import { CheckCircle2, Clock, Download, Filter, Presentation, Users, XCircle, ChevronLeft, ChevronRight, LayoutGrid, Rows } from 'lucide-react';
@@ -14,9 +13,6 @@ export default function Participants() {
 	const { participants = [], infosessions = [], statusCounts = {} } = usePage().props;
 	const [filtredParticipants, setFiltredParticipants] = useState(participants);
 	const params = new URLSearchParams(window.location.search);
-	const statusFromUrl = params.get('status');
-	const initialStatus = ['approved', 'pending', 'rejected', 'all'].includes(statusFromUrl) ? statusFromUrl : 'approved';
-	const [selectedStatus, setSelectedStatus] = useState(initialStatus);
 	const initialView = params.get('view') === 'table' ? 'table' : 'cards';
 	const [view, setView] = useState(initialView);
 
@@ -32,30 +28,10 @@ export default function Participants() {
 		},
 	];
 
-	// Filter participants based on selected status only
-	const getStatusFilteredParticipants = (status) => {
-		switch (status) {
-			case 'pending':
-				return participants.filter((p) => p.status === 'pending');
-			case 'rejected':
-				return participants.filter((p) => p.status === 'rejected');
-			case 'approved':
-				return participants.filter((p) => p.status === 'approved');
-			case 'all':
-			default:
-				return participants;
-		}
-	};
-
-	// Get participants filtered by status only (FilterHeader will handle other filters)
-	const statusFilteredParticipants = getStatusFilteredParticipants(selectedStatus);
-
-	// Update filtered participants when status changes
+	// FilterHeader will manage filtering; initialize with all participants
 	useEffect(() => {
-		const filtered = getStatusFilteredParticipants(selectedStatus);
-		setFiltredParticipants(filtered);
-		setCurrentPage(1); // Reset to first page when filters change
-	}, [selectedStatus, participants]);
+		setFiltredParticipants(participants);
+	}, [participants]);
 
 	// Reset to first page when filtered participants change (from FilterHeader)
 	useEffect(() => {
@@ -77,20 +53,9 @@ export default function Participants() {
 	const endIndex = startIndex + participantsPerPage;
 	const paginatedParticipants = filtredParticipants.slice(startIndex, endIndex);
 
-	// Handle status change without page refresh
-	const handleStatusChange = (newStatus) => {
-		setSelectedStatus(newStatus);
-		setCurrentPage(1);
-		const params = new URLSearchParams(window.location.search);
-		params.set('status', newStatus);
-		params.set('view', view);
-		window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
-	};
-
 	const handleViewChange = (newView) => {
 		setView(newView);
 		const params = new URLSearchParams(window.location.search);
-		params.set('status', selectedStatus);
 		params.set('view', newView);
 		window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
 	};
@@ -221,70 +186,23 @@ export default function Participants() {
 										<h3 className="text-lg font-semibold text-[#212529]">Filter Participants</h3>
 									</div>
 
-									<Select value={selectedStatus} onValueChange={handleStatusChange}>
-										<SelectTrigger className="w-48">
-											<SelectValue placeholder="Select status" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="approved">
-												<div className="flex items-center gap-2">
-													<CheckCircle2 className="h-4 w-4" style={{ color: '#51b04f' }} />
-													Approved ({statusCounts.approved || 0})
-												</div>
-											</SelectItem>
-											<SelectItem value="pending">
-												<div className="flex items-center gap-2">
-													<Clock className="h-4 w-4 text-orange-600" />
-													Pending ({statusCounts.pending || 0})
-												</div>
-											</SelectItem>
-											<SelectItem value="rejected">
-												<div className="flex items-center gap-2">
-													<XCircle className="h-4 w-4" style={{ color: '#ff7376' }} />
-													Rejected ({statusCounts.rejected || 0})
-												</div>
-											</SelectItem>
-											<SelectItem value="all">
-												<div className="flex items-center gap-2">
-													<Users className="h-4 w-4 text-gray-600" />
-													All ({statusCounts.all || 0})
-												</div>
-											</SelectItem>
-										</SelectContent>
-									</Select>
-
 									{filtredParticipants?.length !== totalParticipants && (
 										<Badge variant="secondary" className="bg-gray-100 px-2 py-1 text-[#212529]">
 											{filtredParticipants?.length} of {totalParticipants}
 										</Badge>
 									)}
 								</div>
-
-								<div className="flex items-center gap-2">
-									<Button
-										variant={view === 'cards' ? 'default' : 'outline'}
-										size="sm"
-										onClick={() => handleViewChange('cards')}
-										className="gap-2"
-									>
-										<LayoutGrid className="h-4 w-4" /> Cards
-									</Button>
-									<Button
-										variant={view === 'table' ? 'default' : 'outline'}
-										size="sm"
-										onClick={() => handleViewChange('table')}
-										className="gap-2"
-									>
-										<Rows className="h-4 w-4" /> Table
-									</Button>
-								</div>
 							</div>
 							<div className="mt-4">
-								<FilterHeader
-									participants={statusFilteredParticipants}
-									infosessions={infosessions}
-									setFiltredParticipants={setFiltredParticipants}
-								/>
+								{/* FilterHeader manages status + step + search */}
+								<div className="flex-1">
+									<FilterHeader
+										participants={participants}
+										infosessions={infosessions}
+										setFiltredParticipants={setFiltredParticipants}
+										statusCounts={statusCounts}
+									/>
+								</div>
 							</div>
 						</CardContent>
 					</Card>
@@ -292,6 +210,25 @@ export default function Participants() {
 
 				{/* Participants View */}
 				<div className="mx-auto max-w-7xl px-6 pb-8">
+					{/* View toggle at top-left of table/list area */}
+					<div className="mb-4 flex items-center gap-2">
+						<Button
+							variant={view === 'cards' ? 'default' : 'outline'}
+							size="sm"
+							onClick={() => handleViewChange('cards')}
+							className="gap-2"
+						>
+							<LayoutGrid className="h-4 w-4" /> Cards
+						</Button>
+						<Button
+							variant={view === 'table' ? 'default' : 'outline'}
+							size="sm"
+							onClick={() => handleViewChange('table')}
+							className="gap-2"
+						>
+							<Rows className="h-4 w-4" /> Table
+						</Button>
+					</div>
 					{/* Pagination Info */}
 					{totalParticipants > 0 && (
 						<div className="mb-6 flex items-center justify-between">
