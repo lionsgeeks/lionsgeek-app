@@ -105,4 +105,31 @@ class NewsletterController extends Controller
             'status' => 200
         ]);
     }
+
+    /**
+     * Handle unsubscribe from newsletter via URL
+     */
+    public function unsubscribeFromUrl($id)
+    {
+        try {
+            $subscriberId = Crypt::decrypt($id);
+            $subscriber = Subscriber::where('id', $subscriberId)->first();
+            
+            if ($subscriber) {
+                $subscriber->delete();
+                return view('emails.unsubscribe-success', [
+                    'email' => $subscriber->email
+                ]);
+            } else {
+                return view('emails.unsubscribe-error', [
+                    'message' => 'Subscriber not found or already unsubscribed.'
+                ]);
+            }
+        } catch (DecryptException $e) {
+            return view('emails.unsubscribe-error', [
+                'message' => 'Invalid unsubscribe link. Please contact support if you continue to receive emails.'
+            ]);
+        }
+    }
+
 }

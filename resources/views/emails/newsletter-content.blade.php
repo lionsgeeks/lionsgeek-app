@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to LionsGeek Newsletter</title>
-  <style>
+    <title>{{ $subject ?? 'LionsGeek Newsletter' }}</title>
+    <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
@@ -26,18 +26,12 @@
             border: 1px solid #e9ecef;
             border-radius: 8px;
         }
-        .welcome-section {
-            background-color: #e7f3ff;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            border-left: 4px solid #007bff;
-        }
-        .features-list {
+        .newsletter-content {
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
             margin: 20px 0;
+            border-left: 4px solid #007bff;
         }
         .footer {
             text-align: center;
@@ -75,75 +69,62 @@
         .contact-link {
             color: #007bff;
             text-decoration: underline;
-    }
-  </style>
+        }
+        .unsubscribe {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #856404;
+        }
+        .unsubscribe a {
+            color: #dc3545;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .unsubscribe a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
         <img src="https://media.licdn.com/dms/image/v2/D4E0BAQEI5pl3PyS-Eg/company-logo_200_200/company-logo_200_200/0/1734088749325/lionsgeek_logo?e=2147483647&v=beta&t=2tZP_cpgMZO4IFtfyB0GNKXIrPO5I5w6a8iUlnrhntQ" width="90" alt="LionsGeek Logo" class="logo">
-        <h1>🎉 Welcome to LionsGeek Newsletter!</h1>
-        <p>Thank You For Subscribing</p>
+        <h1>📧 LionsGeek Newsletter</h1>
+        <p>Latest Updates & Insights</p>
     </div>
 
     <div class="content">
-        <h2>Hello Lion!</h2>
+        <h2>Hello!</h2>
         
-        <div class="welcome-section">
-            <h3>🎉 Welcome to Our Community!</h3>
-            <p>Thank you for signing up for our newsletter! We're thrilled to have you on board and excited to share amazing content with you.</p>
+        <div class="newsletter-content">
+            <p>{{ $content }}</p>
         </div>
 
-        <p>LionsGeek is your hub for learning, growth, and innovation in the world of technology and digital media.</p>
-
-        <div class="features-list">
-            <h3>📧 What You Can Expect:</h3>
-            <ul>
-                <li><strong>Latest Updates:</strong> Stay informed about our newest projects in coding, digital media, and beyond</li>
-                <li><strong>Exclusive Insights:</strong> Get tips, tricks, and insights to help you excel in web development, app creation, and digital media production</li>
-                <li><strong>Early Access:</strong> Be the first to know about workshops, tutorials, and events tailored for tech and media enthusiasts like you</li>
-                <li><strong>Community News:</strong> Updates about our community, success stories, and opportunities</li>
-            </ul>
-        </div>
-
-        <p>If there's something specific you'd love to see in our updates, let us know—we'd love to hear from you!</p>
-        
-        <p>Stay tuned for exciting news and updates coming your way soon!</p>
+        <p>Thank you for being part of our community!</p>
         
         <p>Warm regards,<br><strong>The LionsGeek Team</strong></p>
 
         <div class="divider"></div>
 
         <div class="rtl">
-            <h2>مرحبًا أيها الأسد!</h2>
+            <h2>مرحبًا!</h2>
             
-            <div class="welcome-section">
-                <h3>🎉 مرحبًا بك في مجتمعنا!</h3>
-                <p>شكرًا لك على الاشتراك في نشرتنا الإخبارية! نحن متحمسون لوجودك معنا ومتحمسون لمشاركة محتوى رائع معك.</p>
-  </div>
-
-            <p>LionsGeek هو مركزك للتعلم والنمو والابتكار في عالم التكنولوجيا والوسائط الرقمية.</p>
-
-            <div class="features-list">
-                <h3>📧 ما يمكنك توقعه:</h3>
-                <ul>
-                    <li><strong>أحدث التحديثات:</strong> ابق على اطلاع بمشاريعنا الجديدة في البرمجة والوسائط الرقمية وأكثر</li>
-                    <li><strong>رؤى حصرية:</strong> احصل على نصائح وحيل ورؤى لمساعدتك على التفوق في تطوير الويب وإنشاء التطبيقات وإنتاج الوسائط الرقمية</li>
-                    <li><strong>وصول مبكر:</strong> كن أول من يعرف عن ورش العمل والدروس والأحداث المصممة لعشاق التكنولوجيا والوسائط مثلك</li>
-                    <li><strong>أخبار المجتمع:</strong> تحديثات حول مجتمعنا وقصص النجاح والفرص</li>
-                  </ul>
+            <div class="newsletter-content">
+                <p>{{ $content }}</p>
             </div>
 
-            <p>إذا كان هناك شيء محدد تود رؤيته في تحديثاتنا، أخبرنا—نحب أن نسمع منك!</p>
-            
-            <p>ترقبوا أخبار وتحديثات مثيرة قادمة إليكم قريبًا!</p>
+            <p>شكرًا لك لكونك جزءًا من مجتمعنا!</p>
             
             <p>مع أطيب التحيات،<br><strong>فريق LionsGeek</strong></p>
-                        </div>
+        </div>
     </div>
 
     <div class="footer">
         <div class="social-links">
-            <h3>Join Us:</h3>
+            <h3 class="links">Join Us:</h3>
             <a href="https://www.instagram.com/lions_geek?igsh=MWNhb2F6eGRjOTZvcg==" target="_blank">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 5px;">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -172,7 +153,15 @@
         
         <p>This is an automated message. Please do not reply to this email.</p>
         <p>If you have any questions, please <a href="https://lionsgeek.ma/contact" class="contact-link">contact us</a></p>
+        
+        @if(isset($unsubscribeUrl))
+            <div class="unsubscribe">
+                <p><strong>Don't want to receive these emails anymore?</strong></p>
+                <p>You can <a href="{{ $unsubscribeUrl }}">unsubscribe here</a> at any time.</p>
+            </div>
+        @endif
+        
         <p>&copy; {{ date('Y') }} LionsGeek. All rights reserved.</p>
-  </div>
+    </div>
 </body>
 </html>

@@ -5,8 +5,11 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-    Route::resource('newsletter', NewsletterController::class);
+    
+    Route::get('newsletter', [NewsletterController::class, 'index'])->name('newsletter.index');
+    Route::post('newsletter', [NewsletterController::class, 'store'])->name('newsletter.store');
     Route::get('/kill', [NewsletterController::class, 'fakeUsers']);
 });
 
 Route::post('subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::get('newsletter/unsubscribe/{id}', [NewsletterController::class, 'unsubscribeFromUrl'])->name('newsletter.unsubscribe');
