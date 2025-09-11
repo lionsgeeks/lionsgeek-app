@@ -369,96 +369,46 @@ const Dashboard = () => {
                                         </div>
                                     </DialogContent>
                                 </Dialog>
-                                {/* Global Confirmation Dialog */}
+                            
                                 <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-                                    <DialogContent >
+                                    <DialogContent className="w-[90vw] max-w-[60vw] p-4">
                                         <DialogTitle>
-                                            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
-                                                <UserPlus className="w-5 h-5 mr-2" />
-                                                User Management
-                                                <p className="text-gray-600 text-sm">(Manage user accounts and permissions)</p>
+                                            <div className="flex items-center gap-2 ">
+                                                {confirmType === 'delete' ? (
+                                                    <Trash2 className="w-4 h-5" />
+                                                ) : (
+                                                    <RefreshCw className="w-4 h-5" />
+                                                )}
+                                                <span className="font-semibold">
+                                                    {confirmType === 'delete' ? 'Confirm Delete' : 'Confirm Password Reset'}
+                                                </span>
                                             </div>
                                         </DialogTitle>
 
-                                        <div className="flex flex-col gap-6 md:gap-8">
-                                            {/* ======= Add Admin Form ======= */}
-                                            <div className="p-3 sm:p-4 bg-gray-50 rounded-lg w-full">
-                                                <form onSubmit={onAddAdmin} className="space-y-4">
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                                                        <div>
-                                                            <Label htmlFor="name" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                                                                Name:
-                                                            </Label>
-                                                            <Input
-                                                                type="text"
-                                                                name="name"
-                                                                id="name"
-                                                                value={data.name}
-                                                                onChange={(e) => setData('name', e.target.value)}
-                                                                placeholder="Username for the Account"
-                                                                className="w-full"
-                                                                required
-                                                                disabled={processing}
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <Label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                                                                Email:
-                                                            </Label>
-                                                            <Input
-                                                                type="email"
-                                                                name="email"
-                                                                id="email"
-                                                                value={data.email}
-                                                                onChange={(e) => setData('email', e.target.value)}
-                                                                placeholder="Email for the Account"
-                                                                className="w-full text-sm py-2"
-                                                                required
-                                                                disabled={processing}
-                                                            />
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex justify-end">
-                                                        <Button
-                                                            type="submit"
-                                                            disabled={processing}
-                                                            className="inline-flex items-center px-3 py-2 text-sm bg-alpha text-black rounded-lg hover:bg-beta hover:text-alpha focus:ring-2 focus:ring-alpha disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                                                        >
-                                                            {processing ? (
-                                                                <>
-                                                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                                                                    Adding...
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <Plus className="w-4 h-4 mr-2" />
-                                                                    Add Admin
-                                                                </>
-                                                            )}
-                                                        </Button>
-                                                    </div>
-                                                </form>
-                                            </div>
-
-                                            {/* ======= Users Table ======= */}
-                                            <div className=" ">
-                                                <div className="">
-
-                                                </div>
-                                            </div>
+                                        <div className="py-2 text-sm text-gray-700">
+                                            {confirmType === 'delete' ? (
+                                                <p>Are you sure you want to delete user {selectedUser?.email}? This action cannot be undone.</p>
+                                            ) : (
+                                                <p>Reset password for {selectedUser?.email}? A new password will be generated and emailed.</p>
+                                            )}
                                         </div>
 
-                                        <div className="flex justify-end w-full mt-6 pt-4 border-t">
+                                        <div className="flex justify-end gap-2 mt-2">
                                             <Button
-                                                onClick={() => setIsOpen(false)}
-                                                className="px-4 py-2 bg-alpha text-black rounded-lg hover:bg-beta hover:text-alpha focus:ring-2 focus:ring-alpha transition-colors duration-200"
+                                                onClick={() => setConfirmOpen(false)}
+                                                className="px-3 py-1.5 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200"
                                             >
-                                                Close
+                                                Cancel
+                                            </Button>
+                                            <Button
+                                                onClick={performConfirmedAction}
+                                                disabled={isLoading}
+                                                className={`px-3 py-1.5 rounded-md text-white ${confirmType === 'delete' ? 'bg-red-600 hover:bg-red-700' : 'bg-yellow-600 hover:bg-yellow-700'}`}
+                                            >
+                                                {isLoading ? 'Processing...' : 'Confirm'}
                                             </Button>
                                         </div>
                                     </DialogContent>
-
                                 </Dialog>
                             </div>
                         </div>
