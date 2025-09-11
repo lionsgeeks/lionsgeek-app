@@ -651,19 +651,25 @@ class ParticipantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Participant $participant)
-    {
-        // dd($participant);
-        return Inertia::render('admin/participants/[id]', [
-            'participant' => $participant->load([
-                'infoSession',
-                'notes',
-                'questions',
-                'satisfaction',
-                'confirmation'
-            ])
-        ]);
-    }
+   public function show(Participant $participant)
+{
+    $participants = Participant::where('status', 'pending')
+        ->orderBy('id')
+        ->get(['id', 'full_name']);
+
+    return Inertia::render('admin/participants/[id]', [
+        'participant' => $participant->load([
+            'infoSession',
+            'notes',
+            'questions',
+            'satisfaction',
+            'confirmation'
+        ]),
+        'participants' => $participants,
+    ]);
+}
+
+    
 
     /**
      * Show the form for editing the specified resource.
