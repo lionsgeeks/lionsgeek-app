@@ -25,7 +25,7 @@
             <div class="code">{{ $randomPassword ?? '********' }}</div>
             <p class="muted" style="margin-top: 16px;">Use this password to sign in, then change it from your profile settings.</p>
             <p style="margin-top: 20px;">
-                <a class="btn" href="{{ config('app.url') }}/login">Go to Login</a>
+                <a class="btn" href="{{ config('app.url') }}/geek-in">Go to Login</a>
             </p>
         </div>
         <div class="footer">If you did not request this, you can ignore this email.</div>
