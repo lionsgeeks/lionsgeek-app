@@ -40,7 +40,7 @@ import { FrequentQuestionsSection } from './partials/frequent-questions-section'
 import { MotivationSection } from './partials/motivation-section';
 import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-section';
 export default function ParticipantProfilePage() {
-    const { participant } = usePage().props;
+const { participant, participants } = usePage().props;
     const [isProcessing, setIsProcessing] = useState(false);
     const [isDeleteOpened, setIsDeleteOpened] = useState(false);
     const [selectedParticipant, setSelectedParticipant] = useState(null);
@@ -174,22 +174,40 @@ export default function ParticipantProfilePage() {
             action: action,
         });
     };
+   
+   
+const handleNavigation = () => {
+  const currentIndex = participants.findIndex(p => p.id === participant.id);
+  const nextParticipant = participants[currentIndex + 1];
 
-    const handleApprove = () => {
-        setIsProcessing(true);
-        router.post(`/admin/participants/${participant.id}/approve`, {}, {
-            onFinish: () => setIsProcessing(false),
-            onError: () => setIsProcessing(false)
-        });
-    };
+  if (nextParticipant) {
+    router.visit(`/admin/participants/${nextParticipant.id}`);
+  } else {
+    router.visit("/admin/participants");
+  }
+};
+const handleApprove = () => {
+  setIsProcessing(true);
+  router.post(`/admin/participants/${participant.id}/approve`, {}, {
+    onFinish: () => {
+      setIsProcessing(false);
+      handleNavigation(); 
+    },
+    onError: () => setIsProcessing(false),
+  });
+};
 
-    const handleReject = () => {
-        setIsProcessing(true);
-        router.post(`/admin/participants/${participant.id}/reject`, {}, {
-            onFinish: () => setIsProcessing(false),
-            onError: () => setIsProcessing(false)
-        });
-    };
+const handleReject = () => {
+  setIsProcessing(true);
+  router.post(`/admin/participants/${participant.id}/reject`, {}, {
+    onFinish: () => {
+      setIsProcessing(false);
+      handleNavigation(); 
+    },
+    onError: () => setIsProcessing(false),
+  });
+};
+
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

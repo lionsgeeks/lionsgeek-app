@@ -7,43 +7,58 @@ use App\Models\Participant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class ParticipantController extends Controller
 {
     //
 
+
     public function setPhoto(Request $request)
-        {
-            $request->validate([
-                'photo' => 'required|image|mimes:jpeg,png,jpg,gif',
-                "id" => "required"
-            ]);
+    {
+        $request->validate([
+            "photo" => "required|image|mimes:jpeg,png,jpg,gif",
+            "id"    => "required",
+        ]);
 
-            $profile = Participant::find($request->id);
+        $profile = Participant::findOrFail($request->id);
 
-            if ($request->hasFile('photo')) {
-                $file = $request->file('photo');
+        $manager = new ImageManager(new Driver());
+        $file = $request->file("photo");
 
-                // Load the image
-                $image = Image::make($file);
+        // check file size in KB
+        $fileSize = $file->getSize() / 1024;
 
-                // Compress by reducing quality (0-100)
-                $imagePath = 'images/participants/' . time() . '_' . $file->getClientOriginalName();
-                $image->save(storage_path('app/public/' . $imagePath), 60); // 60% quality
+        // unique filename
+        $fileName = time() . '.' . $file->getClientOriginalExtension();
+        $savePath = storage_path("app/public/images/participants/" . $fileName);
 
-
-                $profile->image = basename($imagePath);
-                $profile->save();
-
-                return response()->json([
-                    'message' => 'Photo uploaded and compressed successfully!',
-                    'profile' => $profile,
-                ]);
+        if ($fileSize >= 1024) { // if >= 1MB
+            $img = $manager->read($file);
+            $img->toJpeg(80)->save($savePath); // compress
+        } else {
+            $file->move(storage_path("app/public/images/participants"), $fileName);
         }
 
-        return response()->json(['message' => "Error"], 400);
+        // delete old image if exists
+        if ($profile->image) {
+            $oldFile = storage_path("app/public/images/participants/" . $profile->image);
+            if (file_exists($oldFile)) {
+                unlink($oldFile);
+            }
+        }
+
+        // save new image in DB
+        $profile->image = $fileName;
+        $profile->save();
+
+        return response()->json([
+            "message" => "Photo uploaded successfully!",
+            "profile" => $profile,
+        ]);
     }
+
 
     public function runQueue()
     {
