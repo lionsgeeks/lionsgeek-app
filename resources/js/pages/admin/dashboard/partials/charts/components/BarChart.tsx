@@ -31,6 +31,7 @@ type ChartBarStackedProps = {
 };
 
 export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
+    console.log(barChart);
     return (
         <div className="w-full lg:w-1/2">
             <Card>
@@ -39,6 +40,7 @@ export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
                         <CardDescription>January - June 2024</CardDescription>
                     </CardHeader> */}
                 <CardContent>
+                    
                     <ChartContainer config={chartConfig}>
                         <BarChart accessibilityLayer data={barChart}>
                             <CartesianGrid vertical={false} />
