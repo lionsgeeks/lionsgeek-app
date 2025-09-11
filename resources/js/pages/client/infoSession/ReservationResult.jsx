@@ -150,7 +150,13 @@ export default function ReservationResult() {
               }`}>
                 <a
                   href={redirectUrl || '/'}
-                  className={`inline-flex items-center justify-center px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 bg-yellow-400 hover:bg-yellow-500 text-black shadow-lg hover:shadow-xl ${isRTL ? 'font-arabic' : ''}`}
+                  className={`inline-flex items-center justify-center px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 ${
+                    type === 'success'
+                      ? 'bg-yellow-400 hover:bg-yellow-500 text-black shadow-lg hover:shadow-xl'
+                      : darkMode
+                        ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                        : 'bg-gray-800 hover:bg-gray-900 text-white'
+                  } ${isRTL ? 'font-arabic' : ''}`}
                 >
                   {type === 'success' 
                     ? (selectedLanguage === 'ar' ? 'متابعة' : selectedLanguage === 'fr' ? 'Continuer' : 'Continue')

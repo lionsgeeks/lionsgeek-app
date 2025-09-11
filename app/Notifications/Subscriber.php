@@ -35,13 +35,11 @@ class Subscriber extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $unsubscribeUrl = url('https://lionsgeek.ma/unsubscribe/' . Crypt::encrypt($notifiable->id));
+        $unsubscribeUrl = url('/newsletter/unsubscribe/' . Crypt::encrypt($notifiable->id));
         return (new MailMessage)
             ->subject($this->subject)
-            ->line($this->content)
-            ->action('Click to see more', url('/'))
-            ->line('Thank you!')
-            ->markdown('vendor.notifications.email', [
+            ->view('emails.newsletter-content', [
+                'content' => $this->content,
                 'unsubscribeUrl' => $unsubscribeUrl,
             ]);
     }
