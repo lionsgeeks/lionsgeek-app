@@ -12,29 +12,25 @@ const Chart = () => {
     const { allsessions } = usePage().props;
 
     const [selectedSession, setSelectedSession] = useState(null);
+    const [selectedField, setSelectedField] = useState('Media'); // Default to Media
     const [AllPromo, setAllPromo] = useState([]);
     const [AllSessions, setAllSessions] = useState([]);
+    const [filteredSessions, setFilteredSessions] = useState([]); // New state for filtered sessions
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [barChart, setBarChart] = useState([]);
     const [pieChart, setPieChart] = useState([]);
 
+    // Extract promos from all sessions
     useEffect(() => {
-        // Debug: Log the session data to understand the structure
-        // console.log('All sessions:', allsessions);
-
-        // More robust promo extraction
         const promoNames = allsessions
             .filter((session) => session.name && session.name.includes(':'))
             .map((session) => {
                 const colonIndex = session.name.indexOf(':');
                 return session.name.slice(0, colonIndex).trim().toLowerCase();
             })
-            .filter((promo) => promo.length > 0); // Remove empty strings
+            .filter((promo) => promo.length > 0);
 
-        // Remove duplicates and sort
         const uniquePromos = [...new Set(promoNames)].sort();
-
-        // console.log('Extracted promos:', uniquePromos);
         setAllPromo(uniquePromos);
 
         if (uniquePromos.length > 0 && !selectedPromo) {
@@ -42,26 +38,40 @@ const Chart = () => {
         }
     }, [allsessions]);
 
+    // Filter sessions by selected promo
     useEffect(() => {
         if (!selectedPromo) return;
 
-        // More precise filtering - match the exact promo name (case-insensitive)
-        const filteredSessions = allsessions.filter((session) => {
+        const sessionsForPromo = allsessions.filter((session) => {
             if (!session.name || !session.name.includes(':')) return false;
-
             const sessionPromo = session.name.slice(0, session.name.indexOf(':')).trim().toLowerCase();
             return sessionPromo === selectedPromo.toLowerCase();
         });
 
-        // console.log('Filtered sessions for promo:', selectedPromo, filteredSessions);
-        setAllSessions(filteredSessions);
-
-        if (filteredSessions.length > 0) {
-            const defaultSessionId = filteredSessions[filteredSessions.length - 1]?.id;
-            setSelectedSession(defaultSessionId);
-        }
+        setAllSessions(sessionsForPromo);
     }, [selectedPromo, allsessions]);
 
+    // Filter sessions by selected field (Media/Coding) and update selected session
+    useEffect(() => {
+        if (!selectedField || AllSessions.length === 0) return;
+
+        const sessionsForField = AllSessions.filter((session) =>
+            session.name.toLowerCase().includes(selectedField.toLowerCase())
+        );
+
+        setFilteredSessions(sessionsForField);
+
+        // Auto-select the last session in the filtered list
+        if (sessionsForField.length > 0) {
+            const defaultSessionId = sessionsForField[sessionsForField.length - 1]?.id;
+            setSelectedSession(defaultSessionId);
+        } else {
+            setSelectedSession(null);
+        }
+    }, [selectedField, AllSessions]);
+
+    console.log(barChart);
+    // Fetch chart data when session changes
     useEffect(() => {
         if (!selectedSession) return;
 
@@ -70,6 +80,7 @@ const Chart = () => {
             .then((data) => {
                 setBarChart(data.BarChart || []);
                 setPieChart(data.PieChart || []);
+                
             })
             .catch((err) => console.error('Error fetching chart data:', err));
     }, [selectedSession]);
@@ -84,15 +95,30 @@ const Chart = () => {
                     <CardTitle className="text-xl font-semibold">Analyse</CardTitle>
                 </div>
 
-                <div className="flex flex-col lg:w-[30%] w-full gap-5">
+                <div className="flex lg:flex-row flex-col lg:w-[50%] w-full gap-5">
                     <Select value={selectedPromo || ''} onValueChange={(value) => setSelectedPromo(value)}>
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select Promo" />
                         </SelectTrigger>
                         <SelectContent>
+                            <SelectItem value="all">All Promos</SelectItem>
                             {AllPromo?.map((promo, index) => (
                                 <SelectItem key={`promo-${index}-${promo}`} value={promo}>
                                     {promo.charAt(0).toUpperCase() + promo.slice(1)}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select value={selectedField} onValueChange={(value) => setSelectedField(value)}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Field" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Fields</SelectItem>
+                            {['Media', 'Coding']?.map((field, index) => (
+                                <SelectItem className='capitalize' key={`field-${index}`} value={field.toString()}>
+                                    {field}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -103,7 +129,8 @@ const Chart = () => {
                             <SelectValue placeholder="Select Session" />
                         </SelectTrigger>
                         <SelectContent>
-                            {AllSessions?.map((session) => (
+                            <SelectItem value="all">All Sessions</SelectItem>
+                            {filteredSessions?.map((session) => (
                                 <SelectItem className='capitalize' key={`session-${session.id}`} value={session.id.toString()}>
                                     {session.name.slice(session.name.indexOf(':') + 1).trim()}
                                 </SelectItem>
@@ -115,7 +142,7 @@ const Chart = () => {
 
             <CardContent>
                 <div className="flex lg:flex-row-reverse gap-5 flex-col">
-                    <DonutChart pieChart={pieChart} id={selectedSession} />
+                    <DonutChart pieChart={pieChart} id={[selectedSession , selectedField , selectedPromo]} />
                     <BarChart barChart={barChart} />
                 </div>
             </CardContent>

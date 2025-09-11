@@ -54,7 +54,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
             'blogs' => $blogs,
             'views' => $views,
             'unreadMessages' => $unreadMessages,
-            // yahya add this
             'allsessions' => $allSessions,
             'coworkingsRequest' => $coworkingsRequest,
             'newsLetter' => $newsLetter,
