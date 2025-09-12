@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Clipboard, Copy, Mail, RotateCcw, Search } from 'lucide-react';
+import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import InterviewDialog from './interviewDialog';
 import InviteDialog from './inviteDialog';
@@ -53,6 +53,33 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		return '';
 	};
 
+	// Session options filtered by selectedTrack (coding/media)
+	const sessionOptions = useMemo(() => {
+		let list = infosessions || [];
+		if (selectedTrack && selectedTrack !== 'All') {
+			const wanted = selectedTrack.toLowerCase();
+			list = list.filter((s) => (s?.formation || '').toString().toLowerCase().includes(wanted));
+		}
+		// Also filter by selectedPromo (prefix before ':') when provided
+		if (selectedPromo && selectedPromo !== 'All') {
+			const wantedPromo = selectedPromo.toLowerCase();
+			list = list.filter((s) => {
+				const name = s?.name || '';
+				if (!name.includes(':')) return false;
+				const prefix = name.slice(0, name.indexOf(':')).trim().toLowerCase();
+				return prefix === wantedPromo;
+			});
+		}
+		return list;
+	}, [infosessions, selectedTrack, selectedPromo]);
+
+	// If current selectedSession is not in filtered sessionOptions, reset it
+	useEffect(() => {
+		if (!selectedSession) return;
+		const exists = sessionOptions.some((s) => s?.name === selectedSession);
+		if (!exists) setSelectedSession('');
+	}, [sessionOptions, selectedSession]);
+
 	const filtredParticipans =
 		participants?.filter((participant) => {
 			if (!participant) return false;
@@ -88,6 +115,27 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		setFiltredParticipants(filtredParticipans);
 	}, [search, selectedSession, selectedStep, selectedPromo, selectedTrack]);
 
+	// Initialize selectedStep from URL status on mount (only for status values)
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		const urlStatus = params.get('status');
+		if (urlStatus && isStatusValue(urlStatus)) {
+			setSelectedStep(urlStatus);
+		}
+	}, []);
+
+	// Persist status selection to URL; remove when a non-status step is chosen
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		if (selectedStep && isStatusValue(selectedStep)) {
+			params.set('status', selectedStep);
+		} else {
+			params.delete('status');
+		}
+		const newUrl = `${location.pathname}?${params.toString()}`;
+		window.history.replaceState({}, '', newUrl);
+	}, [selectedStep]);
+
 	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack;
 
 	const handleReset = () => {
@@ -96,6 +144,10 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		setSelectedSession('');
 		setSelectedPromo('');
 		setSelectedTrack('');
+		// Also clear status from URL
+		const params = new URLSearchParams(window.location.search);
+		params.delete('status');
+		window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
 	};
 
 	const handleCopyEmails = () => {
@@ -111,10 +163,20 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 	return (
 		<div className="relative space-y-4">
 			{/* Copy Emails aligned with title (top-right) */}
-			<div className="absolute right-0 -top-12">
+			<div className="absolute right-0 -top-12 hidden sm:block">
 				<Button
 					onClick={handleCopyEmails}
 					className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+				>
+					{copy ? <Copy className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
+					{copy ? 'Copy Emails' : 'Copied!'}
+				</Button>
+			</div>
+			{/* Mobile: Copy Emails under the title */}
+			<div className="sm:hidden mt-2">
+				<Button
+					onClick={handleCopyEmails}
+					className="rounded-lg bg-[#212529] text-white transition-colors hover:bg-[#fee819] hover:text-[#212529]"
 				>
 					{copy ? <Copy className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
 					{copy ? 'Copy Emails' : 'Copied!'}
@@ -130,7 +192,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 						placeholder="Search by name or email..."
-						className="rounded-lg border pl-10 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
+						className="rounded-lg border border-gray-300 bg-white pl-10 h-9 text-[#212529] placeholder:text-gray-400 shadow-sm hover:border-gray-400 focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/30"
 					/>
 				</div>
 
@@ -163,15 +225,15 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 					</SelectContent>
 				</Select>
 
-				{/* Session Filter */}
-				{infosessions && (
+				{/* Session Filter (depends on Track) */}
+				{sessionOptions && (
 					<Select onValueChange={setSelectedSession} value={selectedSession}>
 						<SelectTrigger className="w-56 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
 							<SelectValue placeholder="Filter By Session" />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value="All">All Sessions</SelectItem>
-							{infosessions.map((session, index) => (
+							{sessionOptions.map((session, index) => (
 								<SelectItem key={index} value={session.name}>
 									{session.name}
 								</SelectItem>
@@ -188,27 +250,72 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 					<SelectContent>
 						{/* Status options at top */}
 						<SelectItem value="approved">
-							<span>Approved<span className="ml-1 text-gray-500">({statusCounts.approved || 0})</span></span>
+							<div className="flex items-center gap-2">
+								<CheckCircle2 className="h-4 w-4 text-green-600" />
+								<span>Approved<span className="ml-1 text-gray-500">({statusCounts.approved || 0})</span></span>
+							</div>
 						</SelectItem>
 						<SelectItem value="pending">
-							<span>Pending<span className="ml-1 text-gray-500">({statusCounts.pending || 0})</span></span>
+							<div className="flex items-center gap-2">
+								<Clock className="h-4 w-4 text-orange-600" />
+								<span>Pending<span className="ml-1 text-gray-500">({statusCounts.pending || 0})</span></span>
+							</div>
 						</SelectItem>
 						<SelectItem value="rejected">
-							<span>Rejected<span className="ml-1 text-gray-500">({statusCounts.rejected || 0})</span></span>
+							<div className="flex items-center gap-2">
+								<XCircle className="h-4 w-4 text-red-600" />
+								<span>Rejected<span className="ml-1 text-gray-500">({statusCounts.rejected || 0})</span></span>
+							</div>
 						</SelectItem>
 						<SelectItem value="all">
-							<span>All<span className="ml-1 text-gray-500">({statusCounts.all || 0})</span></span>
+							<div className="flex items-center gap-2">
+								<Users className="h-4 w-4 text-gray-500" />
+								<span>All<span className="ml-1 text-gray-500">({statusCounts.all || 0})</span></span>
+							</div>
 						</SelectItem>
 						{/* Divider equivalent: keep list order */}
-						<SelectItem value="All">All Steps</SelectItem>
-						<SelectItem value="info_session">Info Session</SelectItem>
-						<SelectItem value="interview">Interview</SelectItem>
-						<SelectItem value="interview_pending">Interview Pending</SelectItem>
-						<SelectItem value="interview_failed">Interview Failed</SelectItem>
-						<SelectItem value="jungle">Jungle</SelectItem>
-						<SelectItem value="jungle_failed">Jungle Failed</SelectItem>
-						<SelectItem value="coding_school">Coding School</SelectItem>
-						<SelectItem value="media_school">Media School</SelectItem>
+						<SelectItem value="All">
+							<div className="flex items-center gap-2 text-gray-700">
+								<ListChecks className="h-4 w-4 text-gray-500" />
+								<span>All Steps</span>
+							</div>
+						</SelectItem>
+						<SelectItem value="info_session">
+							<div className="flex items-center gap-2 text-gray-700">
+								<Presentation className="h-4 w-4 text-gray-500" />
+								<span>Info Session</span>
+							</div>
+						</SelectItem>
+						<SelectItem value="interview">
+							<div className="flex items-center gap-2 text-gray-700">
+								<User className="h-4 w-4 text-gray-500" />
+								<span>Interview</span>
+							</div>
+						</SelectItem>
+						<SelectItem value="interview_pending">
+							<div className="flex items-center gap-2 text-gray-700">
+								<Clock className="h-4 w-4 text-gray-500" />
+								<span>Interview Pending</span>
+							</div>
+						</SelectItem>
+						<SelectItem value="interview_failed">
+							<div className="flex items-center gap-2 text-gray-700">
+								<Ban className="h-4 w-4 text-gray-500" />
+								<span>Interview Failed</span>
+							</div>
+						</SelectItem>
+						<SelectItem value="jungle">
+							<div className="flex items-center gap-2 text-gray-700">
+								<Mountain className="h-4 w-4 text-gray-500" />
+								<span>Jungle</span>
+							</div>
+						</SelectItem>
+						<SelectItem value="jungle_failed">
+							<div className="flex items-center gap-2 text-gray-700">
+								<Ban className="h-4 w-4 text-gray-500" />
+								<span>Jungle Failed</span>
+							</div>
+						</SelectItem>
 					</SelectContent>
 				</Select>
 
