@@ -115,6 +115,27 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		setFiltredParticipants(filtredParticipans);
 	}, [search, selectedSession, selectedStep, selectedPromo, selectedTrack]);
 
+	// Initialize selectedStep from URL status on mount (only for status values)
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		const urlStatus = params.get('status');
+		if (urlStatus && isStatusValue(urlStatus)) {
+			setSelectedStep(urlStatus);
+		}
+	}, []);
+
+	// Persist status selection to URL; remove when a non-status step is chosen
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		if (selectedStep && isStatusValue(selectedStep)) {
+			params.set('status', selectedStep);
+		} else {
+			params.delete('status');
+		}
+		const newUrl = `${location.pathname}?${params.toString()}`;
+		window.history.replaceState({}, '', newUrl);
+	}, [selectedStep]);
+
 	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack;
 
 	const handleReset = () => {
@@ -123,6 +144,10 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		setSelectedSession('');
 		setSelectedPromo('');
 		setSelectedTrack('');
+		// Also clear status from URL
+		const params = new URLSearchParams(window.location.search);
+		params.delete('status');
+		window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
 	};
 
 	const handleCopyEmails = () => {
