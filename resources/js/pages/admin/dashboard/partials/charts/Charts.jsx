@@ -4,86 +4,140 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePage } from '@inertiajs/react';
 import { BarChart2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import BarChart from './components/BarChart.js';
 import { DonutChart } from './components/PieChart.js';
 
 const Chart = () => {
     const { allsessions } = usePage().props;
 
-    const [selectedSession, setSelectedSession] = useState(null);
-    const [selectedField, setSelectedField] = useState('Media'); // Default to Media
-    const [AllPromo, setAllPromo] = useState([]);
-    const [AllSessions, setAllSessions] = useState([]);
-    const [filteredSessions, setFilteredSessions] = useState([]); // New state for filtered sessions
-    const [selectedPromo, setSelectedPromo] = useState(null);
+    const [selectedSession, setSelectedSession] = useState('');
+    const [selectedField, setSelectedField] = useState('all');
+    const [selectedPromo, setSelectedPromo] = useState('all');
     const [barChart, setBarChart] = useState([]);
     const [pieChart, setPieChart] = useState([]);
 
-    // Extract promos from all sessions
-    useEffect(() => {
-        const promoNames = allsessions
-            .filter((session) => session.name && session.name.includes(':'))
-            .map((session) => {
-                const colonIndex = session.name.indexOf(':');
-                return session.name.slice(0, colonIndex).trim().toLowerCase();
-            })
-            .filter((promo) => promo.length > 0);
-
-        const uniquePromos = [...new Set(promoNames)].sort();
-        setAllPromo(uniquePromos);
-
-        if (uniquePromos.length > 0 && !selectedPromo) {
-            setSelectedPromo(uniquePromos[0]);
-        }
+    // Build normalized promo options (lowercased values)
+    const promoOptions = useMemo(() => {
+        const set = new Set();
+        (allsessions || []).forEach((s) => {
+            const name = s?.name || '';
+            if (!name.includes(':')) return;
+            const prefix = name.slice(0, name.indexOf(':')).trim().toLowerCase();
+            if (prefix) set.add(prefix);
+        });
+        return Array.from(set).sort();
     }, [allsessions]);
 
-    // Filter sessions by selected promo
-    useEffect(() => {
-        if (!selectedPromo) return;
+    const toTitle = (txt) => txt.split(' ').map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w)).join(' ');
 
-        const sessionsForPromo = allsessions.filter((session) => {
-            if (!session.name || !session.name.includes(':')) return false;
-            const sessionPromo = session.name.slice(0, session.name.indexOf(':')).trim().toLowerCase();
-            return sessionPromo === selectedPromo.toLowerCase();
-        });
+    // Sessions filtered by promo and field; sorted by date ascending
+    const filteredSessions = useMemo(() => {
+        let list = Array.isArray(allsessions) ? [...allsessions] : [];
 
-        setAllSessions(sessionsForPromo);
-    }, [selectedPromo, allsessions]);
-
-    // Filter sessions by selected field (Media/Coding) and update selected session
-    useEffect(() => {
-        if (!selectedField || AllSessions.length === 0) return;
-
-        const sessionsForField = AllSessions.filter((session) =>
-            session.name.toLowerCase().includes(selectedField.toLowerCase())
-        );
-
-        setFilteredSessions(sessionsForField);
-
-        // Auto-select the last session in the filtered list
-        if (sessionsForField.length > 0) {
-            const defaultSessionId = sessionsForField[sessionsForField.length - 1]?.id;
-            setSelectedSession(defaultSessionId);
-        } else {
-            setSelectedSession(null);
+        if (selectedPromo && selectedPromo !== 'all') {
+            list = list.filter((s) => {
+                const name = s?.name || '';
+                if (!name.includes(':')) return false;
+                const prefix = name.slice(0, name.indexOf(':')).trim().toLowerCase();
+                return prefix === selectedPromo;
+            });
         }
-    }, [selectedField, AllSessions]);
 
-    console.log(barChart);
-    // Fetch chart data when session changes
+        if (selectedField && selectedField !== 'all') {
+            const wanted = selectedField.toLowerCase();
+            list = list.filter((s) => (s?.formation || '').toString().toLowerCase().includes(wanted));
+        }
+
+        list.sort((a, b) => new Date(a.start_date || 0) - new Date(b.start_date || 0));
+        return list;
+    }, [allsessions, selectedPromo, selectedField]);
+
+    // Maintain a valid selectedSession when filters change
     useEffect(() => {
-        if (!selectedSession) return;
+        if (!filteredSessions.length) {
+            setSelectedSession('');
+            return;
+        }
+        // If current is invalid, set default to first session id; keep 'all' as is
+        if (selectedSession && selectedSession !== 'all') {
+            const ok = filteredSessions.some((s) => s.id?.toString() === selectedSession?.toString());
+            if (!ok) setSelectedSession(filteredSessions[0].id?.toString());
+        } else if (!selectedSession) {
+            setSelectedSession(filteredSessions[0].id?.toString());
+        }
+    }, [filteredSessions]);
 
-        fetch(`/admin/getChartData/${selectedSession}`)
-            .then((res) => res.json())
-            .then((data) => {
-                setBarChart(data.BarChart || []);
-                setPieChart(data.PieChart || []);
-                
-            })
-            .catch((err) => console.error('Error fetching chart data:', err));
-    }, [selectedSession]);
+    // Helper: sum BarChart arrays by step keys
+    const sumBarCharts = (charts) => {
+        const byStep = new Map();
+        charts.forEach((arr) => {
+            (arr || []).forEach((row) => {
+                const key = row.step;
+                if (!byStep.has(key)) byStep.set(key, { step: key });
+                const target = byStep.get(key);
+                Object.keys(row).forEach((k) => {
+                    if (k === 'step') return;
+                    target[k] = (target[k] || 0) + (row[k] || 0);
+                });
+            });
+        });
+        return Array.from(byStep.values());
+    };
+
+    // Helper: sum PieChart arrays by step keys
+    const sumPieCharts = (charts) => {
+        const byStep = new Map();
+        charts.forEach((arr) => {
+            (arr || []).forEach((row) => {
+                const key = row.step;
+                if (!byStep.has(key)) byStep.set(key, { step: key, total: 0, female: 0, male: 0 });
+                const target = byStep.get(key);
+                target.total += row.total || 0;
+                target.female += row.female || 0;
+                target.male += row.male || 0;
+            });
+        });
+        return Array.from(byStep.values());
+    };
+
+    // Fetch and (optionally) aggregate chart data
+    useEffect(() => {
+        const load = async () => {
+            if (!filteredSessions.length) {
+                setBarChart([]);
+                setPieChart([]);
+                return;
+            }
+
+            // Determine which session ids to include
+            let ids = [];
+            if (selectedSession === 'all') {
+                ids = filteredSessions.map((s) => s.id);
+            } else if (selectedField === 'all') {
+                // When All Fields is selected, aggregate across all filteredSessions
+                ids = filteredSessions.map((s) => s.id);
+            } else {
+                ids = [selectedSession];
+            }
+
+            // Fetch all in parallel and aggregate
+            const results = await Promise.all(
+                ids.map((id) =>
+                    fetch(`/admin/getChartData/${id}`)
+                        .then((r) => r.json())
+                        .catch(() => ({ BarChart: [], PieChart: [] }))
+                )
+            );
+
+            const bar = sumBarCharts(results.map((r) => r.BarChart));
+            const pie = sumPieCharts(results.map((r) => r.PieChart));
+            setBarChart(bar);
+            setPieChart(pie);
+        };
+
+        load();
+    }, [filteredSessions, selectedSession]);
 
     return (
         <Card className="w-full">
@@ -96,43 +150,40 @@ const Chart = () => {
                 </div>
 
                 <div className="flex lg:flex-row flex-col lg:w-[50%] w-full gap-5">
-                    <Select value={selectedPromo || ''} onValueChange={(value) => setSelectedPromo(value)}>
+                    <Select value={selectedPromo} onValueChange={setSelectedPromo}>
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select Promo" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Promos</SelectItem>
-                            {AllPromo?.map((promo, index) => (
-                                <SelectItem key={`promo-${index}-${promo}`} value={promo}>
-                                    {promo.charAt(0).toUpperCase() + promo.slice(1)}
+                            {promoOptions.map((promo) => (
+                                <SelectItem key={`promo-${promo}`} value={promo}>
+                                    {toTitle(promo)}
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
 
-                    <Select value={selectedField} onValueChange={(value) => setSelectedField(value)}>
+                    <Select value={selectedField} onValueChange={setSelectedField}>
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select Field" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Fields</SelectItem>
-                            {['Media', 'Coding']?.map((field, index) => (
-                                <SelectItem className='capitalize' key={`field-${index}`} value={field.toString()}>
-                                    {field}
-                                </SelectItem>
-                            ))}
+                            <SelectItem value="Media">Media</SelectItem>
+                            <SelectItem value="Coding">Coding</SelectItem>
                         </SelectContent>
                     </Select>
 
-                    <Select value={selectedSession?.toString() || ''} onValueChange={(value) => setSelectedSession(value)}>
+                    <Select value={selectedSession?.toString() || ''} onValueChange={setSelectedSession}>
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select Session" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Sessions</SelectItem>
-                            {filteredSessions?.map((session) => (
+                            {filteredSessions.map((session) => (
                                 <SelectItem className='capitalize' key={`session-${session.id}`} value={session.id.toString()}>
-                                    {session.name.slice(session.name.indexOf(':') + 1).trim()}
+                                    {session.name.includes(':') ? session.name.slice(session.name.indexOf(':') + 1).trim() : session.name}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -142,7 +193,7 @@ const Chart = () => {
 
             <CardContent>
                 <div className="flex lg:flex-row-reverse gap-5 flex-col">
-                    <DonutChart pieChart={pieChart} id={[selectedSession , selectedField , selectedPromo]} />
+                    <DonutChart pieChart={pieChart} id={[selectedSession, selectedField, selectedPromo]} />
                     <BarChart barChart={barChart} />
                 </div>
             </CardContent>
