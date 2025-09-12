@@ -170,18 +170,18 @@
 
 {{-- Subcopy --}}
 @isset($actionText)
-<x-slot:subcopy>
-@lang(
-    "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\n".
-    'into your web browser:',
-    [
-        'actionText' => $actionText,
-    ]
-) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
-{{-- <p style="text-align: center; font-size:smaller; ">
-    If you no longer wish to receive these emails, you can
-    <a href="{{ $unsubscribeUrl }}">unsubscribe here</a>.
-</p> --}}
-</x-slot:subcopy>
+    <div style="margin-top:20px; font-size:12px; color:#6c757d;">
+        @lang(
+            'If you\'re having trouble clicking the ":actionText" button, copy and paste the URL below into your web browser:',
+            ['actionText' => $actionText]
+        )
+        <br>
+        <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
+    </div>
 @endisset
-</x-mail::message>
+
+        </div> <!-- /.rtl container -->
+    </div> <!-- /.content -->
+
+</body>
+</html>
