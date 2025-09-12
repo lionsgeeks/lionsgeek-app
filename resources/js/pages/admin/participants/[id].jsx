@@ -40,7 +40,7 @@ import { FrequentQuestionsSection } from './partials/frequent-questions-section'
 import { MotivationSection } from './partials/motivation-section';
 import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-section';
 export default function ParticipantProfilePage() {
-const { participant, participants } = usePage().props;
+    const { participant, participants,stepParticipant } = usePage().props;
     const [isProcessing, setIsProcessing] = useState(false);
     const [isDeleteOpened, setIsDeleteOpened] = useState(false);
     const [selectedParticipant, setSelectedParticipant] = useState(null);
@@ -169,11 +169,21 @@ const { participant, participants } = usePage().props;
         return false;
     }
 
-     const changeStep = (action) => {
-        router.patch(`/admin/participant/current-step/${participant.id}`, {
-            action: action,
-        });
-    };
+      const changeStep = (action) => {
+    router.patch(`/admin/participant/current-step/${participant.id}`, { action });
+
+    const jugleParticipants = stepParticipant.filter(p => p.current_step === participant.current_step);
+
+    const currentIndex = jugleParticipants.findIndex(p => p.id === participant.id);
+
+    const nextParticipant = jugleParticipants[currentIndex + 1];
+
+    if (nextParticipant) {
+        router.visit(`/admin/participants/${nextParticipant.id}`);
+    } else {
+        router.visit("/admin/participants");
+    }
+};
    
    
 const handleNavigation = () => {
