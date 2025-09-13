@@ -47,7 +47,7 @@ export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
                             <XAxis dataKey="step" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value} />
                             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
                             <ChartLegend content={<ChartLegendContent />} />
-                            <Bar dataKey="success" stackId="a" fill="#104e64" radius={[0, 0, 4, 4]} />
+                            <Bar dataKey="success" stackId="a" fill="#4CAF50" radius={[0, 0, 4, 4]} />
                             <Bar dataKey="failed" stackId="a" fill="#ff0000" radius={[4, 4, 0, 0]} />
                             <Bar dataKey="absence" stackId="a" fill="#bcbcbc" radius={[4, 4, 0, 0]} />
                         </BarChart>
