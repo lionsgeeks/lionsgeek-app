@@ -163,6 +163,10 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
+    {{-- Flasher CSS --}}
+    <link rel="stylesheet" href="/vendor/flasher/flasher.min.css">
+    <link rel="stylesheet" href="/vendor/flasher/toastr.min.css">
+
     @routes
     @viteReactRefresh
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.jsx"])
@@ -320,6 +324,10 @@
             }, 100);
         });
     </script>
+
+    {{-- Flasher JavaScript --}}
+    <script src="/vendor/flasher/flasher.min.js"></script>
+    <script src="/vendor/flasher/flasher-toastr.min.js"></script>
 </body>
 
 </html>

@@ -6,8 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, usePage } from '@inertiajs/react';
-import { Download, FileMinus, Inbox, Mail, MailOpen, MessageCircle, Plus, Send, Trash2, TypeOutline, User, Users } from 'lucide-react';
-import { useState } from 'react';
+import { Download, FileMinus, Inbox, Mail, MailOpen, MessageCircle, Plus, Send, Trash2, TypeOutline, User, Users, ChevronLeft, CheckCircle, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function Index() {
     const { messages, selected, sendedMessage } = usePage().props;
@@ -18,8 +18,11 @@ export default function Index() {
     const [filter, setFilter] = useState('all');
     const [showCc, setShowCc] = useState(false);
     const [showBcc, setShowBcc] = useState(false);
+    const [showMobileMessage, setShowMobileMessage] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
     const allMessages = messages.concat(sendedMessage)
-    console.log(allMessages);
+    // console.log(allMessages);
 
     const [emailData, setEmailData] = useState({
         receiver: '',
@@ -46,11 +49,13 @@ export default function Index() {
     const handleSelect = (id) => {
         setActiveId(id);
         setIsComposing(false);
+        setShowMobileMessage(true);
     };
 
     const handleComposeClick = () => {
         setIsComposing(true);
         setActiveId(null);
+        setShowMobileMessage(true);
     };
 
     const handleEmailChange = (e) => {
@@ -66,6 +71,38 @@ export default function Index() {
         router.post(route('messages.send'), emailData, {
             preserveScroll: true,
             preserveState: true,
+            onSuccess: () => {
+                // Show success modal
+                setSuccessMessage('Email sent successfully!');
+                setShowSuccessModal(true);
+                
+                // Clear form after successful submission
+                setEmailData({
+                    receiver: '',
+                    cc: '',
+                    bcc: '',
+                    subject: '',
+                    content: '',
+                    sender: '',
+                });
+                setShowCc(false);
+                setShowBcc(false);
+                
+                // Auto-hide modal after 3 seconds
+                setTimeout(() => {
+                    setShowSuccessModal(false);
+                }, 3000);
+            },
+            onError: () => {
+                // Show error modal
+                setSuccessMessage('Failed to send email. Please try again.');
+                setShowSuccessModal(true);
+                
+                // Auto-hide modal after 3 seconds
+                setTimeout(() => {
+                    setShowSuccessModal(false);
+                }, 3000);
+            },
         });
     };
 
@@ -147,58 +184,58 @@ export default function Index() {
 
                 {/* Statistics Cards */}
                 <div className="mx-auto -mt-4 max-w-7xl px-6">
-                    <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+                    <div className="mb-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
                         <Card className="border-0 bg-white shadow-lg">
-                            <CardContent className="p-6">
+                            <CardContent className="p-4 sm:p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm font-medium text-gray-600">Total Messages</p>
-                                        <p className="text-3xl font-bold text-[#212529]">{totalMessages}</p>
+                                        <p className="text-xs sm:text-sm font-medium text-gray-600">Total Messages</p>
+                                        <p className="text-2xl sm:text-3xl font-bold text-[#212529]">{totalMessages}</p>
                                     </div>
-                                    <div className="rounded-lg bg-gray-100 p-3">
-                                        <Mail className="h-6 w-6 text-[#212529]" />
+                                    <div className="rounded-lg bg-gray-100 p-2 sm:p-3">
+                                        <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-[#212529]" />
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
 
                         <Card className="border-0 bg-white shadow-lg">
-                            <CardContent className="p-6">
+                            <CardContent className="p-4 sm:p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm font-medium text-gray-600">Unread</p>
-                                        <p className="text-3xl font-bold text-[#212529]">{unreadMessages}</p>
+                                        <p className="text-xs sm:text-sm font-medium text-gray-600">Unread</p>
+                                        <p className="text-2xl sm:text-3xl font-bold text-[#212529]">{unreadMessages}</p>
                                     </div>
-                                    <div className="rounded-lg bg-gray-100 p-3">
-                                        <MailOpen className="h-6 w-6 text-[#212529]" />
+                                    <div className="rounded-lg bg-gray-100 p-2 sm:p-3">
+                                        <MailOpen className="h-5 w-5 sm:h-6 sm:w-6 text-[#212529]" />
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
 
                         <Card className="border-0 bg-white shadow-lg">
-                            <CardContent className="p-6">
+                            <CardContent className="p-4 sm:p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm font-medium text-gray-600">Received</p>
-                                        <p className="text-3xl font-bold text-[#212529]">{receivedMessages}</p>
+                                        <p className="text-xs sm:text-sm font-medium text-gray-600">Received</p>
+                                        <p className="text-2xl sm:text-3xl font-bold text-[#212529]">{receivedMessages}</p>
                                     </div>
-                                    <div className="rounded-lg bg-gray-100 p-3">
-                                        <Inbox className="h-6 w-6 text-[#212529]" />
+                                    <div className="rounded-lg bg-gray-100 p-2 sm:p-3">
+                                        <Inbox className="h-5 w-5 sm:h-6 sm:w-6 text-[#212529]" />
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
 
                         <Card className="border-0 bg-white shadow-lg">
-                            <CardContent className="p-6">
+                            <CardContent className="p-4 sm:p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm font-medium text-gray-600">Sent</p>
-                                        <p className="text-3xl font-bold text-[#212529]">{sentMessages}</p>
+                                        <p className="text-xs sm:text-sm font-medium text-gray-600">Sent</p>
+                                        <p className="text-2xl sm:text-3xl font-bold text-[#212529]">{sentMessages}</p>
                                     </div>
-                                    <div className="rounded-lg bg-gray-100 p-3">
-                                        <Send className="h-6 w-6 text-[#212529]" />
+                                    <div className="rounded-lg bg-gray-100 p-2 sm:p-3">
+                                        <Send className="h-5 w-5 sm:h-6 sm:w-6 text-[#212529]" />
                                     </div>
                                 </div>
                             </CardContent>
@@ -210,8 +247,8 @@ export default function Index() {
                 <div className="mx-auto max-w-7xl px-6 pb-8">
                     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                         {/* Messages Sidebar */}
-                        <div className="lg:col-span-1">
-                            <Card className="border-0 bg-white shadow-lg">
+                        <div className={`lg:col-span-1 ${showMobileMessage ? 'hidden lg:block' : 'block'}`}>
+                            <Card className="border-0 bg-white shadow-lg h-full lg:h-auto">
                                 <CardContent className="p-0">
                                     {/* Inbox Header */}
                                     <div className="border-b border-gray-200 p-6">
@@ -221,12 +258,12 @@ export default function Index() {
                                         </div>
 
                                         {/* Filter Buttons */}
-                                        <div className="flex gap-2">
+                                        <div className="flex gap-1 sm:gap-2">
                                             <Button
                                                 size="sm"
                                                 variant={filter === 'all' ? 'default' : 'outline'}
                                                 onClick={() => setFilter('all')}
-                                                className={filter === 'all' ? 'bg-[#212529] text-white' : 'border-gray-300 text-gray-600'}
+                                                className={`text-xs sm:text-sm ${filter === 'all' ? 'bg-[#212529] text-white' : 'border-gray-300 text-gray-600'}`}
                                             >
                                                 All
                                             </Button>
@@ -234,7 +271,7 @@ export default function Index() {
                                                 size="sm"
                                                 variant={filter === 'received' ? 'default' : 'outline'}
                                                 onClick={() => setFilter('received')}
-                                                className={filter === 'received' ? 'bg-[#212529] text-white' : 'border-gray-300 text-gray-600'}
+                                                className={`text-xs sm:text-sm ${filter === 'received' ? 'bg-[#212529] text-white' : 'border-gray-300 text-gray-600'}`}
                                             >
                                                 Received
                                             </Button>
@@ -242,7 +279,7 @@ export default function Index() {
                                                 size="sm"
                                                 variant={filter === 'sended' ? 'default' : 'outline'}
                                                 onClick={() => setFilter('sended')}
-                                                className={filter === 'sended' ? 'bg-[#212529] text-white' : 'border-gray-300 text-gray-600'}
+                                                className={`text-xs sm:text-sm ${filter === 'sended' ? 'bg-[#212529] text-white' : 'border-gray-300 text-gray-600'}`}
                                             >
                                                 Sent
                                             </Button>
@@ -250,25 +287,25 @@ export default function Index() {
                                     </div>
 
                                     {/* Messages List */}
-                                    <div className="max-h-96 overflow-y-auto">
+                                    <div className="max-h-96 overflow-y-auto lg:max-h-96">
                                         {filter === 'all' && (
                                             <>
                                                 {allMessages?.map((message, index) =>
                                                     <div
-                                                        key={message.id}
+                                                        key={`${message.id}-${message.sender ? 'sent' : 'received'}`}
                                                         onClick={() => handleSelect(message.id)}
-                                                        className={`cursor-pointer border-b border-gray-100 p-4 transition-colors hover:bg-gray-50 ${activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''} ${!message.mark_as_read ? 'bg-blue-50/30' : ''} `}
+                                                        className={`cursor-pointer border-b border-gray-100 p-3 sm:p-4 transition-colors hover:bg-gray-50 ${activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''} ${!message.mark_as_read ? 'bg-blue-50/30' : ''} `}
                                                     >
-                                                        <div className="flex items-start justify-between gap-3">
+                                                        <div className="flex items-start justify-between gap-2 sm:gap-3">
                                                             <div className="min-w-0 flex-1">
                                                                 <div className="mb-1 flex items-center gap-2">
-                                                                    <h3 className="truncate font-semibold text-[#212529]">{message.full_name}</h3>
+                                                                    <h3 className="truncate text-sm sm:text-base font-semibold text-[#212529]">{message.full_name}</h3>
                                                                     {!message.mark_as_read && (
-                                                                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">New</Badge>
+                                                                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-xs">New</Badge>
                                                                     )}
                                                                 </div>
-                                                                <p className="truncate text-sm text-gray-600">{message.email}</p>
-                                                                <p className="mt-1 truncate text-sm text-gray-500">{message.message}</p>
+                                                                <p className="truncate text-xs sm:text-sm text-gray-600">{message.email}</p>
+                                                                <p className="mt-1 truncate text-xs sm:text-sm text-gray-500">{message.message}</p>
                                                             </div>
                                                             <div className="flex-shrink-0 text-xs text-gray-400">
                                                                 {new Date(message.created_at).toLocaleDateString('en-GB', {
@@ -284,20 +321,20 @@ export default function Index() {
                                             <>
                                                 {messages?.map((message =>
                                                     <div
-                                                        key={message.id}
+                                                        key={`received-${message.id}`}
                                                         onClick={() => handleSelect(message.id)}
-                                                        className={`cursor-pointer border-b border-gray-100 p-4 transition-colors hover:bg-gray-50 ${activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''} ${!message.mark_as_read ? 'bg-blue-50/30' : ''} `}
+                                                        className={`cursor-pointer border-b border-gray-100 p-3 sm:p-4 transition-colors hover:bg-gray-50 ${activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''} ${!message.mark_as_read ? 'bg-blue-50/30' : ''} `}
                                                     >
-                                                        <div className="flex items-start justify-between gap-3">
+                                                        <div className="flex items-start justify-between gap-2 sm:gap-3">
                                                             <div className="min-w-0 flex-1">
                                                                 <div className="mb-1 flex items-center gap-2">
-                                                                    <h3 className="truncate font-semibold text-[#212529]">{message.full_name}</h3>
+                                                                    <h3 className="truncate text-sm sm:text-base font-semibold text-[#212529]">{message.full_name}</h3>
                                                                     {!message.mark_as_read && (
-                                                                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">New</Badge>
+                                                                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-xs">New</Badge>
                                                                     )}
                                                                 </div>
-                                                                <p className="truncate text-sm text-gray-600">{message.email}</p>
-                                                                <p className="mt-1 truncate text-sm text-gray-500">{message.message}</p>
+                                                                <p className="truncate text-xs sm:text-sm text-gray-600">{message.email}</p>
+                                                                <p className="mt-1 truncate text-xs sm:text-sm text-gray-500">{message.message}</p>
                                                             </div>
                                                             <div className="flex-shrink-0 text-xs text-gray-400">
                                                                 {new Date(message.created_at).toLocaleDateString('en-GB', {
@@ -314,17 +351,17 @@ export default function Index() {
                                             <>
                                                 {sendedMessage.map((message) => (
                                                     <div
-                                                        key={message.id}
+                                                        key={`sent-${message.id}`}
                                                         onClick={() => handleSelect(message.id)}
-                                                        className={`cursor-pointer border-b border-gray-100 p-4 transition-colors duration-200 ease-in-out hover:bg-gray-50 
+                                                        className={`cursor-pointer border-b border-gray-100 p-3 sm:p-4 transition-colors duration-200 ease-in-out hover:bg-gray-50 
       ${activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''}`}
                                                     >
-                                                        <div className="flex items-start justify-between gap-3">
+                                                        <div className="flex items-start justify-between gap-2 sm:gap-3">
                                                             {/* Left side (main content) */}
                                                             <div className="min-w-0 flex-1">
                                                                 {/* Sender + subject on first row */}
                                                                 <div className="mb-1 flex items-center gap-2">
-                                                                    <h3 className="truncate font-semibold text-[#212529] text-sm md:text-base">
+                                                                    <h3 className="truncate font-semibold text-[#212529] text-xs sm:text-sm">
                                                                         {message.sender}@gmail.com
                                                                     </h3>
                                                                     {message.subject && (
@@ -336,21 +373,21 @@ export default function Index() {
 
                                                                 {/* Receiver */}
                                                                 {message.receiver && (
-                                                                    <p className="truncate text-sm text-gray-600">
+                                                                    <p className="truncate text-xs sm:text-sm text-gray-600">
                                                                         To: {message.receiver}
                                                                     </p>
                                                                 )}
 
                                                                 {/* CC + BCC (only if available) */}
                                                                 {message.cc && (
-                                                                    <p className="truncate text-sm text-gray-500">CC: {message.cc}</p>
+                                                                    <p className="truncate text-xs sm:text-sm text-gray-500">CC: {message.cc}</p>
                                                                 )}
                                                                 {message.bcc && (
-                                                                    <p className="truncate text-sm text-gray-500">BCC: {message.bcc}</p>
+                                                                    <p className="truncate text-xs sm:text-sm text-gray-500">BCC: {message.bcc}</p>
                                                                 )}
 
                                                                 {/* Content preview */}
-                                                                <p className="mt-1 line-clamp-2 text-sm text-gray-500">
+                                                                <p className="mt-1 line-clamp-2 text-xs sm:text-sm text-gray-500">
                                                                     {message.content}
                                                                 </p>
                                                             </div>
@@ -376,9 +413,21 @@ export default function Index() {
                         </div>
 
                         {/* Message Content Area */}
-                        <div className="lg:col-span-2">
-                            <Card className="min-h-96 border-0 bg-white shadow-lg">
+                        <div className={`lg:col-span-2 ${showMobileMessage ? 'block' : 'hidden lg:block'}`}>
+                            <Card className="min-h-96 border-0 bg-white shadow-lg h-full lg:h-auto">
                                 <CardContent className="p-6">
+                                    {/* Mobile Back Button */}
+                                    <div className="mb-4 flex items-center gap-3 lg:hidden">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setShowMobileMessage(false)}
+                                        >
+                                            <ChevronLeft className="h-4 w-4" />
+                                            Back to Messages
+                                        </Button>
+                                    </div>
+                                    
                                     {isComposing ? (
                                         /* Compose Email Form */
                                         <div className="space-y-6">
@@ -649,11 +698,87 @@ export default function Index() {
                                             </div>
                                         </div>
                                     ) : (
-                                        /* Empty State */
-                                        <div className="flex flex-col items-center justify-center py-16 text-center">
-                                            <Mail className="mb-4 h-16 w-16 text-gray-300" />
-                                            <h3 className="mb-2 text-lg font-medium text-gray-900">No message selected</h3>
-                                            <p className="text-gray-500">Select a message from the inbox to view its content</p>
+                                        /* Empty State with Recent Messages Preview */
+                                        <div className="space-y-6">
+                                            {/* Welcome Section */}
+                                            <div className="text-center">
+                                                <Mail className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+                                                <h3 className="mb-2 text-lg font-medium text-gray-900">Welcome to Contact Messages</h3>
+                                                <p className="text-gray-500">Select a message from the inbox to view its content</p>
+                                            </div>
+
+                                            {/* Quick Actions */}
+                                            <div className="space-y-4">
+                                                <Button
+                                                    onClick={handleComposeClick}
+                                                    className="w-full bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]"
+                                                >
+                                                    <Send className="mr-2 h-4 w-4" />
+                                                    Compose New Message
+                                                </Button>
+                                                
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => setFilter('all')}
+                                                        className="text-xs"
+                                                    >
+                                                        View All Messages
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => setFilter('received')}
+                                                        className="text-xs"
+                                                    >
+                                                        Unread Only
+                                                    </Button>
+                                                </div>
+                                            </div>
+
+                                            {/* All Messages List */}
+                                            {allMessages.length > 0 && (
+                                                <div className="border-t pt-6">
+                                                    <h4 className="mb-4 text-sm font-medium text-gray-700">All Messages</h4>
+                                                    <div className="space-y-2 max-h-96 overflow-y-auto">
+                                                        {allMessages.map((message) => (
+                                                            <div
+                                                                key={`preview-${message.id}`}
+                                                                onClick={() => handleSelect(message.id)}
+                                                                className={`cursor-pointer rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 ${
+                                                                    activeId === message.id ? 'border-l-4 border-l-[#212529] bg-blue-50' : ''
+                                                                } ${!message.mark_as_read && !message.sender ? 'bg-blue-50/30' : ''}`}
+                                                            >
+                                                                <div className="flex items-start justify-between gap-2">
+                                                                    <div className="min-w-0 flex-1">
+                                                                        <div className="flex items-center gap-2">
+                                                                            <h5 className="truncate text-sm font-medium text-[#212529]">
+                                                                                {message.sender ? `${message.sender}@gmail.com` : message.full_name}
+                                                                            </h5>
+                                                                            {!message.mark_as_read && !message.sender && (
+                                                                                <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-xs">New</Badge>
+                                                                            )}
+                                                                        </div>
+                                                                        <p className="truncate text-xs text-gray-600">
+                                                                            {message.sender ? message.subject || 'No Subject' : message.email}
+                                                                        </p>
+                                                                        <p className="mt-1 line-clamp-2 text-xs text-gray-500">
+                                                                            {message.sender ? message.content : message.message}
+                                                                        </p>
+                                                                    </div>
+                                                                    <div className="flex-shrink-0 text-xs text-gray-400">
+                                                                        {new Date(message.created_at).toLocaleDateString('en-GB', {
+                                                                            day: '2-digit',
+                                                                            month: '2-digit',
+                                                                        })}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </CardContent>
@@ -662,6 +787,43 @@ export default function Index() {
                     </div>
                 </div>
             </div>
+
+            {/* Success Modal */}
+            {showSuccessModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-full bg-green-100 p-2">
+                                    <CheckCircle className="h-6 w-6 text-green-600" />
+                                </div>
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                    {successMessage.includes('successfully') ? 'Success!' : 'Error!'}
+                                </h3>
+                            </div>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setShowSuccessModal(false)}
+                                className="h-8 w-8 p-0"
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </div>
+                        <p className={`text-sm ${successMessage.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>
+                            {successMessage}
+                        </p>
+                        <div className="mt-4 flex justify-end">
+                            <Button
+                                onClick={() => setShowSuccessModal(false)}
+                                className={`${successMessage.includes('successfully') ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'} text-white`}
+                            >
+                                OK
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AppLayout>
     );
 }
