@@ -13,6 +13,7 @@ import {
   XCircle, 
   Loader2 
 } from 'lucide-react';
+import ImagePreview from '@/components/ImagePreview';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -71,6 +72,7 @@ const ParticipantCard = ({ participant }) => {
     const [isUpdateOpened, setIsUpdateOpened] = useState(false);
     const [isDeleteOpened, setIsDeleteOpened] = useState(false);
     const [selectedParticipant, setSelectedParticipant] = useState(null);
+    const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
 
     const handleDelete = (e) => {
         e.stopPropagation();
@@ -110,11 +112,29 @@ const ParticipantCard = ({ participant }) => {
                     >
                         <div className="relative">
                             {participant.image ? (
-                                <img
-                                    src={`/storage/images/participants/${participant.image}`}
-                                    className="h-48 w-full rounded-t-lg object-cover"
-                                    alt={participant.full_name}
-                                />
+                                <div 
+                                    className="h-48 w-full rounded-t-lg overflow-hidden cursor-pointer group relative will-change-transform"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsImagePreviewOpen(true);
+                                    }}
+                                    style={{ transform: 'translateZ(0)' }}
+                                >
+                                    <img
+                                        src={`/storage/images/participants/${participant.image}`}
+                                        className="h-full w-full object-cover transition-transform duration-200 ease-out group-hover:scale-105 will-change-transform"
+                                        alt={participant.full_name}
+                                        style={{ transform: 'translateZ(0)' }}
+                                    />
+                                    {/* Overlay on hover */}
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 ease-out flex items-center justify-center">
+                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out bg-white/90 rounded-full p-2 will-change-transform">
+                                            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
                             ) : (
                                 <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-gray-100">
                                     <User className="h-12 w-12 text-gray-400" />
@@ -339,6 +359,16 @@ const ParticipantCard = ({ participant }) => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            {/* Image Preview Modal */}
+            {participant.image && (
+                <ImagePreview
+                    isOpen={isImagePreviewOpen}
+                    onClose={() => setIsImagePreviewOpen(false)}
+                    imageUrl={`/storage/images/participants/${participant.image}`}
+                    participantName={participant.full_name}
+                />
+            )}
         </>
     );
 };
