@@ -28,6 +28,5 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('user.delete');
 
     Route::put('/email/markread/{message}', [ContactController::class, 'toggleRead'])->name('email.markread');
-    Route::post('/messages/send', [CustomEmailController::class, 'store'])->name('messages.send');
     Route::get('/getChartData/{id?}', [GeneralController::class , 'getChartData'])->name('dashboard.chart');
 });

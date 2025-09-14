@@ -7,7 +7,14 @@ use Inertia\Inertia;
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
     Route::get('/contactus', [ContactController::class, 'show'])->name('admin.contacts.show');
+    Route::post('/messages/send', [ContactController::class, 'send'])->name('messages.send');
     Route::delete('/contactus/{contact}', [ContactController::class, 'destroy'])->name('contact.destroy');
+    
+    // Test flash message route
+    Route::get('/test-flash', function () {
+        flash()->success('Test flash message working!');
+        return redirect()->route('admin.contacts.show');
+    })->name('test.flash');
 });
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 

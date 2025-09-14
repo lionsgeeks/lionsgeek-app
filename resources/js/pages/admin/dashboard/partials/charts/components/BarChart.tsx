@@ -31,7 +31,7 @@ type ChartBarStackedProps = {
 };
 
 export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
-    console.log(barChart);
+    // console.log(barChart);
     return (
         <div className="w-full lg:w-1/2">
             <Card>

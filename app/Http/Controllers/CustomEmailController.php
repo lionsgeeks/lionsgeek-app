@@ -64,6 +64,9 @@ class CustomEmailController extends Controller
             $mailer->send(new CustomEmailMail($request->subject, $request->content));
         }
 
+        // Flash message
+        flash()->success('Email sent successfully!');
+
         return back();
     }
 }

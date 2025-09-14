@@ -38,8 +38,8 @@ return [
     'mailers' => [
         'info' => [
             'transport' => 'smtp',
-            'host' => env('MAIL_HOST'),
-            'port' => env('MAIL_PORT'),
+            'host' => env('MAIL_HOST', '127.0.0.1'),
+            'port' => env('MAIL_PORT', 1025),
             'encryption' => env('MAIL_ENCRYPTION'),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
@@ -47,39 +47,20 @@ return [
 
         'coding' => [
             'transport' => 'smtp',
-            'host' => env('MAIL2_HOST'),
-            'port' => env('MAIL2_PORT'),
-            'encryption' => env('MAIL2_ENCRYPTION'),
-            'username' => env('MAIL2_USERNAME'),
-            'password' => env('MAIL2_PASSWORD'),
+            'host' => env('MAIL_HOST', '127.0.0.1'),
+            'port' => env('MAIL_PORT', 1025),
+            'encryption' => env('MAIL_ENCRYPTION'),
+            'username' => env('MAIL_USERNAME'),
+            'password' => env('MAIL_PASSWORD'),
         ],
 
         'media' => [
             'transport' => 'smtp',
-            'host' => env('MAIL3_HOST'),
-            'port' => env('MAIL3_PORT'),
-            'encryption' => env('MAIL3_ENCRYPTION'),
-            'username' => env('MAIL3_USERNAME'),
-            'password' => env('MAIL3_PASSWORD'),
-        ],
-        'Coding' => [
-            'transport' => 'smtp',
-            'host' => env('MAIL2_HOST', 'smtp.gmail.com'),
-            'port' => env('MAIL2_PORT', 587),
-            'encryption' => env('MAIL2_ENCRYPTION', 'tls'),
-            'username' => env('MAIL2_USERNAME'),
-            'password' => env('MAIL2_PASSWORD'),
-            'timeout' => null,
-        ],
-
-        'Media' => [
-            'transport' => 'smtp',
-            'host' => env('MAIL3_HOST', 'smtp.gmail.com'),
-            'port' => env('MAIL3_PORT', 587),
-            'encryption' => env('MAIL3_ENCRYPTION', 'tls'),
-            'username' => env('MAIL3_USERNAME'),
-            'password' => env('MAIL3_PASSWORD'),
-            'timeout' => null,
+            'host' => env('MAIL_HOST', '127.0.0.1'),
+            'port' => env('MAIL_PORT', 1025),
+            'encryption' => env('MAIL_ENCRYPTION'),
+            'username' => env('MAIL_USERNAME'),
+            'password' => env('MAIL_PASSWORD'),
         ],
 
         'ses' => [
