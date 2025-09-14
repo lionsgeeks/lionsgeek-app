@@ -70,7 +70,8 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 				return prefix === wantedPromo;
 			});
 		}
-		return list;
+		// Always include "No Infosession" option
+		return [{ name: 'No Infosession', id: 'no-infosession' }, ...list];
 	}, [infosessions, selectedTrack, selectedPromo]);
 
 	// If current selectedSession is not in filtered sessionOptions, reset it
@@ -88,7 +89,8 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 				!search ||
 				participant?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
 				participant?.email?.toLowerCase().includes(search.toLowerCase());
-			const matchesSession = !selectedSession || selectedSession === 'All' || participant?.info_session?.name === selectedSession;
+			const matchesSession = !selectedSession || selectedSession === 'All' || 
+				(selectedSession === 'No Infosession' ? !participant?.info_session : participant?.info_session?.name === selectedSession);
 
 			// Promo filter (case-insensitive)
 			const participantPromo = getParticipantPromo(participant);
@@ -234,7 +236,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 						<SelectContent>
 							<SelectItem value="All">All Sessions</SelectItem>
 							{sessionOptions.map((session, index) => (
-								<SelectItem key={index} value={session.name}>
+								<SelectItem key={session.id || index} value={session.name}>
 									{session.name}
 								</SelectItem>
 							))}
