@@ -15,152 +15,18 @@ use App\Models\Participant;
 use App\Models\User;
 
 use App\Http\Controllers\CustomEmailController;
+use App\Http\Controllers\GeneralController;
 use App\Models\InfoSession;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\UserController;
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-    Route::get('dashboard', function () {
-
-        $totalContacts = Contact::all()->count();
-        $members = Subscriber::all()->count();
-
-
-        //* order sessions by the nearest date between now and one month from now
-        $sessions = InfoSession::where('isAvailable', 1)
-            ->whereBetween('start_date', [Carbon::now(), Carbon::now()->addMonth()])
-            ->orderByRaw('ABS(julianday(start_date) - julianday(?))', [Carbon::now()])
-            ->get();
-        $upcomingEvents = Event::whereBetween('date', [Carbon::now(), Carbon::now()->addMonth()])
-            ->orderByRaw('ABS(julianday(date) - julianday(?))', [Carbon::now()])
-            ->take(4)
-            ->get();
-        $blogs = Blog::latest()->with('user')->take(4)->get();
-        $views = General::where('id', 1)->first();
-        $unreadMessages = Contact::where('mark_as_read', '0')->orderby("created_at", "desc")->take(3)->get();
-        // yahya add this
-        $participants = Participant::all()->count();
-        $allSessions = InfoSession::all();
-        $coworkingsRequest = Coworking::all();
-        $newsLetter = Newsletter::all();
-        $users = User::orderBy('created_at', 'asc')->get(['id','name','email','created_at','last_login_at']);
-
-        return Inertia::render('dashboard', [
-            'totalContacts' => $totalContacts,
-            'members' => $members,
-            'sessions' => $sessions,
-            'upcomingEvents' => $upcomingEvents,
-            'blogs' => $blogs,
-            'views' => $views,
-            'unreadMessages' => $unreadMessages,
-            'allsessions' => $allSessions,
-            'coworkingsRequest' => $coworkingsRequest,
-            'newsLetter' => $newsLetter,
-            'participants' => $participants,
-            'users' => $users
-        ]);
-    })->name('dashboard');
+    Route::get('dashboard', [GeneralController::class, 'dashboardData'])->name('dashboard');
 
     Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('admin.reset-password');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('user.delete');
 
     Route::put('/email/markread/{message}', [ContactController::class, 'toggleRead'])->name('email.markread');
-    Route::post('/messages/send', [CustomEmailController::class, 'store'])->name('messages.send');
-});
-// /////////////////////////////////////////
-Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-
-
-    Route::get('/getChartData/{id?}', function ($id = null) {
-        // If no id is provided, fallback to the latest session
-        $session = $id
-            ? InfoSession::findOrFail($id)
-            : InfoSession::latest('start_date')->firstOrFail();
-
-        $successInfoSession = $session->participants()->whereNot('current_step', 'info_session')->count();
-        $absenceInfoSession = $session->participants()->where('current_step', 'info_session')->count();
-        $successInterview = $session->participants()->whereNotIn('current_step', ['info_session', 'interview', 'interview_failed'])->count();
-        $failedInterview = $session->participants()->where('current_step', 'interview_failed')->count();
-        $absenceInterview = $session->participants()->where('current_step', 'interview')->count();
-        $successJungle = $session->participants()->where('current_step', 'like', '%school%')->count();
-        $failedJungle = $session->participants()->where('current_step', 'jungle_failed')->count();
-        $absenceJungle = $session->participants()->where('current_step', 'jungle')->count();
-        $confirmedSchool = $session->participants()->whereHas('confirmation', function ($query) {
-            $query->where('school', true);
-        })->count();
-        $infoSessionFemale = $session->participants()
-            ->where('gender', 'female')
-            ->where('current_step', 'info_session')
-            ->count();
-        $interviewFemale = $session->participants()
-            ->where('gender', 'female')
-            ->whereNotIn('current_step', ['info_session', 'interview', 'interview_failed'])
-            ->count();
-        $jungleFemale = $session->participants()
-            ->where('gender', 'female')
-            ->where('current_step', 'like', '%school%')
-            ->count();
-        $schoolFemale = $session->participants()
-            ->where('gender', 'female')
-            ->whereHas('confirmation', function ($query) {
-                $query->where('school', true);
-            })->count();
-
-        $BarChart = [
-            [
-                'step' => 'Info Session',
-                'success' => $successInfoSession,
-                'absence' => $absenceInfoSession,
-            ],
-            [
-                'step' => 'Interview',
-                'success' => $successInterview,
-                'failed' => $failedInterview,
-                'absence' => $absenceInterview,
-            ],
-            [
-                'step' => 'Jungle',
-                'success' => $successJungle,
-                'failed' => $failedJungle,
-                'absence' => $absenceJungle,
-            ],
-            [
-                'step' => 'School',
-                'success' => $confirmedSchool,
-                'absence' => $successJungle - $confirmedSchool,
-            ],
-        ];
-        $PieChart = [
-            [
-                'step' => 'Info Session',
-                'total' => $successInfoSession + $absenceInfoSession,
-                'female' => $infoSessionFemale,
-                'male' => $successInfoSession - $infoSessionFemale
-            ],
-            [
-                'step' => 'Interview',
-                'total' => $successInterview + $absenceInterview + $failedInterview,
-                'female' => $interviewFemale,
-                'male' => $successInterview - $interviewFemale,
-            ],
-            [
-                'step' => 'Jungle',
-                'total' => $successJungle + $absenceJungle + $failedJungle,
-                'female' => $jungleFemale,
-                'male' => $successJungle - $jungleFemale,
-            ],
-            [
-                'step' => 'School',
-                'total' => ($successJungle - $confirmedSchool) + $confirmedSchool,
-                'female' => $schoolFemale,
-                'male' => $successJungle - $schoolFemale,
-            ],
-        ];
-        return response()->json([
-            'sessionId' => $session->id, // send back which session was used
-            'BarChart'  => $BarChart,
-            'PieChart'  => $PieChart,
-        ]);
-    });
+    Route::get('/getChartData/{id?}', [GeneralController::class , 'getChartData'])->name('dashboard.chart');
 });

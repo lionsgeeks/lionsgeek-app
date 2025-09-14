@@ -1,15 +1,16 @@
 <?php
 return [
-    'default' => 'theme.amazon',
+    'default' => 'theme.toastr',
 
     'themes' => [
-        'amazon' => [
+        'toastr' => [
             'scripts' => [
-                '/vendor/flasher/flasher.min.css',
-                '/vendor/flasher/themes/theme.amazon.min.js',
+                '/vendor/flasher/flasher.min.js',
+                '/vendor/flasher/flasher-toastr.min.js',
             ],
             'styles' => [
-                '/vendor/flasher/themes/theme.amazon.min.css',
+                '/vendor/flasher/flasher.min.css',
+                '/vendor/flasher/toastr.min.css',
             ],
         ],
     ],

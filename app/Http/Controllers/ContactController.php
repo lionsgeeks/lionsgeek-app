@@ -6,6 +6,7 @@ use App\Models\Contact;
 use App\Models\CustomEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class ContactController extends Controller
@@ -14,6 +15,40 @@ class ContactController extends Controller
     public function index()
     {
         return Inertia::render('client/ContactUs/contactUs', []);
+    }
+
+    public function send(Request $request)
+    {
+        $validated = $request->validate([
+            'receiver' => 'required|email',
+            'subject'  => 'nullable|string',
+            'content'  => 'required|string',
+            'sender'   => 'required|string',
+        ]);
+
+        // Save to database
+        CustomEmail::create([
+            'sender' => $request->sender,
+            'receiver' => $request->receiver,
+            'subject' => $request->subject,
+            'content' => $request->content,
+        ]);
+
+        // Send actual email
+        try {
+            $mailer = \Mail::mailer($request->sender);
+            $mailer->to($request->receiver)->send(new \App\Mail\CustomEmailMail($request->subject, $request->content));
+        } catch (\Exception $e) {
+            \Log::error('Email sending failed: ' . $e->getMessage());
+        }
+
+        // Flash message
+        flash()->success('Email sent successfully!');
+        
+        // Debug: Log the flash message
+        \Log::info('Flash message set: Email sent successfully!');
+
+        return back()->with('success', 'Email sent successfully!');
     }
 
 
