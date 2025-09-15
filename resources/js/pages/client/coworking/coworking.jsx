@@ -9,7 +9,7 @@ import { useEffect, useRef } from 'react';
 import { RiDoubleQuotesR } from 'react-icons/ri';
 import ilyass from '../../../../assets/images/testimonial/unknown.jpg';
 import coworkvideo from '../../../../assets/videos/videoplayback.mp4';
-import coworkingpana from '../../../../../storage/app/public/images/coworking/coworking-pana.png';
+import coworkingpana from '../../../../../public/assets/img/coworking/coworking-pana.png';
 
 const Coworking = () => {
     const { selectedLanguage, darkMode } = useAppContext();
@@ -214,6 +214,7 @@ const Coworking = () => {
                                 alt="coworking illustration"
                                 className="object-contain"
                             />
+                            
                         </div>
                     </div>
 
