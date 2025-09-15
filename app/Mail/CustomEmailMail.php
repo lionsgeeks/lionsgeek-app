@@ -15,15 +15,23 @@ class CustomEmailMail extends Mailable
 
     public $subjectLine;
     public $contentBody;
+    public $senderEmail;
 
-    public function __construct($subject, $content)
+    public function __construct($subject, $content, $sender = null)
     {
         $this->subjectLine = $subject;
         $this->contentBody = $content;
+        $this->senderEmail = $sender ? $sender . '@lionsgeek.ma' : 'hello@lionsgeek.ma';
     }
 
     public function build()
     {
-        return $this->subject($this->subjectLine)->html($this->contentBody);
+        return $this->subject($this->subjectLine)
+                    ->view('emails.custom-email')
+                    ->with([
+                        'subjectLine' => $this->subjectLine,
+                        'contentBody' => $this->contentBody,
+                        'senderEmail' => $this->senderEmail,
+                    ]);
     }
 }
