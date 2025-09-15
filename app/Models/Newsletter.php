@@ -8,6 +8,7 @@ class Newsletter extends Model
 {
     protected $fillable = [
         'subject',
-        'content'
+        'content',
+        'subscribers_count'
     ];
 }

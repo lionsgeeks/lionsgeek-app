@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, Link } from '@inertiajs/react';
 import { Calendar, History, Mail, MessageSquare, Send, Users } from 'lucide-react';
 
 const breadcrumbs = [
@@ -186,16 +186,23 @@ export default function NewsletterAdmin() {
                                 {lastnews.length > 0 ? (
                                     <div className="space-y-4">
                                         {recentNewsletters.map((newsletter, index) => (
-                                            <div
+                                            <Link
                                                 key={index}
-                                                className="rounded-lg border border-gray-200 p-4 transition-all duration-200 hover:bg-gray-50"
+                                                href={route('newsletter.preview', newsletter.id)}
+                                                className="block rounded-lg border border-gray-200 p-4 transition-all duration-200 hover:bg-gray-50 hover:border-[#212529]"
                                             >
                                                 <div className="flex items-start justify-between">
                                                     <div className="flex-1">
                                                         <h3 className="line-clamp-1 font-semibold text-[#212529]">{newsletter.subject}</h3>
-                                                        <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
-                                                            <Calendar className="h-4 w-4" />
-                                                            <span>{formatDate(newsletter.created_at)}</span>
+                                                        <div className="mt-2 flex items-center gap-4 text-sm text-gray-600">
+                                                            <div className="flex items-center gap-2">
+                                                                <Calendar className="h-4 w-4" />
+                                                                <span>{formatDate(newsletter.created_at)}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <Users className="h-4 w-4" />
+                                                                <span>{newsletter.subscribers_count || 0} subscribers</span>
+                                                            </div>
                                                         </div>
                                                         {newsletter.content && (
                                                             <p className="mt-2 line-clamp-2 text-sm text-gray-500">
@@ -206,7 +213,7 @@ export default function NewsletterAdmin() {
                                                         )}
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </Link>
                                         ))}
                                         {lastnews.length > 5 && (
                                             <div className="text-center">
