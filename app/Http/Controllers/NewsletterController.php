@@ -28,6 +28,17 @@ class NewsletterController extends Controller
         ]);
     }
 
+    /**
+     * Display the specified newsletter for preview.
+     */
+    public function preview($id)
+    {
+        $newsletter = Newsletter::findOrFail($id);
+        return Inertia::render('admin/newsletter/[id]', [
+            'newsletter' => $newsletter,
+        ]);
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -39,12 +50,15 @@ class NewsletterController extends Controller
             'content' => 'required',
         ]);
 
+        $visitors = Subscriber::all();
+        $subscribersCount = $visitors->count();
+
         Newsletter::create([
             'subject' => $request->subject,
             'content' => $request->content,
+            'subscribers_count' => $subscribersCount,
         ]);
 
-        $visitors = Subscriber::all();
         Notification::send($visitors, new NotificationsSubscriber($request->subject, $request->content));
         return back();
     }
