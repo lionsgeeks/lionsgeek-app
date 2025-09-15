@@ -796,19 +796,19 @@ return redirect()->route('participants.index')
             $participant->update([
                 'current_step' => 'interview_pending'
             ]);
-            return back();
+            return $request->header('X-Inertia') ? response()->noContent() : back();
         }
 
         if ($participant->current_step == "interview" || $participant->current_step == "interview_pending") {
             $participant->update([
                 "current_step" => $action == "next" ? "jungle" : "interview_failed",
             ]);
-            return back();
+            return $request->header('X-Inertia') ? response()->noContent() : back();
         } elseif ($participant->current_step == "jungle") {
             $participant->update([
                 "current_step" => $action == "next" ? $school : "jungle" . "_failed",
             ]);
-            return back();
+            return $request->header('X-Inertia') ? response()->noContent() : back();
         }
     }
     public function frequentQuestions(Request $request, Participant $participant)
