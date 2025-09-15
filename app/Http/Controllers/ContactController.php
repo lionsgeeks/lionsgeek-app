@@ -37,7 +37,7 @@ class ContactController extends Controller
         // Send actual email
         try {
             $mailer = \Mail::mailer($request->sender);
-            $mailer->to($request->receiver)->send(new \App\Mail\CustomEmailMail($request->subject, $request->content));
+            $mailer->to($request->receiver)->send(new \App\Mail\CustomEmailMail($request->subject, $request->content, $request->sender));
         } catch (\Exception $e) {
             \Log::error('Email sending failed: ' . $e->getMessage());
         }
