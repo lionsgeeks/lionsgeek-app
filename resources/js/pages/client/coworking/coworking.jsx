@@ -9,6 +9,7 @@ import { useEffect, useRef } from 'react';
 import { RiDoubleQuotesR } from 'react-icons/ri';
 import ilyass from '../../../../assets/images/testimonial/unknown.jpg';
 import coworkvideo from '../../../../assets/videos/videoplayback.mp4';
+import coworkingpana from '../../../../../storage/app/public/images/coworking/coworking-pana.png';
 
 const Coworking = () => {
     const { selectedLanguage, darkMode } = useAppContext();
@@ -187,15 +188,16 @@ const Coworking = () => {
                             ref={leftside}
                         >
                             <h1
-                                className={`text-3xl font-extrabold sm:text-4xl md:text-5xl lg:text-6xl ${
-                                    selectedLanguage === 'ar' ? 'text-right' : ''
-                                }`}
+                                className={`text-3xl font-extrabold sm:text-4xl md:text-5xl lg:text-6xl ${selectedLanguage === 'ar' ? 'text-right' : ''
+                                    }`}
                                 dangerouslySetInnerHTML={{ __html: titles[selectedLanguage] || titles.en }}
                             />
                             <p className="text-sm sm:text-base md:text-lg">
                                 <TransText
-                                    en="Welcome to our free coworking space, a haven of peace and security designed to inspire productivity and creativity. Here, you can work on your ideas, study, and connect with like-minded people. Whether you're a freelancer, student, or entrepreneur, our space offers the ideal environment to focus and collaborate. Join us and discover a supportive community where innovation and networking thrive."
-                                    fr="Bienvenue dans notre espace de coworking gratuit, un havre de paix et de sécurité conçu pour inspirer productivité et créativité. Ici, vous pouvez travailler sur vos idées, étudier et vous connecter avec des personnes partageant les mêmes idées. Que vous soyez freelance, étudiant ou entrepreneur, notre espace offre l'environnement idéal pour se concentrer et collaborer. Rejoignez-nous et découvrez une communauté solidaire où l'innovation et le réseautage prospèrent."
+                                    en="Welcome to our coworking space, Our free coworking space is a safe and quiet place to work and create . Freelancers , students, and entrepreneurs are welcome in a friendly environment . Join a vibrant community where innovation and collaboration thrive ."
+
+                                    fr="Bienvenue dans notre espace de coworking . Notre espace de coworking gratuit est un lieu calme et sécurisé, idéal pour travailler et créer.Il accueille freelances, étudiants et entrepreneurs dans une ambiance conviviale.Rejoignez une communauté dynamique où l’innovation et la collaboration sont au cœur de tout ."
+
                                     ar="مرحبًا بكم في مساحة العمل المشترك المجانية لدينا، ملاذًا للسلامة والأمان مصممًا لإلهام الإنتاجية والإبداع. هنا يمكنك العمل على أفكارك، والدراسة، والتواصل مع الأشخاص المتشابهين في التفكير. سواء كنت مستقلاً، طالبًا، أو رائد أعمال، توفر مساحتنا البيئة المثالية للتركيز والتعاون. انضم إلينا واكتشف مجتمعًا داعمًا حيث تزدهر الابتكارات والتواصل."
                                 />
                             </p>
@@ -207,11 +209,11 @@ const Coworking = () => {
                         </div>
 
                         <div className="order-1 flex w-full justify-center lg:order-2 lg:justify-end" ref={rightside}>
-                            {/* <img
-                                src="https://lionsgeek.ma/static/media/Coworking-pana.54ca50c5174b93da3b62.png"
+                            <img
+                                src={coworkingpana}
                                 alt="coworking illustration"
                                 className="object-contain"
-                            /> */}
+                            />
                         </div>
                     </div>
 
