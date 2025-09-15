@@ -176,23 +176,23 @@ export default function ParticipantProfilePage() {
       const changeStep = (action) => {
     router.patch(`/admin/participant/current-step/${participant.id}`, { action });
 
-    const jugleParticipants = stepParticipant.filter(p => p.current_step === participant.current_step);
+    // const jugleParticipants = stepParticipant.filter(p => p.current_step === participant.current_step);
 
-    const currentIndex = jugleParticipants.findIndex(p => p.id === participant.id);
+    // const currentIndex = jugleParticipants.findIndex(p => p.id === participant.id);
 
-    const nextParticipant = jugleParticipants[currentIndex + 1];
+    // const nextParticipant = jugleParticipants[currentIndex + 1];
 
-    if (nextParticipant) {
-        router.visit(`/admin/participants/${nextParticipant.id}`);
-    } else {
-        router.visit("/admin/participants");
-    }
+    // if (nextParticipant) {
+    //     router.visit(`/admin/participants/${nextParticipant.id}`);
+    // } else {
+    //     router.visit("/admin/participants");
+    // }
 };
    
    
 const handleNavigation = () => {
-  const currentIndex = participants.findIndex(p => p.id === participant.id);
-  const nextParticipant = participants[currentIndex + 1];
+//   const currentIndex = participants.findIndex(p => p.id === participant.id);
+//   const nextParticipant = participants[currentIndex + 1];
 
   if (nextParticipant) {
     router.visit(`/admin/participants/${nextParticipant.id}`);
