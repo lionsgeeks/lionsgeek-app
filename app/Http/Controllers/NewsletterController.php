@@ -28,6 +28,17 @@ class NewsletterController extends Controller
         ]);
     }
 
+    /**
+     * Display the specified newsletter for preview.
+     */
+    public function preview($id)
+    {
+        $newsletter = Newsletter::findOrFail($id);
+        return Inertia::render('admin/newsletter/[id]', [
+            'newsletter' => $newsletter,
+        ]);
+    }
+
 
     /**
      * Store a newly created resource in storage.
