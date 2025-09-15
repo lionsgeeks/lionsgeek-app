@@ -47,9 +47,15 @@ const ParticipantCard = ({ participant }) => {
     const formationBadgeClass = 'bg-[#fee819] text-[#212529] border-[#fee819]';
 
     const changeStep = (action) => {
-        router.patch(`/admin/participant/current-step/${participant.id}`, {
-            action: action,
-        });
+        setIsProcessing(true);
+        router.patch(
+            `/admin/participant/current-step/${participant.id}`,
+            { action },
+            {
+                onSuccess: () => window.location.reload(),
+                onFinish: () => setIsProcessing(false),
+            }
+        );
     };
 
     const handleApprove = (e) => {

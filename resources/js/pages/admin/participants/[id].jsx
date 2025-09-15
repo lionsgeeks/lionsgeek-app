@@ -412,33 +412,45 @@ const handleReject = () => {
                                     Contact Information
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <Mail className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                    <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Email</div>
-                                        <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
-                                    </div>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Email</div>
+                                    <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <Phone className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                    <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Phone</div>
-                                        <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
-                                    </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Phone</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <MapPin className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                    <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Address</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.city}, {humanize(participant.prefecture)}</div>
-                                    </div>
+                                <div className="md:col-span-2">
+                                    <div className="text-xs text-gray-500 mb-1">Address</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{
+                                        [
+                                            (participant.other_city ? participant.other_city : participant.city),
+                                            humanize(participant.prefecture || participant.region)
+                                        ].filter(Boolean).join(', ')
+                                    }</div>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <Calendar className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                    <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Birthday</div>
-                                        <div className="text-sm font-medium text-[#212529]">{formatDate(participant.birthday)}</div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Birthday</div>
+                                    <div className="text-sm font-medium text-[#212529]">{formatDate(participant.birthday)}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Gender</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.gender) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">CV</div>
+                                    <div className="text-sm font-medium text-[#212529]">
+                                        {participant.cv_file ? (
+                                            <Button asChild size="sm" className="bg-[#fee819] text-[#212529] hover:bg-[#212529] hover:text-white rounded-md transition-colors inline-flex items-center gap-2">
+                                                <a href={`/storage/cvs/${participant.cv_file}`} target="_blank" rel="noreferrer">
+                                                    <FileText className="h-4 w-4" />
+                                                    View CV
+                                                </a>
+                                            </Button>
+                                        ) : (
+                                            '-'
+                                        )}
                                     </div>
                                 </div>
                             </CardContent>
@@ -484,52 +496,7 @@ const handleReject = () => {
                             </CardContent>
                         </Card>
 
-                        {/* Application Details */}
-                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <FileText className="w-5 h-5" />
-                                    Application Details
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Formation Field</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.formation_field) || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Region</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.region) || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Other City</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.other_city || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Gender</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.gender) || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Source</div>
-                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.source) || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">CV</div>
-                                    <div className="text-sm font-medium text-[#212529]">
-                                        {participant.cv_file ? (
-                                            <Button asChild size="sm" className="bg-[#fee819] text-[#212529] hover:bg-[#212529] hover:text-white rounded-md transition-colors inline-flex items-center gap-2">
-                                                <a href={`/storage/cvs/${participant.cv_file}`} target="_blank" rel="noreferrer">
-                                                    <FileText className="h-4 w-4" />
-                                                    View CV
-                                                </a>
-                                            </Button>
-                                        ) : (
-                                            '-'
-                                        )}
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        {/* Application Details card removed (fields relocated) */}
 
                         {/* Session Details */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
@@ -608,6 +575,10 @@ const handleReject = () => {
                                     <div className="text-sm font-medium text-[#212529]">{humanize(participant.how_heard_about_formation) || '-'}</div>
                                 </div>
                                 <div>
+                                    <div className="text-xs text-gray-500 mb-1">Source</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.source) || '-'}</div>
+                                </div>
+                                <div>
                                     <div className="text-xs text-gray-500 mb-1">Current Commitments</div>
                                     <div className="text-sm font-medium text-[#212529]">{humanize(participant.current_commitments) || '-'}</div>
                                 </div>
@@ -623,24 +594,29 @@ const handleReject = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
-                                <div className="grid grid-cols-2 gap-4">
+                                {/* Row: Has Training | Previous Training Details */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <div className="text-xs text-gray-500 mb-1">Has Training</div>
                                         <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.has_training) || '-'}</div>
                                     </div>
                                     <div>
-                                        <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.participated_lionsgeek) || '-'}</div>
+                                        <div className="text-xs text-gray-500 mb-1">Previous Training Details</div>
+                                        <div className="text-sm font-medium text-[#212529]">{participant.previous_training_details || '-'}</div>
                                     </div>
                                 </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Previous Training Details</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.previous_training_details || '-'}</div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
-                                        <div className="text-sm font-medium text-[#212529]">{humanize(participant.lionsgeek_activity) || '-'}</div>
+
+                                {/* Row: Participated + LionsGEEK Activity | Other Activity */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-3">
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
+                                            <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.participated_lionsgeek) || '-'}</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
+                                            <div className="text-sm font-medium text-[#212529]">{humanize(participant.lionsgeek_activity) || '-'}</div>
+                                        </div>
                                     </div>
                                     <div>
                                         <div className="text-xs text-gray-500 mb-1">Other Activity</div>
