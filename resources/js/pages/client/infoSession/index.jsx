@@ -192,12 +192,16 @@ const InfoSession = ({ trainingType = 'digital' }) => {
         const isValid = validateCurrentStep();
         if (isValid && currentStep < 8) {
             setCurrentStep((prev) => prev + 1);
+            // Scroll to top when moving to next step
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
     const prevStep = () => {
         if (currentStep > 1) {
             setCurrentStep((prev) => prev - 1);
+            // Scroll to top when moving to previous step
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
@@ -210,6 +214,8 @@ const InfoSession = ({ trainingType = 'digital' }) => {
         sessionStorage.setItem('formData', JSON.stringify(dataWithoutFile));
         // Stay on the same page and proceed to the embedded game to retain the uploaded CV file
         setCurrentStep(7);
+        // Scroll to top when moving to game step
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     // Validation for each step

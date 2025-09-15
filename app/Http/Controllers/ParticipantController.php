@@ -708,7 +708,7 @@ class ParticipantController extends Controller
             'birthday' => 'required|date',
             'phone' => 'required|string|',
             'city' => 'required|string',
-            'prefecture' => 'required|string',
+            'region' => 'required|string',
             'session' => 'required|exists:info_sessions,id',
             'step' => 'required|string|in:info_session,interview,interview_pending,interview_failed,jungle,jungle_failed,coding_school,media_school',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif48',
@@ -721,7 +721,7 @@ class ParticipantController extends Controller
                 'birthday' => $request->birthday,
                 'phone' => $request->phone,
                 'city' => $request->city,
-                'prefecture' => $request->prefecture,
+                'region' => $request->region,
                 'info_session_id' => $request->session,
                 'current_step' => $request->step,
             ];

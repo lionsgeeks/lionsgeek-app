@@ -426,7 +426,7 @@ const handleReject = () => {
                                     <div className="text-sm font-medium text-[#212529] capitalize">{
                                         [
                                             (participant.other_city ? participant.other_city : participant.city),
-                                            humanize(participant.prefecture || participant.region)
+                                            participant.region ? humanize(participant.region) : 'None'
                                         ].filter(Boolean).join(', ')
                                     }</div>
                                 </div>

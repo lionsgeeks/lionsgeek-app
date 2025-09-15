@@ -224,7 +224,7 @@ const ParticipantCard = ({ participant }) => {
                                     <div className="flex min-h-[20px] items-center text-gray-600">
                                         <MapPin className="mr-2 h-4 w-4 flex-shrink-0" />
                                         <span className="truncate capitalize">
-                                            {participant?.city || 'Unknown'}, {participant?.prefecture?.replaceAll('_', ' ') || 'Unknown'}
+                                            {participant?.city || 'Unknown'}{participant?.region ? `, ${participant.region.replaceAll('_', ' ')}` : ', None'}
                                         </span>
                                     </div>
                                 </div>
