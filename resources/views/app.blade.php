@@ -171,6 +171,9 @@
     @viteReactRefresh
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.jsx"])
     @inertiaHead
+    <script>
+        window.currentUserName = @json(auth()->check() ? auth()->user()->name : null);
+    </script>
 </head>
 
 <body class="font-sans antialiased">

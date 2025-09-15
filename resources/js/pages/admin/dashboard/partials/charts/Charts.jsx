@@ -137,7 +137,7 @@ const Chart = () => {
         };
 
         load();
-    }, [filteredSessions, selectedSession]);
+    }, [filteredSessions, selectedSession, selectedPromo, selectedField]);
 
     return (
         <Card className="w-full">
@@ -175,19 +175,22 @@ const Chart = () => {
                         </SelectContent>
                     </Select>
 
-                    <Select value={selectedSession?.toString() || ''} onValueChange={setSelectedSession}>
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select Session" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All Sessions</SelectItem>
-                            {filteredSessions.map((session) => (
-                                <SelectItem className='capitalize' key={`session-${session.id}`} value={session.id.toString()}>
-                                    {session.name.includes(':') ? session.name.slice(session.name.indexOf(':') + 1).trim() : session.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    {/* Only show session selector when specific promo AND field are selected */}
+                    {selectedPromo !== 'all' && selectedField !== 'all' && (
+                        <Select value={selectedSession?.toString() || ''} onValueChange={setSelectedSession}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select Session" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Sessions</SelectItem>
+                                {filteredSessions.map((session) => (
+                                    <SelectItem className='capitalize' key={`session-${session.id}`} value={session.id.toString()}>
+                                        {session.name.includes(':') ? session.name.slice(session.name.indexOf(':') + 1).trim() : session.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    )}
                 </div>
             </CardHeader>
 

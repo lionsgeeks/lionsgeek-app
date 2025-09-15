@@ -1,5 +1,7 @@
 'use client';
-
+import React, { useState } from 'react';
+import { router } from '@inertiajs/react';
+import { Pencil, Trash2, Check, X as XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -8,11 +10,36 @@ import { useForm } from '@inertiajs/react';
 // import { useToast } from "@/hooks/use-toast"
 
 export function AdminNotesSection({ participant }) {
-    const { data, setData, post, processing } = useForm({
+    const { data, setData, post, processing, patch, delete: destroy } = useForm({
         note: '',
     });
+    const [editingId, setEditingId] = useState(null);
+    const [editingText, setEditingText] = useState('');
     const handleAddNote = async () => {
         post(route('participant.notes', participant.id));
+    };
+
+    const startEdit = (note) => {
+        setEditingId(note.id);
+        setEditingText(note.note);
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setEditingText('');
+    };
+
+    const saveEdit = (note) => {
+        router.patch(route('participant.notes.update', note.id), {
+            note: editingText,
+        }, {
+            onSuccess: cancelEdit,
+            preserveScroll: true,
+        });
+    };
+
+    const deleteNote = (note) => {
+        destroy(route('participant.notes.delete', note.id));
     };
 
     const formatDate = (dateString) => {
@@ -53,10 +80,62 @@ export function AdminNotesSection({ participant }) {
                         <h4 className="font-medium text-gray-900">Previous Notes:</h4>
                         {participant.notes.map((note) => (
                             <div key={note.id} className="rounded-md bg-gray-50 p-3">
-                                <p className="mb-2 text-sm text-gray-800">{note.note}</p>
-                                <div className="text-xs text-gray-500">
-                                    <span className="font-medium">{note.author}</span> - {formatDate(note.created_at)}
-                                </div>
+                                {editingId === note.id ? (
+                                    <div className="space-y-2">
+                                        <Textarea value={editingText} onChange={(e) => setEditingText(e.target.value)} rows={3} />
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => saveEdit(note)}
+                                                disabled={processing}
+                                                className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-[#212529] text-white hover:bg-[#212529]/90"
+                                                title="Save"
+                                            >
+                                                <Check className="h-4 w-4" />
+                                            </button>
+                                            <button
+                                                onClick={cancelEdit}
+                                                className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100"
+                                                title="Cancel"
+                                            >
+                                                <XIcon className="h-4 w-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="mb-2 text-sm text-gray-800 break-words whitespace-pre-wrap">{note.note}</p>
+                                        <div className="flex items-center justify-between text-xs text-gray-500">
+                                            <div>
+                                                <span className="font-medium">{note.author}</span> - {formatDate(note.created_at)}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                {note.author === (participant?.approved_by_name || '') ? null : null}
+                                                {note.author === (window?.LG_AUTH_NAME || '')}
+                                                {note.author === (participant?.current_admin_name || '')}
+                                                {note.author === (participant?.auth_name || '')}
+                                                {/* Only show actions if the current user is the author. We'll get the current name via a global injected in layout, fallback to disabling if not present. */}
+                                                {typeof window !== 'undefined' && window.currentUserName === note.author && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => startEdit(note)}
+                                                            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100"
+                                                            title="Edit"
+                                                        >
+                                                            <Pencil className="h-4 w-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => deleteNote(note)}
+                                                            className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-red-600 text-white hover:bg-red-700"
+                                                            title="Delete"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         ))}
                     </div>
