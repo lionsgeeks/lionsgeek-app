@@ -76,7 +76,7 @@ class ParticipantExport implements FromQuery, WithHeadings, WithMapping
     {
         return [
             $participant->id,
-            $participant->infoSession->formation . " " . $participant->infoSession->name,
+            optional($participant->infoSession)->formation,
             $participant->full_name,
             $participant->email,
             $participant->birthday,
