@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage,router } from '@inertiajs/react';
 import { Briefcase, CheckCircle2, Clock, Download, Filter, Search, Users, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
@@ -211,7 +211,7 @@ export default function CoworkingAdmin() {
                                             {filteredCoworkings.map((cow) => (
                                                 <tr
                                                     key={cow.id}
-                                                    onClick={() => (window.location.href = `/admin/coworking/${cow.id}`)}
+                                                    onClick={() => router.visit (`/admin/coworking/${cow.id}`)}
                                                     className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
                                                 >
                                                     <td className="px-6 py-4">
