@@ -66,7 +66,7 @@ export default function ParticipantsTable({ participants }) {
 									<td className="hidden px-6 py-4 text-sm text-gray-600 md:table-cell">{p.email}</td>
 									<td className="hidden px-6 py-4 text-sm text-gray-600 lg:table-cell">{p.phone}</td>
 									<td className="hidden px-6 py-4 text-sm text-gray-600 md:table-cell capitalize">
-										{p.city || 'Unknown'}{p.prefecture ? `, ${p.prefecture.replaceAll('_', ' ')}` : ''}
+										{p.city || 'Unknown'}{p.region ? `, ${p.region.replaceAll('_', ' ')}` : ', None'}
 									</td>
 									<td className="px-6 py-4">{stepBadge(p.current_step)}</td>
 									<td className="px-6 py-4">{statusBadge(p.status)}</td>

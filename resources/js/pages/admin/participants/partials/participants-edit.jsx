@@ -19,7 +19,7 @@ export default function ParticipantEdit() {
         email: participant?.email || '',
         phone: participant?.phone || '',
         city: participant?.city || '',
-        prefecture: participant?.prefecture || '',
+        region: participant?.region || '',
         session: participant?.info_session?.id?.toString() || '',
         step: participant?.current_step || '',
         formation_field: participant?.formation_field || '',
@@ -36,7 +36,7 @@ export default function ParticipantEdit() {
                 email: participant.email || '',
                 phone: participant.phone || '',
                 city: participant.city || '',
-                prefecture: participant.prefecture || '',
+                region: participant.region || '',
                 session: participant.info_session?.id?.toString() || '',
                 step: participant.current_step || '',
                 formation_field: participant.formation_field || '',
@@ -45,11 +45,11 @@ export default function ParticipantEdit() {
         }
     }, [participant]);
 
-    // Clear prefecture when city is not Casablanca
+    // Clear region when city is not Casablanca
     useEffect(() => {
         const city = (data.city || '').toString().trim().toLowerCase();
-        if (city !== 'casablanca' && data.prefecture) {
-            setData('prefecture', '');
+        if (city !== 'casablanca' && data.region) {
+            setData('region', '');
         }
     }, [data.city]);
 
@@ -229,12 +229,12 @@ export default function ParticipantEdit() {
                                     </div>
                                     {(data.city || '').toString().trim().toLowerCase() === 'casablanca' && (
                                         <div>
-                                            <Label htmlFor="prefecture" className="mb-2 block text-sm font-semibold text-[#212529]">
-                                                Prefecture:
+                                            <Label htmlFor="region" className="mb-2 block text-sm font-semibold text-[#212529]">
+                                                Region:
                                             </Label>
-                                            <Select value={data.prefecture || ''} onValueChange={(value) => setData('prefecture', value)}>
+                                            <Select value={data.region || ''} onValueChange={(value) => setData('region', value)}>
                                                 <SelectTrigger className="w-full rounded-lg border border-gray-300 focus:border-[#fee819] focus:ring-[#fee819]">
-                                                    <SelectValue placeholder="Select prefecture" />
+                                                    <SelectValue placeholder="Select region" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="ain_chock">Aïn Chock</SelectItem>
@@ -250,7 +250,7 @@ export default function ParticipantEdit() {
                                                     <SelectItem value="sidi_othmane">Sidi Othmane</SelectItem>
                                                 </SelectContent>
                                             </Select>
-                                            {errors.prefecture && <p className="mt-1 text-sm text-red-600">{errors.prefecture}</p>}
+                                            {errors.region && <p className="mt-1 text-sm text-red-600">{errors.region}</p>}
                                         </div>
                                     )}
                                 </div>

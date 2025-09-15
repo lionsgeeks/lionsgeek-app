@@ -39,22 +39,55 @@ const ParticipantCard = ({ participant }) => {
 
     const { post, processing } = useForm();
     const [isProcessing, setIsProcessing] = useState(false);
+    const [localParticipant, setLocalParticipant] = useState(participant);
 
     // Formation track (coding/media)
-    const formationRaw = (participant?.formation_field ?? participant?.info_session?.formation)?.toString().toLowerCase();
+    const formationRaw = (localParticipant?.formation_field ?? localParticipant?.info_session?.formation)?.toString().toLowerCase();
     const formationLabel = formationRaw === 'coding' ? 'Coding' : formationRaw === 'media' ? 'Media' : null;
     const formationBadgeClass = 'bg-[#fee819] text-[#212529] border-[#fee819]';
 
-    const changeStep = (action) => {
-        setIsProcessing(true);
-        router.patch(
-            `/admin/participant/current-step/${participant.id}`,
-            { action },
-            {
-                onSuccess: () => window.location.reload(),
-                onFinish: () => setIsProcessing(false),
-            }
-        );
+    const changeStep = async (action) => {
+        try {
+            setIsProcessing(true);
+            // Fire a background PATCH without triggering Inertia navigation
+            const token = document.head.querySelector('meta[name="csrf-token"]').content;
+            await fetch(`/admin/participant/current-step/${localParticipant.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ action }),
+            });
+
+            // Optimistically update local state to avoid reload and keep filters
+            setLocalParticipant((prev) => {
+                if (!prev) return prev;
+                let nextStep = prev.current_step;
+                if (action === 'daz') {
+                    nextStep = 'interview_pending';
+                } else if (action === 'next') {
+                    if (prev.current_step === 'interview' || prev.current_step === 'interview_pending') {
+                        nextStep = 'jungle';
+                    } else if (prev.current_step === 'jungle') {
+                        const f = formationRaw === 'coding' ? 'coding_school' : 'media_school';
+                        nextStep = f;
+                    }
+                } else if (action === 'deny') {
+                    if (prev.current_step === 'interview' || prev.current_step === 'interview_pending') {
+                        nextStep = 'interview_failed';
+                    } else if (prev.current_step === 'jungle') {
+                        nextStep = 'jungle_failed';
+                    }
+                }
+                return { ...prev, current_step: nextStep };
+            });
+        } catch (e) {
+            // ignore; server state remains source of truth
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
     const handleApprove = (e) => {
@@ -129,7 +162,7 @@ const ParticipantCard = ({ participant }) => {
 
                             <div className="absolute top-3 right-3 left-3 flex items-start justify-between">
                                 <div className="flex flex-wrap gap-1.5">
-                                    {participant?.status === 'pending' ? (
+                                    {localParticipant?.status === 'pending' ? (
                                         <>
                                             {formationLabel && (
                                                 <Badge className={`rounded-lg border text-xs font-medium ${formationBadgeClass}`}>
@@ -143,8 +176,8 @@ const ParticipantCard = ({ participant }) => {
                                         </>
                                     ) : (
                                         <>
-                                            <Badge className={`${getStepBadge(participant?.current_step)} w-fit rounded-lg text-xs font-medium`}>
-                                                {participant?.current_step?.replaceAll('_', ' ') || 'Unknown'}
+                                            <Badge className={`${getStepBadge(localParticipant?.current_step)} w-fit rounded-lg text-xs font-medium`}>
+                                                {localParticipant?.current_step?.replaceAll('_', ' ') || 'Unknown'}
                                             </Badge>
 
                                             {participant?.status === 'rejected' && (
@@ -163,14 +196,14 @@ const ParticipantCard = ({ participant }) => {
                                     )}
                                 </div>
                                 <div className="flex flex-wrap gap-1.5">
-                                    {(participant?.current_step === 'jungle' || participant?.current_step?.includes('school')) && (
+                                    {(localParticipant?.current_step === 'jungle' || localParticipant?.current_step?.includes('school')) && (
                                         <Badge
                                             className={`${
                                                 getConfirmationStatus(participant) ? 'bg-[#51b04f] text-white' : 'bg-[#ff7376] text-white'
                                             } w-fit rounded-lg text-xs font-medium`}
                                         >
                                             <CheckCircle2 className="mr-1 h-3 w-3" />
-                                            {getConfirmationStatus(participant) ? 'Confirmed' : 'Pending'}
+                                            {getConfirmationStatus(localParticipant) ? 'Confirmed' : 'Pending'}
                                         </Badge>
                                     )}
                                 </div>
@@ -191,7 +224,7 @@ const ParticipantCard = ({ participant }) => {
                                     <div className="flex min-h-[20px] items-center text-gray-600">
                                         <MapPin className="mr-2 h-4 w-4 flex-shrink-0" />
                                         <span className="truncate capitalize">
-                                            {participant?.city || 'Unknown'}, {participant?.prefecture?.replaceAll('_', ' ') || 'Unknown'}
+                                            {participant?.city || 'Unknown'}{participant?.region ? `, ${participant.region.replaceAll('_', ' ')}` : ', None'}
                                         </span>
                                     </div>
                                 </div>
