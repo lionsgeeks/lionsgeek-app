@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage, router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -46,6 +46,8 @@ export default function ParticipantProfilePage() {
     const [isDeleteOpened, setIsDeleteOpened] = useState(false);
     const [selectedParticipant, setSelectedParticipant] = useState(null);
     const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
+    const notesRef = useRef(null);
+    const [notesHighlight, setNotesHighlight] = useState(false);
     const { post, processing } = useForm();
     
     
@@ -238,7 +240,20 @@ const handleReject = () => {
                                 <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back to Participants
                             </Button>
-                            <div className='flex item-center gap-2 justify-center'>
+                            <div className='flex items-center gap-2 justify-center'>
+                            <Button
+                                onClick={() => {
+                                    if (notesRef.current) {
+                                        notesRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        setNotesHighlight(true);
+                                        setTimeout(() => setNotesHighlight(false), 2000);
+                                    }
+                                }}
+                                size="sm"
+                                className="h-9 min-w-[125px] rounded-lg border border-[#fee819] bg-[#fee819] text-[#212529] hover:bg-transparent hover:text-[#fee819] transition-all duration-200"
+                            >
+                                Admin Notes {participant?.notes?.length ? `(${participant.notes.length})` : ''}
+                            </Button>
 
                             {/* <Button
                                 onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)}
@@ -720,7 +735,9 @@ const handleReject = () => {
                         {/* Questions, Motivation, Notes */}
                         <FrequentQuestionsSection participant={participant} />
                         <MotivationSection participant={participant} />
-                        <AdminNotesSection participant={participant} />
+                        <div ref={notesRef} className={`${notesHighlight ? 'ring-2 ring-[#fee819] rounded-lg transition-shadow duration-300' : ''}`}>
+                            <AdminNotesSection participant={participant} />
+                        </div>
                     </div>
                 </div>
 

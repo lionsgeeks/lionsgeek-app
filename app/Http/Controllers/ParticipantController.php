@@ -851,6 +851,35 @@ return redirect()->route('participants.index')
         return back();
     }
 
+    /**
+     * Update a specific admin note.
+     */
+    public function updateNote(Request $request, Note $note)
+    {
+        // Only the creator of the note can edit it
+        if (!Auth::check() || (string) $note->author !== (string) Auth::user()->name) {
+            return back();
+        }
+        $request->validate([
+            'note' => 'required|string',
+        ]);
+        $note->update(['note' => $request->note]);
+        return back();
+    }
+
+    /**
+     * Delete a specific admin note.
+     */
+    public function deleteNote(Note $note)
+    {
+        // Only the creator of the note can delete it
+        if (!Auth::check() || (string) $note->author !== (string) Auth::user()->name) {
+            return back();
+        }
+        $note->delete();
+        return back();
+    }
+
     // export participants
     public function export()
     {
