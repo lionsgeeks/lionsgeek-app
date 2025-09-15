@@ -196,7 +196,7 @@ export default function CoworkingShow() {
 
             {/* Unified Dialog for Delete / Approve */}
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent>
+                      <DialogContent className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 ">
                     <DialogTitle>Are you sure you want to {actionType === 'approve' ? 'approve' : 'delete'} this Coworking Request?</DialogTitle>
                     <p>
                         {actionType === 'approve'

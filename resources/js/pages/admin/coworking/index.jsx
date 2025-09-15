@@ -275,7 +275,7 @@ export default function CoworkingAdmin() {
             </div>
 
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent>
+             <DialogContent className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 ">
                     <DialogTitle>Please Confirm Your Action for This Coworker?</DialogTitle>
 
                     <div className="flex justify-end gap-2">

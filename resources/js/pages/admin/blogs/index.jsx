@@ -103,7 +103,7 @@ export default function BlogAdmin() {
                             ))}
 
                         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                            <DialogContent>
+             <DialogContent className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 ">
                                 <DialogTitle>Are you sure you want to delete this blog?</DialogTitle>
 
                                 <div className="mt-4 flex justify-end gap-3">
