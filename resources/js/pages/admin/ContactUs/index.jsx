@@ -717,7 +717,7 @@ export default function Index() {
                                                     Compose New Message
                                                 </Button>
                                                 
-                                                <div className="grid grid-cols-2 gap-2">
+                                                {/* <div className="grid grid-cols-2 gap-2">
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
@@ -734,11 +734,11 @@ export default function Index() {
                                                     >
                                                         Unread Only
                                                     </Button>
-                                                </div>
+                                                </div> */}
                                             </div>
 
                                             {/* All Messages List */}
-                                            {allMessages.length > 0 && (
+                                            {/* {allMessages.length > 0 && (
                                                 <div className="border-t pt-6">
                                                     <h4 className="mb-4 text-sm font-medium text-gray-700">All Messages</h4>
                                                     <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -778,7 +778,7 @@ export default function Index() {
                                                         ))}
                                                     </div>
                                                 </div>
-                                            )}
+                                            )} */}
                                         </div>
                                     )}
                                 </CardContent>
