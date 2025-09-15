@@ -194,9 +194,15 @@ export default function NewsletterAdmin() {
                                                 <div className="flex items-start justify-between">
                                                     <div className="flex-1">
                                                         <h3 className="line-clamp-1 font-semibold text-[#212529]">{newsletter.subject}</h3>
-                                                        <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
-                                                            <Calendar className="h-4 w-4" />
-                                                            <span>{formatDate(newsletter.created_at)}</span>
+                                                        <div className="mt-2 flex items-center gap-4 text-sm text-gray-600">
+                                                            <div className="flex items-center gap-2">
+                                                                <Calendar className="h-4 w-4" />
+                                                                <span>{formatDate(newsletter.created_at)}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <Users className="h-4 w-4" />
+                                                                <span>{newsletter.subscribers_count || 0} subscribers</span>
+                                                            </div>
                                                         </div>
                                                         {newsletter.content && (
                                                             <p className="mt-2 line-clamp-2 text-sm text-gray-500">

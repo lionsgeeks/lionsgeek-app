@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage, router } from '@inertiajs/react';
-import { ArrowLeft, Calendar, Mail, User } from 'lucide-react';
+import { ArrowLeft, Calendar, Mail, User, Users } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 
@@ -99,6 +99,10 @@ export default function NewsletterPreview() {
 
                                 <div className="flex-1">
                                     <h1 className="text-3xl font-bold mb-2">{newsletter.subject}</h1>
+                                    <div className="flex items-center gap-2 text-white/80">
+                                        <Users className="h-4 w-4" />
+                                        <span>{newsletter.subscribers_count || 0} subscribers received this newsletter</span>
+                                    </div>
                                 </div>
                             </div>
 

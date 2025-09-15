@@ -50,12 +50,15 @@ class NewsletterController extends Controller
             'content' => 'required',
         ]);
 
+        $visitors = Subscriber::all();
+        $subscribersCount = $visitors->count();
+
         Newsletter::create([
             'subject' => $request->subject,
             'content' => $request->content,
+            'subscribers_count' => $subscribersCount,
         ]);
 
-        $visitors = Subscriber::all();
         Notification::send($visitors, new NotificationsSubscriber($request->subject, $request->content));
         return back();
     }
