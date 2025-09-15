@@ -7,6 +7,8 @@ import { Head, useForm, usePage } from '@inertiajs/react';
 import { Filter, FolderOpen, RotateCcw, Search, Trash } from 'lucide-react';
 import { useState } from 'react';
 import ProjectModal from './partials/projectModal';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+
 
 const breadcrumbs = [
     {
@@ -18,6 +20,8 @@ export default function ProjectsAdmin() {
     const { projects = [] } = usePage().props;
     const { delete: destroy } = useForm();
     const [search, setSearch] = useState('');
+    const [open, setOpen] = useState(false)
+    const [selectedProject, setSelectedProject] = useState(null)
 
     const filteredProjects = projects.filter(
         (project) =>
@@ -229,14 +233,16 @@ export default function ProjectsAdmin() {
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    onDeleteProject(project.id);
+                                               onClick={(e) => {
+                                                e.stopPropagation()
+                                                setSelectedProject(project) 
+                                                setOpen(true) 
                                                 }}
                                                 className="transform text-[#ff7376] transition-all duration-300 ease-in-out hover:scale-110 hover:bg-[#ff7376]/10"
                                             >
                                                 <Trash className="h-4 w-4" />
                                             </Button>
+                                            
                                         </div>
                                     </CardFooter>
                                 </Card>
@@ -245,6 +251,43 @@ export default function ProjectsAdmin() {
                     )}
                 </div>
             </div>
+            {/* Modal Confirmation */}
+      <Dialog open={open} onOpenChange={setOpen}>
+             <DialogContent className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 ">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold text-center text-red-600">
+              Delete Confirmation
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-center text-gray-600">
+            {selectedProject ? (
+              <>Are you sure you want to delete <span className="font-semibold">{selectedProject.name}</span>? </>
+            ) : (
+              "No project selected."
+            )}
+          </p>
+          <DialogFooter className="flex justify-center gap-4 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="bg-red-600 text-white hover:bg-red-700"
+              onClick={() => {
+                if (selectedProject) {
+                  onDeleteProject(selectedProject.id) 
+                }
+                setOpen(false)
+                setSelectedProject(null) 
+              }}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
         </AppLayout>
     );
 }

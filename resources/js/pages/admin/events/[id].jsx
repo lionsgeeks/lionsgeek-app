@@ -225,7 +225,7 @@ export default function AdminEventShow() {
             </div>
 
             <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                <DialogContent>
+             <DialogContent className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 ">
                     <DialogHeader>
                         <DialogTitle>Delete Event</DialogTitle>
                         <DialogDescription>
