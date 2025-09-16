@@ -112,25 +112,9 @@ const ParticipantCard = ({ participant }) => {
     const [selectedParticipant, setSelectedParticipant] = useState(null);
 
     const handleDelete = (e) => {
-    e.stopPropagation();
-    setIsProcessing(true);
-    
-    router.delete(route('participants.destroy', participant.id), {
-        onSuccess: () => {
-        setIsDeleteOpened(false);
-        setSelectedParticipant(null);
-        setIsProcessing(false);
-        },
-        onFinish: () => {
-        setIsProcessing(false);
-        setTimeout(() => {
-            document.body.style.pointerEvents = '';
-            document.body.style.overflow = '';
-        }, 100);
-        },
-    });
+        e.stopPropagation();
+        router.delete(route('participants.destroy', participant.id), {});
     };
-
 
     const getStepBadge = (step) => {
         switch (step) {
@@ -370,61 +354,31 @@ const ParticipantCard = ({ participant }) => {
                     </ContextMenuItem>
                 </ContextMenuContent>
             </ContextMenu>
-            <Dialog
-                open={isDeleteOpened}
-                onOpenChange={(open) => {
-                    setIsDeleteOpened(open);
-                    if (!open) {
-                    setTimeout(() => {
-                        document.body.style.pointerEvents = '';
-                        document.body.style.overflow = '';
-                        document.body.removeAttribute('data-scroll-locked');
-                    }, 100);
-                    }
-                }}
-                >
-                <DialogContent 
-                    className="sm:max-w-md"
-                    onCloseAutoFocus={(event) => {
-                    event.preventDefault();
-                    document.body.style.pointerEvents = '';
-                    document.body.style.overflow = '';
-                    }}
-                >
+            <Dialog open={isDeleteOpened} onOpenChange={setIsDeleteOpened}>
+                <DialogContent className="sm:max-w-md"
+                onCloseAutoFocus={() => {document.body.style.pointerEvents = '';}}>
                     <DialogHeader>
-                    <DialogDescription>
-                        Are you sure you want to delete this Participant {selectedParticipant?.full_name}?
-                    </DialogDescription>
+                        <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
                     </DialogHeader>
 
                     <DialogFooter className="sm:justify-end">
-                    <DialogClose asChild>
-                        <Button 
-                        onClick={() => setIsDeleteOpened(false)} 
-                        type="button" 
-                        variant="secondary"
-                        >
-                        Close
+                        <DialogClose asChild>
+                            <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
+                                Close
+                            </Button>
+                        </DialogClose>
+                        <Button onClick={handleDelete} type="button" variant="destructive">
+                            {processing ? (
+                                <div className="flex gap-3">
+                                    <Loader2 className="animate-spin" /> Deleting ...{' '}
+                                </div>
+                            ) : (
+                                'Delete'
+                            )}
                         </Button>
-                    </DialogClose>
-
-                    <Button 
-                        onClick={handleDelete} 
-                        type="button" 
-                        variant="destructive"
-                        disabled={processing}
-                    >
-                        {processing ? (
-                        <div className="flex gap-3">
-                            <Loader2 className="animate-spin" /> Deleting ...
-                        </div>
-                        ) : (
-                        'Delete'
-                        )}
-                    </Button>
                     </DialogFooter>
                 </DialogContent>
-                </Dialog>
+            </Dialog>
 
         </>
     );
