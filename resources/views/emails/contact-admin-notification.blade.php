@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $subjectLine ?? 'Message from LionsGeek' }}</title>
+    <title>New Contact Message - LionsGeek</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,7 +26,7 @@
             border: 1px solid #e9ecef;
             border-radius: 8px;
         }
-        .message-details {
+        .contact-details {
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
@@ -73,35 +73,45 @@
         .contact-link:hover {
             text-decoration: underline;
         }
+        .urgent {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <img src="https://media.licdn.com/dms/image/v2/D4E0BAQEI5pl3PyS-Eg/company-logo_200_200/company-logo_200_200/0/1734088749325/lionsgeek_logo?e=2147483647&v=beta&t=2tZP_cpgMZO4IFtfyB0GNKXIrPO5I5w6a8iUlnrhntQ" width="90" alt="LionsGeek Logo" class="logo">
-        <h1>📧 Message from LionsGeek</h1>
-        <p>Official Communication</p>
+        <h1>📧 New Contact Message</h1>
+        <p>Admin Notification</p>
     </div>
 
     <div class="content">
-        <h2>Hello!</h2>
+        <h2>Hello Admin!</h2>
         
-        <p>You have received a message from the LionsGeek team.</p>
+        <p>You have received a new message through the LionsGeek contact form.</p>
 
-        <!-- Message Details -->
-        <div class="message-details">
-            <h3>📋 Message Details</h3>
-            <p><strong>From:</strong> {{ $senderEmail ?? 'LionsGeek Team' }}</p>
-            @if($subjectLine)
-            <p><strong>Subject:</strong> {{ $subjectLine }}</p>
-            @endif
-            <p><strong>Date:</strong> {{ date('F j, Y \a\t g:i A') }}</p>
+        <div class="urgent">
+            <strong>⚠️ Action Required:</strong> Please review and respond to this message as soon as possible.
+        </div>
+
+        <!-- Contact Details -->
+        <div class="contact-details">
+            <h3>👤 Contact Information</h3>
+            <p><strong>Name:</strong> {{ $contact->full_name }}</p>
+            <p><strong>Email:</strong> <a href="mailto:{{ $contact->email }}" class="contact-link">{{ $contact->email }}</a></p>
+            <p><strong>Phone:</strong> <a href="tel:{{ $contact->phone }}" class="contact-link">{{ $contact->phone }}</a></p>
+            <p><strong>Date:</strong> {{ $contact->created_at->format('F j, Y \a\t g:i A') }}</p>
         </div>
 
         <!-- Message Content -->
         <div class="message-content">
-            <h3>💬 Your Message</h3>
+            <h3>💬 Message Content</h3>
             <div style="background-color: #ffffff; padding: 15px; border-radius: 5px; border: 1px solid #e9ecef; white-space: pre-wrap; font-size: 14px; line-height: 1.6;">
-                {!! nl2br(e($contentBody)) !!}
+                {{ $contact->message }}
             </div>
         </div>
 
@@ -109,20 +119,22 @@
 
         <!-- Call to Action -->
         <div style="text-align: center; margin: 20px 0;">
-            <a href="https://lionsgeek.ma/contact" class="btn">Contact LionsGeek</a>
+            <a href="{{ config('app.url') }}/admin/contactus?id={{ $contact->id }}" class="btn">View & Reply in Admin Panel</a>
         </div>
 
-        <p><strong>Need help?</strong> Feel free to <a href="https://lionsgeek.ma/contact" class="contact-link">contact us</a> anytime.</p>
-        
-        <p>Best regards,<br><strong>The LionsGeek Team</strong></p>
+        <p><strong>Quick Actions:</strong></p>
+        <ul>
+            <li>View & Reply: <a href="{{ config('app.url') }}/admin/contactus?id={{ $contact->id }}" class="contact-link">Open in Admin Panel</a></li>
+            <li>Email: <a href="mailto:{{ $contact->email }}" class="contact-link">{{ $contact->email }}</a></li>
+            <li>Call: <a href="tel:{{ $contact->phone }}" class="contact-link">{{ $contact->phone }}</a></li>
+        </ul>
 
         <div class="divider"></div>
     </div>
 
     <div class="footer">
         <p><strong>LionsGeek</strong> - Empowering the Next Generation of Tech Leaders</p>
-        <p>This is an official message from LionsGeek. Please do not reply to this email.</p>
-        <p>If you have any questions, please contact us at <a href="mailto:hello@lionsgeek.ma" class="contact-link">hello@lionsgeek.ma</a></p>
+        <p>This is an automated notification from LionsGeek Admin System.</p>
         <p>&copy; {{ date('Y') }} LionsGeek. All rights reserved.</p>
     </div>
 </body>
