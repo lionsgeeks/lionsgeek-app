@@ -90,11 +90,13 @@ class ContactController extends Controller
 
         // Send admin notification email
         try {
-            $adminEmail = 'segiofedereko@gmail.com'; // Admin email for testing
-            Mail::to($adminEmail)->send(new ContactAdminNotification($contact));
-            \Log::info('Admin notification email sent successfully to: ' . $adminEmail);
+
+            foreach ([env("Boss_email") , env("PM_email")] as $mail) {
+                Mail::to($mail)->send(new ContactAdminNotification($contact));
+            }
+
         } catch (\Exception $e) {
-            \Log::error('Failed to send admin notification email: ' . $e->getMessage());
+
         }
 
         return back();
