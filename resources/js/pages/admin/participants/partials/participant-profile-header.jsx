@@ -98,7 +98,10 @@ export function ParticipantProfileHeader({ participant }) {
                                 <MapPin className="h-4 w-4 text-[#212529]" />
                             </div>
                             <span className="text-sm capitalize">
-                                {participant.city}{participant.region ? `, ${participant.region.replaceAll('_', ' ')}` : ', None'}
+                                {participant.city}
+                                {participant.region ? `, ${participant.region.replaceAll('_', ' ')}` : 
+                                 participant.prefecture ? `, ${participant.prefecture.replaceAll('_', ' ')}` : 
+                                 ', none'}
                             </span>
                         </div>
                     </div>

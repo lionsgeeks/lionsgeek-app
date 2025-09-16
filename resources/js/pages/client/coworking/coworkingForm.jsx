@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Modal from '../../../components/Modal';
 import { TransText } from '../../../components/TransText';
 import LoadingPage from '../../../components/loadingPage';
+import { Button } from '../../../components/Button';
 
 export default function CoworkingForm() {
     const { selectedLanguage, darkMode } = useAppContext();
@@ -616,15 +617,13 @@ export default function CoworkingForm() {
                             )}
                         </fieldset>
 
-                        <button
+                        <Button
                             disabled={processing}
-                            className={`w-full rounded py-3 transition-all ${
-                                !processing ? ` ${darkMode ? 'bg-alpha' : 'bg-black text-white'} ` : 'bg-gray-300 text-black/60'
-                            }`}
+                            className="w-full"
                             type="submit"
                         >
                             <TransText en="Submit" fr="Soumettre" ar="تحميل" />
-                        </button>
+                        </Button>
                     </form>
                 ) : (
                     <LoadingPage load={true} />
