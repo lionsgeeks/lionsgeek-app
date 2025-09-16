@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film } from 'lucide-react';
+import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film, UserCheck, Calendar } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import InterviewDialog from './interviewDialog';
 import InviteDialog from './inviteDialog';
@@ -13,6 +13,8 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 	const [selectedSession, setSelectedSession] = useState('');
 	const [selectedPromo, setSelectedPromo] = useState('');
 	const [selectedTrack, setSelectedTrack] = useState('');
+	const [selectedGender, setSelectedGender] = useState('');
+	const [dateSort, setDateSort] = useState('');
 	const [copy, setCopy] = useState(true);
 
 	const isStatusValue = (value) => ['approved', 'pending', 'rejected', 'all'].includes(value);
@@ -81,8 +83,8 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		if (!exists) setSelectedSession('');
 	}, [sessionOptions, selectedSession]);
 
-	const filtredParticipans =
-		participants?.filter((participant) => {
+	const filtredParticipans = useMemo(() => {
+		let filtered = participants?.filter((participant) => {
 			if (!participant) return false;
 
 			const matchesSearch =
@@ -100,6 +102,9 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 			const participantTrack = getParticipantTrack(participant);
 			const matchesTrack = !selectedTrack || selectedTrack === 'All' || participantTrack === selectedTrack.toLowerCase();
 
+			// Gender filter
+			const matchesGender = !selectedGender || selectedGender === 'All' || participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
+
 			// If the Step select currently holds a status value, filter by status; otherwise by current_step
 			let matchesStep = true;
 			if (selectedStep && selectedStep !== 'All') {
@@ -110,12 +115,30 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 				}
 			}
 
-			return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesStep;
+			return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
 		}) || [];
+
+		// Apply date sorting
+		if (dateSort && dateSort !== 'All') {
+			filtered.sort((a, b) => {
+				const dateA = new Date(a.created_at);
+				const dateB = new Date(b.created_at);
+				
+				if (dateSort === 'newest') {
+					return dateB - dateA; // Newest first
+				} else if (dateSort === 'oldest') {
+					return dateA - dateB; // Oldest first
+				}
+				return 0;
+			});
+		}
+
+		return filtered;
+	}, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender, dateSort]);
 
 	useEffect(() => {
 		setFiltredParticipants(filtredParticipans);
-	}, [search, selectedSession, selectedStep, selectedPromo, selectedTrack]);
+	}, [filtredParticipans]);
 
 	// Initialize selectedStep from URL status on mount (only for status values)
 	useEffect(() => {
@@ -138,7 +161,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		window.history.replaceState({}, '', newUrl);
 	}, [selectedStep]);
 
-	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack;
+	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack || selectedGender || dateSort;
 
 	const handleReset = () => {
 		setSearch('');
@@ -146,6 +169,8 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		setSelectedSession('');
 		setSelectedPromo('');
 		setSelectedTrack('');
+		setSelectedGender('');
+		setDateSort('');
 		// Also clear status from URL
 		const params = new URLSearchParams(window.location.search);
 		params.delete('status');
@@ -224,6 +249,32 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 						<SelectItem value="All">All Tracks</SelectItem>
 						<SelectItem className="capitalize" value="coding">Coding</SelectItem>
 						<SelectItem className="capitalize" value="media">Media</SelectItem>
+					</SelectContent>
+				</Select>
+
+				{/* Gender Filter */}
+				<Select onValueChange={setSelectedGender} value={selectedGender}>
+					<SelectTrigger className="w-44 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+						<UserCheck className="mr-2 h-4 w-4" />
+						<SelectValue placeholder="Gender" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="All">All Genders</SelectItem>
+						<SelectItem value="male">Male</SelectItem>
+						<SelectItem value="female">Female</SelectItem>
+					</SelectContent>
+				</Select>
+
+				{/* Date Sort */}
+				<Select onValueChange={setDateSort} value={dateSort}>
+					<SelectTrigger className="w-44 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+						<Calendar className="mr-2 h-4 w-4" />
+						<SelectValue placeholder="Sort By Date" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="All">Default Order</SelectItem>
+						<SelectItem value="newest">Newest First</SelectItem>
+						<SelectItem value="oldest">Oldest First</SelectItem>
 					</SelectContent>
 				</Select>
 
