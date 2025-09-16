@@ -1,5 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
 import { useCallback } from 'react';
+import { Button } from '../../components/Button';
 
 // import AuthLayout from '@/layouts/auth-layout';
 
@@ -175,13 +176,13 @@ export default function Login({ status, canResetPassword }) {
                                                 Forgot your password?
                                             </a>
 
-                                            <button
+                                            <Button
                                                 type="submit"
-                                                className="ms-3 rounded bg-[#fee819] px-4 py-2 font-semibold text-black disabled:opacity-50 cursor-pointer"
+                                                className="ms-3"
                                                 disabled={processing}
                                             >
                                                 Log in
-                                            </button>
+                                            </Button>
                                         </div>
                                     </form>
                                 </div>

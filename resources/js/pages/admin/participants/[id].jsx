@@ -182,11 +182,11 @@ export default function ParticipantProfilePage() {
 
     const nextParticipant = jugleParticipants[currentIndex + 1];
 
-    if (nextParticipant) {
-        router.visit(`/admin/participants/${nextParticipant.id}`);
-    } else {
-        router.visit("/admin/participants");
-    }
+    // if (nextParticipant) {
+    //     router.visit(`/admin/participants/${nextParticipant.id}`);
+    // } else {
+    //     router.visit("/admin/participants");
+    // }
 };
    
    
