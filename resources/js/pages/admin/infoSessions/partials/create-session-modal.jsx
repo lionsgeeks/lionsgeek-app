@@ -193,7 +193,7 @@ export function CreateSessionModal({ open, onOpenChange }) {
                             <Button
                                 type="submit"
                                 disabled={processing || !data.name || !data.formation || !data.start_date || !data.places}
-                                className="flex-1 transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+                                className="flex-1"
                             >
                                 {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 {processing ? 'Creating...' : 'Create Session'}
