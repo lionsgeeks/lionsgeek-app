@@ -3,6 +3,7 @@ import { LoaderCircle, ArrowLeft, Shield } from 'lucide-react';
 import { useCallback } from 'react';
 
 import InputError from '@/components/input-error';
+import { Button } from '../../components/Button';
 
 export default function ResetPassword({ token, email }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -119,14 +120,14 @@ export default function ResetPassword({ token, email }) {
                                             <InputError message={errors.password_confirmation} className="mt-1 text-sm" />
                                         </div>
 
-                                        <button
+                                        <Button
                                             type="submit"
                                             disabled={processing}
-                                            className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#fee819] px-4 py-3 font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-[1.01] hover:bg-[#ffea3b] disabled:opacity-70"
+                                            className="w-full"
                                         >
                                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                                             Reset Password
-                                        </button>
+                                        </Button>
                                     </form>
                                 </div>
                             </div>

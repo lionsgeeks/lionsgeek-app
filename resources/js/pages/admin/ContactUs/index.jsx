@@ -561,7 +561,7 @@ export default function Index() {
                                                     >
                                                         Cancel
                                                     </Button>
-                                                    <Button type="submit" className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]">
+                                                    <Button type="submit">
                                                         <Send className="mr-2 h-4 w-4" />
                                                         Send Email
                                                     </Button>
