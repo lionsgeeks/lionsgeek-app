@@ -515,12 +515,12 @@ export default function Press() {
                                 </div>
 
                                 <div className="mt-4 flex items-center justify-between">
-                                    <a
-                                        href={route('press.show', press.id)}
-                                        className="inline-block rounded-2xl bg-beta px-4 py-1.5 font-bold text-white transition hover:bg-alpha hover:text-beta"
-                                    >
-                                        See press
-                                    </a>
+                                    <button
+    onClick={() => router.visit(route('press.show', press.id))}
+    className="inline-block rounded-2xl bg-beta px-4 py-1.5 font-bold text-white transition hover:bg-alpha hover:text-beta"
+>
+    See press
+</button>
                                     <button onClick={() => handleDelete(press)} className="flex items-center text-red-600 hover:text-red-800">
                                         <Trash2 className="h-5 w-5" />
                                     </button>

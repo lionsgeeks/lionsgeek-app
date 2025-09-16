@@ -646,7 +646,7 @@ const handleReject = () => {
                         
                                             <DialogFooter className="sm:justify-end">
                                                 <DialogClose asChild>
-                                                    <Button onClick={() => setIsUpdateOpened(false)} type="button" variant="secondary">
+                                                    <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
                                                         Close
                                                     </Button>
                                                 </DialogClose>

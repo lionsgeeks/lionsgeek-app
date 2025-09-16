@@ -355,14 +355,15 @@ const ParticipantCard = ({ participant }) => {
                 </ContextMenuContent>
             </ContextMenu>
             <Dialog open={isDeleteOpened} onOpenChange={setIsDeleteOpened}>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="sm:max-w-md"
+                onCloseAutoFocus={() => {document.body.style.pointerEvents = '';}}>
                     <DialogHeader>
                         <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
                     </DialogHeader>
 
                     <DialogFooter className="sm:justify-end">
                         <DialogClose asChild>
-                            <Button onClick={() => setIsUpdateOpened(false)} type="button" variant="secondary">
+                            <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
                                 Close
                             </Button>
                         </DialogClose>
