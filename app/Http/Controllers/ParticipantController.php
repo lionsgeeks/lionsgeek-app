@@ -651,31 +651,31 @@ class ParticipantController extends Controller
     /**
      * Display the specified resource.
      */
-   public function show(Participant $participant)
-{
-    $participants = Participant::where('status', 'pending')
-        ->orderBy('id')
-        ->get(['id', 'full_name']);
-         $stepParticipant = Participant::where('current_step', '!=', 'info_session') 
-    ->where('current_step', 'not like', '%school%')
-    ->where('current_step', 'not like', '%failed%') 
-    ->orderBy('id')
-    ->get(['id', 'full_name', 'current_step']);
+    public function show(Participant $participant)
+    {
+        $participants = Participant::where('status', 'pending')
+            ->orderBy('id')
+            ->get(['id', 'full_name']);
+        $stepParticipant = Participant::where('current_step', '!=', 'info_session')
+            ->where('current_step', 'not like', '%school%')
+            ->where('current_step', 'not like', '%failed%')
+            ->orderBy('id')
+            ->get(['id', 'full_name', 'current_step']);
 
-    return Inertia::render('admin/participants/[id]', [
-        'participant' => $participant->load([
-            'infoSession',
-            'notes',
-            'questions',
-            'satisfaction',
-            'confirmation'
-        ]),
-        'participants' => $participants,
-        'stepParticipant' => $stepParticipant,
-    ]);
-}
+        return Inertia::render('admin/participants/[id]', [
+            'participant' => $participant->load([
+                'infoSession',
+                'notes',
+                'questions',
+                'satisfaction',
+                'confirmation'
+            ]),
+            'participants' => $participants,
+            'stepParticipant' => $stepParticipant,
+        ]);
+    }
 
-    
+
 
     /**
      * Show the form for editing the specified resource.
@@ -765,18 +765,18 @@ class ParticipantController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($id)
-{
-    $participant = Participant::findOrFail($id);
+    {
+        $participant = Participant::findOrFail($id);
 
-    if ($participant->image && Storage::exists('public/images/participants/' . $participant->image)) {
-        Storage::delete('public/images/participants/' . $participant->image);
+        if ($participant->image && Storage::exists('public/images/participants/' . $participant->image)) {
+            Storage::delete('public/images/participants/' . $participant->image);
+        }
+
+        $participant->delete();
+
+        return redirect()->route('participants.index')
+            ->with('success', 'Participant deleted successfully!');
     }
-
-    $participant->delete();
-
-return redirect()->route('participants.index')
-                 ->with('success', 'Participant deleted successfully!');
-}
 
 
     // Change participant current step 
@@ -796,19 +796,21 @@ return redirect()->route('participants.index')
             $participant->update([
                 'current_step' => 'interview_pending'
             ]);
-            return $request->header('X-Inertia') ? response()->noContent() : back();
+            // return $request->header('X-Inertia') ? response()->noContent() : back();
+            return back()->with('success', 'Step updated');
         }
 
         if ($participant->current_step == "interview" || $participant->current_step == "interview_pending") {
             $participant->update([
                 "current_step" => $action == "next" ? "jungle" : "interview_failed",
             ]);
-            return $request->header('X-Inertia') ? response()->noContent() : back();
+            // return $request->header('X-Inertia') ? response()->noContent() : back();
+            return back()->with('success', 'Step updated');
         } elseif ($participant->current_step == "jungle") {
             $participant->update([
                 "current_step" => $action == "next" ? $school : "jungle" . "_failed",
             ]);
-            return $request->header('X-Inertia') ? response()->noContent() : back();
+            return back()->with('success', 'Step updated');
         }
     }
     public function frequentQuestions(Request $request, Participant $participant)
@@ -1183,7 +1185,7 @@ return redirect()->route('participants.index')
             // Build and send QR-coded invitation email
             try {
                 $qrPayload = json_encode([
-                   "code" => $participant->code,
+                    "code" => $participant->code,
                     "email" => $participant->email,
                 ]);
 
@@ -1279,6 +1281,4 @@ return redirect()->route('participants.index')
             ]);
         }
     }
-  
-
 }
