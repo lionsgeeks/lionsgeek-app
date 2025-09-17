@@ -319,13 +319,30 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
             </div>
 
             <div className="flex h-16 items-center gap-4">
-                {/* Search Button */}
+                {/* Search Button - responsive */}
+                {/* Mobile: Search Icon Only */}
                 <button
                     onClick={openSearchDialog}
-                    className="relative p-2 text-gray-600 hover:text-gray-800"
-                    title="Search (Ctrl+K)"
+                    className="relative p-2 text-gray-600 hover:text-gray-800 md:hidden"
+                    title="Search"
                 >
                     <Search className="h-6 w-6 text-black" />
+                </button>
+
+                {/* Desktop/Tablet: Full Search Bar */}
+                <button
+                    onClick={openSearchDialog}
+                    className="hidden md:flex relative h-9 w-64 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 lg:w-72 xl:w-80"
+                >
+                    <span className="text-muted-foreground">Search documentation...</span>
+                    <div className="flex items-center gap-1">
+                        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                            <span className="text-xs">Ctrl</span>
+                        </kbd>
+                        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                            <span className="text-xs">K</span>
+                        </kbd>
+                    </div>
                 </button>
 
                 {/* Notification Button */}
