@@ -235,7 +235,7 @@ const ParticipantCard = ({ participant }) => {
 
                             {/* Action Buttons */}
                             <div className="mt-4 flex min-h-[44px] items-center border-t pt-3" onClick={(e) => e.stopPropagation()}>
-                                {participant?.status === 'pending' ? (
+                                {localParticipant?.status === 'pending' ? (
                                     <div className="flex w-full gap-2">
                                         <Button
                                             onClick={handleApprove}
@@ -257,40 +257,42 @@ const ParticipantCard = ({ participant }) => {
                                             {isProcessing ? 'Rejecting...' : 'Reject'}
                                         </Button>
                                     </div>
-                                ) : participant?.status === 'rejected' ? (
+                                ) : localParticipant?.status === 'rejected' ? (
                                     <div className="w-full text-center">
                                         <Badge className="rounded-lg bg-[#ff7376] px-3 py-1 text-white">Rejected</Badge>
                                     </div>
-                                ) : participant?.current_step !== 'info_session' &&
-                                  !participant?.current_step?.includes('school') &&
-                                  !participant?.current_step?.includes('failed') ? (
+                                ) : localParticipant?.current_step !== 'info_session' &&
+                                !localParticipant?.current_step?.includes('school') &&
+                                !localParticipant?.current_step?.includes('failed') ? (
                                     <div className="flex w-full gap-2">
                                         <Button
-                                            onClick={() => changeStep(participant?.current_step === 'interview' ? 'daz' : 'next')}
+                                            onClick={() => changeStep(localParticipant?.current_step === 'interview' ? 'daz' : 'next')}
                                             className="flex-1 rounded-lg bg-[#51b04f] text-white hover:bg-[#459942]"
                                             size="sm"
+                                            disabled={isProcessing}
                                         >
                                             <ArrowRight className="mr-1 h-4 w-4" />
-                                            Next Step
+                                            {isProcessing ? 'Processing...' : 'Next Step'}
                                         </Button>
                                         <Button
                                             onClick={() => changeStep('deny')}
                                             variant="outline"
                                             className="rounded-lg border-[#ff7376] text-[#ff7376] hover:bg-[#ff7376] hover:text-white"
                                             size="sm"
+                                            disabled={isProcessing}
                                         >
                                             <X className="mr-1 h-4 w-4" />
                                             Deny
                                         </Button>
                                     </div>
-                                ) : participant?.current_step?.includes('school') ? (
+                                ) : localParticipant?.current_step?.includes('school') ? (
                                     <div className="w-full text-center">
                                         <Badge className="rounded-lg bg-[#212529] px-3 py-1 text-white">Final Stage</Badge>
                                     </div>
-                                ) : participant?.current_step?.includes('failed') ? (
+                                ) : localParticipant?.current_step?.includes('failed') ? (
                                     <div className="w-full text-center">
                                         <p className="rounded-lg px-5 py-1 font-bold text-red-500">
-                                            {participant?.current_step?.replaceAll('_', ' ').replace(/^\w/, (c) => c.toUpperCase())}
+                                            {localParticipant?.current_step?.replaceAll('_', ' ').replace(/^\w/, (c) => c.toUpperCase())}
                                         </p>
                                     </div>
                                 ) : (
@@ -358,14 +360,15 @@ const ParticipantCard = ({ participant }) => {
                 </ContextMenuContent>
             </ContextMenu>
             <Dialog open={isDeleteOpened} onOpenChange={setIsDeleteOpened}>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="sm:max-w-md"
+                onCloseAutoFocus={() => {document.body.style.pointerEvents = '';}}>
                     <DialogHeader>
                         <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
                     </DialogHeader>
 
                     <DialogFooter className="sm:justify-end">
                         <DialogClose asChild>
-                            <Button onClick={() => setIsUpdateOpened(false)} type="button" variant="secondary">
+                            <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
                                 Close
                             </Button>
                         </DialogClose>
