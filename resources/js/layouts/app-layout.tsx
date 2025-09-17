@@ -13,7 +13,6 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
     const { auth, messages } = usePage<{ auth: { user: { role: string } } }>().props;
     useEffect(() => {
         if (messages) {
-            console.log('Flasher messages:', messages);
             flasher.render(messages);
         }
     }, [messages]);
