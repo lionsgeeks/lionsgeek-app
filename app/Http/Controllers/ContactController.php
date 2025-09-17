@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Models\CustomEmail;
+use App\Mail\ContactAdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
@@ -80,12 +81,23 @@ class ContactController extends Controller
             'message' => 'required|string',
         ]);
 
-        Contact::create([
+        $contact = Contact::create([
             'full_name' => $request->first . ' ' . $request->last,
             'phone' => $request->phone,
             'email' => $request->email,
             'message' => $request->message,
         ]);
+
+        // Send admin notification email
+        try {
+
+            foreach ([env("Boss_email") , env("PM_email")] as $mail) {
+                Mail::to($mail)->send(new ContactAdminNotification($contact));
+            }
+
+        } catch (\Exception $e) {
+
+        }
 
         return back();
     }
