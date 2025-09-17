@@ -185,4 +185,35 @@ class GeneralController extends Controller
             'PieChart'  => $PieChart,
         ]);
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q', '');
+        
+        if (strlen($query) < 2) {
+            return response()->json([
+                'participants' => [],
+                'infoSessions' => []
+            ]);
+        }
+
+        // Search participants
+        $participants = Participant::where('full_name', 'like', "%{$query}%")
+            ->orWhere('email', 'like', "%{$query}%")
+            ->orWhere('phone', 'like', "%{$query}%")
+            ->with('infoSession')
+            ->limit(10)
+            ->get(['id', 'full_name', 'email', 'phone', 'current_step', 'status', 'info_session_id']);
+
+        // Search info sessions
+        $infoSessions = InfoSession::where('name', 'like', "%{$query}%")
+            ->orWhere('formation', 'like', "%{$query}%")
+            ->limit(10)
+            ->get(['id', 'name', 'formation', 'start_date']);
+
+        return response()->json([
+            'participants' => $participants,
+            'infoSessions' => $infoSessions
+        ]);
+    }
 }
