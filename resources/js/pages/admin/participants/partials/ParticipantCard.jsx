@@ -230,6 +230,15 @@ const ParticipantCard = ({ participant }) => {
                                              ', none'}
                                         </span>
                                     </div>
+                                    {/* Approval Information */}
+                                    {participant?.approved_by && (
+                                        <div className="flex min-h-[20px] items-center text-gray-600">
+                                            <CheckCircle2 className="mr-2 h-4 w-4 flex-shrink-0" />
+                                            <span className="truncate text-xs">
+                                                Approved by {participant.approvedBy?.name || participant.approved_by?.name || 'Unknown'}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

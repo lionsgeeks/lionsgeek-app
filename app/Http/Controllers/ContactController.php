@@ -40,14 +40,14 @@ class ContactController extends Controller
             $mailer = \Mail::mailer($request->sender);
             $mailer->to($request->receiver)->send(new \App\Mail\CustomEmailMail($request->subject, $request->content, $request->sender));
         } catch (\Exception $e) {
-            \Log::error('Email sending failed: ' . $e->getMessage());
+            // \Log::error('Email sending failed: ' . $e->getMessage());
         }
 
         // Flash message
         flash()->success('Email sent successfully!');
-        
+
         // Debug: Log the flash message
-        \Log::info('Flash message set: Email sent successfully!');
+        // \Log::info('Flash message set: Email sent successfully!');
 
         return back()->with('success', 'Email sent successfully!');
     }
@@ -91,28 +91,25 @@ class ContactController extends Controller
         // Send admin notification email
         try {
 
-            foreach ([env("Boss_email") , env("PM_email")] as $mail) {
+            foreach ([env("Boss_email"), env("PM_email")] as $mail) {
                 Mail::to($mail)->send(new ContactAdminNotification($contact));
             }
-
         } catch (\Exception $e) {
-
         }
 
         return back();
     }
     public function toggleRead(Contact $message)
-{
-    $message->mark_as_read = !$message->mark_as_read;
-    $message->save();
+    {
+        $message->mark_as_read = !$message->mark_as_read;
+        $message->save();
 
-    return back(); 
-}
+        return back();
+    }
 
-  public function destroy(Contact $contact)
+    public function destroy(Contact $contact)
     {
         $contact->delete();
         return back();
     }
-
 }
