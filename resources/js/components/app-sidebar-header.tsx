@@ -29,17 +29,60 @@ import {
     Presentation
 } from 'lucide-react';
 import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
+
+// TypeScript interfaces
+interface AdminPage {
+    name: string;
+    path: string;
+    icon: any;
+    category: string;
+}
+
+interface Participant {
+    id: number;
+    full_name: string;
+    email: string;
+    phone: string;
+    current_step: string;
+    status: string;
+    info_session_id?: number;
+    infoSession?: {
+        name: string;
+    };
+}
+
+interface InfoSession {
+    id: number;
+    name: string;
+    formation: string;
+    start_date: string;
+}
+
+interface Notification {
+    id: number;
+    type: string;
+    full_name: string;
+    message?: string;
+    proj_name?: string;
+    created_at: string;
+}
+
+interface SearchResults {
+    participants: Participant[];
+    infoSessions: InfoSession[];
+}
+
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     // const page = usePage();
     // const isAdminPage = page.url.startsWith('/admin');
     const { props } = usePage();
-    const notifications = props.notifications || [];
+    const notifications: Notification[] = (props.notifications as Notification[]) || [];
 
     const [open, setOpen] = useState(false);
     const [notifOpen, setNotifOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [showSearchResults, setShowSearchResults] = useState(false);
-    const [searchResults, setSearchResults] = useState<{ participants: any[], infoSessions: any[] }>({ participants: [], infoSessions: [] });
+    const [searchResults, setSearchResults] = useState<SearchResults>({ participants: [], infoSessions: [] });
     const [isSearching, setIsSearching] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
@@ -47,7 +90,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
     const dialogInputRef = useRef<HTMLInputElement>(null);
 
     // Admin pages data - matching sidebar structure and icons
-    const adminPages: Array<{ name: string, path: string, icon: any, category: string }> = [
+    const adminPages: AdminPage[] = [
         { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutGrid, category: 'Dashboard' },
         { name: 'Participants', path: '/admin/participants', icon: Users, category: 'Events & Sessions' },
         { name: 'Contact Us', path: '/admin/contactus', icon: Contact, category: 'Communications' },
@@ -71,7 +114,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
     }, [searchQuery]);
 
     // Search for participants and info sessions
-    const searchParticipantsAndSessions = useCallback(async (query) => {
+    const searchParticipantsAndSessions = useCallback(async (query: string) => {
         if (query.length < 2) {
             setSearchResults({ participants: [], infoSessions: [] });
             return;
@@ -105,7 +148,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
 
     // Get all search results as a flat array for keyboard navigation
     const allSearchResults = useMemo(() => {
-        const results = [];
+        const results: Array<{ type: string; data: any; index: number }> = [];
 
         // Add pages
         filteredPages.forEach((page, index) => {
@@ -125,25 +168,25 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
         return results;
     }, [filteredPages, searchResults]);
 
-    const handleSearchChange = (e) => {
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setSearchQuery(value);
         setShowSearchResults(value.length > 0);
     };
 
-    const handlePageSelect = useCallback((page) => {
+    const handlePageSelect = useCallback((page: AdminPage) => {
         router.visit(page.path);
         setSearchQuery('');
         setShowSearchResults(false);
     }, []);
 
-    const handleParticipantSelect = useCallback((participant) => {
+    const handleParticipantSelect = useCallback((participant: Participant) => {
         router.visit(`/admin/participants/${participant.id}`);
         setSearchQuery('');
         setShowSearchResults(false);
     }, []);
 
-    const handleInfoSessionSelect = useCallback((infoSession) => {
+    const handleInfoSessionSelect = useCallback((infoSession: InfoSession) => {
         router.visit(`/admin/infosessions/${infoSession.id}`);
         setSearchQuery('');
         setShowSearchResults(false);
@@ -167,24 +210,24 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
         setSelectedIndex(-1);
     }, []);
 
-    const handleDialogPageSelect = useCallback((page) => {
+    const handleDialogPageSelect = useCallback((page: AdminPage) => {
         router.visit(page.path);
         closeSearchDialog();
     }, [closeSearchDialog]);
 
-    const handleDialogParticipantSelect = useCallback((participant) => {
+    const handleDialogParticipantSelect = useCallback((participant: Participant) => {
         router.visit(`/admin/participants/${participant.id}`);
         closeSearchDialog();
     }, [closeSearchDialog]);
 
-    const handleDialogInfoSessionSelect = useCallback((infoSession) => {
+    const handleDialogInfoSessionSelect = useCallback((infoSession: InfoSession) => {
         router.visit(`/admin/infosessions/${infoSession.id}`);
         closeSearchDialog();
     }, [closeSearchDialog]);
 
     // Keyboard shortcut (Ctrl + K) to open search dialog
     useEffect(() => {
-        const handleKeyDown = (event) => {
+        const handleKeyDown = (event: KeyboardEvent) => {
             // Check for Ctrl + K (or Cmd + K on Mac)
             if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
                 event.preventDefault();
@@ -240,7 +283,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [showSearchResults, selectedIndex, allSearchResults, handlePageSelect, handleParticipantSelect, handleInfoSessionSelect, openSearchDialog]);
 
-    const handleNotifClick = (notif) => {
+    const handleNotifClick = (notif: Notification) => {
         if (notif.type == 'coworking') {
             router.visit(`/admin/coworking/${notif.id}`);
         } else if (notif.type == 'contact') {
@@ -248,13 +291,13 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
         }
     };
     useEffect(() => {
-        const handleClick = (e) => {
+        const handleClick = (e: MouseEvent) => {
             // Close notifications
             if (notifOpen) {
                 setNotifOpen(false);
             }
             // Close search results if clicking outside
-            if (showSearchResults && !e.target.closest('.search-container')) {
+            if (showSearchResults && !(e.target as Element)?.closest('.search-container')) {
                 setShowSearchResults(false);
             }
         };
@@ -288,7 +331,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                 {/* Notification Button */}
                 <div className="relative">
                         <button
-                            onClick={(e) => {
+                            onClick={(e: React.MouseEvent) => {
                                 e.stopPropagation();
                                 setNotifOpen(!notifOpen);
                             }}
@@ -444,7 +487,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                                         Participants
                                     </div>
                                     <div className="space-y-1">
-                                        {searchResults.participants.map((participant, index) => (
+                                        {searchResults.participants.map((participant) => (
                                             <button
                                                 key={`participant-${participant.id}`}
                                                 onClick={() => handleDialogParticipantSelect(participant)}
@@ -471,7 +514,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                                         Info Sessions
                                     </div>
                                     <div className="space-y-1">
-                                        {searchResults.infoSessions.map((infoSession, index) => (
+                                        {searchResults.infoSessions.map((infoSession) => (
                                             <button
                                                 key={`session-${infoSession.id}`}
                                                 onClick={() => handleDialogInfoSessionSelect(infoSession)}
