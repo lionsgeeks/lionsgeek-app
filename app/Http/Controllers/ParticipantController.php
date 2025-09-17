@@ -181,6 +181,7 @@ class ParticipantController extends Controller
         $request->validate([
             // Session and Formation Information
             'info_session_id' => 'nullable|integer|exists:info_sessions,id',
+            'private_token' => 'nullable|string', // For private session access
             'formation_field' => 'required|string|in:coding,media',
 
             // Personal Information - with trim and sanitization
@@ -289,6 +290,32 @@ class ParticipantController extends Controller
         $email = $request->email;
         $currentFormationField = $request->formation_field;
 
+        // For private sessions, check if already registered for this specific private session
+        if ($request->filled('private_token')) {
+            $privateSession = \App\Models\InfoSession::findByToken($request->private_token);
+            if ($privateSession) {
+                $existingPrivateParticipant = \App\Models\Participant::where('email', $email)
+                    ->where('info_session_id', $privateSession->id)
+                    ->first();
+
+                if ($existingPrivateParticipant) {
+                    $validator = Validator::make($request->all(), [
+                        'email' => 'required'
+                    ], [
+                        'email.already_registered' => 'You have already registered for this private session.'
+                    ]);
+
+                    $validator->after(function ($validator) {
+                        $validator->errors()->add('email', 'You have already registered for this private session.');
+                    });
+
+                    if ($validator->fails()) {
+                        throw new \Illuminate\Validation\ValidationException($validator);
+                    }
+                }
+            }
+            return; // For private sessions, only check duplicate registration, not 180-day rule
+        }
 
         // Check if email already exists - get the MOST RECENT registration
         $existingParticipant = \App\Models\Participant::where('email', $email)
@@ -429,6 +456,24 @@ class ParticipantController extends Controller
      */
     private function checkSessionCapacity(Request $request): void
     {
+        // Check for private session capacity
+        if ($request->filled('private_token')) {
+            $privateSession = \App\Models\InfoSession::findByToken($request->private_token);
+            if ($privateSession) {
+                $currentParticipants = Participant::where('info_session_id', $privateSession->id)->count();
+                if ($currentParticipants + 1 > $privateSession->places) {
+                    $message = 'Sorry, places are full for this private session.';
+                    if ($request->header('X-Inertia')) {
+                        flash()->option('position', 'bottom-right')->error($message);
+                        throw new \Exception($message);
+                    }
+                    throw new \Exception($message);
+                }
+            }
+            return;
+        }
+
+        // Check for regular info session capacity
         if (!$request->filled('info_session_id')) {
             return;
         }
@@ -468,9 +513,19 @@ class ParticipantController extends Controller
         $timeSpentSeconds = (int) $request->input('time_spent', 0);
         $scoring = $this->calculateFinalScore($levelsCompleted, $correctAnswers, $totalAttempts, $timeSpentSeconds);
 
+        // Handle private session assignment
+        $infoSessionId = $request->info_session_id;
+
+        if ($request->filled('private_token')) {
+            $privateSession = \App\Models\InfoSession::findByToken($request->private_token);
+            if ($privateSession) {
+                $infoSessionId = $privateSession->id; // Assign to the private infosession
+            }
+        }
+
         return Participant::create([
             // Basic Information
-            'info_session_id' => $request->info_session_id,
+            'info_session_id' => $infoSessionId,
             'formation_field' => $request->formation_field,
             'full_name' => $request->full_name,
             'email' => $request->email,
@@ -1292,4 +1347,6 @@ class ParticipantController extends Controller
             ]);
         }
     }
+
+
 }

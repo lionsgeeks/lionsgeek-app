@@ -11,6 +11,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::resource('infosessions', InfosessionController::class);
     Route::patch('infosessions/change-availabilty/{id}', [InfosessionController::class, 'availabilityStatus'])->name('infosession.availability');
     Route::patch('infosessions/change-status/{id}', [InfosessionController::class, 'completeStatus'])->name('infosession.status');
+    Route::post('infosessions/{infosession}/regenerate-token', [InfosessionController::class, 'regenerateToken'])->name('infosession.regenerate-token');
 });
 
 // Grant access to postuler route
@@ -32,7 +33,7 @@ Route::get('/postuler', function (Request $request) {
     
     return Inertia::render('client/infoSession/index', [
         'sessions' => InfoSession::where('isAvailable', true)
-            ->where('name', '!=', 'private session')
+            ->where('is_private', false)
             ->where('isFinish', false)
             ->where('isFull', false)
             ->get(),

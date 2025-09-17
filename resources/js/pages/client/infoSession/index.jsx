@@ -21,7 +21,7 @@ import StepSummary from './partials/StepSummary';
 
 const InfoSession = ({ trainingType = 'digital' }) => {
     const { selectedLanguage, darkMode } = useAppContext();
-    const { sessions, formation_field } = usePage().props;
+    const { sessions, formation_field, privatesession, private_token } = usePage().props;
     const { url } = usePage();
 
     // Use formation_field from session (passed from backend) or fallback to URL parameter
@@ -31,8 +31,9 @@ const InfoSession = ({ trainingType = 'digital' }) => {
 
     const { data, setData, post, processing, errors } = useForm({
         // Session and formation info
-        info_session_id: '',
+        info_session_id: privatesession ? '' : (sessions?.length === 1 ? sessions[0].id : ''),
         formation_field: formationType,
+        private_token: privatesession ? private_token : '', // Add private token for private sessions
 
         // Step 1: Personal Information
         full_name: '',

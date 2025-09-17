@@ -3,8 +3,9 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useForm } from '@inertiajs/react';
-import { Calendar, Code2, GraduationCap, Loader2, Palette, Plus, Users, X } from 'lucide-react';
+import { Calendar, Code2, GraduationCap, Loader2, Palette, Plus, Users, X, Lock } from 'lucide-react';
 
 export function CreateSessionModal({ open, onOpenChange }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -12,6 +13,7 @@ export function CreateSessionModal({ open, onOpenChange }) {
         formation: '',
         start_date: '',
         places: '',
+        is_private: false,
     });
 
     const handleSubmit = async (e) => {
@@ -23,6 +25,7 @@ export function CreateSessionModal({ open, onOpenChange }) {
                     formation: '',
                     start_date: '',
                     places: '',
+                    is_private: false,
                 });
                 onOpenChange(false);
             },
@@ -163,6 +166,30 @@ export function CreateSessionModal({ open, onOpenChange }) {
                             </div>
                         </div>
 
+                        {/* Private Session Option */}
+                        <div className="space-y-3">
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="is_private"
+                                    checked={data.is_private}
+                                    onCheckedChange={(checked) => handleChange('is_private', checked)}
+                                    disabled={processing}
+                                />
+                                <Label htmlFor="is_private" className="text-sm font-medium text-[#212529] flex items-center gap-2">
+                                    <Lock className="h-4 w-4" />
+                                    Make this a private session
+                                </Label>
+                            </div>
+                            {data.is_private && (
+                                <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3">
+                                    <p className="text-sm text-yellow-800">
+                                        <strong>Private Session:</strong> This session will have a unique URL that can be shared privately.
+                                        It won't appear on the public coding/media pages.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+
                         {/* Preview */}
                         {data.formation && data.name && (
                             <div className="rounded-lg border bg-[#f2f2f2] p-4">
@@ -171,9 +198,19 @@ export function CreateSessionModal({ open, onOpenChange }) {
                                     <div className="text-[#212529]">
                                         {data.formation === 'Coding' ? <Code2 className="h-5 w-5" /> : <Palette className="h-5 w-5" />}
                                     </div>
-                                    <div>
-                                        <div className="font-medium text-[#212529]">{data.name}</div>
-                                        <div className="text-sm text-gray-500">{data.formation} Program</div>
+                                    <div className="flex-1">
+                                        <div className="font-medium text-[#212529] flex items-center gap-2">
+                                            {data.name}
+                                            {data.is_private && (
+                                                <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
+                                                    <Lock className="h-3 w-3" />
+                                                    Private
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="text-sm text-gray-500">
+                                            {data.formation} Program {data.is_private ? '• Private Session' : '• Public Session'}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

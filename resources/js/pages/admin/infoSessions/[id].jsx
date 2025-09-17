@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, usePage } from '@inertiajs/react';
-import { ArrowLeft, Calendar, Code2, GraduationCap, Palette, Presentation, TrendingUp, UserCheck, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Calendar, Code2, Copy, GraduationCap, Lock, Palette, Presentation, RefreshCw, TrendingUp, UserCheck, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from '../participants/partials/ParticipantCard';
@@ -69,6 +69,17 @@ const InfosessionDetails = () => {
         }
     };
 
+    const copyPrivateUrl = (token) => {
+        const url = `${window.location.origin}/private-session/${token}`;
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Private URL copied to clipboard!');
+        });
+    };
+
+    const regenerateToken = (id) => {
+        router.post(`/admin/infosessions/${id}/regenerate-token`);
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${infosession.name} - Session Details`} />
@@ -95,7 +106,15 @@ const InfosessionDetails = () => {
                                     )}
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold capitalize">{infosession.name}</h1>
+                                    <div className="flex items-center gap-3">
+                                        <h1 className="text-3xl font-bold capitalize">{infosession.name}</h1>
+                                        {infosession.is_private && (
+                                            <Badge className="bg-yellow-500 text-yellow-900 flex items-center gap-1">
+                                                <Lock className="h-3 w-3" />
+                                                Private Session
+                                            </Badge>
+                                        )}
+                                    </div>
                                     <p className="mt-1 text-gray-300">Session details and participant tracking</p>
                                 </div>
                             </div>
@@ -109,7 +128,7 @@ const InfosessionDetails = () => {
                         </div>
 
                         {/* Session Info Cards */}
-                        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <div className={`mt-6 grid grid-cols-1 gap-4 ${infosession.is_private ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3'}`}>
                             <div className="rounded-lg bg-white/10 p-4">
                                 <div className="flex items-center gap-3">
                                     <Calendar className="h-5 w-5 text-[#fee819]" />
@@ -143,7 +162,79 @@ const InfosessionDetails = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Private URL Card - Only show for private sessions */}
+                            {infosession.is_private && infosession.private_url_token && (
+                                <div className="rounded-lg bg-yellow-500/20 border border-yellow-500/30 p-4">
+                                    <div className="flex items-center gap-3">
+                                        <Lock className="h-5 w-5 text-yellow-400" />
+                                        <div className="flex-1">
+                                            <p className="text-sm text-gray-300">Private URL</p>
+                                            <div className="mt-2 flex items-center gap-2">
+                                                <Button
+                                                    onClick={() => copyPrivateUrl(infosession.private_url_token)}
+                                                    size="sm"
+                                                    variant="outline"
+                                                    className="bg-white/10 border-white/20 text-white hover:bg-white hover:text-[#212529] text-xs"
+                                                >
+                                                    <Copy className="h-3 w-3 mr-1" />
+                                                    Copy
+                                                </Button>
+                                                <Button
+                                                    onClick={() => regenerateToken(infosession.id)}
+                                                    size="sm"
+                                                    variant="outline"
+                                                    className="bg-white/10 border-white/20 text-white hover:bg-white hover:text-[#212529] text-xs"
+                                                >
+                                                    <RefreshCw className="h-3 w-3" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
+
+                        {/* Private URL Management */}
+                        {infosession.is_private && infosession.private_url_token && (
+                            <div className="mt-6 rounded-lg bg-yellow-500/20 border border-yellow-500/30 p-4">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                            <Lock className="h-5 w-5" />
+                                            Private Session URL
+                                        </h3>
+                                        <p className="text-sm text-gray-300 mt-1">
+                                            Share this unique URL with participants to access this private session
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Button
+                                            onClick={() => copyPrivateUrl(infosession.private_url_token)}
+                                            variant="outline"
+                                            className="bg-white/10 border-white/20 text-white hover:bg-white hover:text-[#212529]"
+                                        >
+                                            <Copy className="h-4 w-4 mr-2" />
+                                            Copy URL
+                                        </Button>
+                                        <Button
+                                            onClick={() => regenerateToken(infosession.id)}
+                                            variant="outline"
+                                            className="bg-white/10 border-white/20 text-white hover:bg-white hover:text-[#212529]"
+                                        >
+                                            <RefreshCw className="h-4 w-4 mr-2" />
+                                            Regenerate
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="mt-3 p-3 bg-white/10 rounded-lg">
+                                    <p className="text-xs text-gray-300 mb-1">Current URL:</p>
+                                    <code className="text-sm text-yellow-200 break-all">
+                                        {window.location.origin}/private-session/{infosession.private_url_token}
+                                    </code>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

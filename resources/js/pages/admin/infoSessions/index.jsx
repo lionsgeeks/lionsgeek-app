@@ -11,10 +11,13 @@ import {
     CheckCircle,
     Clock,
     Code2,
+    Copy,
     Edit,
     Filter,
     GraduationCap,
+    Lock,
     Palette,
+    RefreshCw,
     RotateCcw,
     Search,
     Trash,
@@ -92,6 +95,18 @@ export default function InfoSessions() {
 
     const changeStatus = (id) => {
         router.patch(`infosessions/change-status/${id}`);
+    };
+
+    const copyPrivateUrl = (token) => {
+        const url = `${window.location.origin}/private-session/${token}`;
+        navigator.clipboard.writeText(url).then(() => {
+            // You could add a toast notification here
+            alert('Private URL copied to clipboard!');
+        });
+    };
+
+    const regenerateToken = (id) => {
+        router.post(`infosessions/${id}/regenerate-token`);
     };
 
     const onDeleteSession = (id) => {
@@ -403,8 +418,18 @@ export default function InfoSessions() {
                                             <div className="flex min-w-0 flex-1 items-center gap-3">
                                                 <div className="flex-shrink-0 text-[#212529]">{getFormationIcon(session.formation)}</div>
                                                 <div className="min-w-0 flex-1">
-                                                    <h3 className="truncate text-lg font-semibold text-[#212529] capitalize">{session.name}</h3>
-                                                    <Badge className="mt-1 w-fit bg-[#fee819] text-xs text-[#212529]">{session.formation}</Badge>
+                                                    <h3 className="truncate text-lg font-semibold text-[#212529] capitalize flex items-center gap-2">
+                                                        {session.name}
+                                                        {session.is_private && (
+                                                            <Lock className="h-4 w-4 text-yellow-600" />
+                                                        )}
+                                                    </h3>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <Badge className="w-fit bg-[#fee819] text-xs text-[#212529]">{session.formation}</Badge>
+                                                        {session.is_private && (
+                                                            <Badge className="w-fit bg-yellow-100 text-xs text-yellow-800">Private</Badge>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                             {/* Edit/Delete - Top Right */}
@@ -477,6 +502,38 @@ export default function InfoSessions() {
                                                     </p>
                                                 </div>
                                             </div>
+
+                                            {/* Private URL Management */}
+                                            {session.is_private && session.private_url_token && (
+                                                <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3">
+                                                    <p className="text-xs font-medium text-yellow-800 mb-2">Private Session URL</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                copyPrivateUrl(session.private_url_token);
+                                                            }}
+                                                            className="flex-1 text-xs border-yellow-300 text-yellow-800 hover:bg-yellow-100"
+                                                        >
+                                                            <Copy className="h-3 w-3 mr-1" />
+                                                            Copy URL
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                regenerateToken(session.id);
+                                                            }}
+                                                            className="text-xs border-yellow-300 text-yellow-800 hover:bg-yellow-100"
+                                                        >
+                                                            <RefreshCw className="h-3 w-3" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </CardContent>
 
