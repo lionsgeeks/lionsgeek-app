@@ -22,7 +22,6 @@ export default function Index() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const allMessages = messages.concat(sendedMessage)
-    // console.log(allMessages);
 
     const [emailData, setEmailData] = useState({
         receiver: '',

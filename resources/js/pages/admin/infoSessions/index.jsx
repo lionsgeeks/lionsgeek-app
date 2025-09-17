@@ -23,9 +23,54 @@ import {
 import { useState } from 'react';
 import { CreateSessionModal } from './partials/create-session-modal';
 import { EditSessionModal } from './partials/edit-session-modal';
+import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select"
 
 export default function InfoSessions() {
     const { infosessions = [] } = usePage().props;
+
+    // function to extract promo from session name
+    const extractPromo = (sessionName) => {
+        if (!sessionName) return null;
+        const colonIndex = sessionName.indexOf(':');
+        if (colonIndex === -1) return null;
+        const promoText = sessionName.substring(0, colonIndex).trim();
+        
+        if (promoText.toLowerCase().startsWith('promo')) {
+            // Extract the number part
+            const match = promoText.match(/promo\s*(\d+)/i);
+            if (match) {
+                return `Promo ${match[1]}`;
+            }
+        }
+        return null;
+    };
+
+    // get unique promos from all sessions
+    const getUniquePromos = () => {
+        const promos = infosessions
+            .map(session => extractPromo(session.name))
+            .filter(promo => promo !== null)
+            .map(promo => {
+                const parts = promo.toLowerCase().split(' ');
+                parts[0] = 'Promo';
+                if (parts[1]) {
+                    parts[1] = parts[1];
+                }
+                return parts.join(' ');
+            })
+            .filter((promo, index, arr) => arr.indexOf(promo) === index);
+
+        return promos.sort((a, b) => {
+            const numA = parseInt(a.replace(/\D/g, ''));
+            const numB = parseInt(b.replace(/\D/g, ''));
+            return numA - numB;
+        });
+    };
+    
+    const [promoFilter, setPromoFilter] = useState(undefined);
+    const [availabilityFilter, setAvailabilityFilter] = useState(undefined);
+    const uniquePromos = getUniquePromos();
+
     const { delete: destroy } = useForm();
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
@@ -73,11 +118,29 @@ export default function InfoSessions() {
         return formation === 'Coding' ? <Code2 className="h-6 w-6" /> : <Palette className="h-6 w-6" />;
     };
 
-    // Filter sessions based on search
-    const filteredSessions = infosessions.filter(
-        (session) =>
-            session?.name?.toLowerCase().includes(search?.toLowerCase()) || session?.formation?.toLowerCase().includes(search?.toLowerCase()),
-    );
+    // filter sessions
+    const filteredSessions = infosessions.filter((session) => {
+        // search filter
+        const matchesSearch = 
+            session?.name?.toLowerCase().includes(search?.toLowerCase()) || 
+            session?.formation?.toLowerCase().includes(search?.toLowerCase());
+        
+        // promo filter
+        const sessionPromo = extractPromo(session.name);
+        const matchesPromo = !promoFilter || sessionPromo === promoFilter;
+        
+        let matchesAvailability = true;
+        if (availabilityFilter === 'available') {
+            matchesAvailability = session?.isAvailable === 1 && 
+                                session?.isFinish === 0;
+        } else if (availabilityFilter === 'unavailable') {
+            matchesAvailability = session?.isAvailable === 0 || 
+                                session?.isFinish === 1 ||
+                                session?.isFull === 1;
+        }
+        
+        return matchesSearch && matchesPromo && matchesAvailability;
+    });
 
     // Calculate statistics with safe access
     const totalSessions = infosessions?.length || 0;
@@ -85,6 +148,7 @@ export default function InfoSessions() {
     const completedSessions = infosessions?.filter((s) => s?.isFinish)?.length || 0;
     const codingSessions = infosessions?.filter((s) => s?.formation === 'Coding')?.length || 0;
     const hasSearch = search.length > 0;
+    const hasFilters = search.length > 0 || promoFilter || availabilityFilter;
 
     // Empty state
     if (!infosessions || infosessions.length === 0) {
@@ -222,13 +286,57 @@ export default function InfoSessions() {
                                 <div className="flex items-center gap-2">
                                     <Filter className="h-5 w-5 text-[#212529]" />
                                     <h3 className="text-lg font-semibold text-[#212529]">Filter Info Sessions</h3>
-                                    {hasSearch && (
+                                    {hasFilters && (
                                         <Badge variant="secondary" className="bg-gray-100 px-2 py-1 text-[#212529]">
                                             {filteredSessions.length} result{filteredSessions.length !== 1 ? 's' : ''}
                                         </Badge>
                                     )}
+                                    {promoFilter && (
+                                        <Badge className="bg-[#fee819] px-2 py-1 text-[#212529]">
+                                            {promoFilter}
+                                        </Badge>
+                                    )}
+                                    {availabilityFilter && (
+                                        <Badge className="bg-blue-100 px-2 py-1 text-blue-700">
+                                            {availabilityFilter.charAt(0).toUpperCase() + availabilityFilter.slice(1)}
+                                        </Badge>
+                                    )}
                                 </div>
-                                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                                <div className="flex flex-col w-full gap-3 sm:w-auto lg:flex-row lg:items-center">
+                                    {/* promo select */}
+                                    <Select 
+                                        key={`promo-${promoFilter}`} 
+                                        value={promoFilter} 
+                                        onValueChange={(value) => setPromoFilter(value === "all" ? undefined : value)}
+                                    >
+                                        <SelectTrigger className="transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20 lg:w-45 sm:w-80">
+                                            <SelectValue placeholder="Select Promo" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All Promos</SelectItem>
+                                            {uniquePromos.map((promo, index) => (
+                                                <SelectItem key={index} value={promo}>
+                                                    {promo}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+
+                                    {/* availability select */}
+                                    <Select 
+                                        key={`availability-${availabilityFilter}`} 
+                                        value={availabilityFilter} 
+                                        onValueChange={(value) => setAvailabilityFilter(value === "all" ? undefined : value)}
+                                    >
+                                        <SelectTrigger className="transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20 lg:w-45 sm:w-80">
+                                            <SelectValue placeholder="Select Availability" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All Sessions</SelectItem>
+                                            <SelectItem value="available">Available</SelectItem>
+                                            <SelectItem value="unavailable">Unavailable</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <div className="relative">
                                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-500" />
                                         <Input
@@ -236,13 +344,17 @@ export default function InfoSessions() {
                                             placeholder="Search sessions..."
                                             value={search}
                                             onChange={(e) => setSearch(e.target.value)}
-                                            className="w-full pl-10 transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20 sm:w-80"
+                                            className="w-full pl-10 transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20 sm:w-60"
                                         />
                                     </div>
-                                    {hasSearch && (
+                                    {hasFilters && (
                                         <Button
                                             variant="outline"
-                                            onClick={() => setSearch('')}
+                                            onClick={() => {
+                                                setSearch('');
+                                                setPromoFilter(undefined);
+                                                setAvailabilityFilter(undefined);
+                                            }}
                                             className="border-gray-300 text-gray-700 transition-all duration-200 ease-in-out hover:bg-gray-100"
                                         >
                                             <RotateCcw className="mr-2 h-4 w-4" />
@@ -265,9 +377,16 @@ export default function InfoSessions() {
                                 </div>
                                 <h2 className="mb-3 text-2xl font-bold text-[#212529]">No Results Found</h2>
                                 <p className="mb-6 text-gray-600">No sessions match your search criteria. Try adjusting your search terms.</p>
-                                <Button variant="outline" onClick={() => setSearch('')} className="border-gray-300 text-gray-700 hover:bg-gray-100">
+                                <Button 
+                                    variant="outline" 
+                                    onClick={() => {
+                                        setSearch('');
+                                        setPromoFilter(undefined);
+                                        setAvailabilityFilter(undefined);
+                                    }} 
+                                    className="border-gray-300 text-gray-700 hover:bg-gray-100">
                                     <RotateCcw className="mr-2 h-4 w-4" />
-                                    Clear Search
+                                    Clear All Filters
                                 </Button>
                             </CardContent>
                         </Card>

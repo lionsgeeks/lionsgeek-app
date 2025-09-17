@@ -205,7 +205,8 @@ const handleApprove = () => {
   router.post(`/admin/participants/${participant.id}/approve`, {}, {
     onFinish: () => {
       setIsProcessing(false);
-      handleNavigation(); 
+      // Refresh the current page to show updated approval data
+      router.reload();
     },
     onError: () => setIsProcessing(false),
   });
@@ -216,7 +217,8 @@ const handleReject = () => {
   router.post(`/admin/participants/${participant.id}/reject`, {}, {
     onFinish: () => {
       setIsProcessing(false);
-      handleNavigation(); 
+      // Refresh the current page to show updated approval data
+      router.reload();
     },
     onError: () => setIsProcessing(false),
   });
@@ -369,6 +371,25 @@ const handleReject = () => {
                                                 {getConfirmationStatus(participant) ? 'Confirmed' : 'Pending'}
                                             </Badge>
                                         )}
+                                        {/* Approval Status Badge */}
+                                        {participant.status && (
+                                            <Badge className={`${
+                                                participant.status === 'approved' 
+                                                    ? 'bg-green-500 text-white' 
+                                                    : participant.status === 'rejected' 
+                                                    ? 'bg-red-500 text-white' 
+                                                    : 'bg-yellow-500 text-white'
+                                            } rounded-lg px-3 py-1 font-medium`}>
+                                                {participant.status === 'approved' ? (
+                                                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                                                ) : participant.status === 'rejected' ? (
+                                                    <XCircle className="h-3 w-3 mr-1" />
+                                                ) : (
+                                                    <Clock className="h-3 w-3 mr-1" />
+                                                )}
+                                                {participant.status.charAt(0).toUpperCase() + participant.status.slice(1)}
+                                            </Badge>
+                                        )}
                                     </div>
                                     <p className="text-white/80">{participant.info_session?.name || 'No session assigned'}</p>
                                 </div>
@@ -493,6 +514,66 @@ const handleReject = () => {
                                     <div className="text-xs text-gray-500 mb-1">Other Organization</div>
                                     <div className="text-sm font-medium text-[#212529]">{humanize(participant.other_organization) || '-'}</div>
                                 </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Approval Information */}
+                        <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="flex items-center gap-2 text-[#212529]">
+                                    <CheckCircle2 className="w-5 h-5" />
+                                    Approval Information
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Status</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.status || 'Pending'}</div>
+                                </div>
+                                {participant.approved_by && (
+                                    <>
+                                        <Separator />
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Approved By</div>
+                                            <div className="text-sm font-medium text-[#212529]">
+                                                {participant.approvedBy?.name || participant.approved_by?.name || 'Unknown'}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                                {participant.last_step_changed_by && (
+                                    <>
+                                        <Separator />
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Last Step Changed By</div>
+                                            <div className="text-sm font-medium text-[#212529]">
+                                                {participant.lastStepChangedBy?.name || participant.last_step_changed_by?.name || 'Unknown'}
+                                            </div>
+                                            {participant.last_step_changed_at && (
+                                                <div className="text-xs text-gray-400 mt-1">
+                                                    {new Date(participant.last_step_changed_at).toLocaleString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
+                                                </div>
+                                            )}
+                                            {participant.previous_step && participant.current_step && (
+                                                <div className="text-xs text-blue-600 mt-1 font-medium">
+                                                    {participant.previous_step.replaceAll('_', ' ')} → {participant.current_step.replaceAll('_', ' ')}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
+                                {participant.status === 'pending' && (
+                                    <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                        <div className="text-xs text-yellow-700 font-medium">Awaiting Approval</div>
+                                        <div className="text-xs text-yellow-600 mt-1">This participant is waiting for admin approval to proceed to the next step.</div>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
 
@@ -646,7 +727,7 @@ const handleReject = () => {
                         
                                             <DialogFooter className="sm:justify-end">
                                                 <DialogClose asChild>
-                                                    <Button onClick={() => setIsUpdateOpened(false)} type="button" variant="secondary">
+                                                    <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
                                                         Close
                                                     </Button>
                                                 </DialogClose>

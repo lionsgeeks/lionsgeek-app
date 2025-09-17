@@ -44,7 +44,7 @@ class ParticipantController extends Controller
     public function index(Request $request)
     {
         // Always load all participants for frontend filtering
-        $participants = Participant::with(['infoSession', 'confirmation', 'approvedBy'])->get();
+        $participants = Participant::with(['infoSession', 'confirmation', 'approvedBy', 'lastStepChangedBy'])->get();
         $infosessions = InfoSession::all();
 
         // Get counts for each status
@@ -668,7 +668,9 @@ class ParticipantController extends Controller
                 'notes',
                 'questions',
                 'satisfaction',
-                'confirmation'
+                'confirmation',
+                'approvedBy',
+                'lastStepChangedBy'
             ]),
             'participants' => $participants,
             'stepParticipant' => $stepParticipant,
@@ -794,7 +796,10 @@ class ParticipantController extends Controller
 
         if ($action == "daz") {
             $participant->update([
-                'current_step' => 'interview_pending'
+                'previous_step' => $participant->current_step,
+                'current_step' => 'interview_pending',
+                'last_step_changed_by' => Auth::id(),
+                'last_step_changed_at' => now()
             ]);
             // return $request->header('X-Inertia') ? response()->noContent() : back();
             return back()->with('success', 'Step updated');
@@ -802,13 +807,19 @@ class ParticipantController extends Controller
 
         if ($participant->current_step == "interview" || $participant->current_step == "interview_pending") {
             $participant->update([
+                'previous_step' => $participant->current_step,
                 "current_step" => $action == "next" ? "jungle" : "interview_failed",
+                'last_step_changed_by' => Auth::id(),
+                'last_step_changed_at' => now()
             ]);
             // return $request->header('X-Inertia') ? response()->noContent() : back();
             return back()->with('success', 'Step updated');
         } elseif ($participant->current_step == "jungle") {
             $participant->update([
+                'previous_step' => $participant->current_step,
                 "current_step" => $action == "next" ? $school : "jungle" . "_failed",
+                'last_step_changed_by' => Auth::id(),
+                'last_step_changed_at' => now()
             ]);
             return back()->with('success', 'Step updated');
         }
