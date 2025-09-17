@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MessagesExport;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     $galleries = Gallery::with('images')->get();
@@ -61,6 +62,21 @@ Route::fallback(function () {
 Route::get('/policy', function () {
     return Inertia::render('policy/policy');
 })->name('home');
+
+
+
+
+Route::get('/apiactive', function () {
+    $user = Auth::user();
+
+    if (!$user || !in_array($user->email, ['forkanimahdi@gmail.com', 'boujjarr@gmail.com'])) {
+        return redirect('/error');
+    }
+    $routes = config('active-routes');
+    return Inertia::render('apiactive', compact('routes'));
+});
+
+
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/infosession.php';

@@ -64,7 +64,7 @@ class InfoSessionController extends Controller
                     $participant->current_step = "interview";
                     $participant->is_visited = true;
                     $participant->save();
-                    
+
                     return response()->json([
                         "message" => "Credentials match.",
                         "status" => 200,
@@ -94,7 +94,8 @@ class InfoSessionController extends Controller
 
     public function infoData(Request $request)
     {
-        $session = InfoSession::find($request->id);
+        // $session = InfoSession::find($request->id);
+        $session = InfoSession::first();
 
         $participant = $session->participants()->get();
         $attended = $session->participants()->where("is_visited", 1)->orderby("updated_at", "desc")->get();
