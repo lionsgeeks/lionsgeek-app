@@ -13,7 +13,7 @@ class InfoSessionController extends Controller
 {
     public function index()
     {
-        $infos = InfoSession::where('isAvailable', true)->where('isFinish', false)->where("name", "!=", "private session")->orderBy('start_date', "desc")->get();
+        $infos = InfoSession::where('isAvailable', true)->where('isFinish', false)->where('is_private', false)->orderBy('start_date', "desc")->get();
         return response()->json([
             'infos' => $infos,
         ]);
@@ -22,7 +22,7 @@ class InfoSessionController extends Controller
 
     public function PrivateSession()
     {
-        $infos = InfoSession::where('isAvailable', true)->where('isFinish', false)->where("name", "=", "private session")->first();
+        $infos = InfoSession::where('isAvailable', true)->where('isFinish', false)->where('is_private', true)->first();
         return response()->json([
             'infos' => $infos,
         ]);

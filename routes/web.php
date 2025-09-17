@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Gallery;
-
 use App\Models\InfoSession;
 use App\Models\Press;
 use App\Models\Project;
@@ -22,14 +21,18 @@ Route::get('/', function () {
 
 Route::get('/coding', function () {
     return Inertia::render('client/coding/coding', [
-        'sessions' => InfoSession::where('isAvailable', 1)->where('formation', 'Coding')->where('isFinish', 0)->get(),
+        'sessions' => InfoSession::where('isAvailable', 1)->where('formation', 'Coding')->where('isFinish', 0)->where('is_private', false)->get(),
     ]);
 })->name('coding');
 Route::get('/media', function () {
     return Inertia::render('client/media/media', [
-        'sessions' => InfoSession::where('isAvailable', 1)->where('formation', 'Media')->where('isFinish', 0)->get(),
+        'sessions' => InfoSession::where('isAvailable', 1)->where('formation', 'Media')->where('isFinish', 0)->where('is_private', false)->get(),
     ]);
 })->name('media');
+
+// Private session access route
+Route::get('/private-session/{token}', [App\Http\Controllers\InfoSessionController::class, 'showByToken'])
+    ->name('private-session.show');
 Route::get('/pro', function () {
     $projects = Project::all();
     return Inertia::render('client/Pro/Pro', [
@@ -84,6 +87,8 @@ require __DIR__ . '/gallery.php';
 require __DIR__ . '/blogs.php';
 require __DIR__ . '/participants.php';
 require __DIR__ . '/event.php';
+
+
 require __DIR__ . '/projects.php';
 require __DIR__ . '/press.php';
 require __DIR__ . '/coworking.php';

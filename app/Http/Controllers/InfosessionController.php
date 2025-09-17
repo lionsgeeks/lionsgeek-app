@@ -156,4 +156,41 @@ class InfosessionController extends Controller
             return back();
         }
     }
+
+    /**
+     * Show infosession by private URL token
+     */
+    public function showByToken($token)
+    {
+        $infoSession = InfoSession::findByToken($token);
+
+        if (!$infoSession) {
+            abort(404, 'Private session not found or inactive');
+        }
+
+        return Inertia::render('client/infoSession/index', [
+            'sessions' => [$infoSession],
+            'formation_field' => strtolower($infoSession->formation),
+            'privatesession' => true,
+            'private_token' => $token
+        ]);
+    }
+
+    /**
+     * Regenerate private URL token for an infosession
+     */
+    public function regenerateToken(InfoSession $infosession)
+    {
+        try {
+            if (!$infosession->is_private) {
+                return back()->withErrors(['error' => 'This is not a private session']);
+            }
+
+            $newToken = $infosession->regenerateUrlToken();
+
+            return back()->with('success', 'Private URL regenerated successfully');
+        } catch (\Throwable $th) {
+            return back()->withErrors(['error' => 'Failed to regenerate URL']);
+        }
+    }
 }

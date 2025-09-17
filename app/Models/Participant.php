@@ -83,6 +83,8 @@ class Participant extends Model
         return  $this->belongsTo(InfoSession::class);
     }
 
+
+
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'approved_by');

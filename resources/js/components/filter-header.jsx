@@ -137,9 +137,19 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		return filtered;
 	}, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender, dateSort]);
 
+	// Initialize filtered participants on mount
 	useEffect(() => {
-		setFiltredParticipants(filtredParticipans);
-	}, [filtredParticipans]);
+		if (setFiltredParticipants) {
+			setFiltredParticipants(participants);
+		}
+	}, []);
+
+	// Update filtered participants only when filters change
+	useEffect(() => {
+		if (setFiltredParticipants && (search || selectedSession || selectedStep || selectedPromo || selectedTrack || selectedGender || dateSort)) {
+			setFiltredParticipants(filtredParticipans);
+		}
+	}, [search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender, dateSort]);
 
 	// Initialize selectedStep from URL status on mount (only for status values)
 	useEffect(() => {
