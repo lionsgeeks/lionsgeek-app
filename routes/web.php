@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MessagesExport;
+use App\Http\Controllers\InfosessionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,7 +32,7 @@ Route::get('/media', function () {
 })->name('media');
 
 // Private session access route
-Route::get('/private-session/{token}', [App\Http\Controllers\InfoSessionController::class, 'showByToken'])
+Route::get('/private-session/{token}', [InfosessionController::class, 'showByToken'])
     ->name('private-session.show');
 Route::get('/pro', function () {
     $projects = Project::all();
