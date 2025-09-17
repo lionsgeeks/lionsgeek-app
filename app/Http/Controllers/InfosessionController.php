@@ -39,12 +39,15 @@ class InfosessionController extends Controller
                 'formation' => 'required',
                 'start_date' => 'required',
                 'places' => 'required',
+                'is_private' => 'boolean',
             ]);
             InfoSession::create([
                 'name' => strtolower($request->name),
                 'formation' => $request->formation,
                 'start_date' => $request->start_date,
                 'places' => $request->places,
+                'is_private' => $request->boolean('is_private', false),
+                'is_private' => $request->boolean('is_private', false),
             ]);
             return back();
         } catch (\Throwable $th) {
