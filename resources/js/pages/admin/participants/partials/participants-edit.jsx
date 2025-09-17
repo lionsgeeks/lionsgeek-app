@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 export default function ParticipantEdit() {
     const { participant, sessions } = usePage().props;
     const [selectedFile, setSelectedFile] = useState(null);
+const [preview, setPreview] = useState(`/storage/images/participants/${participant.image}`);
 
     const { data, setData, post, processing, errors } = useForm({
         _method: 'PUT',
@@ -84,6 +85,7 @@ export default function ParticipantEdit() {
         const file = e.target.files[0];
         setSelectedFile(file);
         setData('image', file);
+        setPreview(URL.createObjectURL(file));
     };
 
     if (!participant) {
@@ -319,20 +321,65 @@ export default function ParticipantEdit() {
                                 </div>
 
                                 {/* Profile Image */}
-                                <div>
-                                    <Label className="mb-2 block text-sm font-semibold text-[#212529]">Profile Image:</Label>
-                                    <div className="w-full">
-                                        <label
-                                            htmlFor="image"
-                                            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-4 font-medium text-[#212529] transition-all duration-200 hover:border-[#fee819] hover:bg-gray-50"
-                                        >
-                                            <Upload className="h-5 w-5" />
-                                            {selectedFile ? selectedFile.name : 'Upload Image'}
-                                        </label>
-                                        <input id="image" name="image" type="file" onChange={handleFileChange} accept="image/*" className="hidden" />
-                                        {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
-                                    </div>
-                                </div>
+<div className="space-y-2">
+    <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+        Profile Image
+    </label>
+    {preview ? (
+                    <div className="group relative w-full max-w-xs mx-auto rounded-lg overflow-hidden shadow-lg">
+                                    <img
+                src={preview}
+                alt="Profile"
+                className="w-full h-80 object-cover"
+            />
+            {/* Always visible edit indicator */}
+            <div className="absolute top-3 right-3 rounded-lg border bg-white/90 px-2 py-1 shadow-md">
+                <Upload className="h-4 w-4 text-gray-600" />
+            </div>
+            {/* Hover overlay */}
+            <label className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center bg-black/40 text-white opacity-0 transition-all duration-200 group-hover:opacity-100">
+                <div className="rounded-lg border border-white/20 bg-white/10 p-6 text-center backdrop-blur-sm">
+                    <Upload className="mx-auto mb-3 h-8 w-8" />
+                    <div className="mb-1 text-lg font-semibold">Update Profile Image</div>
+                    <div className="text-sm opacity-90">Click to upload new image</div>
+                </div>
+                <input
+                    type="file"
+                    onChange={(e) => {
+                        const file = e.target.files[0];
+                        setSelectedFile(file);
+                        setData('image', file);
+                        setPreview(URL.createObjectURL(file));
+                    }}
+                    className="hidden"
+                    accept="image/*"
+                />
+            </label>
+        </div>
+    ) : (
+        <div className="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-12 text-center transition-all duration-200 hover:border-[#fee819] hover:bg-yellow-50 w-full max-w-xs mx-auto">
+            <label className="block cursor-pointer">
+                <Upload className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                <div className="mb-2 text-lg font-medium text-gray-600">Upload Profile Image</div>
+                <div className="mb-4 text-sm text-gray-500">Drag and drop or click to browse</div>
+                <input
+                    type="file"
+                    onChange={(e) => {
+                        const file = e.target.files[0];
+                        setSelectedFile(file);
+                        setData('image', file);
+                        setPreview(URL.createObjectURL(file));
+                    }}
+                    className="hidden"
+                    accept="image/*"
+                />
+            </label>
+        </div>
+    )}
+    {errors.image && <p className="text-sm text-red-600">{errors.image}</p>}
+</div>
+
+
 
                                 {/* Submit Button */}
                                 <div className="pt-6">
