@@ -34,7 +34,7 @@ import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 interface AdminPage {
     name: string;
     path: string;
-    icon: any;
+    icon: React.ComponentType<{ className?: string }>;
     category: string;
 }
 
@@ -111,7 +111,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
         return adminPages.filter(page =>
             page.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
-    }, [searchQuery]);
+    }, [searchQuery, adminPages]);
 
     // Search for participants and info sessions
     const searchParticipantsAndSessions = useCallback(async (query: string) => {
@@ -148,7 +148,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
 
     // Get all search results as a flat array for keyboard navigation
     const allSearchResults = useMemo(() => {
-        const results: Array<{ type: string; data: any; index: number }> = [];
+        const results: Array<{ type: string; data: AdminPage | Participant | InfoSession; index: number }> = [];
 
         // Add pages
         filteredPages.forEach((page, index) => {
@@ -268,11 +268,11 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                     if (selectedIndex >= 0 && selectedIndex < allSearchResults.length) {
                         const selectedResult = allSearchResults[selectedIndex];
                         if (selectedResult.type === 'page') {
-                            handlePageSelect(selectedResult.data);
+                            handlePageSelect(selectedResult.data as AdminPage);
                         } else if (selectedResult.type === 'participant') {
-                            handleParticipantSelect(selectedResult.data);
+                            handleParticipantSelect(selectedResult.data as Participant);
                         } else if (selectedResult.type === 'session') {
-                            handleInfoSessionSelect(selectedResult.data);
+                            handleInfoSessionSelect(selectedResult.data as InfoSession);
                         }
                     }
                     break;
@@ -294,7 +294,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
         const handleClick = (e: MouseEvent) => {
             // Close notifications
             if (notifOpen) {
-                setNotifOpen(false);
+            setNotifOpen(false);
             }
             // Close search results if clicking outside
             if (showSearchResults && !(e.target as Element)?.closest('.search-container')) {
@@ -329,7 +329,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                 </button>
 
                 {/* Notification Button */}
-                <div className="relative">
+                    <div className="relative">
                         <button
                             onClick={(e: React.MouseEvent) => {
                                 e.stopPropagation();
@@ -388,10 +388,10 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                     </div>
 
                 {/* User Menu Button */}
-                <div className="relative rounded-full bg-beta">
-                    <button onClick={() => setOpen(!open)} className="flex items-center rounded-full p-2 hover:bg-yellow-500 hover:text-black">
-                        <User className="h-6 w-6 text-white hover:text-black" />
-                    </button>
+                    <div className="relative rounded-full bg-beta">
+                        <button onClick={() => setOpen(!open)} className="flex items-center rounded-full p-2 hover:bg-yellow-500 hover:text-black">
+                            <User className="h-6 w-6 text-white hover:text-black" />
+                        </button>
 
                         {open && (
                             <div className="absolute right-0 z-10 mt-2 w-48 rounded-lg border bg-white py-1 shadow-lg">
@@ -411,7 +411,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                                 </Link>
                             </div>
                         )}
-                </div>
+                    </div>
             </div>
 
             {/* Search Dialog */}
@@ -555,8 +555,8 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                                     <div className="text-sm text-gray-500">Search for pages, participants, or info sessions</div>
                                 </div>
                             )}
-                        </div>
-                    </div>
+                </div>
+            </div>
                 </DialogContent>
             </Dialog>
         </header>
