@@ -58,8 +58,15 @@ class InfosessionController extends Controller
      */
     public function show(string $id)
     {
+        $infosession = InfoSession::where('id', $id)->with('allParticipants.confirmation')->first();
+
+        // Alias allParticipants as participants for frontend compatibility
+        if ($infosession) {
+            $infosession->participants = $infosession->allParticipants;
+        }
+
         return Inertia::render('admin/infoSessions/[id]', [
-            'infosession' => InfoSession::where('id', $id)->with('participants.confirmation')->first()
+            'infosession' => $infosession
         ]);
     }
 
