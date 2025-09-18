@@ -10,15 +10,17 @@ import {
     Contact,
     BriefcaseBusiness,
     Settings,
-    LayoutGrid
+    LayoutGrid,
+    LucideIcon
 } from 'lucide-react';
+import { ReactNode } from 'react';
 
 // Define the header data interface
 export interface AdminPageHeaderData {
-    icon: any;
+    icon: LucideIcon;
     title: string;
     description: string;
-    actions?: any;
+    actions?: ReactNode;
 }
 
 // Predefined header data for common admin pages
