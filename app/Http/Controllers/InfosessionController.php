@@ -47,7 +47,7 @@ class InfosessionController extends Controller
                 'start_date' => $request->start_date,
                 'places' => $request->places,
                 'is_private' => $request->boolean('is_private', false),
-                'is_private' => $request->boolean('is_private', false),
+                'isAvailable' => true, // Make sessions available by default
             ]);
             return back();
         } catch (\Throwable $th) {
