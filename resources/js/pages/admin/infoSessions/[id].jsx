@@ -132,14 +132,21 @@ const InfosessionDetails = () => {
                             <div className="rounded-lg bg-white/10 p-4">
                                 <div className="flex items-center gap-3">
                                     <Calendar className="h-5 w-5 text-[#fee819]" />
-                                    <div>
-                                        <p className="text-sm text-gray-300">Start Date</p>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-sm text-gray-500">Start Date</p>
                                         <p className="font-medium text-white">
-                                            {infosession.start_date?.includes('T')
-                                                ? infosession.start_date.replace('T', ' ')
-                                                : infosession.start_date}
+                                            {infosession.start_date
+                                                ? new Date(infosession.start_date).toLocaleString("en-GB", {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                })
+                                                : ""}
                                         </p>
                                     </div>
+
                                 </div>
                             </div>
                             <div className="rounded-lg bg-white/10 p-4">

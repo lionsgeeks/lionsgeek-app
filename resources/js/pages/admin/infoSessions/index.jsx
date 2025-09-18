@@ -26,7 +26,7 @@ import {
 import { useState } from 'react';
 import { CreateSessionModal } from './partials/create-session-modal';
 import { EditSessionModal } from './partials/edit-session-modal';
-import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select"
 
 export default function InfoSessions() {
     const { infosessions = [] } = usePage().props;
@@ -37,7 +37,7 @@ export default function InfoSessions() {
         const colonIndex = sessionName.indexOf(':');
         if (colonIndex === -1) return null;
         const promoText = sessionName.substring(0, colonIndex).trim();
-        
+
         if (promoText.toLowerCase().startsWith('promo')) {
             // Extract the number part
             const match = promoText.match(/promo\s*(\d+)/i);
@@ -69,7 +69,7 @@ export default function InfoSessions() {
             return numA - numB;
         });
     };
-    
+
     const [promoFilter, setPromoFilter] = useState(undefined);
     const [availabilityFilter, setAvailabilityFilter] = useState(undefined);
     const uniquePromos = getUniquePromos();
@@ -136,24 +136,24 @@ export default function InfoSessions() {
     // filter sessions
     const filteredSessions = infosessions.filter((session) => {
         // search filter
-        const matchesSearch = 
-            session?.name?.toLowerCase().includes(search?.toLowerCase()) || 
+        const matchesSearch =
+            session?.name?.toLowerCase().includes(search?.toLowerCase()) ||
             session?.formation?.toLowerCase().includes(search?.toLowerCase());
-        
+
         // promo filter
         const sessionPromo = extractPromo(session.name);
         const matchesPromo = !promoFilter || sessionPromo === promoFilter;
-        
+
         let matchesAvailability = true;
         if (availabilityFilter === 'available') {
-            matchesAvailability = session?.isAvailable === 1 && 
-                                session?.isFinish === 0;
+            matchesAvailability = session?.isAvailable === 1 &&
+                session?.isFinish === 0;
         } else if (availabilityFilter === 'unavailable') {
-            matchesAvailability = session?.isAvailable === 0 || 
-                                session?.isFinish === 1 ||
-                                session?.isFull === 1;
+            matchesAvailability = session?.isAvailable === 0 ||
+                session?.isFinish === 1 ||
+                session?.isFull === 1;
         }
-        
+
         return matchesSearch && matchesPromo && matchesAvailability;
     });
 
@@ -319,9 +319,9 @@ export default function InfoSessions() {
                                 </div>
                                 <div className="flex flex-col w-full gap-3 sm:w-auto lg:flex-row lg:items-center">
                                     {/* promo select */}
-                                    <Select 
-                                        key={`promo-${promoFilter}`} 
-                                        value={promoFilter} 
+                                    <Select
+                                        key={`promo-${promoFilter}`}
+                                        value={promoFilter}
                                         onValueChange={(value) => setPromoFilter(value === "all" ? undefined : value)}
                                     >
                                         <SelectTrigger className="transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20 lg:w-45 sm:w-80">
@@ -338,9 +338,9 @@ export default function InfoSessions() {
                                     </Select>
 
                                     {/* availability select */}
-                                    <Select 
-                                        key={`availability-${availabilityFilter}`} 
-                                        value={availabilityFilter} 
+                                    <Select
+                                        key={`availability-${availabilityFilter}`}
+                                        value={availabilityFilter}
                                         onValueChange={(value) => setAvailabilityFilter(value === "all" ? undefined : value)}
                                     >
                                         <SelectTrigger className="transition-all duration-200 ease-in-out focus:ring-2 focus:ring-[#212529]/20 lg:w-45 sm:w-80">
@@ -392,13 +392,13 @@ export default function InfoSessions() {
                                 </div>
                                 <h2 className="mb-3 text-2xl font-bold text-[#212529]">No Results Found</h2>
                                 <p className="mb-6 text-gray-600">No sessions match your search criteria. Try adjusting your search terms.</p>
-                                <Button 
-                                    variant="outline" 
+                                <Button
+                                    variant="outline"
                                     onClick={() => {
                                         setSearch('');
                                         setPromoFilter(undefined);
                                         setAvailabilityFilter(undefined);
-                                    }} 
+                                    }}
                                     className="border-gray-300 text-gray-700 hover:bg-gray-100">
                                     <RotateCcw className="mr-2 h-4 w-4" />
                                     Clear All Filters
@@ -484,11 +484,18 @@ export default function InfoSessions() {
                                                 <div className="min-w-0 flex-1">
                                                     <p className="text-sm text-gray-500">Start Date</p>
                                                     <p className="font-medium text-[#212529]">
-                                                        {session.start_date?.includes('T')
-                                                            ? session.start_date.replace('T', ' ')
-                                                            : session.start_date}
+                                                        {session.start_date
+                                                            ? new Date(session.start_date).toLocaleString("en-GB", {
+                                                                day: "2-digit",
+                                                                month: "2-digit",
+                                                                year: "numeric",
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            })
+                                                            : ""}
                                                     </p>
                                                 </div>
+
                                             </div>
 
                                             <div className="flex items-center gap-3">
