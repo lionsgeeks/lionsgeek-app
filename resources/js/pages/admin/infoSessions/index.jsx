@@ -26,11 +26,8 @@ import {
 import { useState } from 'react';
 import { CreateSessionModal } from './partials/create-session-modal';
 import { EditSessionModal } from './partials/edit-session-modal';
-<<<<<<< HEAD
 import AdminPageHeader from '../components/AdminPageHeader';
-=======
-import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select"
->>>>>>> 895f719f0d20346d2469ee2b808c08349b14c5f7
+import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select";
 
 export default function InfoSessions() {
     const { infosessions = [] } = usePage().props;
