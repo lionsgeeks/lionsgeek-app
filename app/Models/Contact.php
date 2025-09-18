@@ -12,6 +12,8 @@ class Contact extends Model
         'phone',
         'email',
         'message',
-        'mark_as_read'
+        'mark_as_read',
+        'file_path',
+        'file_name'
     ];
 }

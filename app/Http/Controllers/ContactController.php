@@ -25,7 +25,17 @@ class ContactController extends Controller
             'subject'  => 'nullable|string',
             'content'  => 'required|string',
             'sender'   => 'required|string',
+            'contact_file' => 'nullable|file|max:20480|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,gif'
         ]);
+
+        $filePath = null;
+        $fileName = null;
+
+        if ($request->hasFile('contact_file')) {
+            $file = $request->file('contact_file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('contact_files', $fileName, 'public');
+        }
 
         // Save to database
         CustomEmail::create([
@@ -33,12 +43,14 @@ class ContactController extends Controller
             'receiver' => $request->receiver,
             'subject' => $request->subject,
             'content' => $request->content,
+            'file_path' => $filePath,
+            'file_name' => $fileName,
         ]);
 
         // Send actual email
         try {
             $mailer = \Mail::mailer($request->sender);
-            $mailer->to($request->receiver)->send(new \App\Mail\CustomEmailMail($request->subject, $request->content, $request->sender));
+            $mailer->to($request->receiver)->send(new \App\Mail\CustomEmailMail($request->subject, $request->content, $request->sender, $filePath));
         } catch (\Exception $e) {
             // \Log::error('Email sending failed: ' . $e->getMessage());
         }
@@ -79,13 +91,25 @@ class ContactController extends Controller
             'phone' => 'required|string',
             'email' => 'required|string|email',
             'message' => 'required|string',
+            'contact_file' => 'nullable|file|max:20480|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,gif',
         ]);
+
+        $filePath = null;
+        $fileName = null;
+
+        if ($request->hasFile('contact_file')) {
+            $file = $request->file('contact_file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('contact_files', $fileName, 'public');
+        }
 
         $contact = Contact::create([
             'full_name' => $request->first . ' ' . $request->last,
             'phone' => $request->phone,
             'email' => $request->email,
             'message' => $request->message,
+            'file_path' => $filePath,
+            'file_name' => $fileName,
         ]);
 
         // Send admin notification email

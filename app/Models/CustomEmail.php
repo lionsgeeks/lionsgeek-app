@@ -11,5 +11,7 @@ class CustomEmail extends Model
         'receiver',
         'subject',
         'content',
+        'file_path',
+        'file_name'
     ];
 }
