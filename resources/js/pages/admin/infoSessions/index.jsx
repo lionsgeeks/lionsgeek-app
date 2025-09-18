@@ -465,11 +465,18 @@ export default function InfoSessions() {
                                                 <div className="min-w-0 flex-1">
                                                     <p className="text-sm text-gray-500">Start Date</p>
                                                     <p className="font-medium text-[#212529]">
-                                                        {session.start_date?.includes('T')
-                                                            ? session.start_date.replace('T', ' ')
-                                                            : session.start_date}
+                                                        {session.start_date
+                                                            ? new Date(session.start_date).toLocaleString("en-GB", {
+                                                                day: "2-digit",
+                                                                month: "2-digit",
+                                                                year: "numeric",
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            })
+                                                            : ""}
                                                     </p>
                                                 </div>
+
                                             </div>
 
                                             <div className="flex items-center gap-3">
