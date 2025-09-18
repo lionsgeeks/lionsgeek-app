@@ -7,6 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, usePage,router } from '@inertiajs/react';
 import { Briefcase, CheckCircle2, Clock, Download, Filter, Search, Users, XCircle } from 'lucide-react';
 import { useState } from 'react';
+import AdminPageHeader from '../components/AdminPageHeader';
 
 const breadcrumbs = [
     {
@@ -58,27 +59,17 @@ export default function CoworkingAdmin() {
 
             <div className="min-h-screen bg-white">
                 {/* Header Section */}
-                <div className="bg-[#212529] py-8 text-white">
-                    <div className="mx-auto max-w-7xl px-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
-                                    <Briefcase className="h-8 w-8 text-[#212529]" />
-                                </div>
-                                <div>
-                                    <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Coworking Management</h1>
-                                    <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage coworking space requests and applications</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-3">
-                                <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                                    <Download className="mr-2 h-4 w-4" />
-                                    Export Excel
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <AdminPageHeader
+                    icon={Briefcase}
+                    title="Coworking Management"
+                    description="Manage coworking space requests and applications"
+                    actions={
+                        <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                            <Download className="mr-2 h-4 w-4" />
+                            Export Excel
+                        </Button>
+                    }
+                />
 
                 {/* Statistics Cards */}
                 <div className="mx-auto -mt-4 max-w-7xl px-6">

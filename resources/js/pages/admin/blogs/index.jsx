@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { BookOpen, CalendarIcon, Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import AdminPageHeader from '../components/AdminPageHeader';
 
 const breadcrumbs = [
     {
@@ -36,27 +37,19 @@ export default function BlogAdmin() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Blogs" />
             <div className="min-h-screen bg-white">
-                <div className="bg-[#212529] py-8 text-white">
-                    <div className="mx-auto max-w-7xl px-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
-                                    <BookOpen className="h-8 w-8 text-[#212529]" />
-                                </div>
-                                <div>
-                                    <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Blogs</h1>
-                                    <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage blog posts created and published on your platform</p>
-                                </div>
-                            </div>
-                            <a href="/admin/blogs/create">
-                                <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                                    <Plus className="mr-2 h-4 w-4 lg:flex hidden" />
-                                    Write a New Blog
-                                </Button>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <AdminPageHeader
+                    icon={BookOpen}
+                    title="Blogs"
+                    description="Manage blog posts created and published on your platform"
+                    actions={
+                        <a href="/admin/blogs/create">
+                            <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                <Plus className="mr-2 h-4 w-4 lg:flex hidden" />
+                                Write a New Blog
+                            </Button>
+                        </a>
+                    }
+                />
 
                 <div className="mx-auto max-w-7xl px-6 pt-8">
                     <div className="mb-4">
