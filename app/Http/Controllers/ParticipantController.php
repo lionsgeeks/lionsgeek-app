@@ -1153,6 +1153,8 @@ class ParticipantController extends Controller
             $isUpcoming = \Carbon\Carbon::parse($session->start_date)->gte(now());
             $isAvailable = !$session->isFull && !$session->isFinish && $session->isAvailable;
 
+
+
             if (!($validFormation && $isUpcoming && $isAvailable)) {
                 return Inertia::render('client/infoSession/ReservationResult', [
                     'type' => 'error',
