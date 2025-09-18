@@ -179,7 +179,7 @@ class ParticipantController extends Controller
         $this->validateEmailWithTimeRestriction($request);
 
         $request->validate([
-            // Session and Formation Information
+            // Session and Formation Information - not required since participants choose via email
             'info_session_id' => 'nullable|integer|exists:info_sessions,id',
             'private_token' => 'nullable|string', // For private session access
             'formation_field' => 'required|string|in:coding,media',
@@ -290,32 +290,9 @@ class ParticipantController extends Controller
         $email = $request->email;
         $currentFormationField = $request->formation_field;
 
-        // For private sessions, check if already registered for this specific private session
-        if ($request->filled('private_token')) {
-            $privateSession = \App\Models\InfoSession::findByToken($request->private_token);
-            if ($privateSession) {
-                $existingPrivateParticipant = \App\Models\Participant::where('email', $email)
-                    ->where('info_session_id', $privateSession->id)
-                    ->first();
-
-                if ($existingPrivateParticipant) {
-                    $validator = Validator::make($request->all(), [
-                        'email' => 'required'
-                    ], [
-                        'email.already_registered' => 'You have already registered for this private session.'
-                    ]);
-
-                    $validator->after(function ($validator) {
-                        $validator->errors()->add('email', 'You have already registered for this private session.');
-                    });
-
-                    if ($validator->fails()) {
-                        throw new \Illuminate\Validation\ValidationException($validator);
-                    }
-                }
-            }
-            return; // For private sessions, only check duplicate registration, not 180-day rule
-        }
+        // Since participants are not assigned to sessions during registration,
+        // we only need to check the general 180-day rule for all registrations
+        // Private session specific checks are removed since no session assignment happens
 
         // Check if email already exists - get the MOST RECENT registration
         $existingParticipant = \App\Models\Participant::where('email', $email)
@@ -453,44 +430,13 @@ class ParticipantController extends Controller
 
     /**
      * Check if session has available capacity.
+     * Since participants are not assigned during registration, skip capacity checks.
      */
     private function checkSessionCapacity(Request $request): void
     {
-        // Check for private session capacity
-        if ($request->filled('private_token')) {
-            $privateSession = \App\Models\InfoSession::findByToken($request->private_token);
-            if ($privateSession) {
-                $currentParticipants = Participant::where('info_session_id', $privateSession->id)->count();
-                if ($currentParticipants + 1 > $privateSession->places) {
-                    $message = 'Sorry, places are full for this private session.';
-                    if ($request->header('X-Inertia')) {
-                        flash()->option('position', 'bottom-right')->error($message);
-                        throw new \Exception($message);
-                    }
-                    throw new \Exception($message);
-                }
-            }
-            return;
-        }
-
-        // Check for regular info session capacity
-        if (!$request->filled('info_session_id')) {
-            return;
-        }
-
-        $currentParticipants = Participant::where('info_session_id', $request->info_session_id)->count();
-        $infoSession = InfoSession::where('id', $request->info_session_id)->first();
-
-        if ($infoSession && ($currentParticipants + 1 > $infoSession->places)) {
-            $message = 'Sorry, places are full for this session.';
-
-            if ($request->header('X-Inertia')) {
-                flash()->option('position', 'bottom-right')->error($message);
-                throw new \Exception($message);
-            }
-
-            throw new \Exception($message);
-        }
+        // Skip capacity checks since participants will choose sessions via email
+        // Capacity will be checked when they actually reserve a session
+        return;
     }
 
     /**
@@ -513,19 +459,11 @@ class ParticipantController extends Controller
         $timeSpentSeconds = (int) $request->input('time_spent', 0);
         $scoring = $this->calculateFinalScore($levelsCompleted, $correctAnswers, $totalAttempts, $timeSpentSeconds);
 
-        // Handle private session assignment
-        $infoSessionId = $request->info_session_id;
-
-        if ($request->filled('private_token')) {
-            $privateSession = \App\Models\InfoSession::findByToken($request->private_token);
-            if ($privateSession) {
-                $infoSessionId = $privateSession->id; // Assign to the private infosession
-            }
-        }
+        // Don't assign to any session initially - participants will choose via email
 
         return Participant::create([
             // Basic Information
-            'info_session_id' => $infoSessionId,
+            'info_session_id' => null, // No automatic assignment
             'formation_field' => $request->formation_field,
             'full_name' => $request->full_name,
             'email' => $request->email,
@@ -836,7 +774,7 @@ class ParticipantController extends Controller
     }
 
 
-    // Change participant current step 
+    // Change participant current step
     public function step(Request $request, Participant $participant)
     {
         $request->validate([
