@@ -433,7 +433,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
 
             {/* Search Dialog */}
             <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
-                <DialogContent className="max-w-2xl max-h-[80vh] p-0">
+                <DialogContent className=" p-0 lg:max-w-2xl lg:max-h-[80vh]">
                     <DialogHeader className="px-6 py-4 border-b">
                         <DialogTitle className="flex items-center gap-2">
                             <Search className="h-5 w-5" />
@@ -451,7 +451,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                                 placeholder="Search pages, participants, sessions..."
                                 value={searchQuery}
                                 onChange={handleSearchChange}
-                                className="pl-10 pr-4 h-12 text-base border-2 focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
+                                className="pl-10 pr-10 h-12 text-base border-2 focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20"
                             />
                         </div>
 

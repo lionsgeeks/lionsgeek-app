@@ -8,6 +8,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, router, usePage } from '@inertiajs/react';
 import { Download, FileMinus, Inbox, Mail, MailOpen, MessageCircle, Plus, Send, Trash2, TypeOutline, User, Users, ChevronLeft, CheckCircle, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import AdminPageHeader from '../components/AdminPageHeader';
 
 export default function Index() {
     const { messages, selected, sendedMessage } = usePage().props;
@@ -151,35 +152,27 @@ export default function Index() {
 
             <div className="min-h-screen bg-white">
                 {/* Header Section */}
-                <div className="bg-[#212529] py-8 text-white">
-                    <div className="mx-auto max-w-7xl px-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
-                                    <MessageCircle className="h-8 w-8 text-[#212529]" />
-                                </div>
-                                <div>
-                                    <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Contact Messages</h1>
-                                    <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage customer inquiries and communications</p>
-                                </div>
-                            </div>
-                            <div className="flex lg:flex-row-reverse flex-col gap-3">
-                                <Button
-                                    onClick={handleComposeClick}
-                                    className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                                    <Download className="mr-2 h-4 w-4 lg:flex hidden" />
-                                    Compose
-                                </Button>
-                                <Button
-                                    onClick={() => (window.location.href = route('messages.export'))}
-                                    className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                                    <Download className="mr-2 h-4 w-4 lg:flex hidden" />
-                                    Export Excel
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <AdminPageHeader
+                    icon={MessageCircle}
+                    title="Contact Messages"
+                    description="Manage customer inquiries and communications"
+                    actions={
+                        <>
+                            <Button
+                                onClick={handleComposeClick}
+                                className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                <Download className="mr-2 h-4 w-4 lg:flex hidden" />
+                                Compose
+                            </Button>
+                            <Button
+                                onClick={() => (window.location.href = route('messages.export'))}
+                                className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                <Download className="mr-2 h-4 w-4 lg:flex hidden" />
+                                Export Excel
+                            </Button>
+                        </>
+                    }
+                />
 
                 {/* Statistics Cards */}
                 <div className="mx-auto -mt-4 max-w-7xl px-6">

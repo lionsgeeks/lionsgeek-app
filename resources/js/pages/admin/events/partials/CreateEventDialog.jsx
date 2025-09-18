@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@headlessui/react';
-import { Plus } from 'lucide-react';
+import { Plus, X, Calendar } from 'lucide-react';
 import { useState } from 'react';
 import EventForm from './EventForm';
 
@@ -29,8 +29,29 @@ export default function CreateEventDialog({ onSuccess }) {
                     </Card>
                 )} */}
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
-                <DialogTitle className="sr-only">Create New </DialogTitle>
+            <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto p-0">
+                {/* Header */}
+                <div className="relative rounded-t-lg bg-[#212529] p-6 text-white">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-[#fee819] p-2">
+                                <Calendar className="h-6 w-6 text-[#212529]" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-xl font-bold text-white">Create New Event</DialogTitle>
+                                <p className="mt-1 text-sm text-gray-300">Add event details and information</p>
+                            </div>
+                        </div>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setIsOpen(false)}
+                            className="text-white hover:bg-white/10"
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
                 <EventForm onClose={() => setIsOpen(false)} onSuccess={handleSuccess} />
             </DialogContent>
         </Dialog>
