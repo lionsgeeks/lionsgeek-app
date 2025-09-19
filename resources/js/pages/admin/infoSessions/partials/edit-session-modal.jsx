@@ -5,8 +5,9 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { router, useForm } from '@inertiajs/react';
-import { Calendar, Code2, GraduationCap, Loader2, Palette, Users, X } from 'lucide-react';
+import { Calendar, Code2, GraduationCap, Loader2, Lock, Palette, Users, X } from 'lucide-react';
 import { useEffect } from 'react';
 
 export function EditSessionModal({ open, onOpenChange, session, loading = false }) {
@@ -15,6 +16,7 @@ export function EditSessionModal({ open, onOpenChange, session, loading = false 
         start_date: '',
         places: '',
         formation: '',
+        is_private: false,
     });
 
     useEffect(() => {
@@ -37,6 +39,7 @@ export function EditSessionModal({ open, onOpenChange, session, loading = false 
                 start_date: formatDateTime(session.start_date),
                 places: session.places || '',
                 formation: session.formation || '',
+                is_private: session.is_private || false,
             });
         }
     }, [session]);
@@ -100,31 +103,59 @@ export function EditSessionModal({ open, onOpenChange, session, loading = false 
                             {errors.name && <p className="text-sm text-[#ff7376]">{errors.name}</p>}
                         </div>
 
-                        {/* Program Type */}
-                        <div className="space-y-2">
-                            <Label htmlFor="edit-type" className="text-sm font-medium text-[#212529]">
-                                Program Type <span className="text-[#ff7376]">*</span>
-                            </Label>
-                            <Select value={data.formation} onValueChange={(value) => handleChange('formation', value)} disabled={loading}>
-                                <SelectTrigger className="rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
-                                    <SelectValue placeholder="Choose program type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Coding">
-                                        <div className="flex items-center gap-2">
-                                            <Code2 className="h-4 w-4" />
-                                            <span>Coding Program</span>
-                                        </div>
-                                    </SelectItem>
-                                    <SelectItem value="Media">
-                                        <div className="flex items-center gap-2">
-                                            <Palette className="h-4 w-4" />
-                                            <span>Media Program</span>
-                                        </div>
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                            {errors.formation && <p className="text-sm text-[#ff7376]">{errors.formation}</p>}
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            {/* Program Type */}
+                            <div className="space-y-2">
+                                <Label htmlFor="edit-type" className="text-sm font-medium text-[#212529]">
+                                    Program Type <span className="text-[#ff7376]">*</span>
+                                </Label>
+                                <Select
+                                    value={data.formation}
+                                    onValueChange={(value) => handleChange('formation', value)}
+                                    disabled={loading}
+                                >
+                                    <SelectTrigger className="rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+                                        <SelectValue placeholder="Choose program type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Coding">
+                                            <div className="flex items-center gap-2">
+                                                <Code2 className="h-4 w-4" />
+                                                <span>Coding Program</span>
+                                            </div>
+                                        </SelectItem>
+                                        <SelectItem value="Media">
+                                            <div className="flex items-center gap-2">
+                                                <Palette className="h-4 w-4" />
+                                                <span>Media Program</span>
+                                            </div>
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                {errors.formation && <p className="text-sm text-[#ff7376]">{errors.formation}</p>}
+                            </div>
+
+                            {/* Session Privacy */}
+                            <div className="space-y-2">
+                                <Label htmlFor="edit-is-private" className="text-sm font-medium text-[#212529]">
+                                    Session Privacy
+                                </Label>
+                                <div className="flex h-10 items-center gap-3 rounded-lg border p-2 transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+                                    <Lock className="h-4 w-4 text-gray-400" />
+                                    <div className="flex items-center justify-between flex-1">
+                                        <Label htmlFor="edit-is-private" className="text-sm text-gray-600">
+                                            Private Session
+                                        </Label>
+                                        <Switch
+                                            id="edit-is-private"
+                                            checked={data.is_private}
+                                            onCheckedChange={(value) => handleChange('is_private', value)}
+                                            disabled={loading}
+                                        />
+                                    </div>
+                                </div>
+                                {errors.is_private && <p className="text-sm text-[#ff7376]">{errors.is_private}</p>}
+                            </div>
                         </div>
 
                         {/* Date and Capacity */}

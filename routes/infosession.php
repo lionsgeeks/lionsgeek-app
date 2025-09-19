@@ -11,6 +11,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::resource('infosessions', InfosessionController::class);
     Route::patch('infosessions/change-availabilty/{id}', [InfosessionController::class, 'availabilityStatus'])->name('infosession.availability');
     Route::patch('infosessions/change-status/{id}', [InfosessionController::class, 'completeStatus'])->name('infosession.status');
+    Route::patch('infosessions/change-privacy/{id}', [InfosessionController::class, 'privacyStatus'])->name('infosession.privacy');
     Route::post('infosessions/{infosession}/regenerate-token', [InfosessionController::class, 'regenerateToken'])->name('infosession.regenerate-token');
 });
 
