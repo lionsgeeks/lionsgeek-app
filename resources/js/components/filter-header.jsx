@@ -50,9 +50,17 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
 	// Helper to extract track (coding/media)
 	const getParticipantTrack = (participant) => {
-		const raw = (participant?.formation_field ?? participant?.info_session?.formation ?? '').toString().toLowerCase();
-		if (raw.includes('coding')) return 'coding';
-		if (raw.includes('media')) return 'media';
+		const sessionFormation = participant?.info_session?.formation?.toString().toLowerCase() || '';
+		if (sessionFormation.includes('coding')) return 'coding';
+		if (sessionFormation.includes('media')) return 'media';
+		
+		const formationField = participant?.formation_field?.toString().toLowerCase() || '';
+		if (formationField.includes('coding')) return 'coding';
+		if (formationField.includes('media')) return 'media';
+		
+		const sessionName = participant?.info_session?.name?.toString().toLowerCase() || '';
+		if (sessionName.includes('coding')) return 'coding';
+		if (sessionName.includes('media')) return 'media';
 		return '';
 	};
 
@@ -84,43 +92,87 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		if (!exists) setSelectedSession('');
 	}, [sessionOptions, selectedSession]);
 
-    const filtredParticipans = useMemo(() => {
-        let filtered = participants?.filter((participant) => {
-            if (!participant) return false;
+	const filtredParticipans = useMemo(() => {
+		let filtered = participants?.filter((participant) => {
+			if (!participant) return false;
 
-            const matchesSearch =
-                !search ||
-                participant?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-                participant?.email?.toLowerCase().includes(search.toLowerCase());
-            const matchesSession = !selectedSession || selectedSession === 'All' || 
-                (selectedSession === 'No Infosession' ? !participant?.info_session : participant?.info_session?.name === selectedSession);
+			// Search
+			const matchesSearch = !search || 
+				participant?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+				participant?.email?.toLowerCase().includes(search.toLowerCase());
 
-            // Promo filter (case-insensitive)
-            const participantPromo = getParticipantPromo(participant);
-            const matchesPromo = !selectedPromo || selectedPromo === 'All' || participantPromo === selectedPromo.toLowerCase();
+			// Session filter 
+			const matchesSession = !selectedSession || selectedSession === 'All' || 
+				(selectedSession === 'No Infosession' ? 
+					!participant?.info_session : 
+					participant?.info_session?.name === selectedSession);
 
-            // Track filter
-            const participantTrack = getParticipantTrack(participant);
-            const matchesTrack = !selectedTrack || selectedTrack === 'All' || participantTrack === selectedTrack.toLowerCase();
+			// Promo filter 
+			const participantPromo = getParticipantPromo(participant);
+			const matchesPromo = !selectedPromo || selectedPromo === 'All' || 
+				participantPromo === selectedPromo.toLowerCase();
 
-            // Gender filter
-            const matchesGender = !selectedGender || selectedGender === 'All' || participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
+			// Track filter
+			const participantTrack = getParticipantTrack(participant);
+			const matchesTrack = !selectedTrack || selectedTrack === 'All' || 
+				participantTrack === selectedTrack.toLowerCase();
 
-            // If the Step select currently holds a status value, filter by status; otherwise by current_step
-            let matchesStep = true;
-            if (selectedStep && selectedStep !== 'All') {
-                if (isStatusValue(selectedStep)) {
-                    matchesStep = selectedStep === 'all' ? true : participant?.status === selectedStep;
-                } else {
-                    matchesStep = participant?.current_step === selectedStep;
-                }
-            }
+			// Gender filter
+			const matchesGender = !selectedGender || selectedGender === 'All' || 
+				participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
 
-            return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
-        }) || [];
+			// Step filter 
+			let matchesStep = true;
+			if (selectedStep && selectedStep !== 'All') {
+				if (isStatusValue(selectedStep)) {
+					if (selectedStep === 'all') {
+						matchesStep = true;
+					} else {
+						matchesStep = participant?.status === selectedStep;
+					}
+				} else {
+					switch (selectedStep) {
+						case 'info_session':
+							matchesStep = participant?.info_session != null;
+							break;
+						case 'interview':
+							matchesStep = participant?.current_step && [
+								'interview', 'interview_pending', 'interview_failed',
+								'jungle', 'jungle_failed', 'coding_school', 'media_school'
+							].includes(participant.current_step);
+							break;
+						case 'interview_pending':
+							matchesStep = participant?.current_step === 'interview_pending';
+							break;
+						case 'interview_failed':
+							matchesStep = participant?.current_step === 'interview_failed';
+							break;
+						case 'jungle':
+							matchesStep = ['jungle', 'jungle_failed'].includes(participant?.current_step);
+							break;
+						case 'jungle_failed':
+							matchesStep = participant?.current_step === 'jungle_failed';
+							break;
+						default:
+							matchesStep = participant?.current_step === selectedStep;
+					}
+				}
+			}
 
-        return filtered;
-    }, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender]);
+			return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
+		}) || [];
+
+		return filtered;
+	}, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender]);
+
+	const dynamicStatusCounts = useMemo(() => {
+		return {
+			approved: filtredParticipans.filter(p => p?.status === 'approved').length,
+			pending: filtredParticipans.filter(p => p?.status === 'pending').length,
+			rejected: filtredParticipans.filter(p => p?.status === 'rejected').length,
+			all: filtredParticipans.length,
+		};
+	}, [filtredParticipans]);
 
 	useEffect(() => {
         if (setFiltredParticipants) {
@@ -300,25 +352,25 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 						<SelectItem value="approved">
 							<div className="flex items-center gap-2">
 								<CheckCircle2 className="h-4 w-4 text-green-600" />
-								<span>Approved<span className="ml-1 text-gray-500">({statusCounts.approved || 0})</span></span>
+								<span>Approved<span className="ml-1 text-gray-500">({dynamicStatusCounts.approved || 0})</span></span>
 							</div>
 						</SelectItem>
 						<SelectItem value="pending">
 							<div className="flex items-center gap-2">
 								<Clock className="h-4 w-4 text-orange-600" />
-								<span>Pending<span className="ml-1 text-gray-500">({statusCounts.pending || 0})</span></span>
+								<span>Pending<span className="ml-1 text-gray-500">({dynamicStatusCounts.pending || 0})</span></span>
 							</div>
 						</SelectItem>
 						<SelectItem value="rejected">
 							<div className="flex items-center gap-2">
 								<XCircle className="h-4 w-4 text-red-600" />
-								<span>Rejected<span className="ml-1 text-gray-500">({statusCounts.rejected || 0})</span></span>
+								<span>Rejected<span className="ml-1 text-gray-500">({dynamicStatusCounts.rejected || 0})</span></span>
 							</div>
 						</SelectItem>
 						<SelectItem value="all">
 							<div className="flex items-center gap-2">
 								<Users className="h-4 w-4 text-gray-500" />
-								<span>All<span className="ml-1 text-gray-500">({statusCounts.all || 0})</span></span>
+								<span>All<span className="ml-1 text-gray-500">({dynamicStatusCounts.all || 0})</span></span>
 							</div>
 						</SelectItem>
 						{/* Divider equivalent: keep list order */}
