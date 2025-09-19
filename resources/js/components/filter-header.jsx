@@ -84,72 +84,66 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		if (!exists) setSelectedSession('');
 	}, [sessionOptions, selectedSession]);
 
-	const filtredParticipans = useMemo(() => {
-		let filtered = participants?.filter((participant) => {
-			if (!participant) return false;
+    const filtredParticipans = useMemo(() => {
+        let filtered = participants?.filter((participant) => {
+            if (!participant) return false;
 
-			const matchesSearch =
-				!search ||
-				participant?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-				participant?.email?.toLowerCase().includes(search.toLowerCase());
-			const matchesSession = !selectedSession || selectedSession === 'All' || 
-				(selectedSession === 'No Infosession' ? !participant?.info_session : participant?.info_session?.name === selectedSession);
+            const matchesSearch =
+                !search ||
+                participant?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+                participant?.email?.toLowerCase().includes(search.toLowerCase());
+            const matchesSession = !selectedSession || selectedSession === 'All' || 
+                (selectedSession === 'No Infosession' ? !participant?.info_session : participant?.info_session?.name === selectedSession);
 
-			// Promo filter (case-insensitive)
-			const participantPromo = getParticipantPromo(participant);
-			const matchesPromo = !selectedPromo || selectedPromo === 'All' || participantPromo === selectedPromo.toLowerCase();
+            // Promo filter (case-insensitive)
+            const participantPromo = getParticipantPromo(participant);
+            const matchesPromo = !selectedPromo || selectedPromo === 'All' || participantPromo === selectedPromo.toLowerCase();
 
-			// Track filter
-			const participantTrack = getParticipantTrack(participant);
-			const matchesTrack = !selectedTrack || selectedTrack === 'All' || participantTrack === selectedTrack.toLowerCase();
+            // Track filter
+            const participantTrack = getParticipantTrack(participant);
+            const matchesTrack = !selectedTrack || selectedTrack === 'All' || participantTrack === selectedTrack.toLowerCase();
 
-			// Gender filter
-			const matchesGender = !selectedGender || selectedGender === 'All' || participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
+            // Gender filter
+            const matchesGender = !selectedGender || selectedGender === 'All' || participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
 
-			// If the Step select currently holds a status value, filter by status; otherwise by current_step
-			let matchesStep = true;
-			if (selectedStep && selectedStep !== 'All') {
-				if (isStatusValue(selectedStep)) {
-					matchesStep = selectedStep === 'all' ? true : participant?.status === selectedStep;
-				} else {
-					matchesStep = participant?.current_step === selectedStep;
-				}
-			}
+            // If the Step select currently holds a status value, filter by status; otherwise by current_step
+            let matchesStep = true;
+            if (selectedStep && selectedStep !== 'All') {
+                if (isStatusValue(selectedStep)) {
+                    matchesStep = selectedStep === 'all' ? true : participant?.status === selectedStep;
+                } else {
+                    matchesStep = participant?.current_step === selectedStep;
+                }
+            }
 
-			return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
-		}) || [];
+            return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
+        }) || [];
 
-		// Apply date sorting
-		if (dateSort && dateSort !== 'All') {
-			filtered.sort((a, b) => {
-				const dateA = new Date(a.created_at);
-				const dateB = new Date(b.created_at);
-				
-				if (dateSort === 'newest') {
-					return dateB - dateA; // Newest first
-				} else if (dateSort === 'oldest') {
-					return dateA - dateB; // Oldest first
-				}
-				return 0;
-			});
-		}
+        return filtered;
+    }, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender]);
 
-		return filtered;
-	}, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender, dateSort]);
-
-	// Initialize filtered participants on mount
 	useEffect(() => {
-		if (setFiltredParticipants) {
-			setFiltredParticipants(participants);
-		}
-	}, []);
-
-	// Update filtered participants only when filters change
-	useEffect(() => {
-		if (setFiltredParticipants && (search || selectedSession || selectedStep || selectedPromo || selectedTrack || selectedGender || dateSort)) {
-			setFiltredParticipants(filtredParticipans);
-		}
-	}, [search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender, dateSort]);
+        if (setFiltredParticipants) {
+            let result = [...filtredParticipans];
+            
+            // تطبيق الـ sorting هنا بس
+            if (dateSort && dateSort !== 'All') {
+                result.sort((a, b) => {
+                    const dateA = new Date(a.created_at);
+                    const dateB = new Date(b.created_at);
+                    
+                    if (dateSort === 'newest') {
+                        return dateB - dateA;
+                    } else if (dateSort === 'oldest') {
+                        return dateA - dateB;
+                    }
+                    return 0;
+                });
+            }
+            
+            setFiltredParticipants(result);
+        }
+    }, [filtredParticipans, dateSort, setFiltredParticipants]);
 
 	// Initialize selectedStep from URL status on mount (only for status values)
 	useEffect(() => {
@@ -174,19 +168,23 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
 	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack || selectedGender || dateSort;
 
-	const handleReset = () => {
-		setSearch('');
-		setSelectedStep('');
-		setSelectedSession('');
-		setSelectedPromo('');
-		setSelectedTrack('');
-		setSelectedGender('');
-		setDateSort('');
-		// Also clear status from URL
-		const params = new URLSearchParams(window.location.search);
-		params.delete('status');
-		window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
-	};
+    const handleReset = () => {
+        setSearch('');
+        setSelectedStep('');
+        setSelectedSession('');
+        setSelectedPromo('');
+        setSelectedTrack('');
+        setSelectedGender('');
+        setDateSort('');
+        
+        if (setFiltredParticipants) {
+            setFiltredParticipants(participants);
+        }
+        
+        const params = new URLSearchParams(window.location.search);
+        params.delete('status');
+        window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+    };
 
 	const handleCopyEmails = () => {
 		const emails = filtredParticipans.map((p) => p.email).join(', ');

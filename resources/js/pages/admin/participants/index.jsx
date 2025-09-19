@@ -41,10 +41,10 @@ export default function Participants() {
 
 	// Calculate statistics with safe access
 	const stepsCount = {
-		info_session: filtredParticipants?.filter((p) => p?.current_step === 'info_session')?.length || 0,
-		interview: filtredParticipants?.filter((p) => p?.current_step === 'interview')?.length || 0,
-		jungle: filtredParticipants?.filter((p) => p?.current_step === 'jungle')?.length || 0,
-		school: filtredParticipants?.filter((p) => p?.current_step?.includes('school'))?.length || 0,
+		info_session: participants?.filter((p) => p?.current_step === 'info_session')?.length || 0,
+		interview: participants?.filter((p) => p?.current_step === 'interview')?.length || 0,
+		jungle: participants?.filter((p) => p?.current_step === 'jungle')?.length || 0,
+		school: participants?.filter((p) => p?.current_step?.includes('school'))?.length || 0,
 	};
 
 	// Pagination calculations
