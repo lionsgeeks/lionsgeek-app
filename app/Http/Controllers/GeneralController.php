@@ -17,7 +17,8 @@ use App\Models\Contact;
 use App\Models\InfoSession;
 use App\Models\Subscriber;
 use Carbon\Carbon;
-// use Illuminate\Support\Facades\Request;
+
+// use Illuminate\Support\Facades\DB;
 
 class GeneralController extends Controller
 {
@@ -45,7 +46,19 @@ class GeneralController extends Controller
         $allSessions = InfoSession::all();
         $coworkingsRequest = Coworking::all();
         $newsLetter = Newsletter::all();
-        $users = User::orderBy('created_at', 'asc')->get(['id', 'name', 'email', 'created_at', 'last_login_at']);
+          $users = User::orderBy('created_at', 'asc')->get(['id', 'name', 'email', 'created_at', 'last_login_at']);
+        // $users = User::query()
+        //     ->leftJoin('sessions', 'sessions.user_id', '=', 'users.id')
+        //     ->groupBy('users.id')
+        //     ->orderBy('users.created_at', 'asc')
+        //     ->get([
+        //         'users.id',
+        //         'users.name',
+        //         'users.email',
+        //         'users.created_at',
+        //         'users.last_login_at',
+        //         DB::raw('CASE WHEN MAX(sessions.last_activity) IS NULL THEN 0 ELSE 1 END as is_online')
+        //     ]);
 
         return Inertia::render('dashboard', [
             'totalContacts' => $totalContacts,
@@ -68,30 +81,31 @@ class GeneralController extends Controller
             ? InfoSession::findOrFail($id)
             : InfoSession::latest('start_date')->firstOrFail();
 
-        $successInfoSession = $session->participants()->whereNot('current_step', 'info_session')->count();
-        $absenceInfoSession = $session->participants()->where('current_step', 'info_session')->count();
-        $successInterview = $session->participants()->whereNotIn('current_step', ['info_session', 'interview', 'interview_failed'])->count();
-        $failedInterview = $session->participants()->where('current_step', 'interview_failed')->count();
-        $absenceInterview = $session->participants()->where('current_step', 'interview')->count();
-        $successJungle = $session->participants()->where('current_step', 'like', '%school%')->count();
-        $failedJungle = $session->participants()->where('current_step', 'jungle_failed')->count();
-        $absenceJungle = $session->participants()->where('current_step', 'jungle')->count();
-        $confirmedSchool = $session->participants()->whereHas('confirmation', function ($query) {
+        // Use allParticipants() to include all participants regardless of status
+        $successInfoSession = $session->allParticipants()->whereNot('current_step', 'info_session')->count();
+        $absenceInfoSession = $session->allParticipants()->where('current_step', 'info_session')->count();
+        $successInterview = $session->allParticipants()->whereNotIn('current_step', ['info_session', 'interview', 'interview_failed'])->count();
+        $failedInterview = $session->allParticipants()->where('current_step', 'interview_failed')->count();
+        $absenceInterview = $session->allParticipants()->where('current_step', 'interview')->count();
+        $successJungle = $session->allParticipants()->where('current_step', 'LIKE', '%school%')->count();
+        $failedJungle = $session->allParticipants()->where('current_step', 'jungle_failed')->count();
+        $absenceJungle = $session->allParticipants()->where('current_step', 'jungle')->count();
+        $confirmedSchool = $session->allParticipants()->whereHas('confirmation', function ($query) {
             $query->where('school', true);
         })->count();
-        $infoSessionFemale = $session->participants()
+        $infoSessionFemale = $session->allParticipants()
             ->where('gender', 'female')
             ->where('current_step', 'info_session')
             ->count();
-        $interviewFemale = $session->participants()
+        $interviewFemale = $session->allParticipants()
             ->where('gender', 'female')
             ->whereNotIn('current_step', ['info_session', 'interview', 'interview_failed'])
             ->count();
-        $jungleFemale = $session->participants()
+        $jungleFemale = $session->allParticipants()
             ->where('gender', 'female')
-            ->where('current_step', 'like', '%school%')
+            ->where('current_step', 'LIKE', '%school%')
             ->count();
-        $schoolFemale = $session->participants()
+        $schoolFemale = $session->allParticipants()
             ->where('gender', 'female')
             ->whereHas('confirmation', function ($query) {
                 $query->where('school', true);
@@ -121,36 +135,85 @@ class GeneralController extends Controller
                 'absence' => $successJungle - $confirmedSchool,
             ],
         ];
+        // Calculate male counts properly
+        $infoSessionMale = $session->allParticipants()
+            ->where('gender', 'male')
+            ->where('current_step', 'info_session')
+            ->count();
+        $interviewMale = $session->allParticipants()
+            ->where('gender', 'male')
+            ->whereNotIn('current_step', ['info_session', 'interview', 'interview_failed'])
+            ->count();
+        $jungleMale = $session->allParticipants()
+            ->where('gender', 'male')
+            ->where('current_step', 'LIKE', '%school%')
+            ->count();
+        $schoolMale = $session->allParticipants()
+            ->where('gender', 'male')
+            ->whereHas('confirmation', function ($query) {
+                $query->where('school', true);
+            })->count();
         $PieChart = [
             [
                 'step' => 'Info Session',
                 'total' => $successInfoSession + $absenceInfoSession,
                 'female' => $infoSessionFemale,
-                'male' => $successInfoSession - $infoSessionFemale
+                'male' => $infoSessionMale
             ],
             [
                 'step' => 'Interview',
                 'total' => $successInterview + $absenceInterview + $failedInterview,
                 'female' => $interviewFemale,
-                'male' => $successInterview - $interviewFemale,
+                'male' => $interviewMale,
             ],
             [
                 'step' => 'Jungle',
                 'total' => $successJungle + $absenceJungle + $failedJungle,
                 'female' => $jungleFemale,
-                'male' => $successJungle - $jungleFemale,
+                'male' => $jungleMale,
             ],
             [
                 'step' => 'School',
                 'total' => ($successJungle - $confirmedSchool) + $confirmedSchool,
                 'female' => $schoolFemale,
-                'male' => $successJungle - $schoolFemale,
+                'male' => $schoolMale,
             ],
         ];
         return response()->json([
             'sessionId' => $session->id, // send back which session was used
             'BarChart'  => $BarChart,
             'PieChart'  => $PieChart,
+        ]);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q', '');
+        
+        if (strlen($query) < 2) {
+            return response()->json([
+                'participants' => [],
+                'infoSessions' => []
+            ]);
+        }
+
+        // Search participants
+        $participants = Participant::where('full_name', 'like', "%{$query}%")
+            ->orWhere('email', 'like', "%{$query}%")
+            ->orWhere('phone', 'like', "%{$query}%")
+            ->with('infoSession')
+            ->limit(10)
+            ->get(['id', 'full_name', 'email', 'phone', 'current_step', 'status', 'info_session_id']);
+
+        // Search info sessions
+        $infoSessions = InfoSession::where('name', 'like', "%{$query}%")
+            ->orWhere('formation', 'like', "%{$query}%")
+            ->limit(10)
+            ->get(['id', 'name', 'formation', 'start_date']);
+
+        return response()->json([
+            'participants' => $participants,
+            'infoSessions' => $infoSessions
         ]);
     }
 }

@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage, router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -46,6 +46,8 @@ export default function ParticipantProfilePage() {
     const [isDeleteOpened, setIsDeleteOpened] = useState(false);
     const [selectedParticipant, setSelectedParticipant] = useState(null);
     const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
+    const notesRef = useRef(null);
+    const [notesHighlight, setNotesHighlight] = useState(false);
     const { post, processing } = useForm();
     
     
@@ -180,11 +182,11 @@ export default function ParticipantProfilePage() {
 
     const nextParticipant = jugleParticipants[currentIndex + 1];
 
-    if (nextParticipant) {
-        router.visit(`/admin/participants/${nextParticipant.id}`);
-    } else {
-        router.visit("/admin/participants");
-    }
+    // if (nextParticipant) {
+    //     router.visit(`/admin/participants/${nextParticipant.id}`);
+    // } else {
+    //     router.visit("/admin/participants");
+    // }
 };
    
    
@@ -203,7 +205,8 @@ const handleApprove = () => {
   router.post(`/admin/participants/${participant.id}/approve`, {}, {
     onFinish: () => {
       setIsProcessing(false);
-      handleNavigation(); 
+      // Refresh the current page to show updated approval data
+      router.reload();
     },
     onError: () => setIsProcessing(false),
   });
@@ -214,7 +217,8 @@ const handleReject = () => {
   router.post(`/admin/participants/${participant.id}/reject`, {}, {
     onFinish: () => {
       setIsProcessing(false);
-      handleNavigation(); 
+      // Refresh the current page to show updated approval data
+      router.reload();
     },
     onError: () => setIsProcessing(false),
   });
@@ -238,7 +242,20 @@ const handleReject = () => {
                                 <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back to Participants
                             </Button>
-                            <div className='flex item-center gap-2 justify-center'>
+                            <div className='flex items-center gap-2 justify-center'>
+                            <Button
+                                onClick={() => {
+                                    if (notesRef.current) {
+                                        notesRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        setNotesHighlight(true);
+                                        setTimeout(() => setNotesHighlight(false), 2000);
+                                    }
+                                }}
+                                size="sm"
+                                className="h-9 min-w-[125px] rounded-lg border border-[#fee819] bg-[#fee819] text-[#212529] hover:bg-transparent hover:text-[#fee819] transition-all duration-200"
+                            >
+                                Admin Notes {participant?.notes?.length ? `(${participant.notes.length})` : ''}
+                            </Button>
 
                             {/* <Button
                                 onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)}
@@ -354,6 +371,25 @@ const handleReject = () => {
                                                 {getConfirmationStatus(participant) ? 'Confirmed' : 'Pending'}
                                             </Badge>
                                         )}
+                                        {/* Approval Status Badge */}
+                                        {participant.status && (
+                                            <Badge className={`${
+                                                participant.status === 'approved' 
+                                                    ? 'bg-green-500 text-white' 
+                                                    : participant.status === 'rejected' 
+                                                    ? 'bg-red-500 text-white' 
+                                                    : 'bg-yellow-500 text-white'
+                                            } rounded-lg px-3 py-1 font-medium`}>
+                                                {participant.status === 'approved' ? (
+                                                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                                                ) : participant.status === 'rejected' ? (
+                                                    <XCircle className="h-3 w-3 mr-1" />
+                                                ) : (
+                                                    <Clock className="h-3 w-3 mr-1" />
+                                                )}
+                                                {participant.status.charAt(0).toUpperCase() + participant.status.slice(1)}
+                                            </Badge>
+                                        )}
                                     </div>
                                     <p className="text-white/80">{participant.info_session?.name || 'No session assigned'}</p>
 
@@ -413,33 +449,45 @@ const handleReject = () => {
                                     Contact Information
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <Mail className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                    <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Email</div>
-                                        <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
-                                    </div>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Email</div>
+                                    <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <Phone className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                    <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Phone</div>
-                                        <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
-                                    </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Phone</div>
+                                    <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <MapPin className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                    <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Address</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{participant.city}, {humanize(participant.prefecture)}</div>
-                                    </div>
+                                <div className="md:col-span-2">
+                                    <div className="text-xs text-gray-500 mb-1">Address</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{
+                                        [
+                                            (participant.other_city ? participant.other_city : participant.city),
+                                            participant.region ? humanize(participant.region) : 'None'
+                                        ].filter(Boolean).join(', ')
+                                    }</div>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <Calendar className="w-4 h-4 text-[#212529] flex-shrink-0" />
-                                    <div className="min-w-0 flex-1">
-                                        <div className="text-xs text-gray-500 mb-1">Birthday</div>
-                                        <div className="text-sm font-medium text-[#212529]">{formatDate(participant.birthday)}</div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Birthday</div>
+                                    <div className="text-sm font-medium text-[#212529]">{formatDate(participant.birthday)}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">Gender</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.gender) || '-'}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-500 mb-1">CV</div>
+                                    <div className="text-sm font-medium text-[#212529]">
+                                        {participant.cv_file ? (
+                                            <Button asChild size="sm" className="bg-[#fee819] text-[#212529] hover:bg-[#212529] hover:text-white rounded-md transition-colors inline-flex items-center gap-2">
+                                                <a href={`/storage/cvs/${participant.cv_file}`} target="_blank" rel="noreferrer">
+                                                    <FileText className="h-4 w-4" />
+                                                    View CV
+                                                </a>
+                                            </Button>
+                                        ) : (
+                                            '-'
+                                        )}
                                     </div>
                                 </div>
                             </CardContent>
@@ -485,52 +533,67 @@ const handleReject = () => {
                             </CardContent>
                         </Card>
 
-                        {/* Application Details */}
+                        {/* Approval Information */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center gap-2 text-[#212529]">
-                                    <FileText className="w-5 h-5" />
-                                    Application Details
+                                    <CheckCircle2 className="w-5 h-5" />
+                                    Approval Information
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <CardContent className="space-y-3">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Formation Field</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.formation_field) || '-'}</div>
+                                    <div className="text-xs text-gray-500 mb-1">Status</div>
+                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.status || 'Pending'}</div>
                                 </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Region</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.region) || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Other City</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{participant.other_city || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Gender</div>
-                                    <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.gender) || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Source</div>
-                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.source) || '-'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">CV</div>
-                                    <div className="text-sm font-medium text-[#212529]">
-                                        {participant.cv_file ? (
-                                            <Button asChild size="sm" className="bg-[#fee819] text-[#212529] hover:bg-[#212529] hover:text-white rounded-md transition-colors inline-flex items-center gap-2">
-                                                <a href={`/storage/cvs/${participant.cv_file}`} target="_blank" rel="noreferrer">
-                                                    <FileText className="h-4 w-4" />
-                                                    View CV
-                                                </a>
-                                            </Button>
-                                        ) : (
-                                            '-'
-                                        )}
+                                {participant.approved_by && (
+                                    <>
+                                        <Separator />
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Approved By</div>
+                                            <div className="text-sm font-medium text-[#212529]">
+                                                {participant.approvedBy?.name || participant.approved_by?.name || 'Unknown'}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                                {participant.last_step_changed_by && (
+                                    <>
+                                        <Separator />
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Last Step Changed By</div>
+                                            <div className="text-sm font-medium text-[#212529]">
+                                                {participant.lastStepChangedBy?.name || participant.last_step_changed_by?.name || 'Unknown'}
+                                            </div>
+                                            {participant.last_step_changed_at && (
+                                                <div className="text-xs text-gray-400 mt-1">
+                                                    {new Date(participant.last_step_changed_at).toLocaleString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
+                                                </div>
+                                            )}
+                                            {participant.previous_step && participant.current_step && (
+                                                <div className="text-xs text-blue-600 mt-1 font-medium">
+                                                    {participant.previous_step.replaceAll('_', ' ')} → {participant.current_step.replaceAll('_', ' ')}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
+                                {participant.status === 'pending' && (
+                                    <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                        <div className="text-xs text-yellow-700 font-medium">Awaiting Approval</div>
+                                        <div className="text-xs text-yellow-600 mt-1">This participant is waiting for admin approval to proceed to the next step.</div>
                                     </div>
-                                </div>
+                                )}
                             </CardContent>
                         </Card>
+
+                        {/* Application Details card removed (fields relocated) */}
 
                         {/* Session Details */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
@@ -609,6 +672,10 @@ const handleReject = () => {
                                     <div className="text-sm font-medium text-[#212529]">{humanize(participant.how_heard_about_formation) || '-'}</div>
                                 </div>
                                 <div>
+                                    <div className="text-xs text-gray-500 mb-1">Source</div>
+                                    <div className="text-sm font-medium text-[#212529]">{humanize(participant.source) || '-'}</div>
+                                </div>
+                                <div>
                                     <div className="text-xs text-gray-500 mb-1">Current Commitments</div>
                                     <div className="text-sm font-medium text-[#212529]">{humanize(participant.current_commitments) || '-'}</div>
                                 </div>
@@ -624,24 +691,29 @@ const handleReject = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
-                                <div className="grid grid-cols-2 gap-4">
+                                {/* Row: Has Training | Previous Training Details */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <div className="text-xs text-gray-500 mb-1">Has Training</div>
                                         <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.has_training) || '-'}</div>
                                     </div>
                                     <div>
-                                        <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
-                                        <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.participated_lionsgeek) || '-'}</div>
+                                        <div className="text-xs text-gray-500 mb-1">Previous Training Details</div>
+                                        <div className="text-sm font-medium text-[#212529]">{participant.previous_training_details || '-'}</div>
                                     </div>
                                 </div>
-                                <div>
-                                    <div className="text-xs text-gray-500 mb-1">Previous Training Details</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.previous_training_details || '-'}</div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
-                                        <div className="text-sm font-medium text-[#212529]">{humanize(participant.lionsgeek_activity) || '-'}</div>
+
+                                {/* Row: Participated + LionsGEEK Activity | Other Activity */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-3">
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
+                                            <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.participated_lionsgeek) || '-'}</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
+                                            <div className="text-sm font-medium text-[#212529]">{humanize(participant.lionsgeek_activity) || '-'}</div>
+                                        </div>
                                     </div>
                                     <div>
                                         <div className="text-xs text-gray-500 mb-1">Other Activity</div>
@@ -671,7 +743,7 @@ const handleReject = () => {
                         
                                             <DialogFooter className="sm:justify-end">
                                                 <DialogClose asChild>
-                                                    <Button onClick={() => setIsUpdateOpened(false)} type="button" variant="secondary">
+                                                    <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
                                                         Close
                                                     </Button>
                                                 </DialogClose>
@@ -736,7 +808,9 @@ const handleReject = () => {
                         {/* Questions, Motivation, Notes */}
                         <FrequentQuestionsSection participant={participant} />
                         <MotivationSection participant={participant} />
-                        <AdminNotesSection participant={participant} />
+                        <div ref={notesRef} className={`${notesHighlight ? 'ring-2 ring-[#fee819] rounded-lg transition-shadow duration-300' : ''}`}>
+                            <AdminNotesSection participant={participant} />
+                        </div>
                     </div>
                 </div>
 

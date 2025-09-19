@@ -13,7 +13,7 @@ class InfoSessionController extends Controller
 {
     public function index()
     {
-        $infos = InfoSession::where('isAvailable', true)->where('isFinish', false)->where("name", "!=", "private session")->orderBy('start_date', "desc")->get();
+        $infos = InfoSession::where('isAvailable', true)->where('isFinish', false)->where('is_private', false)->orderBy('start_date', "desc")->get();
         return response()->json([
             'infos' => $infos,
         ]);
@@ -22,7 +22,7 @@ class InfoSessionController extends Controller
 
     public function PrivateSession()
     {
-        $infos = InfoSession::where('isAvailable', true)->where('isFinish', false)->where("name", "=", "private session")->first();
+        $infos = InfoSession::where('isAvailable', true)->where('isFinish', false)->where('is_private', true)->first();
         return response()->json([
             'infos' => $infos,
         ]);
@@ -64,7 +64,7 @@ class InfoSessionController extends Controller
                     $participant->current_step = "interview";
                     $participant->is_visited = true;
                     $participant->save();
-                    
+
                     return response()->json([
                         "message" => "Credentials match.",
                         "status" => 200,
@@ -95,6 +95,7 @@ class InfoSessionController extends Controller
     public function infoData(Request $request)
     {
         $session = InfoSession::find($request->id);
+        // $session = InfoSession::first();
 
         $participant = $session->participants()->get();
         $attended = $session->participants()->where("is_visited", 1)->orderby("updated_at", "desc")->get();

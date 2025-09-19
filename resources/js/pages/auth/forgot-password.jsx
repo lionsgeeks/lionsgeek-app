@@ -1,5 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle, ArrowLeft, Mail, Shield } from 'lucide-react';
+import { Button } from '../../components/Button';
 
 export default function ForgotPassword({ status }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -89,10 +90,10 @@ export default function ForgotPassword({ status }) {
                                             )}
                                         </div>
 
-                                        <button
+                                        <Button
                                             type="submit"
                                             disabled={processing}
-                                            className="w-full rounded-lg bg-[#fee819] px-4 py-3 font-semibold text-black transition-all duration-200 hover:bg-[#fee819]/90 focus:outline-none focus:ring-2 focus:ring-[#fee819]/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                                            className="w-full"
                                         >
                                             {processing ? (
                                                 <>
@@ -105,7 +106,7 @@ export default function ForgotPassword({ status }) {
                                                     <span>Send Reset Link</span>
                                                 </>
                                             )}
-                                        </button>
+                                        </Button>
                                     </form>
 
                                     {/* Back to login */}

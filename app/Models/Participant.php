@@ -23,6 +23,7 @@ class Participant extends Model
         'source',
         'code',
         'current_step',
+        'previous_step',
         'is_visited',
         'image',
 
@@ -66,6 +67,10 @@ class Participant extends Model
         'status',
         'approved_by',
         'approved_at',
+        
+        // Step change tracking
+        'last_step_changed_by',
+        'last_step_changed_at',
     ];
 
     // Status constants
@@ -78,9 +83,16 @@ class Participant extends Model
         return  $this->belongsTo(InfoSession::class);
     }
 
+
+
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function lastStepChangedBy()
+    {
+        return $this->belongsTo(User::class, 'last_step_changed_by');
     }
 
     public function notes()

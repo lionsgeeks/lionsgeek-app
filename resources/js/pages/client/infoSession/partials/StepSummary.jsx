@@ -46,6 +46,8 @@ export default function StepSummary({ data, errors, setCurrentStep, darkMode, se
             current_commitments: 5,
         };
         setCurrentStep(map[fieldKey] || 1);
+        // Scroll to top when navigating to a field
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     // Filter only provided fields

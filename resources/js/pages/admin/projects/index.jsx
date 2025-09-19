@@ -8,6 +8,7 @@ import { Filter, FolderOpen, RotateCcw, Search, Trash } from 'lucide-react';
 import { useState } from 'react';
 import ProjectModal from './partials/projectModal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import AdminPageHeader from '../components/AdminPageHeader';
 
 
 const breadcrumbs = [
@@ -43,22 +44,12 @@ export default function ProjectsAdmin() {
 
             <div className="min-h-screen bg-white">
                 {/* Header Section */}
-                <div className="bg-[#212529] py-8 text-white">
-                    <div className="mx-auto max-w-7xl px-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
-                                    <FolderOpen className="h-8 w-8 text-[#212529]" />
-                                </div>
-                                <div>
-                                    <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Project Management</h1>
-                                    <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage your projects and portfolios</p>
-                                </div>
-                            </div>
-                            <ProjectModal />
-                        </div>
-                    </div>
-                </div>
+                <AdminPageHeader
+                    icon={FolderOpen}
+                    title="Project Management"
+                    description="Manage your projects and portfolios"
+                    actions={<ProjectModal />}
+                />
 
                 {/* Statistics Cards */}
                 <div className="mx-auto -mt-4 max-w-7xl px-6">

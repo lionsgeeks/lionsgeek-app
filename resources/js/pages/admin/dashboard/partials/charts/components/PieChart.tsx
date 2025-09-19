@@ -33,6 +33,7 @@ const chartConfig: ChartConfig = {
 
 export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
     const [selectedStep, setSelectedStep] = React.useState<PieStep | null>(null);
+    
 
     // Reset selected step whenever pieChart changes
     React.useEffect(() => {
@@ -41,7 +42,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
         setSelectedStep(infoStep || pieChart[0]);
     }, [pieChart]);
 
-    // Prepare male/female dataset
+    // Prepare male/female dataset for selected step
     const genderData = React.useMemo(() => {
         if (!selectedStep) return [];
         return [
@@ -50,7 +51,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
         ];
     }, [selectedStep]);
 
-    const totalVisitors = selectedStep?.total ?? 0;
+    const totalParticipants = selectedStep?.total ?? 0;
 
     if (!pieChart || pieChart.length === 0) {
         return <p>No data available</p>;
@@ -70,10 +71,10 @@ export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
                                             return (
                                                 <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
                                                     <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-3xl font-bold">
-                                                        {totalVisitors}
+                                                        {totalParticipants}
                                                     </tspan>
                                                     <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className="fill-muted-foreground">
-                                                        Participants
+                                                        Total
                                                     </tspan>
                                                 </text>
                                             );
@@ -104,6 +105,23 @@ export const DonutChart: React.FC<DonutChartProps> = ({ pieChart }) => {
                             </div>
                         ))}
                     </div>
+                    
+                    {/* Gender distribution info for selected step */}
+                    {/* <div className="text-center">
+                        <h4 className="font-medium text-gray-700 mb-2">
+                            Gender Distribution
+                        </h4>
+                        <div className="flex justify-center gap-6">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-[#1f77b4]"></div>
+                                <span className="text-sm">Male: {genderData[0]?.value || 0}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-[#9467bd]"></div>
+                                <span className="text-sm">Female: {genderData[1]?.value || 0}</span>
+                            </div>
+                        </div>
+                    </div> */}
                 </CardFooter>
             </Card>
         </div>

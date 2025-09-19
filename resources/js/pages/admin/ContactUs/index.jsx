@@ -6,8 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, usePage } from '@inertiajs/react';
-import { Download, FileMinus, Inbox, Mail, MailOpen, MessageCircle, Plus, Send, Trash2, TypeOutline, User, Users, ChevronLeft, CheckCircle, X } from 'lucide-react';
+import { Download, FileMinus, Inbox, Mail, MailOpen, MessageCircle, Plus, Send, Trash2, TypeOutline, User, Users, ChevronLeft, CheckCircle, X, Paperclip } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import AdminPageHeader from '../components/AdminPageHeader';
+import { Label } from "@/components/ui/label";
 
 export default function Index() {
     const { messages, selected, sendedMessage } = usePage().props;
@@ -22,7 +24,6 @@ export default function Index() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const allMessages = messages.concat(sendedMessage)
-    // console.log(allMessages);
 
     const [emailData, setEmailData] = useState({
         receiver: '',
@@ -31,6 +32,7 @@ export default function Index() {
         subject: '',
         content: '',
         sender: '',
+        contact_file: null,
     });
 
     const handleReply = () => {
@@ -43,6 +45,7 @@ export default function Index() {
             bcc: '',
             subject: `Re: ${selectedMessage.subject || ''}`,
             content: '',
+            contact_file: null,
         });
     };
 
@@ -59,18 +62,34 @@ export default function Index() {
     };
 
     const handleEmailChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, files } = e.target;
         setEmailData((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: type === 'file' ? files[0] : value,
         }));
     };
 
     const handleSendEmail = (e) => {
         e.preventDefault();
-        router.post(route('messages.send'), emailData, {
+        
+        const formData = new FormData();
+        formData.append('receiver', emailData.receiver);
+        formData.append('cc', emailData.cc);
+        formData.append('bcc', emailData.bcc);
+        formData.append('subject', emailData.subject);
+        formData.append('content', emailData.content);
+        formData.append('sender', emailData.sender);
+        
+        if (emailData.contact_file) {
+            formData.append('contact_file', emailData.contact_file);
+        }
+
+        router.post(route('messages.send'), formData, {
             preserveScroll: true,
             preserveState: true,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
             onSuccess: () => {
                 // Show success modal
                 setSuccessMessage('Email sent successfully!');
@@ -84,6 +103,7 @@ export default function Index() {
                     subject: '',
                     content: '',
                     sender: '',
+                    contact_file: null,
                 });
                 setShowCc(false);
                 setShowBcc(false);
@@ -152,35 +172,27 @@ export default function Index() {
 
             <div className="min-h-screen bg-white">
                 {/* Header Section */}
-                <div className="bg-[#212529] py-8 text-white">
-                    <div className="mx-auto max-w-7xl px-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
-                                    <MessageCircle className="h-8 w-8 text-[#212529]" />
-                                </div>
-                                <div>
-                                    <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Contact Messages</h1>
-                                    <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage customer inquiries and communications</p>
-                                </div>
-                            </div>
-                            <div className="flex lg:flex-row-reverse flex-col gap-3">
-                                <Button
-                                    onClick={handleComposeClick}
-                                    className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                                    <Download className="mr-2 h-4 w-4 lg:flex hidden" />
-                                    Compose
-                                </Button>
-                                <Button
-                                    onClick={() => (window.location.href = route('messages.export'))}
-                                    className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-                                    <Download className="mr-2 h-4 w-4 lg:flex hidden" />
-                                    Export Excel
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <AdminPageHeader
+                    icon={MessageCircle}
+                    title="Contact Messages"
+                    description="Manage customer inquiries and communications"
+                    actions={
+                        <>
+                            <Button
+                                onClick={handleComposeClick}
+                                className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                <Send className="mr-2 h-4 w-4" />
+                                Compose
+                            </Button>
+                            <Button
+                                onClick={() => (window.location.href = route('messages.export'))}
+                                className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                <Download className="mr-2 h-4 w-4 lg:flex hidden" />
+                                Export Excel
+                            </Button>
+                        </>
+                    }
+                />
 
                 {/* Statistics Cards */}
                 <div className="mx-auto -mt-4 max-w-7xl px-6">
@@ -436,7 +448,7 @@ export default function Index() {
                                                 <h2 className="text-lg font-semibold text-[#212529]">Compose Message</h2>
                                             </div>
 
-                                            <form onSubmit={handleSendEmail} className="space-y-4">
+                                            <form onSubmit={handleSendEmail} className="space-y-4" encType="multipart/form-data">
                                                 <div>
                                                     <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
                                                         <User className="h-4 w-4" />
@@ -552,6 +564,24 @@ export default function Index() {
                                                     />
                                                 </div>
 
+                                                <div>
+                                                    <Label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+                                                        <Paperclip className="h-4 w-4" />
+                                                        File
+                                                    </Label>
+                                                    <Input 
+                                                        name="contact_file" 
+                                                        type="file" 
+                                                        onChange={handleEmailChange}
+                                                        className="w-full cursor-pointer" 
+                                                    />
+                                                    {emailData.contact_file && (
+                                                        <p className="mt-1 text-xs text-gray-500">
+                                                            Selected: {emailData.contact_file.name}
+                                                        </p>
+                                                    )}
+                                                </div>
+
                                                 <div className="flex gap-3 pt-4">
                                                     <Button
                                                         type="button"
@@ -561,7 +591,7 @@ export default function Index() {
                                                     >
                                                         Cancel
                                                     </Button>
-                                                    <Button type="submit" className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]">
+                                                    <Button type="submit">
                                                         <Send className="mr-2 h-4 w-4" />
                                                         Send Email
                                                     </Button>

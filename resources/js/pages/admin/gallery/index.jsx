@@ -9,6 +9,7 @@ import { Filter, Image, Images, RotateCcw, Search, Trash } from 'lucide-react';
 import { useState } from 'react';
 import GalleryShow from './partials/galleryShow';
 import GalleryStore from './partials/galleryStore';
+import AdminPageHeader from '../components/AdminPageHeader';
 
 const breadcrumbs = [
     {
@@ -59,22 +60,12 @@ export default function GalleryAdmin() {
 
             <div className="min-h-screen bg-white">
                 {/* Header Section */}
-                <div className="bg-[#212529] py-8 text-white">
-                    <div className="mx-auto max-w-7xl px-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
-                                    <Images className="h-8 w-8 text-[#212529]" />
-                                </div>
-                                <div>
-                                    <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Gallery Management</h1>
-                                    <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%]">Manage photo galleries and collections</p>
-                                </div>
-                            </div>
-                            <GalleryStore />
-                        </div>
-                    </div>
-                </div>
+                <AdminPageHeader
+                    icon={Images}
+                    title="Gallery Management"
+                    description="Manage photo galleries and collections"
+                    actions={<GalleryStore />}
+                />
 
                 {/* Statistics Cards */}
                 <div className="mx-auto -mt-4 max-w-7xl px-6">

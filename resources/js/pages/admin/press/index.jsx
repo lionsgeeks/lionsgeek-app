@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { X, Newspaper, Upload, Image as ImageIcon, Plus, Images, Trash2 } from "lucide-react";
+import AdminPageHeader from '../components/AdminPageHeader';
 
 
 const breadcrumbs = [{ title: 'Press', href: '/admin/press' }];
@@ -89,18 +90,11 @@ export default function Press() {
             <Head title="Press" />
 
             <div className="min-h-screen bg-white">
-                <div className="bg-[#212529] py-8 text-white">
-                    <div className="flex items-center justify-between px-6">
-                        <div className="flex items-center gap-3">
-                            <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
-                                <Newspaper className="h-8 w-8 text-[#212529]" />
-                            </div>
-                            <div>
-                                <h1 className="lg:text-3xl text-2xl lg:font-bold  capitalize">Press Releases</h1>
-                                <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%] ">Manage and showcase all your press coverage and media mentions</p>
-                            </div>
-                        </div>
-                        {/* Modal Add press*/}
+                <AdminPageHeader
+                    icon={Newspaper}
+                    title="Press Releases"
+                    description="Manage and showcase all your press coverage and media mentions"
+                    actions={
                         <Dialog open={isOpen} onOpenChange={setIsOpen}>
                             <DialogTrigger asChild>
                                 <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
@@ -481,7 +475,7 @@ export default function Press() {
                                             <Button
                                                 type="submit"
                                                 disabled={processing}
-                                                className="flex-1 transform bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+                                                className="flex-1"
                                             >
                                                 {processing ? 'Processing...' : 'Submit'}
                                             </Button>
@@ -490,8 +484,8 @@ export default function Press() {
                                 </div>
                             </DialogContent>
                         </Dialog>
-                    </div>
-                </div>
+                    }
+                />
 
                 {/* Press List */}
                 <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2 lg:grid-cols-3">
@@ -515,12 +509,12 @@ export default function Press() {
                                 </div>
 
                                 <div className="mt-4 flex items-center justify-between">
-                                    <a
-                                        href={route('press.show', press.id)}
-                                        className="inline-block rounded-2xl bg-beta px-4 py-1.5 font-bold text-white transition hover:bg-alpha hover:text-beta"
-                                    >
-                                        See press
-                                    </a>
+                                    <button
+    onClick={() => router.visit(route('press.show', press.id))}
+    className="inline-block rounded-2xl bg-beta px-4 py-1.5 font-bold text-white transition hover:bg-alpha hover:text-beta"
+>
+    See press
+</button>
                                     <button onClick={() => handleDelete(press)} className="flex items-center text-red-600 hover:text-red-800">
                                         <Trash2 className="h-5 w-5" />
                                     </button>

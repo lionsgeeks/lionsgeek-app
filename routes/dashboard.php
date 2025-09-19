@@ -29,4 +29,5 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
     Route::put('/email/markread/{message}', [ContactController::class, 'toggleRead'])->name('email.markread');
     Route::get('/getChartData/{id?}', [GeneralController::class , 'getChartData'])->name('dashboard.chart');
+    Route::get('/search', [GeneralController::class, 'search'])->name('admin.search');
 });

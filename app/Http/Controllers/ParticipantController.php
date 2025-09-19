@@ -44,7 +44,7 @@ class ParticipantController extends Controller
     public function index(Request $request)
     {
         // Always load all participants for frontend filtering
-        $participants = Participant::with(['infoSession', 'confirmation', 'approvedBy'])->get();
+        $participants = Participant::with(['infoSession', 'confirmation', 'approvedBy', 'lastStepChangedBy'])->get();
         $infosessions = InfoSession::all();
 
         // Get counts for each status
@@ -179,8 +179,9 @@ class ParticipantController extends Controller
         $this->validateEmailWithTimeRestriction($request);
 
         $request->validate([
-            // Session and Formation Information
+            // Session and Formation Information - not required since participants choose via email
             'info_session_id' => 'nullable|integer|exists:info_sessions,id',
+            'private_token' => 'nullable|string', // For private session access
             'formation_field' => 'required|string|in:coding,media',
 
             // Personal Information - with trim and sanitization
@@ -289,6 +290,9 @@ class ParticipantController extends Controller
         $email = $request->email;
         $currentFormationField = $request->formation_field;
 
+        // Since participants are not assigned to sessions during registration,
+        // we only need to check the general 180-day rule for all registrations
+        // Private session specific checks are removed since no session assignment happens
 
         // Check if email already exists - get the MOST RECENT registration
         $existingParticipant = \App\Models\Participant::where('email', $email)
@@ -426,26 +430,13 @@ class ParticipantController extends Controller
 
     /**
      * Check if session has available capacity.
+     * Since participants are not assigned during registration, skip capacity checks.
      */
     private function checkSessionCapacity(Request $request): void
     {
-        if (!$request->filled('info_session_id')) {
-            return;
-        }
-
-        $currentParticipants = Participant::where('info_session_id', $request->info_session_id)->count();
-        $infoSession = InfoSession::where('id', $request->info_session_id)->first();
-
-        if ($infoSession && ($currentParticipants + 1 > $infoSession->places)) {
-            $message = 'Sorry, places are full for this session.';
-
-            if ($request->header('X-Inertia')) {
-                flash()->option('position', 'bottom-right')->error($message);
-                throw new \Exception($message);
-            }
-
-            throw new \Exception($message);
-        }
+        // Skip capacity checks since participants will choose sessions via email
+        // Capacity will be checked when they actually reserve a session
+        return;
     }
 
     /**
@@ -468,9 +459,11 @@ class ParticipantController extends Controller
         $timeSpentSeconds = (int) $request->input('time_spent', 0);
         $scoring = $this->calculateFinalScore($levelsCompleted, $correctAnswers, $totalAttempts, $timeSpentSeconds);
 
+        // Don't assign to any session initially - participants will choose via email
+
         return Participant::create([
             // Basic Information
-            'info_session_id' => $request->info_session_id,
+            'info_session_id' => null, // No automatic assignment
             'formation_field' => $request->formation_field,
             'full_name' => $request->full_name,
             'email' => $request->email,
@@ -683,7 +676,6 @@ class ParticipantController extends Controller
     ]);
 }
 
-    
 
     /**
      * Show the form for editing the specified resource.
@@ -716,7 +708,7 @@ class ParticipantController extends Controller
             'birthday' => 'required|date',
             'phone' => 'required|string|',
             'city' => 'required|string',
-            'prefecture' => 'required|string',
+            'region' => 'required|string',
             'session' => 'required|exists:info_sessions,id',
             'step' => 'required|string|in:info_session,interview,interview_pending,interview_failed,jungle,jungle_failed,coding_school,media_school',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif48',
@@ -729,7 +721,7 @@ class ParticipantController extends Controller
                 'birthday' => $request->birthday,
                 'phone' => $request->phone,
                 'city' => $request->city,
-                'prefecture' => $request->prefecture,
+                'region' => $request->region,
                 'info_session_id' => $request->session,
                 'current_step' => $request->step,
             ];
@@ -773,21 +765,21 @@ class ParticipantController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($id)
-{
-    $participant = Participant::findOrFail($id);
+    {
+        $participant = Participant::findOrFail($id);
 
-    if ($participant->image && Storage::exists('public/images/participants/' . $participant->image)) {
-        Storage::delete('public/images/participants/' . $participant->image);
+        if ($participant->image && Storage::exists('public/images/participants/' . $participant->image)) {
+            Storage::delete('public/images/participants/' . $participant->image);
+        }
+
+        $participant->delete();
+
+        return redirect()->route('participants.index')
+            ->with('success', 'Participant deleted successfully!');
     }
 
-    $participant->delete();
 
-return redirect()->route('participants.index')
-                 ->with('success', 'Participant deleted successfully!');
-}
-
-
-    // Change participant current step 
+    // Change participant current step
     public function step(Request $request, Participant $participant)
     {
         $request->validate([
@@ -802,21 +794,32 @@ return redirect()->route('participants.index')
 
         if ($action == "daz") {
             $participant->update([
-                'current_step' => 'interview_pending'
+                'previous_step' => $participant->current_step,
+                'current_step' => 'interview_pending',
+                'last_step_changed_by' => Auth::id(),
+                'last_step_changed_at' => now()
             ]);
-            return back();
+            // return $request->header('X-Inertia') ? response()->noContent() : back();
+            return back()->with('success', 'Step updated');
         }
 
         if ($participant->current_step == "interview" || $participant->current_step == "interview_pending") {
             $participant->update([
+                'previous_step' => $participant->current_step,
                 "current_step" => $action == "next" ? "jungle" : "interview_failed",
+                'last_step_changed_by' => Auth::id(),
+                'last_step_changed_at' => now()
             ]);
-            return back();
+            // return $request->header('X-Inertia') ? response()->noContent() : back();
+            return back()->with('success', 'Step updated');
         } elseif ($participant->current_step == "jungle") {
             $participant->update([
+                'previous_step' => $participant->current_step,
                 "current_step" => $action == "next" ? $school : "jungle" . "_failed",
+                'last_step_changed_by' => Auth::id(),
+                'last_step_changed_at' => now()
             ]);
-            return back();
+            return back()->with('success', 'Step updated');
         }
     }
     public function frequentQuestions(Request $request, Participant $participant)
@@ -856,6 +859,35 @@ return redirect()->route('participants.index')
             'participant_id' => $participant->id,
             'author' => $user->name,
         ]);
+        return back();
+    }
+
+    /**
+     * Update a specific admin note.
+     */
+    public function updateNote(Request $request, Note $note)
+    {
+        // Only the creator of the note can edit it
+        if (!Auth::check() || (string) $note->author !== (string) Auth::user()->name) {
+            return back();
+        }
+        $request->validate([
+            'note' => 'required|string',
+        ]);
+        $note->update(['note' => $request->note]);
+        return back();
+    }
+
+    /**
+     * Delete a specific admin note.
+     */
+    public function deleteNote(Note $note)
+    {
+        // Only the creator of the note can delete it
+        if (!Auth::check() || (string) $note->author !== (string) Auth::user()->name) {
+            return back();
+        }
+        $note->delete();
         return back();
     }
 
@@ -1126,6 +1158,8 @@ return redirect()->route('participants.index')
             $isUpcoming = \Carbon\Carbon::parse($session->start_date)->gte(now());
             $isAvailable = !$session->isFull && !$session->isFinish && $session->isAvailable;
 
+
+
             if (!($validFormation && $isUpcoming && $isAvailable)) {
                 return Inertia::render('client/infoSession/ReservationResult', [
                     'type' => 'error',
@@ -1162,7 +1196,7 @@ return redirect()->route('participants.index')
             // Build and send QR-coded invitation email
             try {
                 $qrPayload = json_encode([
-                   "code" => $participant->code,
+                    "code" => $participant->code,
                     "email" => $participant->email,
                 ]);
 
@@ -1258,6 +1292,6 @@ return redirect()->route('participants.index')
             ]);
         }
     }
-  
+
 
 }

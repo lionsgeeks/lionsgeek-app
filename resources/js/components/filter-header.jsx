@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film } from 'lucide-react';
+import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film, UserCheck, Calendar, Filter } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import InterviewDialog from './interviewDialog';
 import InviteDialog from './inviteDialog';
@@ -13,7 +13,10 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 	const [selectedSession, setSelectedSession] = useState('');
 	const [selectedPromo, setSelectedPromo] = useState('');
 	const [selectedTrack, setSelectedTrack] = useState('');
+	const [selectedGender, setSelectedGender] = useState('');
+	const [dateSort, setDateSort] = useState('');
 	const [copy, setCopy] = useState(true);
+	const [showMobileFilters, setShowMobileFilters] = useState(false);
 
 	const isStatusValue = (value) => ['approved', 'pending', 'rejected', 'all'].includes(value);
 
@@ -81,8 +84,8 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		if (!exists) setSelectedSession('');
 	}, [sessionOptions, selectedSession]);
 
-	const filtredParticipans =
-		participants?.filter((participant) => {
+	const filtredParticipans = useMemo(() => {
+		let filtered = participants?.filter((participant) => {
 			if (!participant) return false;
 
 			const matchesSearch =
@@ -100,6 +103,9 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 			const participantTrack = getParticipantTrack(participant);
 			const matchesTrack = !selectedTrack || selectedTrack === 'All' || participantTrack === selectedTrack.toLowerCase();
 
+			// Gender filter
+			const matchesGender = !selectedGender || selectedGender === 'All' || participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
+
 			// If the Step select currently holds a status value, filter by status; otherwise by current_step
 			let matchesStep = true;
 			if (selectedStep && selectedStep !== 'All') {
@@ -110,12 +116,40 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 				}
 			}
 
-			return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesStep;
+			return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
 		}) || [];
 
+		// Apply date sorting
+		if (dateSort && dateSort !== 'All') {
+			filtered.sort((a, b) => {
+				const dateA = new Date(a.created_at);
+				const dateB = new Date(b.created_at);
+				
+				if (dateSort === 'newest') {
+					return dateB - dateA; // Newest first
+				} else if (dateSort === 'oldest') {
+					return dateA - dateB; // Oldest first
+				}
+				return 0;
+			});
+		}
+
+		return filtered;
+	}, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender, dateSort]);
+
+	// Initialize filtered participants on mount
 	useEffect(() => {
-		setFiltredParticipants(filtredParticipans);
-	}, [search, selectedSession, selectedStep, selectedPromo, selectedTrack]);
+		if (setFiltredParticipants) {
+			setFiltredParticipants(participants);
+		}
+	}, []);
+
+	// Update filtered participants only when filters change
+	useEffect(() => {
+		if (setFiltredParticipants && (search || selectedSession || selectedStep || selectedPromo || selectedTrack || selectedGender || dateSort)) {
+			setFiltredParticipants(filtredParticipans);
+		}
+	}, [search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender, dateSort]);
 
 	// Initialize selectedStep from URL status on mount (only for status values)
 	useEffect(() => {
@@ -138,7 +172,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		window.history.replaceState({}, '', newUrl);
 	}, [selectedStep]);
 
-	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack;
+	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack || selectedGender || dateSort;
 
 	const handleReset = () => {
 		setSearch('');
@@ -146,6 +180,8 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		setSelectedSession('');
 		setSelectedPromo('');
 		setSelectedTrack('');
+		setSelectedGender('');
+		setDateSort('');
 		// Also clear status from URL
 		const params = new URLSearchParams(window.location.search);
 		params.delete('status');
@@ -186,9 +222,9 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 			</div>
 			
 			{/* Filter Controls */}
-			<div className="flex flex-wrap items-center gap-3">
+			<div className="flex flex-wrap items-center gap-3 sm:gap-3 gap-2">
 				{/* Search Input */}
-				<div className="relative max-w-md min-w_[280px] flex-1 min-w-[280px]">
+				<div className="relative w-full sm:max-w-md sm:min-w-[280px] flex-1">
 					<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
 					<Input
 						value={search}
@@ -198,26 +234,38 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 					/>
 				</div>
 
-				{/* Promo Filter */}
-				{promoOptions?.length > 0 && (
-					<Select onValueChange={setSelectedPromo} value={selectedPromo}>
-						<SelectTrigger className="w-48 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
-							<SelectValue placeholder="Filter By Promo" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="All">All Promos</SelectItem>
-							{promoOptions.map((promo) => (
-								<SelectItem key={`promo-${promo}`} value={promo}>
-									{formatPromoLabel(promo)}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				)}
+				{/* Mobile Filter Toggle Button */}
+				<Button
+					onClick={() => setShowMobileFilters(!showMobileFilters)}
+					className="sm:hidden rounded-lg border border-gray-300 bg-white text-[#212529] hover:bg-gray-50"
+					variant="outline"
+				>
+					<Filter className="mr-2 h-4 w-4" />
+					Filters
+				</Button>
+
+				{/* All Filters - Hidden on mobile until button is clicked */}
+				<div className={`${showMobileFilters ? 'flex' : 'hidden'} sm:contents flex-wrap items-center gap-3 sm:gap-3 gap-2`}>
+					{/* Promo Filter */}
+					{promoOptions?.length > 0 && (
+						<Select onValueChange={setSelectedPromo} value={selectedPromo}>
+							<SelectTrigger className="w-full sm:w-48 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+								<SelectValue placeholder="Filter By Promo" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="All">All Promos</SelectItem>
+								{promoOptions.map((promo) => (
+									<SelectItem key={`promo-${promo}`} value={promo}>
+										{formatPromoLabel(promo)}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					)}
 
 				{/* Track Filter (Coding/Media) */}
 				<Select onValueChange={setSelectedTrack} value={selectedTrack}>
-					<SelectTrigger className="w-44 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20 capitalize">
+					<SelectTrigger className="w-full sm:w-44 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20 capitalize">
 						<SelectValue placeholder="Filter By Track" />
 					</SelectTrigger>
 					<SelectContent>
@@ -227,10 +275,11 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 					</SelectContent>
 				</Select>
 
+
 				{/* Session Filter (depends on Track) */}
 				{sessionOptions && (
 					<Select onValueChange={setSelectedSession} value={selectedSession}>
-						<SelectTrigger className="w-56 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+						<SelectTrigger className="w-full sm:w-56 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
 							<SelectValue placeholder="Filter By Session" />
 						</SelectTrigger>
 						<SelectContent>
@@ -246,7 +295,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
 				{/* Step Filter with status options on top and counts on the right */}
 				<Select onValueChange={setSelectedStep} value={selectedStep}>
-					<SelectTrigger className="w-56 rounded-lg border focus:border-[#212529]">
+					<SelectTrigger className="w-full sm:w-56 rounded-lg border focus:border-[#212529]">
 						<SelectValue placeholder="Filter By Step" />
 					</SelectTrigger>
 					<SelectContent>
@@ -321,27 +370,52 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 					</SelectContent>
 				</Select>
 
-				{/* Reset Button moved into controls row (left) */}
-				{hasActiveFilters && (
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={handleReset}
-						className="ml-auto rounded-lg text-[#212529] transition-all duration-200 ease-in-out hover:bg-gray-50 hover:text-[#212529]/80"
-					>
-						<RotateCcw className="mr-1 h-4 w-4" />
-						Reset
-					</Button>
-				)}
+					{/* Gender Filter - Last Filter */}
+					<Select onValueChange={setSelectedGender} value={selectedGender}>
+						<SelectTrigger className="w-full sm:w-44 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+							<SelectValue placeholder="Filter By Gender" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="All">All Genders</SelectItem>
+							<SelectItem value="male">Male</SelectItem>
+							<SelectItem value="female">Female</SelectItem>
+						</SelectContent>
+					</Select>
 
-				{/* Action Buttons for Infosession Detail Page */}
-				{!infosessions && (
-					<div className="ml-auto flex gap-3">
-						<InterviewDialog infosession={infosession} />
-						<InviteDialog infosession={infosession} step={'jungle'} />
-						<InviteDialog infosession={infosession} step={'school'} />
-					</div>
-				)}
+					{/* Date Sort - Last Filter */}
+					<Select onValueChange={setDateSort} value={dateSort}>
+						<SelectTrigger className="w-full sm:w-44 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+							<SelectValue placeholder="Sort By Date" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="All">Default Order</SelectItem>
+							<SelectItem value="newest">Newest First</SelectItem>
+							<SelectItem value="oldest">Oldest First</SelectItem>
+						</SelectContent>
+					</Select>
+
+					{/* Reset Button - After all filters */}
+					{hasActiveFilters && (
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={handleReset}
+							className="rounded-lg text-[#212529] transition-all duration-200 ease-in-out hover:bg-gray-50 hover:text-[#212529]/80"
+						>
+							<RotateCcw className="mr-1 h-4 w-4" />
+							Reset
+						</Button>
+					)}
+
+					{/* Action Buttons for Infosession Detail Page */}
+					{!infosessions && (
+						<div className="ml-auto flex gap-3">
+							<InterviewDialog infosession={infosession} />
+							<InviteDialog infosession={infosession} step={'jungle'} />
+							<InviteDialog infosession={infosession} step={'school'} />
+						</div>
+					)}
+				</div>
 			</div>
 
 			{/* Results Summary */}

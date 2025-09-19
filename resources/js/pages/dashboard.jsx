@@ -101,7 +101,6 @@ const Dashboard = () => {
                 router.reload({ only: ['users'] });
             },
             onError: (errors) => {
-                // console.log('Validation errors:', errors);
             }
         });
     };
@@ -143,7 +142,6 @@ const Dashboard = () => {
 
 
 
-    // console.log(auth);
 
     return (
         <>
@@ -306,6 +304,14 @@ const Dashboard = () => {
                                                                     </td>
                                                                     <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
                                                                         <div className="text-sm text-gray-600">{formatRelativeTime(user.last_login_at)} </div>
+                                                                        {/* <div className="text-sm text-gray-600">{user?.is_online ? (
+                                                                            <span className="inline-flex items-center gap-1 text-green-600">
+                                                                                <span className="inline-block h-2 w-2 rounded-full bg-green-500"></span>
+                                                                                Online
+                                                                            </span>
+                                                                        ) : (
+                                                                            formatRelativeTime(user.last_login_at)
+                                                                        )}</div> */}
                                                                     </td>
                                                                     <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
                                                                         <div className="text-sm text-gray-600">{formatDate(user.created_at)}</div>
@@ -369,7 +375,7 @@ const Dashboard = () => {
                                         </div>
                                     </DialogContent>
                                 </Dialog>
-                            
+
                                 <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                                     <DialogContent className="w-[90vw] max-w-[60vw] p-4">
                                         <DialogTitle>
