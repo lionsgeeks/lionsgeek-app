@@ -143,9 +143,9 @@ const ParticipantCard = ({ participant }) => {
         <>
             <ContextMenu>
                 <ContextMenuTrigger className="relative w-full">
+                    <a href={`/admin/participants/${participant.id}`} className="block">
                     <Card
                         className="flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border bg-white p-0 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl"
-                        onClick={() => router.visit(`/admin/participants/${participant.id}`)}
                     >
                         <div className="relative">
                             {participant.image ? (
@@ -243,7 +243,7 @@ const ParticipantCard = ({ participant }) => {
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="mt-4 flex min-h-[44px] items-center border-t pt-3" onClick={(e) => e.stopPropagation()}>
+                            <div className="mt-4 flex min-h-[44px] items-center border-t pt-3" onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}>
                                 {localParticipant?.status === 'pending' ? (
                                     <div className="flex w-full gap-2">
                                         <Button
@@ -310,6 +310,7 @@ const ParticipantCard = ({ participant }) => {
                             </div>
                         </CardContent>
                     </Card>
+                    </a>
                 </ContextMenuTrigger>
 
                 <ContextMenuContent className="w-48">
