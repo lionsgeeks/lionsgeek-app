@@ -1,36 +1,36 @@
 import { useState } from 'react';
 import { router, useForm } from '@inertiajs/react';
-import { 
-  ArrowRight, 
-  CheckCircle2, 
-  Clock, 
-  Edit, 
-  Mail, 
-  MapPin, 
-  Trash, 
-  User, 
-  X, 
-  XCircle, 
-  Loader2 
+import {
+    ArrowRight,
+    CheckCircle2,
+    Clock,
+    Edit,
+    Mail,
+    MapPin,
+    Trash,
+    User,
+    X,
+    XCircle,
+    Loader2
 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-  ContextMenu, 
-  ContextMenuContent, 
-  ContextMenuItem, 
-  ContextMenuSeparator, 
-  ContextMenuTrigger 
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuSeparator,
+    ContextMenuTrigger
 } from '@/components/ui/context-menu';
-import { 
-  Dialog, 
-  DialogClose, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader 
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader
 } from '@/components/ui/dialog';
 
 
@@ -138,6 +138,8 @@ const ParticipantCard = ({ participant }) => {
         if (step?.includes('school')) return participant?.confirmation?.school;
         return false;
     };
+    const [isNextStepConfirmOpen, setIsNextStepConfirmOpen] = useState(false);
+
 
     return (
         <>
@@ -198,9 +200,8 @@ const ParticipantCard = ({ participant }) => {
                                 <div className="flex flex-wrap gap-1.5">
                                     {(localParticipant?.current_step === 'jungle' || localParticipant?.current_step?.includes('school')) && (
                                         <Badge
-                                            className={`${
-                                                getConfirmationStatus(participant) ? 'bg-[#51b04f] text-white' : 'bg-[#ff7376] text-white'
-                                            } w-fit rounded-lg text-xs font-medium`}
+                                            className={`${getConfirmationStatus(participant) ? 'bg-[#51b04f] text-white' : 'bg-[#ff7376] text-white'
+                                                } w-fit rounded-lg text-xs font-medium`}
                                         >
                                             <CheckCircle2 className="mr-1 h-3 w-3" />
                                             {getConfirmationStatus(localParticipant) ? 'Confirmed' : 'Pending'}
@@ -225,9 +226,9 @@ const ParticipantCard = ({ participant }) => {
                                         <MapPin className="mr-2 h-4 w-4 flex-shrink-0" />
                                         <span className="truncate capitalize">
                                             {participant?.city || 'Unknown'}
-                                            {participant?.region ? `, ${participant.region.replaceAll('_', ' ')}` : 
-                                             participant?.prefecture ? `, ${participant.prefecture.replaceAll('_', ' ')}` : 
-                                             ', none'}
+                                            {participant?.region ? `, ${participant.region.replaceAll('_', ' ')}` :
+                                                participant?.prefecture ? `, ${participant.prefecture.replaceAll('_', ' ')}` :
+                                                    ', none'}
                                         </span>
                                     </div>
                                     {/* Approval Information */}
@@ -271,11 +272,11 @@ const ParticipantCard = ({ participant }) => {
                                         <Badge className="rounded-lg bg-[#ff7376] px-3 py-1 text-white">Rejected</Badge>
                                     </div>
                                 ) : localParticipant?.current_step !== 'info_session' &&
-                                !localParticipant?.current_step?.includes('school') &&
-                                !localParticipant?.current_step?.includes('failed') ? (
+                                    !localParticipant?.current_step?.includes('school') &&
+                                    !localParticipant?.current_step?.includes('failed') ? (
                                     <div className="flex w-full gap-2">
                                         <Button
-                                            onClick={() => changeStep(localParticipant?.current_step === 'interview' ? 'daz' : 'next')}
+                                            onClick={() => setIsNextStepConfirmOpen(true)}
                                             className="flex-1 rounded-lg bg-[#51b04f] text-white hover:bg-[#459942]"
                                             size="sm"
                                             disabled={isProcessing}
@@ -283,6 +284,7 @@ const ParticipantCard = ({ participant }) => {
                                             <ArrowRight className="mr-1 h-4 w-4" />
                                             {isProcessing ? 'Processing...' : 'Next Step'}
                                         </Button>
+
                                         <Button
                                             onClick={() => changeStep('deny')}
                                             variant="outline"
@@ -368,31 +370,48 @@ const ParticipantCard = ({ participant }) => {
                     </ContextMenuItem>
                 </ContextMenuContent>
             </ContextMenu>
-            <Dialog open={isDeleteOpened} onOpenChange={setIsDeleteOpened}>
-                <DialogContent className="sm:max-w-md"
-                onCloseAutoFocus={() => {document.body.style.pointerEvents = '';}}>
+            <Dialog open={isNextStepConfirmOpen} onOpenChange={setIsNextStepConfirmOpen}>
+                <DialogContent className="sm:max-w-md">
                     <DialogHeader>
-                        <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
+                        <DialogDescription>
+                            Are you sure you want to move 
+                            <span className="font-semibold text-[#212529]">  {participant?.full_name}  </span>
+                            to the next step?
+                        </DialogDescription>
                     </DialogHeader>
 
                     <DialogFooter className="sm:justify-end">
                         <DialogClose asChild>
-                            <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
-                                Close
+                            <Button
+                                onClick={() => setIsNextStepConfirmOpen(false)}
+                                type="button"
+                                variant="secondary"
+                            >
+                                Cancel
                             </Button>
                         </DialogClose>
-                        <Button onClick={handleDelete} type="button" variant="destructive">
-                            {processing ? (
-                                <div className="flex gap-3">
-                                    <Loader2 className="animate-spin" /> Deleting ...{' '}
+                        <Button
+                            onClick={() => {
+                                changeStep(localParticipant?.current_step === 'interview' ? 'daz' : 'next');
+                                setIsNextStepConfirmOpen(false);
+                            }}
+                            type="button"
+                            className="bg-[#51b04f] text-white hover:bg-[#459942]"
+                            disabled={isProcessing}
+                        >
+                            {isProcessing ? (
+                                <div className="flex gap-2 items-center">
+                                    <Loader2 className="animate-spin h-4 w-4" />
+                                    Processing...
                                 </div>
                             ) : (
-                                'Delete'
+                                'Confirm'
                             )}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
 
         </>
     );
