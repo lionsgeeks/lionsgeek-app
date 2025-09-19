@@ -38,7 +38,11 @@ export function PatternGame({ data: formDataProp }) {
     const { darkMode, selectedLanguage } = useAppContext();
     const [currentLevel, setCurrentLevel] = useState(0);
     const [attempts, setAttempts] = useState(0);
-    const [timeRemaining, setTimeRemaining] = useState(240);
+    // const [timeRemaining, setTimeRemaining] = useState(240);
+
+    // testing 15 sec
+    const [timeRemaining, setTimeRemaining] = useState(60);
+    
     const [selectedChoice, setSelectedChoice] = useState(null);
     const [gameCompleted, setGameCompleted] = useState(false);
     const [currentPuzzle, setCurrentPuzzle] = useState(null);
@@ -377,6 +381,23 @@ export function PatternGame({ data: formDataProp }) {
         return 4;
     }
 
+    function calculateIntelligenceLevel() {
+        const totalScore = levelAttempts.reduce((sum, lvl) => sum + (lvl.totalScore || 0), 0);
+        if (totalScore > 90) return 'Very High';
+        else if (totalScore > 60) return 'High';
+        else if (totalScore > 30) return 'Medium';
+        else return 'Low';
+    }
+
+
+
+    function getScoreForAnswer(isCorrect, timeTakenMs) { 
+        if (!isCorrect) return -2;
+        if (timeTakenMs <= 5000) return 7;
+        if (timeTakenMs <= 10000 && timeTakenMs >= 5000) return 5;
+        return 4;
+    }
+
     function submitAnswer() {
         if (!selectedChoice || !currentPuzzle) return;
 
@@ -408,9 +429,6 @@ export function PatternGame({ data: formDataProp }) {
 
             const totalCorrectAnswers = next.filter(level => level.correct).length;
             const totalPoints = next.reduce((acc, level) => acc + (level.totalScore || 0), 0);
-
-            // logggggggggggggggggggggggggggggg
-            // logggggggggggggggggggggggggggggg
 
             return next;
         });
@@ -452,27 +470,12 @@ export function PatternGame({ data: formDataProp }) {
     function endGame(completed) {
         setGameCompleted(true);
         clearInterval(timerRef.current);
-        setShowEnd(true);
+
+        const level = calculateIntelligenceLevel();
+        setIntelligenceLevel(level);
+
+        setTimeout(() => setShowEnd(true), 0);
         setCompletedFlag(completed);
-        // calculateIntelligenceLevel();
-        // Persist game metrics to sessionStorage so summary can show them
-        try {
-            const elapsedMs = Date.now() - startTime;
-            const gameData = {
-                game_completed: completed,
-                correct_answers: correctAnswers,
-                levels_completed: currentLevel,
-                total_attempts: attempts,
-                wrong_attempts: Math.max(0, attempts - correctAnswers),
-                time_spent: Math.floor(elapsedMs / 1000),
-                time_spent_formatted: formatElapsed(elapsedMs),
-                intelligenceLevel: intelligenceLevel
-            };
-            const raw = sessionStorage.getItem('formData');
-            const existing = raw ? JSON.parse(raw) : {};
-            sessionStorage.setItem('formData', JSON.stringify({ ...existing, ...gameData }));
-        } catch {}
-        // clear session flag after finishing (optional)
     }
 
     const [showEnd, setShowEnd] = useState(false);

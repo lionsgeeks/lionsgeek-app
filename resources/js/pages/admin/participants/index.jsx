@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
 import { CheckCircle2, Clock, Download, Filter, Presentation, Users, XCircle, ChevronLeft, ChevronRight, LayoutGrid, Rows } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from './partials/ParticipantCard';
 import ParticipantsTable from './partials/ParticipantsTable';
@@ -28,6 +28,27 @@ export default function Participants() {
 			href: '/admin/participants',
 		},
 	];
+	// dynamic filter participant
+	const dynamicStepsCount = useMemo(() => {
+		return {
+			total: filtredParticipants.length,
+			info_session: filtredParticipants.filter((p) => p?.info_session != null).length,
+			interview: filtredParticipants.filter((p) => 
+				p?.current_step && [
+					'interview', 'interview_pending', 'interview_failed',
+					'jungle', 'jungle_failed'
+				].includes(p.current_step)
+			).length,
+			advanced: filtredParticipants.filter((p) => 
+				p?.current_step && [
+					'jungle', 'jungle_failed'
+				].includes(p.current_step)
+			).length,
+			school: filtredParticipants.filter((p) => 
+				p?.current_step && ['coding_school', 'media_school'].includes(p.current_step)
+			).length,
+		};
+	}, [filtredParticipants]);
 
 	// FilterHeader will manage filtering; initialize with all participants
 	useEffect(() => {
@@ -38,14 +59,6 @@ export default function Participants() {
 	useEffect(() => {
 		setCurrentPage(1);
 	}, [filtredParticipants]);
-
-	// Calculate statistics with safe access
-	const stepsCount = {
-		info_session: filtredParticipants?.filter((p) => p?.current_step === 'info_session')?.length || 0,
-		interview: filtredParticipants?.filter((p) => p?.current_step === 'interview')?.length || 0,
-		jungle: filtredParticipants?.filter((p) => p?.current_step === 'jungle')?.length || 0,
-		school: filtredParticipants?.filter((p) => p?.current_step?.includes('school'))?.length || 0,
-	};
 
 	// Pagination calculations
 	const totalParticipants = filtredParticipants.length;
@@ -115,7 +128,7 @@ export default function Participants() {
 								<div className="flex items-center justify-between">
 									<div>
 										<p className="text-sm font-medium text-gray-600">Total Participants</p>
-										<p className="text-3xl font-bold text-[#212529]">{totalParticipants}</p>
+										<p className="text-3xl font-bold text-[#212529]">{dynamicStepsCount.total}</p>
 									</div>
 									<div className="rounded-lg bg-gray-100 p-3">
 										<Users className="h-6 w-6 text-[#212529]" />
@@ -129,7 +142,7 @@ export default function Participants() {
 								<div className="flex items-center justify-between">
 									<div>
 										<p className="text-sm font-medium text-gray-600">Info Session</p>
-										<p className="text-3xl font-bold text-[#212529]">{stepsCount.info_session}</p>
+										<p className="text-3xl font-bold text-[#212529]">{dynamicStepsCount.info_session}</p>
 									</div>
 									<div className="rounded-lg bg-gray-100 p-3">
 										<Presentation className="h-6 w-6 text-[#212529]" />
@@ -143,7 +156,7 @@ export default function Participants() {
 								<div className="flex items-center justify-between">
 									<div>
 										<p className="text-sm font-medium text-gray-600">Interview</p>
-										<p className="text-3xl font-bold text-[#212529]">{stepsCount.interview}</p>
+										<p className="text-3xl font-bold text-[#212529]">{dynamicStepsCount.interview}</p>
 									</div>
 									<div className="rounded-lg bg-gray-100 p-3">
 										<Clock className="h-6 w-6 text-[#212529]" />
@@ -157,7 +170,7 @@ export default function Participants() {
 								<div className="flex items-center justify-between">
 									<div>
 										<p className="text-sm font-medium text-gray-600">Advanced</p>
-										<p className="text-3xl font-bold text-[#212529]">{stepsCount.jungle + stepsCount.school}</p>
+										<p className="text-3xl font-bold text-[#212529]">{dynamicStepsCount.advanced}</p>
 									</div>
 									<div className="rounded-lg bg-gray-100 p-3">
 										<CheckCircle2 className="h-6 w-6 text-[#212529]" />

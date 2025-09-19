@@ -8,7 +8,6 @@ import InterviewDialog from './interviewDialog';
 import InviteDialog from './inviteDialog';
 
 const FilterHeader = ({ participants = [], infosession, infosessions = [], setFiltredParticipants, statusCounts = {} }) => {
-	const STORAGE_KEY = 'participants_filters_v1';
 	const [search, setSearch] = useState('');
 	const [selectedStep, setSelectedStep] = useState('');
 	const [selectedSession, setSelectedSession] = useState('');
@@ -51,9 +50,17 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
 	// Helper to extract track (coding/media)
 	const getParticipantTrack = (participant) => {
-		const raw = (participant?.formation_field ?? participant?.info_session?.formation ?? '').toString().toLowerCase();
-		if (raw.includes('coding')) return 'coding';
-		if (raw.includes('media')) return 'media';
+		const sessionFormation = participant?.info_session?.formation?.toString().toLowerCase() || '';
+		if (sessionFormation.includes('coding')) return 'coding';
+		if (sessionFormation.includes('media')) return 'media';
+		
+		const formationField = participant?.formation_field?.toString().toLowerCase() || '';
+		if (formationField.includes('coding')) return 'coding';
+		if (formationField.includes('media')) return 'media';
+		
+		const sessionName = participant?.info_session?.name?.toString().toLowerCase() || '';
+		if (sessionName.includes('coding')) return 'coding';
+		if (sessionName.includes('media')) return 'media';
 		return '';
 	};
 
@@ -89,109 +96,105 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		let filtered = participants?.filter((participant) => {
 			if (!participant) return false;
 
-			const matchesSearch =
-				!search ||
+			// Search
+			const matchesSearch = !search || 
 				participant?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
 				participant?.email?.toLowerCase().includes(search.toLowerCase());
-			const matchesSession = !selectedSession || selectedSession === 'All' || 
-				(selectedSession === 'No Infosession' ? !participant?.info_session : participant?.info_session?.name === selectedSession);
 
-			// Promo filter (case-insensitive)
+			// Session filter 
+			const matchesSession = !selectedSession || selectedSession === 'All' || 
+				(selectedSession === 'No Infosession' ? 
+					!participant?.info_session : 
+					participant?.info_session?.name === selectedSession);
+
+			// Promo filter 
 			const participantPromo = getParticipantPromo(participant);
-			const matchesPromo = !selectedPromo || selectedPromo === 'All' || participantPromo === selectedPromo.toLowerCase();
+			const matchesPromo = !selectedPromo || selectedPromo === 'All' || 
+				participantPromo === selectedPromo.toLowerCase();
 
 			// Track filter
 			const participantTrack = getParticipantTrack(participant);
-			const matchesTrack = !selectedTrack || selectedTrack === 'All' || participantTrack === selectedTrack.toLowerCase();
+			const matchesTrack = !selectedTrack || selectedTrack === 'All' || 
+				participantTrack === selectedTrack.toLowerCase();
 
 			// Gender filter
-			const matchesGender = !selectedGender || selectedGender === 'All' || participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
+			const matchesGender = !selectedGender || selectedGender === 'All' || 
+				participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
 
-			// If the Step select currently holds a status value, filter by status; otherwise by current_step
+			// Step filter 
 			let matchesStep = true;
 			if (selectedStep && selectedStep !== 'All') {
 				if (isStatusValue(selectedStep)) {
-					matchesStep = selectedStep === 'all' ? true : participant?.status === selectedStep;
+					if (selectedStep === 'all') {
+						matchesStep = true;
+					} else {
+						matchesStep = participant?.status === selectedStep;
+					}
 				} else {
-					matchesStep = participant?.current_step === selectedStep;
+					switch (selectedStep) {
+						case 'info_session':
+							matchesStep = participant?.info_session != null;
+							break;
+						case 'interview':
+							matchesStep = participant?.current_step && [
+								'interview', 'interview_pending', 'interview_failed',
+								'jungle', 'jungle_failed', 'coding_school', 'media_school'
+							].includes(participant.current_step);
+							break;
+						case 'interview_pending':
+							matchesStep = participant?.current_step === 'interview_pending';
+							break;
+						case 'interview_failed':
+							matchesStep = participant?.current_step === 'interview_failed';
+							break;
+						case 'jungle':
+							matchesStep = ['jungle', 'jungle_failed'].includes(participant?.current_step);
+							break;
+						case 'jungle_failed':
+							matchesStep = participant?.current_step === 'jungle_failed';
+							break;
+						default:
+							matchesStep = participant?.current_step === selectedStep;
+					}
 				}
 			}
 
 			return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
 		}) || [];
 
-		// Apply date sorting
-		if (dateSort && dateSort !== 'All') {
-			filtered.sort((a, b) => {
-				const dateA = new Date(a.created_at);
-				const dateB = new Date(b.created_at);
-				
-				if (dateSort === 'newest') {
-					return dateB - dateA; // Newest first
-				} else if (dateSort === 'oldest') {
-					return dateA - dateB; // Oldest first
-				}
-				return 0;
-			});
-		}
-
 		return filtered;
-	}, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender, dateSort]);
+	}, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender]);
 
-	// Initialize filtered participants on mount
-	useEffect(() => {
-		if (setFiltredParticipants) {
-			setFiltredParticipants(participants);
-		}
-	}, []);
+	const dynamicStatusCounts = useMemo(() => {
+		return {
+			approved: filtredParticipans.filter(p => p?.status === 'approved').length,
+			pending: filtredParticipans.filter(p => p?.status === 'pending').length,
+			rejected: filtredParticipans.filter(p => p?.status === 'rejected').length,
+			all: filtredParticipans.length,
+		};
+	}, [filtredParticipans]);
 
-	// Load saved filters on mount
 	useEffect(() => {
-		try {
-			const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-			if (raw) {
-				const saved = JSON.parse(raw);
-				if (saved && typeof saved === 'object') {
-					setSearch(saved.search ?? '');
-					setSelectedStep(saved.selectedStep ?? '');
-					setSelectedSession(saved.selectedSession ?? '');
-					setSelectedPromo(saved.selectedPromo ?? '');
-					setSelectedTrack(saved.selectedTrack ?? '');
-					setSelectedGender(saved.selectedGender ?? '');
-					setDateSort(saved.dateSort ?? '');
-				}
-			}
-		} catch (e) {
-			// ignore malformed storage
-		}
-	}, []);
-
-	// Update filtered participants only when filters change
-	useEffect(() => {
-		if (setFiltredParticipants && (search || selectedSession || selectedStep || selectedPromo || selectedTrack || selectedGender || dateSort)) {
-			setFiltredParticipants(filtredParticipans);
-		}
-	}, [search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender, dateSort]);
-
-	// Persist filters whenever they change
-	useEffect(() => {
-		try {
-			const payload = {
-				search,
-				selectedStep,
-				selectedSession,
-				selectedPromo,
-				selectedTrack,
-				selectedGender,
-				dateSort,
-			};
-			if (typeof window !== 'undefined') {
-				localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-			}
-		} catch (e) {
-			// ignore storage errors
-		}
-	}, [search, selectedStep, selectedSession, selectedPromo, selectedTrack, selectedGender, dateSort]);
+        if (setFiltredParticipants) {
+            let result = [...filtredParticipans];
+            
+            if (dateSort && dateSort !== 'All') {
+                result.sort((a, b) => {
+                    const dateA = new Date(a.created_at);
+                    const dateB = new Date(b.created_at);
+                    
+                    if (dateSort === 'newest') {
+                        return dateB - dateA;
+                    } else if (dateSort === 'oldest') {
+                        return dateA - dateB;
+                    }
+                    return 0;
+                });
+            }
+            
+            setFiltredParticipants(result);
+        }
+    }, [filtredParticipans, dateSort, setFiltredParticipants]);
 
 	// Initialize selectedStep from URL status on mount (only for status values)
 	useEffect(() => {
@@ -216,26 +219,23 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
 	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack || selectedGender || dateSort;
 
-	const handleReset = () => {
-		setSearch('');
-		setSelectedStep('');
-		setSelectedSession('');
-		setSelectedPromo('');
-		setSelectedTrack('');
-		setSelectedGender('');
-		setDateSort('');
-		try {
-			if (typeof window !== 'undefined') {
-				localStorage.removeItem(STORAGE_KEY);
-			}
-		} catch (e) {
-			// ignore
-		}
-		// Also clear status from URL
-		const params = new URLSearchParams(window.location.search);
-		params.delete('status');
-		window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
-	};
+    const handleReset = () => {
+        setSearch('');
+        setSelectedStep('');
+        setSelectedSession('');
+        setSelectedPromo('');
+        setSelectedTrack('');
+        setSelectedGender('');
+        setDateSort('');
+        
+        if (setFiltredParticipants) {
+            setFiltredParticipants(participants);
+        }
+        
+        const params = new URLSearchParams(window.location.search);
+        params.delete('status');
+        window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+    };
 
 	const handleCopyEmails = () => {
 		const emails = filtredParticipans.map((p) => p.email).join(', ');
@@ -352,25 +352,25 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 						<SelectItem value="approved">
 							<div className="flex items-center gap-2">
 								<CheckCircle2 className="h-4 w-4 text-green-600" />
-								<span>Approved<span className="ml-1 text-gray-500">({statusCounts.approved || 0})</span></span>
+								<span>Approved<span className="ml-1 text-gray-500">({dynamicStatusCounts.approved || 0})</span></span>
 							</div>
 						</SelectItem>
 						<SelectItem value="pending">
 							<div className="flex items-center gap-2">
 								<Clock className="h-4 w-4 text-orange-600" />
-								<span>Pending<span className="ml-1 text-gray-500">({statusCounts.pending || 0})</span></span>
+								<span>Pending<span className="ml-1 text-gray-500">({dynamicStatusCounts.pending || 0})</span></span>
 							</div>
 						</SelectItem>
 						<SelectItem value="rejected">
 							<div className="flex items-center gap-2">
 								<XCircle className="h-4 w-4 text-red-600" />
-								<span>Rejected<span className="ml-1 text-gray-500">({statusCounts.rejected || 0})</span></span>
+								<span>Rejected<span className="ml-1 text-gray-500">({dynamicStatusCounts.rejected || 0})</span></span>
 							</div>
 						</SelectItem>
 						<SelectItem value="all">
 							<div className="flex items-center gap-2">
 								<Users className="h-4 w-4 text-gray-500" />
-								<span>All<span className="ml-1 text-gray-500">({statusCounts.all || 0})</span></span>
+								<span>All<span className="ml-1 text-gray-500">({dynamicStatusCounts.all || 0})</span></span>
 							</div>
 						</SelectItem>
 						{/* Divider equivalent: keep list order */}
