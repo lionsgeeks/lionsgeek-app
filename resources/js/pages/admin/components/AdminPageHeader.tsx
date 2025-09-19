@@ -17,25 +17,34 @@ export default function AdminPageHeader({
     className = ""
 }: AdminPageHeaderProps) {
     return (
-        <div className={`bg-[#212529] py-8 text-white ${className}`}>
-            <div className="mx-auto max-w-7xl px-6">
-                <div className="flex items-center justify-between">
-                    <div className="flex lg:items-center gap-3">
-                        <div className="rounded-lg bg-[#fee819] p-3 lg:flex hidden">
-                            <Icon className="h-8 w-8 text-[#212529]" />
-                        </div>
-                        <div>
-                            <h1 className="lg:text-3xl text-2xl lg:font-bold capitalize">{title}</h1>
-                            <p className="mt-1 text-gray-300 lg:text-lg text-[0.8rem] lg:w-fit w-[90%]">{description}</p>
-                        </div>
-                    </div>
-                    {actions && (
-                        <div className="flex lg:flex-row flex-col items-start gap-3">
-                            {actions}
-                        </div>
-                    )}
-                </div>
-            </div>
+       <div className={`bg-[#212529] py-8 text-white ${className}`}>
+  <div className="mx-auto max-w-7xl px-6">
+    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      
+      {/* Left side: Icon + Title/Description */}
+      <div className="flex flex-col sm:flex-row lg:items-center gap-3 w-full lg:w-auto">
+        <div className="hidden lg:flex rounded-lg bg-[#fee819] p-3">
+          <Icon className="h-8 w-8 text-[#212529]" />
         </div>
+        <div>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold lg:font-bold capitalize">
+            {title}
+          </h1>
+          <p className="mt-1 text-gray-300 text-sm sm:text-base lg:text-lg w-full sm:w-[90%] lg:w-fit">
+            {description}
+          </p>
+        </div>
+      </div>
+
+      {/* Right side: Actions */}
+      {actions && (
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-3 w-full lg:w-auto">
+          {actions}
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
     );
 }

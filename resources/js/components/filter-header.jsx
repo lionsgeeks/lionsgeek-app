@@ -8,6 +8,7 @@ import InterviewDialog from './interviewDialog';
 import InviteDialog from './inviteDialog';
 
 const FilterHeader = ({ participants = [], infosession, infosessions = [], setFiltredParticipants, statusCounts = {} }) => {
+	const STORAGE_KEY = 'participants_filters_v1';
 	const [search, setSearch] = useState('');
 	const [selectedStep, setSelectedStep] = useState('');
 	const [selectedSession, setSelectedSession] = useState('');
@@ -144,12 +145,53 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		}
 	}, []);
 
+	// Load saved filters on mount
+	useEffect(() => {
+		try {
+			const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+			if (raw) {
+				const saved = JSON.parse(raw);
+				if (saved && typeof saved === 'object') {
+					setSearch(saved.search ?? '');
+					setSelectedStep(saved.selectedStep ?? '');
+					setSelectedSession(saved.selectedSession ?? '');
+					setSelectedPromo(saved.selectedPromo ?? '');
+					setSelectedTrack(saved.selectedTrack ?? '');
+					setSelectedGender(saved.selectedGender ?? '');
+					setDateSort(saved.dateSort ?? '');
+				}
+			}
+		} catch (e) {
+			// ignore malformed storage
+		}
+	}, []);
+
 	// Update filtered participants only when filters change
 	useEffect(() => {
 		if (setFiltredParticipants && (search || selectedSession || selectedStep || selectedPromo || selectedTrack || selectedGender || dateSort)) {
 			setFiltredParticipants(filtredParticipans);
 		}
 	}, [search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender, dateSort]);
+
+	// Persist filters whenever they change
+	useEffect(() => {
+		try {
+			const payload = {
+				search,
+				selectedStep,
+				selectedSession,
+				selectedPromo,
+				selectedTrack,
+				selectedGender,
+				dateSort,
+			};
+			if (typeof window !== 'undefined') {
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+			}
+		} catch (e) {
+			// ignore storage errors
+		}
+	}, [search, selectedStep, selectedSession, selectedPromo, selectedTrack, selectedGender, dateSort]);
 
 	// Initialize selectedStep from URL status on mount (only for status values)
 	useEffect(() => {
@@ -182,6 +224,13 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		setSelectedTrack('');
 		setSelectedGender('');
 		setDateSort('');
+		try {
+			if (typeof window !== 'undefined') {
+				localStorage.removeItem(STORAGE_KEY);
+			}
+		} catch (e) {
+			// ignore
+		}
 		// Also clear status from URL
 		const params = new URLSearchParams(window.location.search);
 		params.delete('status');

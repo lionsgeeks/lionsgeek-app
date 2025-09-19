@@ -5,15 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  Dialog, 
-  DialogClose, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader 
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader
 } from '@/components/ui/dialog';
-import { 
+import {
     ArrowLeft,
     User,
     Mail,
@@ -49,9 +49,9 @@ export default function ParticipantProfilePage() {
     const notesRef = useRef(null);
     const [notesHighlight, setNotesHighlight] = useState(false);
     const { post, processing } = useForm();
-    
-    
-    
+
+
+
 
     // Compute derived game metrics for display
     const totalLevelsConst = 20; // matches game plan length
@@ -158,14 +158,14 @@ export default function ParticipantProfilePage() {
         ? Number(participant.age)
         : (participant?.birthday ? Math.floor((Date.now() - new Date(participant.birthday).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null);
 
-   const handleDelete = (e) => {
-  e.stopPropagation();
- router.delete(`/admin/participants/${participant.id}`, {
-    onSuccess: () => {
-      router.visit("/admin/participants");
-    },
-  });
-};
+    const handleDelete = (e) => {
+        e.stopPropagation();
+        router.delete(`/admin/participants/${participant.id}`, {
+            onSuccess: () => {
+                router.visit("/admin/participants");
+            },
+        });
+    };
     function getConfirmationStatus(participant) {
         const step = participant?.current_step;
         if (step === 'jungle') return participant?.confirmation?.jungle;
@@ -173,65 +173,66 @@ export default function ParticipantProfilePage() {
         return false;
     }
 
-      const changeStep = (action) => {
-    router.patch(`/admin/participant/current-step/${participant.id}`, { action });
+    const changeStep = (action) => {
+        router.patch(`/admin/participant/current-step/${participant.id}`, { action });
 
-    const jugleParticipants = stepParticipant.filter(p => p.current_step === participant.current_step);
+        const jugleParticipants = stepParticipant.filter(p => p.current_step === participant.current_step);
 
-    const currentIndex = jugleParticipants.findIndex(p => p.id === participant.id);
+        const currentIndex = jugleParticipants.findIndex(p => p.id === participant.id);
 
-    const nextParticipant = jugleParticipants[currentIndex + 1];
+        const nextParticipant = jugleParticipants[currentIndex + 1];
 
-    // if (nextParticipant) {
-    //     router.visit(`/admin/participants/${nextParticipant.id}`);
-    // } else {
-    //     router.visit("/admin/participants");
-    // }
-};
-   
-   
-const handleNavigation = () => {
-  const currentIndex = participants.findIndex(p => p.id === participant.id);
-  const nextParticipant = participants[currentIndex + 1];
+        // if (nextParticipant) {
+        //     router.visit(`/admin/participants/${nextParticipant.id}`);
+        // } else {
+        //     router.visit("/admin/participants");
+        // }
+    };
 
-  if (nextParticipant) {
-    router.visit(`/admin/participants/${nextParticipant.id}`);
-  } else {
-    router.visit("/admin/participants");
-  }
-};
-const handleApprove = () => {
-  setIsProcessing(true);
-  router.post(`/admin/participants/${participant.id}/approve`, {}, {
-    onFinish: () => {
-      setIsProcessing(false);
-      // Refresh the current page to show updated approval data
-      router.reload();
-    },
-    onError: () => setIsProcessing(false),
-  });
-};
 
-const handleReject = () => {
-  setIsProcessing(true);
-  router.post(`/admin/participants/${participant.id}/reject`, {}, {
-    onFinish: () => {
-      setIsProcessing(false);
-      // Refresh the current page to show updated approval data
-      router.reload();
-    },
-    onError: () => setIsProcessing(false),
-  });
-};
+    const handleNavigation = () => {
+        const currentIndex = participants.findIndex(p => p.id === participant.id);
+        const nextParticipant = participants[currentIndex + 1];
 
+        if (nextParticipant) {
+            router.visit(`/admin/participants/${nextParticipant.id}`);
+        } else {
+            router.visit("/admin/participants");
+        }
+    };
+    const handleApprove = () => {
+        setIsProcessing(true);
+        router.post(`/admin/participants/${participant.id}/approve`, {}, {
+            onFinish: () => {
+                setIsProcessing(false);
+                // Refresh the current page to show updated approval data
+                router.reload();
+            },
+            onError: () => setIsProcessing(false),
+        });
+    };
+
+    const handleReject = () => {
+        setIsProcessing(true);
+        router.post(`/admin/participants/${participant.id}/reject`, {}, {
+            onFinish: () => {
+                setIsProcessing(false);
+                // Refresh the current page to show updated approval data
+                router.reload();
+            },
+            onError: () => setIsProcessing(false),
+        });
+    };
+
+    const [isNextStepConfirmOpen, setIsNextStepConfirmOpen] = useState(false);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${participant.full_name} - Participant Details`} />
 
             <div className="min-h-screen bg-white">
-               {/* Header Banner */}
-               <div className="bg-[#212529] text-white">
+                {/* Header Banner */}
+                <div className="bg-[#212529] text-white">
                     <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
                             <Button
@@ -243,21 +244,21 @@ const handleReject = () => {
                                 Back to Participants
                             </Button>
                             <div className='flex items-center gap-2 justify-center'>
-                            <Button
-                                onClick={() => {
-                                    if (notesRef.current) {
-                                        notesRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                        setNotesHighlight(true);
-                                        setTimeout(() => setNotesHighlight(false), 2000);
-                                    }
-                                }}
-                                size="sm"
-                                className="h-9 min-w-[125px] rounded-lg border border-[#fee819] bg-[#fee819] text-[#212529] hover:bg-transparent hover:text-[#fee819] transition-all duration-200"
-                            >
-                                Admin Notes {participant?.notes?.length ? `(${participant.notes.length})` : ''}
-                            </Button>
+                                <Button
+                                    onClick={() => {
+                                        if (notesRef.current) {
+                                            notesRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                            setNotesHighlight(true);
+                                            setTimeout(() => setNotesHighlight(false), 2000);
+                                        }
+                                    }}
+                                    size="sm"
+                                    className="h-9 min-w-[125px] rounded-lg border border-[#fee819] bg-[#fee819] text-[#212529] hover:bg-transparent hover:text-[#fee819] transition-all duration-200"
+                                >
+                                    Admin Notes {participant?.notes?.length ? `(${participant.notes.length})` : ''}
+                                </Button>
 
-                            {/* <Button
+                                {/* <Button
                                 onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)}
                                 variant="ghost"
                                 className="text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
@@ -266,58 +267,59 @@ const handleReject = () => {
                                 Edit Profile
                             </Button> */}
 
-                            {
-                                participant?.current_step !== 'info_session' && !participant?.current_step?.includes('school') && !participant?.current_step?.includes('failed') && (
-                                    <div className="flex gap-2 ">
+                                {
+                                    participant?.current_step !== 'info_session' && !participant?.current_step?.includes('school') && !participant?.current_step?.includes('failed') && (
+                                        <div className="flex gap-2 ">
+                                            <Button
+                                                onClick={() => setIsNextStepConfirmOpen(true)}
+                                                className="flex-1 bg-[#51b04f] text-white hover:bg-[#459942] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 w-[10%]"
+                                                size="sm"
+                                            >
+                                                <ArrowRight className="h-4 w-4 mr-1" />
+                                                Next Step
+                                            </Button>
+
+                                            <Button
+                                                onClick={() => changeStep('deny')}
+                                                variant="outline"
+                                                className="border-[#ff7376] bg-[#ff7376] text-white hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                                                size="sm"
+                                            >
+                                                <XCircle className="h-4 w-4 mr-1" />
+                                                Deny
+                                            </Button>
+                                        </div>
+                                    )}
+
+                                {participant?.status === 'pending' && (
+                                    <div className="flex w-full gap-2">
                                         <Button
-                                            onClick={() => changeStep(participant?.current_step === 'interview' ? 'daz' : 'next')}
-                                            className="flex-1 bg-[#51b04f] text-white hover:bg-[#459942] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 w-[10%]"
+                                            onClick={handleApprove}
+                                            disabled={isProcessing}
+                                            className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
                                             size="sm"
                                         >
-                                            <ArrowRight className="h-4 w-4 mr-1" />
-                                            Next Step
+                                            <CheckCircle2 className="mr-1 h-4 w-4" />
+                                            {isProcessing ? 'Approving...' : 'Approve'}
                                         </Button>
                                         <Button
-                                            onClick={() => changeStep('deny')}
+                                            onClick={handleReject}
+                                            disabled={isProcessing}
                                             variant="outline"
-                                            className="border-[#ff7376] bg-[#ff7376] text-white hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                                            className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
                                             size="sm"
                                         >
-                                            <XCircle className="h-4 w-4 mr-1" />
-                                            Deny
+                                            <XCircle className="mr-1 h-4 w-4" />
+                                            {isProcessing ? 'Rejecting...' : 'Reject'}
                                         </Button>
                                     </div>
                                 )}
-
-                            {participant?.status === 'pending' && (
-                                <div className="flex w-full gap-2">
-                                    <Button
-                                        onClick={handleApprove}
-                                        disabled={isProcessing}
-                                        className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
-                                        size="sm"
-                                    >
-                                        <CheckCircle2 className="mr-1 h-4 w-4" />
-                                        {isProcessing ? 'Approving...' : 'Approve'}
-                                    </Button>
-                                    <Button
-                                        onClick={handleReject}
-                                        disabled={isProcessing}
-                                        variant="outline"
-                                        className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
-                                        size="sm"
-                                    >
-                                        <XCircle className="mr-1 h-4 w-4" />
-                                        {isProcessing ? 'Rejecting...' : 'Reject'}
-                                    </Button>
-                                </div>
-                            )}
                             </div>
                         </div>
 
-                        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
+                        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 w-full">
                             {/* Profile Image & Basic Info */}
-                            <div className="flex items-center gap-6">
+                            <div className="flex flex-col sm:flex-row items-center gap-6 w-full">
                                 <div className="relative">
                                     <div
                                         className="w-24 h-24 rounded-xl overflow-hidden bg-white/10 relative group cursor-pointer"
@@ -349,7 +351,7 @@ const handleReject = () => {
                                         <div onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)} className="bg-[#fee819] rounded-full p-1">
                                             <Edit className="w-4 h-4 text-[#212529] cursor-pointer" />
                                         </div>
-                                        <div onClick={() => setIsDeleteOpened(true)}  className="bg-[#fee819] rounded-full p-1">
+                                        <div onClick={() => setIsDeleteOpened(true)} className="bg-[#fee819] rounded-full p-1">
                                             <Trash className="w-4 h-4 text-[#292121] cursor-pointer" />
                                         </div>
                                     </div>
@@ -373,13 +375,12 @@ const handleReject = () => {
                                         )}
                                         {/* Approval Status Badge */}
                                         {participant.status && (
-                                            <Badge className={`${
-                                                participant.status === 'approved' 
-                                                    ? 'bg-green-500 text-white' 
-                                                    : participant.status === 'rejected' 
-                                                    ? 'bg-red-500 text-white' 
-                                                    : 'bg-yellow-500 text-white'
-                                            } rounded-lg px-3 py-1 font-medium`}>
+                                            <Badge className={`${participant.status === 'approved'
+                                                    ? 'bg-green-500 text-white'
+                                                    : participant.status === 'rejected'
+                                                        ? 'bg-red-500 text-white'
+                                                        : 'bg-yellow-500 text-white'
+                                                } rounded-lg px-3 py-1 font-medium`}>
                                                 {participant.status === 'approved' ? (
                                                     <CheckCircle2 className="h-3 w-3 mr-1" />
                                                 ) : participant.status === 'rejected' ? (
@@ -412,7 +413,7 @@ const handleReject = () => {
                             </div>
 
                             {/* Quick Stats (hidden on phone) */}
-                            <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 lg:ml-auto">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full mt-4 lg:mt-0">
                                 <div className="text-center p-3 bg-white/10 rounded-lg">
                                     <Calendar className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Age</div>
@@ -736,29 +737,29 @@ const handleReject = () => {
                             </CardContent>
                         </Card>
                         <Dialog open={isDeleteOpened} onOpenChange={setIsDeleteOpened}>
-                                        <DialogContent className="sm:max-w-md">
-                                            <DialogHeader>
-                                                <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
-                                            </DialogHeader>
-                        
-                                            <DialogFooter className="sm:justify-end">
-                                                <DialogClose asChild>
-                                                    <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
-                                                        Close
-                                                    </Button>
-                                                </DialogClose>
-                                                <Button onClick={handleDelete} type="button" variant="destructive">
-                                                    {processing ? (
-                                                        <div className="flex gap-3">
-                                                            <Loader2 className="animate-spin" /> Deleting ...{' '}
-                                                        </div>
-                                                    ) : (
-                                                        'Delete'
-                                                    )}
-                                                </Button>
-                                            </DialogFooter>
-                                        </DialogContent>
-                                    </Dialog>
+                            <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                    <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
+                                </DialogHeader>
+
+                                <DialogFooter className="sm:justify-end">
+                                    <DialogClose asChild>
+                                        <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
+                                            Close
+                                        </Button>
+                                    </DialogClose>
+                                    <Button onClick={handleDelete} type="button" variant="destructive">
+                                        {processing ? (
+                                            <div className="flex gap-3">
+                                                <Loader2 className="animate-spin" /> Deleting ...{' '}
+                                            </div>
+                                        ) : (
+                                            'Delete'
+                                        )}
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
 
 
                         {/* Game Results */}
@@ -828,6 +829,53 @@ const handleReject = () => {
                     />
                 )}
             </div>
+            <Dialog open={isNextStepConfirmOpen} onOpenChange={setIsNextStepConfirmOpen}>
+  <DialogContent className="sm:max-w-md">
+    <DialogHeader>
+      <DialogDescription className="text-sm text-[#212529]">
+        Are you sure you want to move 
+        <span className="font-semibold ml-1">
+          {participant?.full_name}
+        </span> 
+        to the next step?
+      </DialogDescription>
+    </DialogHeader>
+
+    <DialogFooter className="sm:justify-end">
+      <DialogClose asChild>
+        <Button
+          onClick={() => setIsNextStepConfirmOpen(false)}
+          type="button"
+          variant="secondary"
+        >
+          Cancel
+        </Button>
+      </DialogClose>
+      <Button
+        onClick={() => {
+          changeStep(participant?.current_step === 'interview' ? 'daz' : 'next');
+          setIsNextStepConfirmOpen(false);
+        }}
+        type="button"
+        className="bg-[#51b04f] text-white hover:bg-[#459942] transition-all duration-300 ease-in-out transform hover:scale-105"
+      >
+        {isProcessing ? (
+          <div className="flex gap-2 items-center">
+            <Loader2 className="animate-spin h-4 w-4" />
+            Processing...
+          </div>
+        ) : (
+          <>
+         
+            Confirm
+          </>
+        )}
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+
+
         </AppLayout>
     );
 }
