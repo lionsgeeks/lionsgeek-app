@@ -92,12 +92,14 @@ class InfosessionController extends Controller
             'formation' => 'required',
             'start_date' => 'required',
             'places' => 'required',
+            'is_private' => 'boolean',
         ]);
         $infoSession->update([
             'name' => $request->name,
             'formation' => $request->formation,
             'start_date' => $request->start_date,
             'places' => $request->places,
+            'is_private' => $request->boolean('is_private'),
         ]);
         return back();
     }
@@ -163,6 +165,19 @@ class InfosessionController extends Controller
             return back()->with($messageType, $message);
         } catch (\Throwable $th) {
             //throw $th;
+            return back();
+        }
+    }
+
+    public function privacyStatus($id)
+    {
+        try {
+            $infosession = InfoSession::where('id', $id)->first();
+            $infosession->update([
+                'is_private' => !$infosession->is_private
+            ]);
+            return back();
+        } catch (\Throwable $th) {
             return back();
         }
     }

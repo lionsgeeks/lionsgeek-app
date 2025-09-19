@@ -38,6 +38,12 @@ class InfoSession extends Model
                 $infoSession->private_url_token = self::generateUrlToken();
             }
         });
+
+        static::updating(function ($infoSession) {
+            if ($infoSession->is_private && empty($infoSession->private_url_token)) {
+                $infoSession->private_url_token = self::generateUrlToken();
+            }
+        });
     }
 
     public function participants()
