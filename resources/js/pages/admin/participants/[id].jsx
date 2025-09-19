@@ -41,7 +41,7 @@ import { FrequentQuestionsSection } from './partials/frequent-questions-section'
 import { MotivationSection } from './partials/motivation-section';
 import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-section';
 export default function ParticipantProfilePage() {
-    const { participant, participants, stepParticipant } = usePage().props;
+    const { participant, participants, stepParticipant, otherProfiles } = usePage().props;
     const [isProcessing, setIsProcessing] = useState(false);
     const [isDeleteOpened, setIsDeleteOpened] = useState(false);
     const [selectedParticipant, setSelectedParticipant] = useState(null);
@@ -357,7 +357,7 @@ export default function ParticipantProfilePage() {
                                     </div>
                                 </div>
 
-                                <div className="flex-1">
+                            <div className="flex-1">
                                     <h1 className="text-3xl font-bold mb-2">{participant.full_name}</h1>
                                     <div className="flex flex-wrap gap-2 mb-3">
                                         <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1 font-medium`}>
@@ -393,6 +393,22 @@ export default function ParticipantProfilePage() {
                                         )}
                                     </div>
                                     <p className="text-white/80">{participant.info_session?.name || 'No session assigned'}</p>
+
+                                    {/* Cross-promo navigation */}
+                                    {Array.isArray(otherProfiles) && otherProfiles.length > 0 && (
+                                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                                            <span className="text-xs text-white/70">Also in:</span>
+                                            {otherProfiles.map((p) => (
+                                                <Badge
+                                                    key={p.id}
+                                                    onClick={() => router.visit(`/admin/participants/${p.id}`)}
+                                                    className="cursor-pointer bg-white/10 hover:bg-white/20 text-white rounded-lg px-2 py-1"
+                                                >
+                                                    {(p?.info_session?.name || `Promo #${p.info_session_id}`)}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
