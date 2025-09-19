@@ -656,11 +656,18 @@ class ParticipantController extends Controller
     $participants = Participant::where('status', 'pending')
         ->orderBy('id')
         ->get(['id', 'full_name']);
-         $stepParticipant = Participant::where('current_step', '!=', 'info_session') 
-    ->where('current_step', 'not like', '%school%')
-    ->where('current_step', 'not like', '%failed%') 
-    ->orderBy('id')
-    ->get(['id', 'full_name', 'current_step']);
+    $stepParticipant = Participant::where('current_step', '!=', 'info_session')
+        ->where('current_step', 'not like', '%school%')
+        ->where('current_step', 'not like', '%failed%')
+        ->orderBy('id')
+        ->get(['id', 'full_name', 'current_step']);
+
+    // Fetch other registrations for the same person (same email), across other promos/sessions
+    $otherProfiles = Participant::with('infoSession')
+        ->where('email', $participant->email)
+        ->where('id', '!=', $participant->id)
+        ->orderBy('created_at', 'desc')
+        ->get(['id', 'info_session_id', 'current_step', 'status', 'created_at']);
 
     return Inertia::render('admin/participants/[id]', [
         'participant' => $participant->load([
@@ -672,6 +679,7 @@ class ParticipantController extends Controller
         ]),
         'participants' => $participants,
         'stepParticipant' => $stepParticipant,
+        'otherProfiles' => $otherProfiles,
     ]);
 }
 
