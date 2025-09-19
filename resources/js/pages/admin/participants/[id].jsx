@@ -531,7 +531,7 @@ export default function ParticipantProfilePage() {
                                     <div className="text-xs text-gray-500 mb-1">Status</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{participant.status || 'Pending'}</div>
                                 </div>
-                                {participant.approved_by && (
+                                {/* {participant.approved_by && (
                                     <>
                                         <Separator />
                                         <div>
@@ -541,7 +541,7 @@ export default function ParticipantProfilePage() {
                                             </div>
                                         </div>
                                     </>
-                                )}
+                                )} */}
                                 {participant.last_step_changed_by && (
                                     <>
                                         <Separator />

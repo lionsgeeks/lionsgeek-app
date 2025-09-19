@@ -30,6 +30,8 @@ type ChartBarStackedProps = {
     }[];
 };
 
+
+
 export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
     return (
         <div className="w-full lg:w-1/2">
