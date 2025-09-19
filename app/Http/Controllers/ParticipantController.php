@@ -644,32 +644,37 @@ class ParticipantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Participant $participant)
-    {
-        $participants = Participant::where('status', 'pending')
-            ->orderBy('id')
-            ->get(['id', 'full_name']);
-        $stepParticipant = Participant::where('current_step', '!=', 'info_session')
-            ->where('current_step', 'not like', '%school%')
-            ->where('current_step', 'not like', '%failed%')
-            ->orderBy('id')
-            ->get(['id', 'full_name', 'current_step']);
+   public function show(Participant $participant)
+{
+    $participants = Participant::where('status', 'pending')
+        ->orderBy('id')
+        ->get(['id', 'full_name']);
+    $stepParticipant = Participant::where('current_step', '!=', 'info_session')
+        ->where('current_step', 'not like', '%school%')
+        ->where('current_step', 'not like', '%failed%')
+        ->orderBy('id')
+        ->get(['id', 'full_name', 'current_step']);
 
-        return Inertia::render('admin/participants/[id]', [
-            'participant' => $participant->load([
-                'infoSession',
-                'notes',
-                'questions',
-                'satisfaction',
-                'confirmation',
-                'approvedBy',
-                'lastStepChangedBy'
-            ]),
-            'participants' => $participants,
-            'stepParticipant' => $stepParticipant,
-        ]);
-    }
+    // Fetch other registrations for the same person (same email), across other promos/sessions
+    $otherProfiles = Participant::with('infoSession')
+        ->where('email', $participant->email)
+        ->where('id', '!=', $participant->id)
+        ->orderBy('created_at', 'desc')
+        ->get(['id', 'info_session_id', 'current_step', 'status', 'created_at']);
 
+    return Inertia::render('admin/participants/[id]', [
+        'participant' => $participant->load([
+            'infoSession',
+            'notes',
+            'questions',
+            'satisfaction',
+            'confirmation'
+        ]),
+        'participants' => $participants,
+        'stepParticipant' => $stepParticipant,
+        'otherProfiles' => $otherProfiles,
+    ]);
+}
 
 
     /**
@@ -696,19 +701,20 @@ class ParticipantController extends Controller
 
         // Custom email validation with 180-day check for updates
         $this->validateEmailWithTimeRestrictionForUpdate($request, $participant);
-
         $request->validate([
             'full_name' => 'required|string',
             'email' => 'required|email',
             'birthday' => 'required|date',
             'phone' => 'required|string|',
             'city' => 'required|string',
-            'region' => 'required|string',
+            'region' => 'nullable|string',
             'session' => 'required|exists:info_sessions,id',
             'step' => 'required|string|in:info_session,interview,interview_pending,interview_failed,jungle,jungle_failed,coding_school,media_school',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif48',
+            "fomation_field" => 'nullable|string|in:coding,media',
         ], $messages);
 
+   
         try {
             $updateData = [
                 'full_name' => $request->full_name,
@@ -719,6 +725,7 @@ class ParticipantController extends Controller
                 'region' => $request->region,
                 'info_session_id' => $request->session,
                 'current_step' => $request->step,
+                'formation_field' => $request->formation_field,
             ];
 
             // Calculate age from birthday
