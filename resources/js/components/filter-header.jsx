@@ -126,7 +126,6 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
         if (setFiltredParticipants) {
             let result = [...filtredParticipans];
             
-            // تطبيق الـ sorting هنا بس
             if (dateSort && dateSort !== 'All') {
                 result.sort((a, b) => {
                     const dateA = new Date(a.created_at);
