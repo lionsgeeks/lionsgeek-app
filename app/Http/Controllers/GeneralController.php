@@ -24,6 +24,7 @@ class GeneralController extends Controller
 {
     public function dashboardData()
     {
+        // dd(Participant::where('current_step' , 'LIKE' , '%school%')->get());
 
         $totalContacts = Contact::all()->count();
         $members = Subscriber::all()->count();
