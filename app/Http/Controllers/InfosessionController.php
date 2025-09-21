@@ -192,6 +192,7 @@ class InfosessionController extends Controller
         if (!$infoSession) {
             abort(404, 'Private session not found or inactive');
         }
+    $newToken = $infoSession->regenerateTokenIfExpired();
 
         return Inertia::render('client/infoSession/index', [
             'sessions' => [$infoSession],
