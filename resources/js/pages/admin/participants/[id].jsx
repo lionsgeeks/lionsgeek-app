@@ -357,7 +357,7 @@ export default function ParticipantProfilePage() {
                                     </div>
                                 </div>
 
-                            <div className="flex-1">
+                                <div className="flex-1">
                                     <h1 className="text-3xl font-bold mb-2">{participant.full_name}</h1>
                                     <div className="flex flex-wrap gap-2 mb-3">
                                         <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1 font-medium`}>
@@ -376,10 +376,10 @@ export default function ParticipantProfilePage() {
                                         {/* Approval Status Badge */}
                                         {participant.status && (
                                             <Badge className={`${participant.status === 'approved'
-                                                    ? 'bg-green-500 text-white'
-                                                    : participant.status === 'rejected'
-                                                        ? 'bg-red-500 text-white'
-                                                        : 'bg-yellow-500 text-white'
+                                                ? 'bg-green-500 text-white'
+                                                : participant.status === 'rejected'
+                                                    ? 'bg-red-500 text-white'
+                                                    : 'bg-yellow-500 text-white'
                                                 } rounded-lg px-3 py-1 font-medium`}>
                                                 {participant.status === 'approved' ? (
                                                     <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -830,50 +830,50 @@ export default function ParticipantProfilePage() {
                 )}
             </div>
             <Dialog open={isNextStepConfirmOpen} onOpenChange={setIsNextStepConfirmOpen}>
-  <DialogContent className="sm:max-w-md">
-    <DialogHeader>
-      <DialogDescription className="text-sm text-[#212529]">
-        Are you sure you want to move 
-        <span className="font-semibold ml-1">
-          {participant?.full_name}
-        </span> 
-        to the next step?
-      </DialogDescription>
-    </DialogHeader>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogDescription className="text-sm text-[#212529]">
+                            Are you sure you want to move
+                            <span className="font-semibold ml-1">
+                                {participant?.full_name}
+                            </span>
+                            to the next step?
+                        </DialogDescription>
+                    </DialogHeader>
 
-    <DialogFooter className="sm:justify-end">
-      <DialogClose asChild>
-        <Button
-          onClick={() => setIsNextStepConfirmOpen(false)}
-          type="button"
-          variant="secondary"
-        >
-          Cancel
-        </Button>
-      </DialogClose>
-      <Button
-        onClick={() => {
-          changeStep(participant?.current_step === 'interview' ? 'daz' : 'next');
-          setIsNextStepConfirmOpen(false);
-        }}
-        type="button"
-        className="bg-[#51b04f] text-white hover:bg-[#459942] transition-all duration-300 ease-in-out transform hover:scale-105"
-      >
-        {isProcessing ? (
-          <div className="flex gap-2 items-center">
-            <Loader2 className="animate-spin h-4 w-4" />
-            Processing...
-          </div>
-        ) : (
-          <>
-         
-            Confirm
-          </>
-        )}
-      </Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
+                    <DialogFooter className="sm:justify-end">
+                        <DialogClose asChild>
+                            <Button
+                                onClick={() => setIsNextStepConfirmOpen(false)}
+                                type="button"
+                                variant="secondary"
+                            >
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                        <Button
+                            onClick={() => {
+                                changeStep(participant?.current_step === 'interview' ? 'daz' : 'next');
+                                setIsNextStepConfirmOpen(false);
+                            }}
+                            type="button"
+                            className="bg-[#51b04f] text-white hover:bg-[#459942] transition-all duration-300 ease-in-out transform hover:scale-105"
+                        >
+                            {isProcessing ? (
+                                <div className="flex gap-2 items-center">
+                                    <Loader2 className="animate-spin h-4 w-4" />
+                                    Processing...
+                                </div>
+                            ) : (
+                                <>
+
+                                    Confirm
+                                </>
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
 
         </AppLayout>

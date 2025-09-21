@@ -513,14 +513,14 @@ class ParticipantController extends Controller
             'cv_file' => $cvFileName,
 
             // Game Metrics
-                'game_completed' => $request->boolean('game_completed'),
-                'final_score' => $request->input('final_score'),
-                'correct_answers' => $request->input('correct_answers'),
-                'levels_completed' => $request->input('levels_completed'),
-                'total_attempts' => $request->input('total_attempts'),
-                'wrong_attempts' => $request->input('wrong_attempts'),
-                'time_spent' => $request->input('time_spent'),
-                'time_spent_formatted' => $request->input('time_spent_formatted'),
+            'game_completed' => $request->boolean('game_completed'),
+            'final_score' => $request->input('final_score'),
+            'correct_answers' => $request->input('correct_answers'),
+            'levels_completed' => $request->input('levels_completed'),
+            'total_attempts' => $request->input('total_attempts'),
+            'wrong_attempts' => $request->input('wrong_attempts'),
+            'time_spent' => $request->input('time_spent'),
+            'time_spent_formatted' => $request->input('time_spent_formatted'),
 
             // Status
             'status' => Participant::STATUS_PENDING,
@@ -644,37 +644,37 @@ class ParticipantController extends Controller
     /**
      * Display the specified resource.
      */
-   public function show(Participant $participant)
-{
-    $participants = Participant::where('status', 'pending')
-        ->orderBy('id')
-        ->get(['id', 'full_name']);
-    $stepParticipant = Participant::where('current_step', '!=', 'info_session')
-        ->where('current_step', 'not like', '%school%')
-        ->where('current_step', 'not like', '%failed%')
-        ->orderBy('id')
-        ->get(['id', 'full_name', 'current_step']);
+    public function show(Participant $participant)
+    {
+        $participants = Participant::where('status', 'pending')
+            ->orderBy('id')
+            ->get(['id', 'full_name']);
+        $stepParticipant = Participant::where('current_step', '!=', 'info_session')
+            ->where('current_step', 'not like', '%school%')
+            ->where('current_step', 'not like', '%failed%')
+            ->orderBy('id')
+            ->get(['id', 'full_name', 'current_step']);
 
-    // Fetch other registrations for the same person (same email), across other promos/sessions
-    $otherProfiles = Participant::with('infoSession')
-        ->where('email', $participant->email)
-        ->where('id', '!=', $participant->id)
-        ->orderBy('created_at', 'desc')
-        ->get(['id', 'info_session_id', 'current_step', 'status', 'created_at']);
-
-    return Inertia::render('admin/participants/[id]', [
-        'participant' => $participant->load([
-            'infoSession',
-            'notes',
-            'questions',
-            'satisfaction',
-            'confirmation'
-        ]),
-        'participants' => $participants,
-        'stepParticipant' => $stepParticipant,
-        'otherProfiles' => $otherProfiles,
-    ]);
-}
+        // Fetch other registrations for the same person (same email), across other promos/sessions
+        $otherProfiles = Participant::with('infoSession')
+            ->where('email', $participant->email)
+            ->where('id', '!=', $participant->id)
+            ->orderBy('created_at', 'desc')
+            ->get(['id', 'info_session_id', 'current_step', 'status', 'created_at']);
+        return Inertia::render('admin/participants/[id]', [
+            'participant' => $participant->load([
+                'infoSession',
+                'notes',
+                'questions',
+                'satisfaction',
+                'confirmation',
+                'approvedBy',
+                'lastStepChangedBy'
+            ]),
+            'participants' => $participants,
+            'stepParticipant' => $stepParticipant,
+        ]);
+    }
 
 
     /**
@@ -714,7 +714,7 @@ class ParticipantController extends Controller
             "fomation_field" => 'nullable|string|in:coding,media',
         ], $messages);
 
-   
+
         try {
             $updateData = [
                 'full_name' => $request->full_name,
@@ -1294,6 +1294,4 @@ class ParticipantController extends Controller
             ]);
         }
     }
-
-
 }
