@@ -14,6 +14,10 @@ const chartConfig = {
         label: 'Failed',
         color: 'var(--chart-2)',
     },
+    pending: {
+        label: 'Pending',
+        color: 'var(--chart-2)',
+    },
     absence: {
         label: 'Absence',
         color: 'var(--chart-3)', // make sure you have this CSS var or use a hex color
@@ -25,7 +29,8 @@ type ChartBarStackedProps = {
     barChart: {
         step: string;
         success?: number;
-        failed?: number;
+        pending?: number;
+        failed?: number; 
         absence?: number;
     }[];
 };
@@ -50,6 +55,7 @@ export default function ChartBarStacked({ barChart }: ChartBarStackedProps) {
                             <ChartLegend content={<ChartLegendContent />} />
                             <Bar dataKey="success" stackId="a" fill="#4CAF50" radius={[0, 0, 4, 4]} />
                             <Bar dataKey="failed" stackId="a" fill="#ff0000" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="pending" stackId="a" fill="#FFA500" radius={[4, 4, 0, 0]} />
                             <Bar dataKey="absence" stackId="a" fill="#bcbcbc" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ChartContainer>
