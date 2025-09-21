@@ -18,7 +18,8 @@ class InfoSession extends Model
         'isFinish',
         'places',
         'private_url_token',
-        'is_private'
+        'is_private',
+        'token_generated_at', 
     ];
 
     protected $casts = [
@@ -26,7 +27,8 @@ class InfoSession extends Model
         'isAvailable' => 'boolean',
         'isFull' => 'boolean',
         'isFinish' => 'boolean',
-        'is_private' => 'boolean'
+        'is_private' => 'boolean',
+        'token_generated_at' => 'datetime', 
     ];
 
     protected static function boot()
@@ -36,12 +38,14 @@ class InfoSession extends Model
         static::creating(function ($infoSession) {
             if ($infoSession->is_private && empty($infoSession->private_url_token)) {
                 $infoSession->private_url_token = self::generateUrlToken();
+                $infoSession->token_generated_at = now(); 
             }
         });
 
         static::updating(function ($infoSession) {
             if ($infoSession->is_private && empty($infoSession->private_url_token)) {
                 $infoSession->private_url_token = self::generateUrlToken();
+                $infoSession->token_generated_at = now();
             }
         });
     }
@@ -82,18 +86,43 @@ class InfoSession extends Model
      */
     public static function findByToken($token)
     {
-        return self::where('private_url_token', $token)
+        $session = self::where('private_url_token', $token)
             ->where('is_private', true)
             ->where('isAvailable', true)
             ->first();
+
+        if ($session) {
+            $session->regenerateTokenIfExpired();
+        }
+
+        return $session;
     }
 
     /**
-     * Regenerate the private URL token
+     * Regenerate the private URL token manually
      */
     public function regenerateUrlToken()
     {
-        $this->update(['private_url_token' => self::generateUrlToken()]);
+        $this->update([
+            'private_url_token' => self::generateUrlToken(),
+            'token_generated_at' => now(),
+        ]);
+        return $this->private_url_token;
+    }
+
+    public function regenerateTokenIfExpired()
+    {
+        $tokenTime = $this->token_generated_at ? new \DateTime($this->token_generated_at) : null;
+        // $nowMinusMonth = new \DateTime('-1 minute'); 
+        $nowMinusMonth = new \DateTime('-1 month'); 
+
+        if (!$tokenTime || $tokenTime < $nowMinusMonth) {
+            $this->update([
+                'private_url_token' => self::generateUrlToken(),
+                'token_generated_at' => now(),
+            ]);
+        }
+
         return $this->private_url_token;
     }
 }

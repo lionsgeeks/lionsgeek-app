@@ -24,6 +24,7 @@ class GeneralController extends Controller
 {
     public function dashboardData()
     {
+        // dd(Participant::where('current_step' , 'LIKE' , '%school%')->get());
 
         $totalContacts = Contact::all()->count();
         $members = Subscriber::all()->count();
@@ -86,10 +87,10 @@ class GeneralController extends Controller
         // ! info session data
         $successInfoSession = $session->allParticipants()->whereNot('current_step', 'info_session')->count();
         $absenceInfoSession = $session->allParticipants()->where('current_step', 'info_session')->count();
-        $absenceInfoFailed = $session->allParticipants()->where('current_step', 'failed')->count();
 
         // ! insterview data
-        $successInterview = $session->allParticipants()->whereNotIn('current_step', ['info_session', 'interview_pending', 'interview_failed'])->count();
+        $successInterview = $session->allParticipants()->whereNotIn('current_step', ['info_session', 'interview' , 'interview_pending', 'interview_failed'])->count();
+        $pendingInterview = $session->allParticipants()->where('current_step', 'interview_pending')->count();
         $failedInterview = $session->allParticipants()->where('current_step', 'interview_failed')->count();
         $absenceInterview = $session->allParticipants()->where('current_step', 'interview')->count();
 
@@ -102,36 +103,18 @@ class GeneralController extends Controller
         })->count();
 
 
-        // ? pie chart data
-        $infoSessionFemale = $session->allParticipants()
-            ->where('gender', 'female')
-            ->where('current_step', 'info_session')
-            ->count();
-        $interviewFemale = $session->allParticipants()
-            ->where('gender', 'female')
-            ->whereNotIn('current_step', ['info_session', 'interview', 'interview_failed'])
-            ->count();
-        $jungleFemale = $session->allParticipants()
-            ->where('gender', 'female')
-            ->where('current_step', 'LIKE', '%school%')
-            ->count();
-        $schoolFemale = $session->allParticipants()
-            ->where('gender', 'female')
-            ->whereHas('confirmation', function ($query) {
-                $query->where('school', true);
-            })->count();
 
         $BarChart = [
             [
                 'step' => 'Info Session',
                 'success' => $successInfoSession,
-                'failed' => $absenceInfoFailed,
                 'absence' => $absenceInfoSession,
             ],
             [
                 'step' => 'Interview',
                 'success' => $successInterview,
-                'failed' => $failedInterview,
+                'failed' => $failedInterview,  
+                'pending' => $pendingInterview,  
                 'absence' => $absenceInterview,
             ],
             [
@@ -147,47 +130,67 @@ class GeneralController extends Controller
             ],
         ];
         // Calculate male counts properly
-        $infoSessionMale = $session->allParticipants()
-            ->where('gender', 'male')
-            ->where('current_step', 'info_session')
+        // ? pie chart data
+        //! info seesion pie
+        $infoSessionFemale = $session->allParticipants()
+            ->where('gender', 'female')
+            ->whereNot('current_step', 'info_session')
             ->count();
-        $interviewMale = $session->allParticipants()
-            ->where('gender', 'male')
-            ->whereNotIn('current_step', ['info_session', 'interview', 'interview_failed'])
+
+        //! interview pie
+        $interviewFemale = $session->allParticipants()
+            ->where('gender', 'female')
+            ->whereNotIn('current_step', ['info_session', 'interview_pending', 'interview_failed'])
+            ->count();
+
+        //! jungle pie
+        $jungleFemale = $session->allParticipants()
+            ->where('gender', 'female')
+            ->where('current_step', 'LIKE', '%school%')
             ->count();
         $jungleMale = $session->allParticipants()
             ->where('gender', 'male')
             ->where('current_step', 'LIKE', '%school%')
             ->count();
+
+        //! school pie
+        $schoolFemale = $session->allParticipants()
+            ->where('gender', 'female')
+            ->whereHas('confirmation', function ($query) {
+                $query->where('school', true);
+            })->count();
         $schoolMale = $session->allParticipants()
             ->where('gender', 'male')
             ->whereHas('confirmation', function ($query) {
                 $query->where('school', true);
             })->count();
+
+
+        // ! array pie chart send
         $PieChart = [
             [
                 'step' => 'Info Session',
-                'total' => $successInfoSession + $absenceInfoSession,
+                'total' => $successInfoSession,
                 'female' => $infoSessionFemale,
-                'male' => $infoSessionMale
+                'male' => $successInfoSession - $infoSessionFemale
             ],
             [
                 'step' => 'Interview',
-                'total' => $successInterview + $absenceInterview + $failedInterview,
+                'total' => $successInterview,
                 'female' => $interviewFemale,
-                'male' => $interviewMale,
+                'male' => $successInterview - $interviewFemale,
             ],
             [
                 'step' => 'Jungle',
-                'total' => $successJungle + $absenceJungle + $failedJungle,
+                'total' => $successJungle,
                 'female' => $jungleFemale,
-                'male' => $jungleMale,
+                'male' => $successJungle - $jungleFemale,
             ],
             [
                 'step' => 'School',
-                'total' => ($successJungle - $confirmedSchool) + $confirmedSchool,
+                'total' => $confirmedSchool,
                 'female' => $schoolFemale,
-                'male' => $schoolMale,
+                'male' => $confirmedSchool - $schoolFemale,
             ],
         ];
         return response()->json([
