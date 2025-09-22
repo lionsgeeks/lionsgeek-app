@@ -73,12 +73,12 @@ class ParticipantController extends Controller
             // 2. Situation professionnelle et revenus
             'pere_tuteur' => 'nullable|string|in:decede,entrepreneur,cadre,fonctionnaire,salarie_prive,independant,precaire,sans_emploi',
             'mere_tuteur' => 'nullable|string|in:decedee,entrepreneur,cadre,fonctionnaire,salarie_prive,independante,precaire,sans_emploi',
-            'revenus_mensuels' => 'nullable|string|in:lt_3000,3000_6000,6000_10000,gt_10000',
+            'revenus_mensuels' => 'nullable|string|in:lt_3000,3000_6000,6000_10000,10000_15000,gt_15000',
 
             // 3. Logement
             'type_logement' => 'nullable|string|in:proprietaire,locataire,social_irreg,autre',
-            'services_base' => 'nullable|array',
-            'services_base.*' => 'in:eau,electricite,internet',
+            // Basic services now a simple yes/no choice
+            'services_base' => 'nullable|string|in:yes,no',
 
             // 4. Niveau d’éducation
             'education_pere' => 'nullable|string|in:non_scolarise,primaire,college_lycee,superieur',
@@ -94,9 +94,122 @@ class ParticipantController extends Controller
             'categorie_sociale' => 'nullable|string|in:vulnerable,moyenne_inferieure,moyenne,favorisee',
         ]);
 
+        // Compute social score on server using same mapping as UI
+        $score = 0; $max = 0;
+
+        $add = function ($value, $map, $default = null) use (&$score, &$max) {
+            if ($value === '' || $value === null) return;
+            $pts = array_key_exists($value, $map) ? $map[$value] : ($default !== null ? $default : 0);
+            $score += $pts;
+            $mapMax = max($map);
+            $max += is_numeric($mapMax) ? $mapMax : 0;
+        };
+
+        // Normalize nullable numeric fields to 0 when not provided
+        $validated['nombre_personnes'] = isset($validated['nombre_personnes']) && $validated['nombre_personnes'] !== null
+            ? (int) $validated['nombre_personnes']
+            : 0;
+        $validated['fratrie'] = isset($validated['fratrie']) && $validated['fratrie'] !== null
+            ? (int) $validated['fratrie']
+            : 0;
+
+        // 1) Composition du foyer
+        $add($validated['composition_foyer'] ?? null, [
+            'pere_mere' => 0,
+            'pere_seul' => 7,
+            'mere_seule' => 7,
+            'autre' => 3,
+        ]);
+        // Nombre personnes foyer
+        if (isset($validated['nombre_personnes'])) {
+            $n = max(0, (int) $validated['nombre_personnes']);
+            $pts = $n >= 7 ? 6 : ($n >= 5 ? 4 : ($n >= 3 ? 3 : 1));
+            $score += $pts; $max += 6;
+        }
+        // Fratrie
+        if (isset($validated['fratrie'])) {
+            $n = max(0, (int) $validated['fratrie']);
+            $pts = $n >= 5 ? 6 : ($n >= 3 ? 3 : ($n >= 1 ? 1 : 0));
+            $score += $pts; $max += 6;
+        }
+
+        // 2) Statuts parents
+        $add($validated['pere_tuteur'] ?? null, [
+            'decede' => 12,
+            'sans_emploi' => 8,
+            'precaire' => 6,
+            'independant' => 5,
+            'salarie_prive' => 3,
+            'fonctionnaire' => 3,
+            'cadre' => 0,
+            'entrepreneur' => 0,
+        ]);
+        $add($validated['mere_tuteur'] ?? null, [
+            'decedee' => 12,
+            'sans_emploi' => 8,
+            'precaire' => 6,
+            'independante' => 5,
+            'salarie_prive' => 3,
+            'fonctionnaire' => 3,
+            'cadre' => 0,
+            'entrepreneur' => 0,
+        ]);
+
+        // Revenus
+        $add($validated['revenus_mensuels'] ?? null, [
+            'lt_3000' => 10,
+            '3000_6000' => 8,
+            '6000_10000' => 4,
+            '10000_15000' => 1,
+            'gt_15000' => 0,
+        ]);
+
+        // 3) Logement (pas d'impact pour services_base désormais)
+        $add($validated['type_logement'] ?? null, [
+            'social_irreg' => 10,
+            'locataire' => 6,
+            'autre' => 5,
+            'proprietaire' => 1,
+        ]);
+
+        // 4) Education
+        $add($validated['education_pere'] ?? null, [
+            'non_scolarise' => 6,
+            'primaire' => 4,
+            'college_lycee' => 2,
+            'superieur' => 0,
+        ]);
+        $add($validated['education_mere'] ?? null, [
+            'non_scolarisee' => 6,
+            'primaire' => 4,
+            'college_lycee' => 2,
+            'superieur' => 0,
+        ]);
+
+        // 5) Situations particulières
+        if (isset($validated['situation_particuliere']) && is_array($validated['situation_particuliere'])) {
+            // Score the most severe selected option
+            $situMap = ['handicap' => 10, 'autre' => 5, 'aucun' => 0];
+            $selectedScores = array_map(fn($k) => $situMap[$k] ?? 0, $validated['situation_particuliere']);
+            $score += count($selectedScores) ? max($selectedScores) : 0;
+            $max += 10;
+        }
+
+        // 6) Catégorie sociale
+        $add($validated['categorie_sociale'] ?? null, [
+            'vulnerable' => 10,
+            'moyenne_inferieure' => 6,
+            'moyenne' => 3,
+            'favorisee' => 0,
+        ]);
+
+        $validated['social_score'] = $max > 0 ? (int) round(($score / $max) * 100) : 0;
+
         $participant->update($validated);
 
-        return back()->with('success', 'Social status updated');
+        // Use Flasher for Inertia flash messages
+        flash()->success('Social status updated');
+        return back();
     }
 
     /**
