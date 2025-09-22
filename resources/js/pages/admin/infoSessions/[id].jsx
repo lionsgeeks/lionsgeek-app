@@ -7,6 +7,8 @@ import { ArrowLeft, Calendar, Code2, Copy, GraduationCap, Lock, Palette, Present
 import { useState } from 'react';
 import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from '../participants/partials/ParticipantCard';
+import InviteToJungle from './partials/InviteToJungle';
+import InviteToSchool from './partials/InviteToSchool';
 
 const InfosessionDetails = () => {
     const { infosession } = usePage().props;
@@ -317,6 +319,15 @@ const InfosessionDetails = () => {
                                 participants={infosession.participants}
                                 setFiltredParticipants={setFiltredParticipants}
                             />
+                        </div>
+                    </div>
+
+                    {/* Email Invitation Section */}
+                    <div className="mb-8">
+                        <h2 className="mb-6 text-2xl font-bold text-[#212529]">Email Invitations</h2>
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <InviteToJungle infosession={infosession} />
+                            <InviteToSchool infosession={infosession} />
                         </div>
                     </div>
 

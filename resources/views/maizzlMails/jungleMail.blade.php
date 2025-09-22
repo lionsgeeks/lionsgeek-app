@@ -81,7 +81,7 @@
                     to see you
                     flourish in the jungle!</p>
                   <div style="text-align:center">
-                    <a href="http://192.168.100.136:8000/participant/confirmation/jungle/{{ $full_name }}/{{$id}}" style="padding: 10px 20px; background-color:#000; color: #fff; text-decoration: none; border-radius: 10px;
+                    <a href="https://lionsgeek.ma/participant/confirmation/jungle/{{ $full_name }}/{{$id}}" style="padding: 10px 20px; background-color:#000; color: #fff; text-decoration: none; border-radius: 10px;
                                             ">
                       Click To Confirm Your Attendance
                     </a>
@@ -101,7 +101,7 @@
                                         أقصى استفادة من رحلتك.</p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">نحن متحمسون لانضمامك إلينا ولا نستطيع الانتظار
                                         لرؤيتك تتألق في الـJungle!</p>
                                          <div style="text-align:center">
-                                            <a href="http://192.168.100.136:8000/participant/confirmation/jungle/{{ $full_name }}/{{$id}}" style="padding: 10px 20px; background-color:#000; color: #fff; text-decoration: none; border-radius: 10px;
+                                            <a href="https://lionsgeek.ma/participant/confirmation/jungle/{{ $full_name }}/{{$id}}" style="padding: 10px 20px; background-color:#000; color: #fff; text-decoration: none; border-radius: 10px;
                                             ">
                                                 انقر هنا لتأكيد حضورك
                                             </a>
