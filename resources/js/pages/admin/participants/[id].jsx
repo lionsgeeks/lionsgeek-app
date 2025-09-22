@@ -11,8 +11,14 @@ import {
     DialogContent,
     DialogDescription,
     DialogFooter,
-    DialogHeader
-} from '@/components/ui/dialog';
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
     ArrowLeft,
     User,
@@ -33,7 +39,8 @@ import {
     Edit,
     ArrowRight,
     X,
-    XCircle
+    XCircle,
+    Users
 } from 'lucide-react';
 import ImagePreview from '@/components/ImagePreview';
 import { AdminNotesSection } from './partials/admin-notes-section';
@@ -50,7 +57,99 @@ export default function ParticipantProfilePage() {
     const [notesHighlight, setNotesHighlight] = useState(false);
     const { post, processing } = useForm();
 
+    // Social Status form state (local, not persisted yet)
+    const [socialForm, setSocialForm] = useState({
+        foyerComposition: "",
+        foyerCompositionAutre: "",
+        foyerCount: "",
+        siblingCount: "",
+        fatherStatus: "",
+        motherStatus: "",
+        incomeRange: "",
+        logementType: "",
+        logementAutre: "",
+        basicServices: [],
+        eduFather: "",
+        eduMother: "",
+        socialAid: "",
+        specialSituations: [],
+        specialOther: "",
+        link2m: "",
+        socialCategory: "",
+    });
+    const toggleArrayValue = (arr, value) => (arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]);
+    const [socialLangTab, setSocialLangTab] = useState('Français');
 
+    // Compute social score: worst cases yield higher points; returns { score, max, percent }
+    const computeSocialScore = (form) => {
+        let score = 0;
+        let max = 0;
+
+        const add = (val, map, defaultVal = null) => {
+            if (val === '' || val == null) return; // unanswered
+            const pts = map[val] ?? (defaultVal != null ? defaultVal : 0);
+            score += pts;
+            max += Math.max(...Object.values(map));
+        };
+
+        // 1) Composition du foyer
+        add(form.foyerComposition, { pere_mere: 0, pere_seul: 5, mere_seule: 5, autre: 7 });
+
+        // Numeric: foyerCount, siblingCount (cap at ranges)
+        if (form.foyerCount !== '') {
+            const n = Math.max(0, Number(form.foyerCount) || 0);
+            const pts = n >= 7 ? 7 : n >= 5 ? 5 : n >= 3 ? 3 : 1;
+            score += pts; max += 7;
+        }
+        if (form.siblingCount !== '') {
+            const n = Math.max(0, Number(form.siblingCount) || 0);
+            const pts = n >= 5 ? 7 : n >= 3 ? 5 : n >= 1 ? 3 : 1;
+            score += pts; max += 7;
+        }
+
+        // 2) Parents statuses
+        add(form.fatherStatus, {
+            decede: 10,
+            sans_emploi: 9,
+            precaire: 8,
+            independant: 5,
+            salarie_prive: 4,
+            fonctionnaire: 3,
+            cadre: 2,
+            entrepreneur: 2,
+        });
+        add(form.motherStatus, {
+            decedee: 10,
+            sans_emploi: 9,
+            precaire: 8,
+            independante: 5,
+            salarie_prive: 4,
+            fonctionnaire: 3,
+            cadre: 2,
+            entrepreneur: 2,
+        });
+
+        // Income
+        add(form.incomeRange, { lt_3000: 10, '3000_6000': 7, '6000_10000': 4, gt_10000: 1 });
+
+        // 3) Logement
+        add(form.logementType, { social_irreg: 10, locataire: 6, autre: 5, proprietaire: 1 });
+        // Services: missing increases score
+        add(form.basicServices, { yes: 0, no: 6 });
+
+        // 4) Education levels
+        add(form.eduFather, { non_scolarise: 6, primaire: 4, college_lycee: 2, superieur: 0 });
+        add(form.eduMother, { non_scolarisee: 6, primaire: 4, college_lycee: 2, superieur: 0 });
+
+        // 5) Special situation
+        add(form.specialSituations, { handicap: 10, orphelin: 9, autre: 5, aucun: 0 });
+
+        // 6) Social category (by evaluator)
+        add(form.socialCategory, { vulnerable: 10, moyenne_inferieure: 6, moyenne: 3, favorisee: 0 });
+
+        const percent = max > 0 ? Math.round((score / max) * 100) : 0;
+        return { score, max, percent };
+    };
 
 
     // Compute derived game metrics for display
@@ -91,6 +190,27 @@ export default function ParticipantProfilePage() {
             </AppLayout>
         );
     }
+
+    const handelSubmit = () => {
+        const s = computeSocialScore(socialForm);
+        const payload = {
+            composition_foyer: socialForm.foyerComposition,
+            nombre_personnes: socialForm.foyerCount,
+            fratrie: socialForm.siblingCount,
+            pere_tuteur: socialForm.fatherStatus,
+            mere_tuteur: socialForm.motherStatus,
+            revenus_mensuels: socialForm.incomeRange,
+            type_logement: socialForm.logementType,
+            services_base: socialForm.basicServices,
+            education_pere: socialForm.eduFather,
+            education_mere: socialForm.eduMother,
+            aides_sociales: socialForm.socialAid,
+            situation_particuliere: socialForm.specialSituations,
+            lien_2m: socialForm.link2m,
+            categorie_sociale: socialForm.socialCategory,
+        };
+        router.patch(`/admin/participants/${participant.id}/social-status`, payload, { preserveScroll: true });
+    };
 
     const breadcrumbs = [
         {
@@ -225,6 +345,7 @@ export default function ParticipantProfilePage() {
     };
 
     const [isNextStepConfirmOpen, setIsNextStepConfirmOpen] = useState(false);
+    const { auth } = usePage().props;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -314,6 +435,252 @@ export default function ParticipantProfilePage() {
                                         </Button>
                                     </div>
                                 )}
+                                {(auth.user.role === 'social_manager' || auth.user.role === 'super_admin') && (
+                                    <Dialog>
+                                        <form>
+                                            <DialogTrigger asChild>
+                                                <Button variant="outline" className='flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]'>Social Status</Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="w-[40%] h-[90vh] overflow-auto">
+                                                <DialogHeader>
+                                                    <DialogTitle className="sr-only">Social Status</DialogTitle>
+                                                    <div className="-mx-6 -mt-6 mb-4 rounded-t-lg bg-[#212529] p-6 text-white">
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="rounded-lg bg-[#fee819] p-2">
+                                                                    <Users className="h-5 w-5 text-[#212529]" />
+                                                                </div>
+                                                                <div>
+                                                                    <div className="text-xl font-bold">Statut social</div>
+                                                                    <div className="text-sm text-gray-300">Renseignez les informations sociales du participant</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </DialogHeader>
+                                                <div className="grid gap-4">
+                                                    {/* 1. Situation familiale */}
+                                                    <div className="space-y-4 rounded-lg border p-4">
+                                                        <div className="flex items-center justify-between">
+                                                            <h3 className="text-sm font-semibold text-[#212529]">1. Situation familiale</h3>
+                                                        </div>
+                                                        <div className="grid gap-3">
+                                                            <Label className="text-sm font-medium text-[#212529]">Composition du foyer</Label>
+                                                            <Select value={socialForm.foyerComposition} onValueChange={(v) => setSocialForm(s => ({ ...s, foyerComposition: v }))}>
+                                                                <SelectTrigger className="rounded-md">
+                                                                    <SelectValue placeholder="Choisir" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="pere_mere">Père et Mère</SelectItem>
+                                                                    <SelectItem value="pere_seul">Père seul</SelectItem>
+                                                                    <SelectItem value="mere_seule">Mère seule</SelectItem>
+                                                                    <SelectItem value="autre">Autre (tuteur, grands-parents, etc.)</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                            {socialForm.foyerComposition === 'autre' && (
+                                                                <Input value={socialForm.foyerCompositionAutre} onChange={(e) => setSocialForm(s => ({ ...s, foyerCompositionAutre: e.target.value }))} placeholder="Précisez" />
+                                                            )}
+                                                        </div>
+                                                        <div className="grid gap-4 sm:grid-cols-2">
+                                                            <div className="space-y-1">
+                                                                <Label className="text-sm font-medium text-[#212529]">Nombre de personnes dans le foyer</Label>
+                                                                <Input type="number" min="0" value={socialForm.foyerCount} onChange={(e) => setSocialForm(s => ({ ...s, foyerCount: e.target.value }))} />
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                <Label className="text-sm font-medium text-[#212529]">Fratrie (nombre de frères/sœurs)</Label>
+                                                                <Input type="number" min="0" value={socialForm.siblingCount} onChange={(e) => setSocialForm(s => ({ ...s, siblingCount: e.target.value }))} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* 2. Situation professionnelle et revenus */}
+                                                    <div className="space-y-4 rounded-lg border p-4">
+                                                        <h3 className="text-sm font-semibold text-[#212529]">2. Situation professionnelle et revenus</h3>
+                                                        <div className="grid gap-3">
+                                                            <Label className="text-sm font-medium text-[#212529]">Père / Tuteur 1</Label>
+                                                            <Select value={socialForm.fatherStatus} onValueChange={(v) => setSocialForm(s => ({ ...s, fatherStatus: v }))}>
+                                                                <SelectTrigger className="rounded-md">
+                                                                    <SelectValue placeholder="Choisir" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="decede">Décédé</SelectItem>
+                                                                    <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
+                                                                    <SelectItem value="cadre">Cadre</SelectItem>
+                                                                    <SelectItem value="fonctionnaire">Fonctionnaire</SelectItem>
+                                                                    <SelectItem value="salarie_prive">Salarié secteur privé</SelectItem>
+                                                                    <SelectItem value="independant">Travailleur indépendant</SelectItem>
+                                                                    <SelectItem value="precaire">Journalier/précaire</SelectItem>
+                                                                    <SelectItem value="sans_emploi">Sans emploi</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                        <div className="grid gap-3">
+                                                            <Label className="text-sm font-medium text-[#212529]">Mère / Tuteur 2</Label>
+                                                            <Select value={socialForm.motherStatus} onValueChange={(v) => setSocialForm(s => ({ ...s, motherStatus: v }))}>
+                                                                <SelectTrigger className="rounded-md">
+                                                                    <SelectValue placeholder="Choisir" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="decedee">Décédée</SelectItem>
+                                                                    <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
+                                                                    <SelectItem value="cadre">Cadre</SelectItem>
+                                                                    <SelectItem value="fonctionnaire">Fonctionnaire</SelectItem>
+                                                                    <SelectItem value="salarie_prive">Salariée secteur privé</SelectItem>
+                                                                    <SelectItem value="independante">Travailleuse indépendante</SelectItem>
+                                                                    <SelectItem value="precaire">Journalière/précaire</SelectItem>
+                                                                    <SelectItem value="sans_emploi">Sans emploi</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                        <div className="grid gap-2">
+                                                            <Label className="text-sm font-medium text-[#212529]">Revenus mensuels estimés du foyer</Label>
+                                                            <Select value={socialForm.incomeRange} onValueChange={(v) => setSocialForm(s => ({ ...s, incomeRange: v }))}>
+                                                                <SelectTrigger className="rounded-md">
+                                                                    <SelectValue placeholder="Choisir" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="lt_3000">Moins de 3 000 MAD</SelectItem>
+                                                                    <SelectItem value="3000_6000">3 000 – 6 000 MAD</SelectItem>
+                                                                    <SelectItem value="6000_10000">6 000 – 10 000 MAD</SelectItem>
+                                                                    <SelectItem value="gt_10000">Plus de 10 000 MAD</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* 3. Logement */}
+                                                    <div className="space-y-4 rounded-lg border p-4">
+                                                        <h3 className="text-sm font-semibold text-[#212529]">3. Logement</h3>
+                                                        <div className="grid gap-3">
+                                                            <Label className="text-sm font-medium text-[#212529]">Type de logement</Label>
+                                                            <Select value={socialForm.logementType} onValueChange={(v) => setSocialForm(s => ({ ...s, logementType: v }))}>
+                                                                <SelectTrigger className="rounded-md">
+                                                                    <SelectValue placeholder="Choisir" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="proprietaire">Propriétaire</SelectItem>
+                                                                    <SelectItem value="locataire">Locataire</SelectItem>
+                                                                    <SelectItem value="social_irreg">Logement social / habitat non réglementaire</SelectItem>
+                                                                    <SelectItem value="autre">Autre</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                            {socialForm.logementType === 'autre' && (
+                                                                <Input value={socialForm.logementAutre} onChange={(e) => setSocialForm(s => ({ ...s, logementAutre: e.target.value }))} placeholder="Si autre, préciser" />
+                                                            )}
+                                                        </div>
+                                                        <div className="grid gap-2">
+                                                            <Label className="text-sm font-medium text-[#212529]">Accès aux services de base</Label>
+                                                            <div className="grid gap-2 sm:grid-cols-3">
+                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
+                                                                    <Checkbox checked={socialForm.basicServices.includes('eau')} onCheckedChange={() => setSocialForm(s => ({ ...s, basicServices: toggleArrayValue(s.basicServices, 'eau') }))} />
+                                                                    Eau
+                                                                </label>
+                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
+                                                                    <Checkbox checked={socialForm.basicServices.includes('electricite')} onCheckedChange={() => setSocialForm(s => ({ ...s, basicServices: toggleArrayValue(s.basicServices, 'electricite') }))} />
+                                                                    Électricité
+                                                                </label>
+                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
+                                                                    <Checkbox checked={socialForm.basicServices.includes('internet')} onCheckedChange={() => setSocialForm(s => ({ ...s, basicServices: toggleArrayValue(s.basicServices, 'internet') }))} />
+                                                                    Internet à domicile
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* 4. Niveau d’éducation des parents/tuteurs */}
+                                                    <div className="space-y-4 rounded-lg border p-4">
+                                                        <h3 className="text-sm font-semibold text-[#212529]">4. Niveau d’éducation des parents/tuteurs</h3>
+                                                        <div className="grid gap-4 sm:grid-cols-2">
+                                                            <div className="space-y-2">
+                                                                <Label className="text-sm font-medium text-[#212529]">Père / Tuteur 1</Label>
+                                                                <Select value={socialForm.eduFather} onValueChange={(v) => setSocialForm(s => ({ ...s, eduFather: v }))}>
+                                                                    <SelectTrigger className="rounded-md">
+                                                                        <SelectValue placeholder="Choisir" />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="non_scolarise">Non scolarisé</SelectItem>
+                                                                        <SelectItem value="primaire">Primaire</SelectItem>
+                                                                        <SelectItem value="college_lycee">Collège/lycée</SelectItem>
+                                                                        <SelectItem value="superieur">Supérieur</SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                <Label className="text-sm font-medium text-[#212529]">Mère / Tuteur 2</Label>
+                                                                <Select value={socialForm.eduMother} onValueChange={(v) => setSocialForm(s => ({ ...s, eduMother: v }))}>
+                                                                    <SelectTrigger className="rounded-md">
+                                                                        <SelectValue placeholder="Choisir" />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="non_scolarisee">Non scolarisée</SelectItem>
+                                                                        <SelectItem value="primaire">Primaire</SelectItem>
+                                                                        <SelectItem value="college_lycee">Collège/lycée</SelectItem>
+                                                                        <SelectItem value="superieur">Supérieur</SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* 5. Autres éléments sociaux */}
+                                                    <div className="space-y-4 rounded-lg border p-4">
+                                                        <h3 className="text-sm font-semibold text-[#212529]">5. Autres éléments sociaux</h3>
+                                                        <div className="grid gap-2">
+                                                            <Label className="text-sm font-medium text-[#212529]">Aides sociales reçues</Label>
+                                                            <Input value={socialForm.socialAid} onChange={(e) => setSocialForm(s => ({ ...s, socialAid: e.target.value }))} placeholder="RAMED, bourses, associations, etc." />
+                                                        </div>
+                                                        <div className="grid gap-2">
+                                                            <Label className="text-sm font-medium text-[#212529]">Situation particulière</Label>
+                                                            <div className="grid gap-2 sm:grid-cols-3">
+                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
+                                                                    <Checkbox checked={socialForm.specialSituations.includes('handicap')} onCheckedChange={() => setSocialForm(s => ({ ...s, specialSituations: toggleArrayValue(s.specialSituations, 'handicap') }))} />
+                                                                    Handicap
+                                                                </label>
+                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
+                                                                    <Checkbox checked={socialForm.specialSituations.includes('orphelin')} onCheckedChange={() => setSocialForm(s => ({ ...s, specialSituations: toggleArrayValue(s.specialSituations, 'orphelin') }))} />
+                                                                    Orphelin
+                                                                </label>
+                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
+                                                                    <Checkbox checked={socialForm.specialSituations.includes('autre')} onCheckedChange={() => setSocialForm(s => ({ ...s, specialSituations: toggleArrayValue(s.specialSituations, 'autre') }))} />
+                                                                    Autre
+                                                                </label>
+                                                            </div>
+                                                            {socialForm.specialSituations.includes('autre') && (
+                                                                <Input value={socialForm.specialOther} onChange={(e) => setSocialForm(s => ({ ...s, specialOther: e.target.value }))} placeholder="Préciser l'autre situation" />
+                                                            )}
+                                                        </div>
+                                                        <div className="grid gap-2">
+                                                            <Label className="text-sm font-medium text-[#212529]">Lien avec 2M</Label>
+                                                            <Input value={socialForm.link2m} onChange={(e) => setSocialForm(s => ({ ...s, link2m: e.target.value }))} />
+                                                        </div>
+                                                    </div>
+
+                                                    {/* 6. Catégorie sociale */}
+                                                    <div className="space-y-3 rounded-lg border p-4">
+                                                        <h3 className="text-sm font-semibold text-[#212529]">6. Catégorie sociale (évaluateur LionsGEEK)</h3>
+                                                        <Select value={socialForm.socialCategory} onValueChange={(v) => setSocialForm(s => ({ ...s, socialCategory: v }))}>
+                                                            <SelectTrigger className="rounded-md">
+                                                                <SelectValue placeholder="Choisir" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="vulnerable">Vulnérable</SelectItem>
+                                                                <SelectItem value="moyenne_inferieure">Moyenne inférieure</SelectItem>
+                                                                <SelectItem value="moyenne">Moyenne</SelectItem>
+                                                                <SelectItem value="favorisee">Favorisée</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+                                                </div>
+                                                <DialogFooter>
+                                                    <DialogClose asChild>
+                                                        <Button variant="outline">Cancel</Button>
+                                                    </DialogClose>
+                                                    <Button type="button" onClick={handelSubmit}>Save</Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </form>
+                                    </Dialog>
+                                )}
                             </div>
                         </div>
 
@@ -359,6 +726,17 @@ export default function ParticipantProfilePage() {
 
                                 <div className="flex-1">
                                     <h1 className="text-3xl font-bold mb-2">{participant.full_name}</h1>
+                                    {/* Social Vulnerability Score */}
+                                    {(auth.user.role === 'social_manager' || auth.user.role === 'super_admin') && (() => {
+                                        const s = computeSocialScore(socialForm);
+                                        return (
+                                            <div className="mb-3 inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1 text-white">
+                                                <TrendingUp className="h-4 w-4 text-[#fee819]" />
+                                                <span className="text-sm">Social Score:</span>
+                                                <span className="text-sm font-semibold">{s.percent}%</span>
+                                            </div>
+                                        );
+                                    })()}
                                     <div className="flex flex-wrap gap-2 mb-3">
                                         <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1 font-medium`}>
                                             {participant.current_step.replaceAll('_', ' ')}

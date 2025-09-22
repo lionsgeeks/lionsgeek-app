@@ -71,6 +71,29 @@ class Participant extends Model
         // Step change tracking
         'last_step_changed_by',
         'last_step_changed_at',
+
+        // Social status fields (match migration French column names)
+        'composition_foyer',
+        'nombre_personnes',
+        'fratrie',
+        'pere_tuteur',
+        'mere_tuteur',
+        'revenus_mensuels',
+        'type_logement',
+        'services_base',
+        'education_pere',
+        'education_mere',
+        'aides_sociales',
+        'situation_particuliere',
+        'lien_2m',
+        'categorie_sociale',
+    ];
+
+    protected $casts = [
+        'services_base' => 'array',
+        'situation_particuliere' => 'array',
+        'nombre_personnes' => 'integer',
+        'fratrie' => 'integer',
     ];
 
     // Status constants

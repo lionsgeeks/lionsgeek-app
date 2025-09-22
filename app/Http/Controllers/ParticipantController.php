@@ -62,6 +62,43 @@ class ParticipantController extends Controller
         ]);
     }
 
+    public function updateSocialStatus(Request $request, Participant $participant)
+    {
+        $validated = $request->validate([
+            // 1. Situation familiale
+            'composition_foyer' => 'nullable|string|in:pere_mere,pere_seul,mere_seule,autre',
+            'nombre_personnes' => 'nullable|integer',
+            'fratrie' => 'nullable|integer',
+
+            // 2. Situation professionnelle et revenus
+            'pere_tuteur' => 'nullable|string|in:decede,entrepreneur,cadre,fonctionnaire,salarie_prive,independant,precaire,sans_emploi',
+            'mere_tuteur' => 'nullable|string|in:decedee,entrepreneur,cadre,fonctionnaire,salarie_prive,independante,precaire,sans_emploi',
+            'revenus_mensuels' => 'nullable|string|in:lt_3000,3000_6000,6000_10000,gt_10000',
+
+            // 3. Logement
+            'type_logement' => 'nullable|string|in:proprietaire,locataire,social_irreg,autre',
+            'services_base' => 'nullable|array',
+            'services_base.*' => 'in:eau,electricite,internet',
+
+            // 4. Niveau d’éducation
+            'education_pere' => 'nullable|string|in:non_scolarise,primaire,college_lycee,superieur',
+            'education_mere' => 'nullable|string|in:non_scolarisee,primaire,college_lycee,superieur',
+
+            // 5. Autres éléments sociaux
+            'aides_sociales' => 'nullable|string',
+            'situation_particuliere' => 'nullable|array',
+            'situation_particuliere.*' => 'in:handicap,orphelin,autre',
+            'lien_2m' => 'nullable|string',
+
+            // 6. Catégorie sociale
+            'categorie_sociale' => 'nullable|string|in:vulnerable,moyenne_inferieure,moyenne,favorisee',
+        ]);
+
+        $participant->update($validated);
+
+        return back()->with('success', 'Social status updated');
+    }
+
     /**
      * Show the form for creating a new resource.
      */
