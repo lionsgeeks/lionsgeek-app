@@ -170,13 +170,10 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 				} else {
 					switch (selectedStep) {
 						case 'info_session':
-							matchesStep = participant?.info_session != null;
+							matchesStep = participant?.current_step === 'info_session';
 							break;
 						case 'interview':
-							matchesStep = participant?.current_step && [
-								'interview', 'interview_pending', 'interview_failed',
-								'jungle', 'jungle_failed', 'coding_school', 'media_school'
-							].includes(participant.current_step);
+							matchesStep = participant?.current_step === 'interview';
 							break;
 						case 'interview_pending':
 							matchesStep = participant?.current_step === 'interview_pending';
@@ -185,7 +182,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 							matchesStep = participant?.current_step === 'interview_failed';
 							break;
 						case 'jungle':
-							matchesStep = ['jungle', 'jungle_failed'].includes(participant?.current_step);
+							matchesStep = participant?.current_step === 'jungle';
 							break;
 						case 'jungle_failed':
 							matchesStep = participant?.current_step === 'jungle_failed';
@@ -391,8 +388,8 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 				{/* Filter button opens modal */}
 				<Button
 					onClick={openFilterModal}
-					variant="outline"
-					className="rounded-lg border border-gray-300 bg-white text-[#212529] hover:bg-gray-50"
+					variant={hasActiveFilters ? "default" : "outline"}
+					className={`rounded-lg ${hasActiveFilters ? 'bg-[#fee819] text-[#212529] border-0 hover:bg-[#fee819]' : 'border border-gray-300 bg-white text-[#212529] hover:bg-gray-50'}`}
 				>
 					<Filter className="mr-2 h-4 w-4" />
 					Filter
