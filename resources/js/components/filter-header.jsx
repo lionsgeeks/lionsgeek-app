@@ -160,7 +160,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
             const matchesGender = !selectedGender || selectedGender === 'All' ||
                 participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
 
-			// Step filter 
+			// Step filter
 			let matchesStep = true;
 			if (selectedStep && selectedStep !== 'All') {
 				if (isStatusValue(selectedStep)) {
@@ -409,7 +409,42 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                         Reset
                     </Button>
                 )}
+                    <div className="">
+                                        <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+                                            <DialogTrigger asChild>
+                                                <Button className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]">
+                                                    Invite People
+                                                </Button>
+                                            </DialogTrigger>
 
+                                            <DialogContent className="max-w-xl flex flex-col justify-center items-center ">
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-2xl font-bold text-[#212529]">
+                                                        Invite People to
+                                                    </DialogTitle>
+                                                </DialogHeader>
+
+                                                <div className="grid grid-cols-2 gap-6 items-center justify-center">
+                                                    <InviteToJungle infosession={infosession} closeParent={() => setIsInviteOpen(false)} />
+                                                    <InviteToSchool infosession={infosession} closeParent={() => setIsInviteOpen(false)} />
+                                                </div>
+
+                                                {/* Container to push the button to bottom-right */}
+                                                <div className="w-full flex justify-end ">
+                                                    <Button
+                                                        onClick={() => setIsInviteOpen(false)}
+                                                        className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]"
+                                                    >
+                                                        Close
+                                                    </Button>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
+
+
+                                    </div>
+
+                    
                 {/* Action Buttons for Infosession Detail Page */}
                 {!infosessions && (
                     <div className="ml-auto flex gap-3">
