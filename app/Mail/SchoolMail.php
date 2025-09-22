@@ -22,20 +22,25 @@ class SchoolMail extends Mailable implements ShouldQueue
         $this->day = $day;
         $this->school = $school;
         $this->id = $id;
-
-    
     }
-     /**
+    /**
      */
     public function build()
     {
-        return $this->subject('LionsGeek School Invitation')
+        $fromEmail = match (strtolower($this->school)) {
+            'coding' => 'coding@mylionsgeek.ma',
+            'media'  => 'media@mylionsgeek.ma',
+            default  => config('mail.from.address'),
+        };
+
+        return $this->from($fromEmail, 'LionsGeek School')
+            ->subject('LionsGeek School Invitation')
             ->view($this->day ? 'maizzlMails.schoolMail' : 'maizzlMails.schoolMail2')
             ->with([
                 'full_name' => $this->full_name,
-                'day' => $this->day,
-                'school' => $this->school,
-                'id' => $this->id,
+                'day'       => $this->day,
+                'school'    => $this->school,
+                'id'        => $this->id,
             ]);
     }
 }

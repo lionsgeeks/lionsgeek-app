@@ -1084,9 +1084,9 @@ class ParticipantController extends Controller
             $info = InfoSession::where('id', $request->infosession_id)->first();
             $formationType = $info->formation;
             if ($formationType == 'Media') {
-                $emailRecipient = 'Media';
+                $emailRecipient = 'media@mylionsgeek.ma';
             } elseif ($formationType == 'Coding') {
-                $emailRecipient = 'Coding';
+                $emailRecipient = 'coding@mylionsgeek.ma';
             }
             $divided = ceil($candidats->count() / count($request->dates));
             foreach ($request->dates as $time) {
@@ -1110,11 +1110,10 @@ class ParticipantController extends Controller
         try {
             $infoSession = InfoSession::where('id', $request->query('infosession_id'))->first();
             $traning = $infoSession->formation;
-            $emailRecipient = 'info'; // Default mailer
             if ($traning == 'Media') {
-                $emailRecipient = 'media';
+                $emailRecipient = 'media@mylionsgeek.ma';
             } elseif ($traning == 'Coding') {
-                $emailRecipient = 'coding';
+                $emailRecipient = 'coding@mylionsgeek.ma';
             }
 
             $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->query('infosession_id'))->get();
@@ -1191,7 +1190,7 @@ class ParticipantController extends Controller
 
                     $school = $candidat->current_step == "coding_school" ? "coding" : "media";
                     $id = Crypt::encryptString($candidat->id);
-                    $mailer = $school == 'coding' ? 'coding' : ($school == 'media' ? 'media' : 'info');
+                    $mailer = $school == 'Coding' ? 'coding@mylionsgeek.ma' : ($school == 'Media' && 'media@mylionsgeek.ma' );
                     Mail::mailer($mailer)->to($candidat->email)->queue(new SchoolMail($candidat->full_name, $id, $day, $school));
                     $successCount++;
 

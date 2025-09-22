@@ -27,16 +27,22 @@ class JungleMail extends Mailable implements ShouldQueue
         $this->traning = $traning;
         $this->id = $id;
     }
-    
     public function build()
     {
-        return $this->subject('Invitation to Jungle')
+        $fromEmail = match (strtolower($this->traning)) {
+            'coding' => 'coding@mylionsgeek.ma',
+            'media'  => 'media@mylionsgeek.ma',
+            default  => config('mail.from.address'), 
+        };
+
+        return $this->from($fromEmail, 'LionsGeek Jungle')
+            ->subject('Invitation to Jungle')
             ->view('maizzlMails.jungleMail')
             ->with([
                 'full_name' => $this->full_name,
-                'day' => $this->day,
-                'traning' => $this->traning,
-                'id' => $this->id,
+                'day'       => $this->day,
+                'traning'   => $this->traning,
+                'id'        => $this->id,
             ]);
     }
 }
