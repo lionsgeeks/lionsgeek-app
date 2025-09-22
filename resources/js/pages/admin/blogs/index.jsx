@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { BookOpen, CalendarIcon, Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import AdminPageHeader from '../components/AdminPageHeader';
@@ -21,7 +21,7 @@ export default function BlogAdmin() {
 
     const totalBlogs = blogs?.length || 0;
     const onDelete = () => {
-        destroy(route('blogs.destroy', selectedBlog), {
+        destroy(route('blogs.destroy', selectedBlog.id), {
             onSuccess: () => {
                 setIsOpen(false);
             },
@@ -42,12 +42,13 @@ export default function BlogAdmin() {
                     title="Blogs"
                     description="Manage blog posts created and published on your platform"
                     actions={
-                        <a href="/admin/blogs/create">
-                            <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                            <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
+                                    onClick={() => router.visit('/admin/blogs/create')}>
+
                                 <Plus className="mr-2 h-4 w-4 lg:flex hidden" />
                                 Write a New Blog
                             </Button>
-                        </a>
+                        
                     }
                 />
 
@@ -79,11 +80,12 @@ export default function BlogAdmin() {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <a href={`blogs/${blog.id}`}>
-                                                <button className="transform rounded-lg border bg-white p-2 transition-all duration-200 ease-in-out hover:scale-110 hover:bg-gray-100">
+                                            
+                                                <button    onClick={() => router.visit(route('blogs.show', blog.id))}  
+                                                      className="transform rounded-lg border bg-white p-2 transition-all duration-200 ease-in-out hover:scale-110 hover:bg-gray-100">
                                                     <Edit className="h-4 w-4" />
                                                 </button>
-                                            </a>
+
                                             <button
                                                 className="transform cursor-pointer rounded-lg border p-2 text-red-600 transition-all duration-200 ease-in-out hover:scale-110 hover:text-red-800"
                                                 onClick={() => onConfirmDelete(blog.id)}
