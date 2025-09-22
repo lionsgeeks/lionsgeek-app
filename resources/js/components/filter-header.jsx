@@ -160,40 +160,43 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
             const matchesGender = !selectedGender || selectedGender === 'All' ||
                 participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
 
-			// Step filter 
-			let matchesStep = true;
-			if (selectedStep && selectedStep !== 'All') {
-				if (isStatusValue(selectedStep)) {
-					if (selectedStep === 'all') {
-						matchesStep = true;
-					} else {
-						matchesStep = participant?.status === selectedStep;
-					}
-				} else {
-					switch (selectedStep) {
-						case 'info_session':
-							matchesStep = participant?.current_step === 'info_session';
-							break;
-						case 'interview':
-							matchesStep = participant?.current_step === 'interview';
-							break;
-						case 'interview_pending':
-							matchesStep = participant?.current_step === 'interview_pending';
-							break;
-						case 'interview_failed':
-							matchesStep = participant?.current_step === 'interview_failed';
-							break;
-						case 'jungle':
-							matchesStep = participant?.current_step === 'jungle';
-							break;
-						case 'jungle_failed':
-							matchesStep = participant?.current_step === 'jungle_failed';
-							break;
-						default:
-							matchesStep = participant?.current_step === selectedStep;
-					}
-				}
-			}
+            // Step filter
+            let matchesStep = true;
+            if (selectedStep && selectedStep !== 'All') {
+                if (isStatusValue(selectedStep)) {
+                    if (selectedStep === 'all') {
+                        matchesStep = true;
+                    } else {
+                        matchesStep = participant?.status === selectedStep;
+                    }
+                } else {
+                    switch (selectedStep) {
+                        case 'info_session':
+                            matchesStep = participant?.info_session != null;
+                            break;
+                        case 'interview':
+                            matchesStep = participant?.current_step && [
+                                'interview', 'interview_pending', 'interview_failed',
+                                'jungle', 'jungle_failed', 'coding_school', 'media_school'
+                            ].includes(participant.current_step);
+                            break;
+                        case 'interview_pending':
+                            matchesStep = participant?.current_step === 'interview_pending';
+                            break;
+                        case 'interview_failed':
+                            matchesStep = participant?.current_step === 'interview_failed';
+                            break;
+                        case 'jungle':
+                            matchesStep = ['jungle', 'jungle_failed'].includes(participant?.current_step);
+                            break;
+                        case 'jungle_failed':
+                            matchesStep = participant?.current_step === 'jungle_failed';
+                            break;
+                        default:
+                            matchesStep = participant?.current_step === selectedStep;
+                    }
+                }
+            }
 
             return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
         }) || [];
@@ -387,15 +390,51 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                     />
                 </div>
 
-				{/* Filter button opens modal */}
-				<Button
-					onClick={openFilterModal}
-					variant={hasActiveFilters ? "default" : "outline"}
-					className={`rounded-lg ${hasActiveFilters ? 'bg-[#fee819] text-[#212529] border-0 hover:bg-[#fee819]' : 'border border-gray-300 bg-white text-[#212529] hover:bg-gray-50'}`}
-				>
-					<Filter className="mr-2 h-4 w-4" />
-					Filter
-				</Button>
+                {/* Filter button opens modal */}
+                <Button
+                    onClick={openFilterModal}
+                    variant="outline"
+                    className="rounded-lg border border-gray-300 bg-white text-[#212529] hover:bg-gray-50"
+                >
+                    <Filter className="mr-2 h-4 w-4" />
+                    Filter
+                </Button>
+                {/* Email Invitation Section in Modal */}
+                <div className="">
+                    <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]">
+                                Invite People
+                            </Button>
+                        </DialogTrigger>
+
+                        <DialogContent className="max-w-xl flex flex-col justify-center items-center ">
+                            <DialogHeader>
+                                <DialogTitle className="text-2xl font-bold text-[#212529]">
+                                    Invite People to
+                                </DialogTitle>
+                            </DialogHeader>
+
+                            <div className="grid grid-cols-2 gap-6 items-center justify-center">
+                                <InviteToJungle infosession={infosession} closeParent={() => setIsInviteOpen(false)} />
+                                <InviteToSchool infosession={infosession} closeParent={() => setIsInviteOpen(false)} />
+                            </div>
+
+                            {/* Container to push the button to bottom-right */}
+                            <div className="w-full flex justify-end ">
+                                <Button
+                                    onClick={() => setIsInviteOpen(false)}
+                                    className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]"
+                                >
+                                    Close
+                                </Button>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+
+
+                </div>
+
 
                 {/* Reset Button - next to Filter */}
                 {hasActiveFilters && (
