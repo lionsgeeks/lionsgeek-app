@@ -117,6 +117,13 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],
+        
+        'mail' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/emails.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
 
         'null' => [
             'driver' => 'monolog',

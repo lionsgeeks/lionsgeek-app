@@ -1,11 +1,14 @@
+import { router } from '@inertiajs/react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film, UserCheck, Calendar, Filter } from 'lucide-react';
+import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film, UserCheck, Calendar, Filter, School } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import InterviewDialog from './interviewDialog';
 import InviteDialog from './inviteDialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 
 const FilterHeader = ({ participants = [], infosession, infosessions = [], setFiltredParticipants, statusCounts = {} }) => {
 	const [search, setSearch] = useState('');
@@ -17,6 +20,10 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 	const [dateSort, setDateSort] = useState('');
 	const [copy, setCopy] = useState(true);
 	const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+	const [selectedDelay, setSelectedDelay] = useState(30);
+    const [selectedReminderType, setSelectedReminderType] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
 	const isStatusValue = (value) => ['approved', 'pending', 'rejected', 'all'].includes(value);
 
@@ -247,6 +254,50 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		}
 	};
 
+	const handleCardSelect = (cardId) => {
+		setSelectedReminderType(cardId);
+	};
+
+
+const handleReminderSubmit = async (e) => {
+	// alert('d')
+    e.preventDefault();
+    if (!selectedReminderType) return;
+    
+    setIsLoading(true);
+    try {
+        const targetParticipants = filtredParticipans.filter(p => {
+            switch(selectedReminderType) {
+                case 'info_session':
+                    return !p?.info_session;
+                case 'jungle':
+                    return p?.current_step === 'jungle';
+                case 'school':
+                    return ['coding_school', 'media_school'].includes(p?.current_step);
+                default:
+                    return false;
+            }
+        });
+
+        const response = await router.post('/send-reminder', {
+            reminder_type: selectedReminderType,
+            participants: targetParticipants.map(p => p.id),
+            delay_minutes: 0,
+            send_immediately: true
+        });
+        
+        setSelectedReminderType(null);
+        alert('✅ Reminders queued successfully!');
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error sending reminders');
+    } finally {
+        setIsLoading(false);
+    }
+};
+
+
 	return (
 		<div className="relative space-y-4">
 			{/* Copy Emails aligned with title (top-right) */}
@@ -464,6 +515,94 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 							<InviteDialog infosession={infosession} step={'school'} />
 						</div>
 					)}
+				</div>
+
+                {/* button reminder */}
+                <div className="">
+					<Dialog>
+						<form onSubmit={handleReminderSubmit}>
+							<DialogTrigger asChild>
+								<Button className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
+									Reminder
+								</Button>
+							</DialogTrigger>
+							<DialogContent className="sm:max-w-[700px] py-5 px-5">
+								<DialogHeader>
+									<DialogTitle>Send Reminder</DialogTitle>
+									<DialogDescription>Select session type for immediate reminder</DialogDescription>
+								</DialogHeader>
+
+								{/* Cards selection فقط - بلا delay */}
+								<div className="flex justify-evenly items-center gap-4 py-5">
+									<div 
+										onClick={() => handleCardSelect('info_session')}
+										className={`shadow-lg group rounded-lg w-45 h-45 flex flex-col gap-6 justify-center items-center border border-dashed transition-all duration-400 ease-in-out hover:scale-105 cursor-pointer ${
+											selectedReminderType === 'info_session' 
+												? 'bg-[#212529] text-white border-[#212529]' 
+												: 'bg-transparent border-black/20 text-[#212529] hover:bg-[#212529] hover:text-white'
+										}`}
+									>
+										<Presentation className={`w-10 h-10 transition-colors duration-400 ${
+											selectedReminderType === 'info_session' ? 'text-white' : 'text-[#212529] group-hover:text-white'
+										}`}/>
+										<DialogTitle>Info Session</DialogTitle>
+										<p className="text-xs opacity-80">
+											{filtredParticipans.filter(p => !p?.info_session).length} participants
+										</p>
+									</div>
+
+									<div 
+										onClick={() => handleCardSelect('jungle')}
+										className={`shadow-lg group rounded-lg w-45 h-45 flex flex-col gap-6 justify-center items-center border border-dashed transition-all duration-400 ease-in-out hover:scale-105 cursor-pointer ${
+											selectedReminderType === 'jungle' 
+												? 'bg-[#212529] text-white border-[#212529]' 
+												: 'bg-transparent border-black/20 text-[#212529] hover:bg-[#212529] hover:text-white'
+										}`}
+									>
+										<Mountain className={`w-10 h-10 transition-colors duration-400 ${
+											selectedReminderType === 'jungle' ? 'text-white' : 'text-[#212529] group-hover:text-white'
+										}`}/>
+										<DialogTitle>Jungle</DialogTitle>
+										<p className="text-xs opacity-80">
+											{filtredParticipans.filter(p => p?.current_step === 'jungle').length} participants
+										</p>
+									</div>
+
+									<div 
+										onClick={() => handleCardSelect('school')}
+										className={`shadow-lg group rounded-lg w-45 h-45 flex flex-col gap-6 justify-center items-center border border-dashed transition-all duration-400 ease-in-out hover:scale-105 cursor-pointer ${
+											selectedReminderType === 'school' 
+												? 'bg-[#212529] text-white border-[#212529]' 
+												: 'bg-transparent border-black/20 text-[#212529] hover:bg-[#212529] hover:text-white'
+										}`}
+									>
+										<School className={`w-10 h-10 transition-colors duration-400 ${
+											selectedReminderType === 'school' ? 'text-white' : 'text-[#212529] group-hover:text-white'
+										}`}/>
+										<DialogTitle>School</DialogTitle>
+										<p className="text-xs opacity-80">
+											{filtredParticipans.filter(p => ['coding_school', 'media_school'].includes(p?.current_step)).length} participants
+										</p>
+									</div>
+								</div>
+
+								<DialogFooter>
+									<DialogClose asChild>
+										<Button variant="outline" className="transform rounded-lg transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#f0f0f0]">
+											Cancel
+										</Button>
+									</DialogClose>
+									<Button 
+										onClick={handleReminderSubmit}
+										disabled={!selectedReminderType || isLoading}
+										className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529] disabled:opacity-50"
+									>
+										{isLoading ? 'Sending...' : 'Send Now'}
+									</Button>
+								</DialogFooter>
+							</DialogContent>
+						</form>
+					</Dialog>
 				</div>
 			</div>
 

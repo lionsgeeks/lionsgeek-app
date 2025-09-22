@@ -9,7 +9,10 @@ use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MessagesExport;
 use App\Http\Controllers\InfosessionController;
+use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\UserController;
+use App\Jobs\SendInfoSessionReminderJob;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
@@ -79,6 +82,22 @@ Route::get('/apiactive', function () {
     $routes = config('active-routes');
     return Inertia::render('apiactive', compact('routes'));
 });
+Route::post('/send-reminder', [ReminderController::class, 'sendReminder'])
+    ->name('send.reminder');
+    
+Route::get('/test-reminder-jobs', function () {
+    $participants = User::whereNull('info_session_id')->take(2)->get();
+    
+    if ($participants->isEmpty()) {
+        return "No test participants found.";
+    }
+    
+    foreach ($participants as $participant) {
+        SendInfoSessionReminderJob::dispatch($participant);
+    }
+    
+    return "✅ {$participants->count()} test jobs dispatched! Run: php artisan queue:work";
+})->name('test.reminder.jobs');
 
 
 require __DIR__ . '/settings.php';
