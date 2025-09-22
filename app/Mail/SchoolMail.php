@@ -22,13 +22,18 @@ class SchoolMail extends Mailable implements ShouldQueue
         $this->day = $day;
         $this->school = $school;
         $this->id = $id;
+
+        // Route to specific queue based on school type
+        $queueName = strtolower($school) === 'coding' ? 'coding' :
+                    (strtolower($school) === 'media' ? 'media' : 'default');
+        $this->onQueue($queueName);
     }
      /**
      */
     public function build()
     {
         return $this->subject('LionsGeek School Invitation')
-            ->view($this->day ? 'maizzlMails.schoolMail' : 'maizzlMails.schoolMail2 ')
+            ->view($this->day ? 'maizzlMails.schoolMail' : 'maizzlMails.schoolMail2')
             ->with([
                 'full_name' => $this->full_name,
                 'day' => $this->day,

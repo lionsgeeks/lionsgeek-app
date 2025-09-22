@@ -994,31 +994,119 @@ class ParticipantController extends Controller
     }
     public function toJungle(Request $request)
     {
-        $traning = InfoSession::where('id', $request->query('infosession_id'))->first()->formation;
-        if ($traning == 'Media') {
-            $emailRecipient = 'Media';
-        } elseif ($traning == 'Coding') {
-            $emailRecipient = 'Coding';
+        try {
+            $traning = InfoSession::where('id', $request->query('infosession_id'))->first()->formation;
+            if ($traning == 'Media') {
+                $emailRecipient = 'media';
+            } elseif ($traning == 'Coding') {
+                $emailRecipient = 'coding';
+            } else {
+                $emailRecipient = 'info';
+            }
+            $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->query('infosession_id'))->get();
+            $day = $request->query('date');
+
+            $successCount = 0;
+            $errorCount = 0;
+
+            foreach ($candidats as $candidat) {
+                try {
+                    // Validate email address
+                    if (!filter_var($candidat->email, FILTER_VALIDATE_EMAIL)) {
+                        Log::warning("Invalid email address for participant {$candidat->id}: {$candidat->email}");
+                        $errorCount++;
+                        continue;
+                    }
+
+                    $id = Crypt::encryptString($candidat->id);
+                    Mail::mailer($emailRecipient)->to($candidat->email)->queue(new JungleMail($candidat->full_name, $id, $day, $traning));
+                    $successCount++;
+
+                    Log::info("Jungle email queued for participant {$candidat->id} ({$candidat->email})");
+                } catch (\Exception $e) {
+                    Log::error("Failed to queue jungle email for participant {$candidat->id}: " . $e->getMessage());
+                    $errorCount++;
+                }
+            }
+
+            if ($successCount > 0) {
+                flash()
+                    ->option('position', 'bottom-right')
+                    ->success("Successfully queued {$successCount} jungle emails.");
+            }
+
+            if ($errorCount > 0) {
+                flash()
+                    ->option('position', 'bottom-right')
+                    ->warning("{$errorCount} emails failed to queue. Check logs for details.");
+            }
+
+        } catch (\Exception $e) {
+            Log::error("Error in toJungle function: " . $e->getMessage());
+            flash()
+                ->option('position', 'bottom-right')
+                ->error("Failed to send jungle emails. Please try again.");
         }
-        $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->query('infosession_id'))->get();
-        $day = $request->query('date');
-        foreach ($candidats as $candidat) {
-            $id = Crypt::encryptString($candidat->id);
-            Mail::mailer($emailRecipient)->to($candidat->email)->send(new JungleMail($candidat->full_name, $id, $day, $traning));
-        }
+
         return back();
     }
     public function toSchool(Request $request)
     {
-        $candidats = Participant::where('info_session_id', $request->query('infosession_id'))->where('current_step', 'coding_school')->orWhere('current_step', 'media_school')->get();
-        // If "Send" button is clicked, validate that a date is provided
-        // If "Send Without Date" button is clicked, set date to null
-        $day = $request->query('submit_without_date') ? null : $request->query('date');
-        foreach ($candidats as $key => $candidat) {
-            $school = $candidat->current_step == "coding_school" ? "Coding" : "Media";
-            $id = Crypt::encryptString($candidat->id);
-            Mail::to($candidat->email)->send(new SchoolMail($candidat->full_name, $id, $day, $school));
+        try {
+            $candidats = Participant::where('info_session_id', $request->query('infosession_id'))
+                ->where(function($query) {
+                    $query->where('current_step', 'coding_school')
+                          ->orWhere('current_step', 'media_school');
+                })
+                ->get();
+            // If "Send" button is clicked, validate that a date is provided
+            // If "Send Without Date" button is clicked, set date to null
+            $day = $request->query('submit_without_date') ? null : $request->query('date');
+
+            $successCount = 0;
+            $errorCount = 0;
+
+            foreach ($candidats as $candidat) {
+                try {
+                    // Validate email address
+                    if (!filter_var($candidat->email, FILTER_VALIDATE_EMAIL)) {
+                        Log::warning("Invalid email address for participant {$candidat->id}: {$candidat->email}");
+                        $errorCount++;
+                        continue;
+                    }
+
+                    $school = $candidat->current_step == "coding_school" ? "coding" : "media";
+                    $id = Crypt::encryptString($candidat->id);
+                    $mailer = $school == 'coding' ? 'coding' : ($school == 'media' ? 'media' : 'info');
+                    Mail::mailer($mailer)->to($candidat->email)->queue(new SchoolMail($candidat->full_name, $id, $day, $school));
+                    $successCount++;
+
+                    Log::info("School email queued for participant {$candidat->id} ({$candidat->email})");
+                } catch (\Exception $e) {
+                    Log::error("Failed to queue school email for participant {$candidat->id}: " . $e->getMessage());
+                    $errorCount++;
+                }
+            }
+
+            if ($successCount > 0) {
+                flash()
+                    ->option('position', 'bottom-right')
+                    ->success("Successfully queued {$successCount} school emails.");
+            }
+
+            if ($errorCount > 0) {
+                flash()
+                    ->option('position', 'bottom-right')
+                    ->warning("{$errorCount} emails failed to queue. Check logs for details.");
+            }
+
+        } catch (\Exception $e) {
+            Log::error("Error in toSchool function: " . $e->getMessage());
+            flash()
+                ->option('position', 'bottom-right')
+                ->error("Failed to send school emails. Please try again.");
         }
+
         return back();
     }
     public function confirmationJungle($full_name, $id)
