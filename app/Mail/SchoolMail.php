@@ -23,10 +23,7 @@ class SchoolMail extends Mailable implements ShouldQueue
         $this->school = $school;
         $this->id = $id;
 
-        // Route to specific queue based on school type
-        $queueName = strtolower($school) === 'coding' ? 'coding' :
-                    (strtolower($school) === 'media' ? 'media' : 'default');
-        $this->onQueue($queueName);
+    
     }
      /**
      */

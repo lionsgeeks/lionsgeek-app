@@ -995,14 +995,15 @@ class ParticipantController extends Controller
     public function toJungle(Request $request)
     {
         try {
-            $traning = InfoSession::where('id', $request->query('infosession_id'))->first()->formation;
+            $infoSession = InfoSession::where('id', $request->query('infosession_id'))->first();
+            $traning = $infoSession->formation;
+            $emailRecipient = 'info'; // Default mailer
             if ($traning == 'Media') {
                 $emailRecipient = 'media';
             } elseif ($traning == 'Coding') {
                 $emailRecipient = 'coding';
-            } else {
-                $emailRecipient = 'info';
             }
+
             $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->query('infosession_id'))->get();
             $day = $request->query('date');
 
