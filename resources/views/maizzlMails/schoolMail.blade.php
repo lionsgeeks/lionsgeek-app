@@ -81,7 +81,7 @@
                   </p>
                   <div role="separator" style="line-height: 4px">&zwj;</div>
                   <div style="text-align: center">
-                    <a href="http://192.168.100.136:8000/participant/confirmation/school/{{ $full_name }}/{{$id}}" style="padding: 10px 20px; background-color: #000; color: #fff; text-decoration: none; border-radius: 10px">
+                    <a href="https://lionsgeek.ma/participant/confirmation/school/{{ $full_name }}/{{$id}}" style="padding: 10px 20px; background-color: #000; color: #fff; text-decoration: none; border-radius: 10px">
                       Click To Confirm Your Attendance
                     </a>
                   </div>
@@ -103,7 +103,7 @@
                                         البرمجة إلى إنشاء محتوى مؤثر، الرحلة ديالك كاتبدا هنا.
                                     </p>  <div role="separator" style="line-height: 4px">&zwj;</div>                                    <p style="font-size: 16px; line-height: 24px; color: #475569">تابع معنا التحديثات، ووجد راسك لتجربة مميزة ما غتنساهاش!</p>
                                     <div style="text-align: center">
-                                        <a href="http://192.168.100.136:8000/participant/confirmation/school/{{ $full_name }}/{{$id}}" style="
+                                        <a href="https://lionsgeek.ma/participant/confirmation/school/{{ $full_name }}/{{$id}}" style="
                                                 padding: 10px 20px;
                                                 background-color: #000;
                                                 color: #fff;
