@@ -22,6 +22,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/participants/{participant}/approve', [ParticipantController::class, 'approve'])->name('participants.approve');
     Route::post('/participants/{participant}/reject', [ParticipantController::class, 'reject'])->name('participants.reject');
 
+    // Social status update
+    Route::patch('/participants/{participant}/social-status', [ParticipantController::class, 'updateSocialStatus'])->name('participants.social-status');
+
     // route delete
     Route::delete('/participants/{id}', [ParticipantController::class, 'destroy'])
     ->name('participants.destroy');

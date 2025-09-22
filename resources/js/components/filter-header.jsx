@@ -376,7 +376,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 			</div>
 			
 			{/* Filter Controls */}
-			<div className="flex flex-wrap items-center gap-3">
+			<div className="flex flex-wrap items-center gap-3 sm:gap-3">
 				{/* Search Input */}
 				<div className="relative w-full sm:max-w-md sm:min-w-[280px] flex-1">
 					<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
