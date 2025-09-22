@@ -9,6 +9,8 @@ import {
     Dialog,
     DialogClose,
     DialogContent,
+    DialogTrigger,
+    DialogTitle,
     DialogDescription,
     DialogFooter,
     DialogHeader
@@ -17,8 +19,6 @@ import {
     ArrowLeft,
     User,
     Mail,
-    Phone,
-    MapPin,
     Calendar,
     GraduationCap,
     CheckCircle2,
@@ -32,7 +32,6 @@ import {
     BookOpen,
     Edit,
     ArrowRight,
-    X,
     XCircle,
     Users
 } from 'lucide-react';
@@ -41,6 +40,16 @@ import { AdminNotesSection } from './partials/admin-notes-section';
 import { FrequentQuestionsSection } from './partials/frequent-questions-section';
 import { MotivationSection } from './partials/motivation-section';
 import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-section';
+import { Label } from 'recharts';
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 export default function ParticipantProfilePage() {
     const { participant, participants, stepParticipant, otherProfiles } = usePage().props;
     const [isProcessing, setIsProcessing] = useState(false);
@@ -50,12 +59,33 @@ export default function ParticipantProfilePage() {
     const [isSocialDialogOpen, setIsSocialDialogOpen] = useState(false);
     const notesRef = useRef(null);
     const [notesHighlight, setNotesHighlight] = useState(false);
-    const { post, processing } = useForm();
+    const { processing } = useForm();
 
 
 
 
-    // Compute derived game metrics for display
+    // Social Status form state (local, not persisted yet)
+    const [socialForm, setSocialForm] = useState({
+        foyerComposition: "",
+        foyerCompositionAutre: "",
+        foyerCount: "",
+        siblingCount: "",
+        fatherStatus: "",
+        motherStatus: "",
+        incomeRange: "",
+        logementType: "",
+        logementAutre: "",
+        basicServices: "",
+        eduFather: "",
+        eduMother: "",
+        socialAid: "",
+        specialSituations: [],
+        specialOther: "",
+        link2m: "",
+        socialCategory: "",
+    });
+    const toggleArrayValue = (arr, value) => (arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]);
+
     const totalLevelsConst = 20; // matches game plan length
     const maxSpeedLevelsPerMin = 5; // as specified
     const levelsCompletedVal = Number(participant?.levels_completed || 0);
@@ -317,29 +347,31 @@ export default function ParticipantProfilePage() {
                                         </div>
                                     )}
 
-                                {participant?.status === 'pending' && (
-                                    <div className="flex w-full gap-2">
-                                        <Button
-                                            onClick={handleApprove}
-                                            disabled={isProcessing}
-                                            className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
-                                            size="sm"
-                                        >
-                                            <CheckCircle2 className="mr-1 h-4 w-4" />
-                                            {isProcessing ? 'Approving...' : 'Approve'}
-                                        </Button>
-                                        <Button
-                                            onClick={handleReject}
-                                            disabled={isProcessing}
-                                            variant="outline"
-                                            className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
-                                            size="sm"
-                                        >
-                                            <XCircle className="mr-1 h-4 w-4" />
-                                            {isProcessing ? 'Rejecting...' : 'Reject'}
-                                        </Button>
-                                    </div>
-                                )}
+                                {
+                                    participant?.status === 'pending' && (
+                                        <div className="flex w-full gap-2">
+                                            <Button
+                                                onClick={handleApprove}
+                                                disabled={isProcessing}
+                                                className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
+                                                size="sm"
+                                            >
+                                                <CheckCircle2 className="mr-1 h-4 w-4" />
+                                                {isProcessing ? 'Approving...' : 'Approve'}
+                                            </Button>
+                                            <Button
+                                                onClick={handleReject}
+                                                disabled={isProcessing}
+                                                variant="outline"
+                                                className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
+                                                size="sm"
+                                            >
+                                                <XCircle className="mr-1 h-4 w-4" />
+                                                {isProcessing ? 'Rejecting...' : 'Reject'}
+                                            </Button>
+                                        </div>
+                                    )
+                                }
 
                                 {/* Cross-promo badges moved to bottom of header */}
                                 {(auth.user.role === 'social_manager' || auth.user.role === 'super_admin') && (
@@ -584,8 +616,8 @@ export default function ParticipantProfilePage() {
                                         </form>
                                     </Dialog>
                                 )}
-                            </div>
-                        </div>
+                            </div >
+                        </div >
 
                         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 w-full">
                             {/* Profile Image & Basic Info */}
@@ -703,26 +735,28 @@ export default function ParticipantProfilePage() {
 
                         </div>
                         {/* Cross-promo badges row under cards */}
-                        {Array.isArray(otherProfiles) && otherProfiles.length > 0 && (
-                            <div className="w-full mt-2 flex justify-end">
-                                <div className="flex flex-wrap items-center gap-2">
-                                    {otherProfiles.map((p) => (
-                                        <Badge
-                                            key={p.id}
-                                            onClick={() => router.visit(`/admin/participants/${p.id}`)}
-                                            className="cursor-pointer bg-white text-[#212529] hover:bg-[#fee819] hover:text-[#212529] rounded-lg px-3 py-1"
-                                        >
-                                            {p?.info_session?.name || `Promo #${p.info_session_id}`}
-                                        </Badge>
-                                    ))}
+                        {
+                            Array.isArray(otherProfiles) && otherProfiles.length > 0 && (
+                                <div className="w-full mt-2 flex justify-end">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        {otherProfiles.map((p) => (
+                                            <Badge
+                                                key={p.id}
+                                                onClick={() => router.visit(`/admin/participants/${p.id}`)}
+                                                className="cursor-pointer bg-white text-[#212529] hover:bg-[#fee819] hover:text-[#212529] rounded-lg px-3 py-1"
+                                            >
+                                                {p?.info_session?.name || `Promo #${p.info_session_id}`}
+                                            </Badge>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
+                            )
+                        }
+                    </div >
+                </div >
 
                 {/* Main Content */}
-                <div className="p-6 pb-3">
+                < div className="p-6 pb-3" >
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {/* Contact & Personal Info */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
@@ -1095,22 +1129,24 @@ export default function ParticipantProfilePage() {
                             <AdminNotesSection participant={participant} />
                         </div>
                     </div>
-                </div>
+                </div >
 
                 {/* Satisfaction Metrics - Full Width Bottom */}
-                <div className="px-6 pb-6">
+                < div className="px-6 pb-6" >
                     <SatisfactionMetricsSection participant={participant} />
-                </div>
+                </div >
                 {/* Image Preview Modal */}
-                {participant?.image && (
-                    <ImagePreview
-                        isOpen={isImagePreviewOpen}
-                        onClose={() => setIsImagePreviewOpen(false)}
-                        imageUrl={`/storage/images/participants/${participant.image}`}
-                        participantName={participant.full_name}
-                    />
-                )}
-            </div>
+                {
+                    participant?.image && (
+                        <ImagePreview
+                            isOpen={isImagePreviewOpen}
+                            onClose={() => setIsImagePreviewOpen(false)}
+                            imageUrl={`/storage/images/participants/${participant.image}`}
+                            participantName={participant.full_name}
+                        />
+                    )
+                }
+            </div >
 
             <Dialog open={isNextStepConfirmOpen} onOpenChange={setIsNextStepConfirmOpen}>
                 <DialogContent className="sm:max-w-md">
@@ -1159,6 +1195,6 @@ export default function ParticipantProfilePage() {
             </Dialog>
 
 
-        </AppLayout>
+        </AppLayout >
     );
 }
