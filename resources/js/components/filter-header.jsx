@@ -13,7 +13,7 @@ import { DialogDescription } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 const FilterHeader = ({ participants = [], infosession, infosessions = [], setFiltredParticipants, statusCounts = {} }) => {
     const STORAGE_KEY = 'admin_participants_filters_v1';
-    const { post, errors , processing , data , setData , reset  } = useForm({
+    const { post, errors, processing, data, setData, reset } = useForm({
         step: null,
     })
     const [search, setSearch] = useState('');
@@ -359,7 +359,8 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
 
     const handleReminderSubmit = () => {
-
+        post("/send-reminder")
+        reset("step")
     }
 
     return (
@@ -461,14 +462,14 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                                                 ].map(({ id, title, icon: Icon }) => (
                                                     <div
                                                         key={id}
-                                                        onClick={() => setSelectedReminderType(id)}
-                                                        className={`shadow-lg group rounded-lg w-45 h-45  flex flex-col gap-6 justify-center items-center border border-dashed transition-all duration-400 ease-in-out hover:scale-105 cursor-pointer ${selectedReminderType === id
+                                                        onClick={() => setData("step", id)}
+                                                        className={`shadow-lg group rounded-lg w-45 h-45  flex flex-col gap-6 justify-center items-center border border-dashed transition-all duration-400 ease-in-out hover:scale-105 cursor-pointer ${data.step === id
                                                             ? "bg-[#212529] text-white border-[#212529]"
                                                             : "bg-transparent border-black/20 text-[#212529] hover:bg-[#212529] hover:text-white"
                                                             }`}
                                                     >
                                                         <Icon
-                                                            className={`w-10 h-10 transition-colors duration-400 ${selectedReminderType === id
+                                                            className={`w-10 h-10 transition-colors duration-400 ${data.step === id
                                                                 ? "text-white"
                                                                 : "text-[#212529] group-hover:text-white"
                                                                 }`}

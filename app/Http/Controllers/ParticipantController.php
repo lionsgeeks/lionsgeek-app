@@ -1552,8 +1552,16 @@ class ParticipantController extends Controller
     }
 
 
-    public function sendReminder () {
+  public function sendReminder()
+{
+    $step = request()->step;
 
-        dd(request()->all());
-    }
+    $participants = Participant::where('current_step', $step)
+        ->whereBetween('created_at', [now()->subMonth(), now()])
+        ->where("formation_field" , "coding")
+        ->get();
+
+    dd($participants);
+}
+
 }
