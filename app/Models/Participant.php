@@ -87,10 +87,12 @@ class Participant extends Model
         'situation_particuliere',
         'lien_2m',
         'categorie_sociale',
+
+        // Persisted social score
+        'social_score',
     ];
 
     protected $casts = [
-        'services_base' => 'array',
         'situation_particuliere' => 'array',
         'nombre_personnes' => 'integer',
         'fratrie' => 'integer',
