@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { router } from '@inertiajs/react';
-import { Rocket } from 'lucide-react';
+import { Rocket, TreePalm } from 'lucide-react';
 import { useState } from 'react';
 
 const InviteToJungle = ({ infosession }) => {
@@ -22,10 +22,10 @@ const InviteToJungle = ({ infosession }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             {/* Trigger button */}
-            <DialogTrigger asChild className="w-full h-[30vh]">
-                <div className="flex flex-col h-[30vh] items-center justify-center gap-3 bg-black text-white hover:bg-beta">
-                    <Rocket className="h-20 w-20" />
-                    to Jungle
+            <DialogTrigger asChild >
+                <div className="flex font-bold flex-col h-[21vh] w-[15vw] items-center justify-center gap-3  border-2 border-dashed rounded-lg  text-black hover:bg-beta hover:text-white hover:border-0">
+                    <TreePalm className="h-10 w-10" />
+                    Jungle
                 </div>
             </DialogTrigger>
 
@@ -33,7 +33,7 @@ const InviteToJungle = ({ infosession }) => {
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <Rocket className="h-5 w-5" />
+                        <TreePalm className="h-5 w-5" />
                         Invite to Jungle
                     </DialogTitle>
                 </DialogHeader>

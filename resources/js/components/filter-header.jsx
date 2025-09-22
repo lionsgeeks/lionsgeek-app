@@ -408,19 +408,30 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                             </Button>
                         </DialogTrigger>
 
-                        <DialogContent className="max-w-3xl">
+                        <DialogContent className="max-w-xl flex flex-col justify-center items-center ">
                             <DialogHeader>
                                 <DialogTitle className="text-2xl font-bold text-[#212529]">
-                                    Invite People
+                                    Invite People to
                                 </DialogTitle>
                             </DialogHeader>
 
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mt-4">
+                            <div className="grid grid-cols-2 gap-6 items-center justify-center">
                                 <InviteToJungle infosession={infosession} closeParent={() => setIsInviteOpen(false)} />
                                 <InviteToSchool infosession={infosession} closeParent={() => setIsInviteOpen(false)} />
                             </div>
+
+                            {/* Container to push the button to bottom-right */}
+                            <div className="w-full flex justify-end ">
+                                <Button
+                                    onClick={() => setIsInviteOpen(false)}
+                                    className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]"
+                                >
+                                    Close
+                                </Button>
+                            </div>
                         </DialogContent>
                     </Dialog>
+
 
                 </div>
 

@@ -33,9 +33,9 @@ const InviteToSchool = ({ infosession }) => {
         <Dialog open={open} onOpenChange={setOpen}>
             {/* Trigger button */}
             <DialogTrigger asChild>
-                <div className="flex flex-col h-[30vh] items-center justify-center gap-3 bg-black text-white hover:bg-beta">
-                    <School className="h-20 w-20" />
-                    <span>to School</span>
+                <div className="flex flex-col font-bold h-[21vh] w-[15vw] items-center justify-center gap-3  border-2 border-dashed rounded-lg text-black hover:bg-beta hover:text-white hover:border-0">
+                    <School className="h-10 w-10" />
+                    <span>School</span>
                 </div>
             </DialogTrigger>
 
