@@ -4,7 +4,7 @@ import { router } from '@inertiajs/react';
 import { School } from 'lucide-react';
 import { useState } from 'react';
 
-const InviteToSchool = ({ infosession }) => {
+const InviteToSchool = ({ infosession , closeParent}) => {
     const [date, setDate] = useState('');
     const [open, setOpen] = useState(false); // control dialog open state
 
@@ -14,7 +14,7 @@ const InviteToSchool = ({ infosession }) => {
             `/admin/invite/school?infosession_id=${infosession.id}&date=${date}`,
             {},
             {
-                onSuccess: () => setOpen(false), // close modal on success
+                onSuccess: () => closeParent(),
             }
         );
     };
@@ -24,7 +24,10 @@ const InviteToSchool = ({ infosession }) => {
             `/admin/invite/school?infosession_id=${infosession.id}&submit_without_date=true`,
             {},
             {
-                onSuccess: () => setOpen(false), // close modal on success
+                onSuccess: () => {
+                    setOpen(false);
+                    closeParent();
+                },
             }
         );
     };

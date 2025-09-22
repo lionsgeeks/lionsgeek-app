@@ -4,20 +4,21 @@ import { router } from '@inertiajs/react';
 import { Rocket, TreePalm } from 'lucide-react';
 import { useState } from 'react';
 
-const InviteToJungle = ({ infosession }) => {
+const InviteToJungle = ({ infosession , closeParent }) => {
     const [date, setDate] = useState('');
     const [open, setOpen] = useState(false); // control dialog open state
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        router.post(
-            `/admin/invite/jungle?infosession_id=${infosession.id}&date=${date}`,
-            {},
-            {
-                onSuccess: () => setOpen(false), // close modal on success
-            }
-        );
-    };
+const handleSubmit = (e) => {
+    e.preventDefault();
+    router.post(
+        `/admin/invite/jungle?infosession_id=${infosession.id}&date=${date}`,
+        {},
+        {
+             onSuccess: () => closeParent(),
+        }
+    );
+};
+
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
