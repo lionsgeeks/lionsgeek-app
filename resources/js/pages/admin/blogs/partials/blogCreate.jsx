@@ -60,8 +60,10 @@ export default function BlogCreate() {
                 },
             );
         } else {
-            post(route('blogs.store'));
-        }
+post(route('blogs.store'), {
+            data: FormData,
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });        }
     };
 
     const [tab, setTab] = useState('English');

@@ -33,7 +33,8 @@ import {
     Edit,
     ArrowRight,
     X,
-    XCircle
+    XCircle,
+    Users
 } from 'lucide-react';
 import ImagePreview from '@/components/ImagePreview';
 import { AdminNotesSection } from './partials/admin-notes-section';
@@ -91,6 +92,27 @@ export default function ParticipantProfilePage() {
             </AppLayout>
         );
     }
+
+    const handelSubmit = () => {
+        const s = computeSocialScore(socialForm);
+        const payload = {
+            composition_foyer: socialForm.foyerComposition,
+            nombre_personnes: socialForm.foyerCount,
+            fratrie: socialForm.siblingCount,
+            pere_tuteur: socialForm.fatherStatus,
+            mere_tuteur: socialForm.motherStatus,
+            revenus_mensuels: socialForm.incomeRange,
+            type_logement: socialForm.logementType,
+            services_base: socialForm.basicServices,
+            education_pere: socialForm.eduFather,
+            education_mere: socialForm.eduMother,
+            aides_sociales: socialForm.socialAid,
+            situation_particuliere: socialForm.specialSituations,
+            lien_2m: socialForm.link2m,
+            categorie_sociale: socialForm.socialCategory,
+        };
+        router.patch(`/admin/participants/${participant.id}/social-status`, payload, { preserveScroll: true });
+    };
 
     const breadcrumbs = [
         {
@@ -225,6 +247,7 @@ const handleReject = () => {
 };
 
     const [isNextStepConfirmOpen, setIsNextStepConfirmOpen] = useState(false);
+    const { auth } = usePage().props;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -360,7 +383,19 @@ const handleReject = () => {
                                 </div>
 
                                 <div className="flex-1">
+                                <div className="flex-1">
                                     <h1 className="text-3xl font-bold mb-2">{participant.full_name}</h1>
+                                    {/* Social Vulnerability Score */}
+                                    {(auth.user.role === 'social_manager' || auth.user.role === 'super_admin') && (() => {
+                                        const s = computeSocialScore(socialForm);
+                                        return (
+                                            <div className="mb-3 inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1 text-white">
+                                                <TrendingUp className="h-4 w-4 text-[#fee819]" />
+                                                <span className="text-sm">Social Score:</span>
+                                                <span className="text-sm font-semibold">{s.percent}%</span>
+                                            </div>
+                                        );
+                                    })()}
                                     <div className="flex flex-wrap gap-2 mb-3">
                                         <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1 font-medium`}>
                                             {participant.current_step.replaceAll('_', ' ')}
@@ -378,10 +413,10 @@ const handleReject = () => {
                                         {/* Approval Status Badge */}
                                         {participant.status && (
                                             <Badge className={`${participant.status === 'approved'
-                                                    ? 'bg-green-500 text-white'
-                                                    : participant.status === 'rejected'
-                                                        ? 'bg-red-500 text-white'
-                                                        : 'bg-yellow-500 text-white'
+                                                ? 'bg-green-500 text-white'
+                                                : participant.status === 'rejected'
+                                                    ? 'bg-red-500 text-white'
+                                                    : 'bg-yellow-500 text-white'
                                                 } rounded-lg px-3 py-1 font-medium`}>
                                                 {participant.status === 'approved' ? (
                                                     <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -836,50 +871,50 @@ const handleReject = () => {
                 )}
             </div>
             <Dialog open={isNextStepConfirmOpen} onOpenChange={setIsNextStepConfirmOpen}>
-  <DialogContent className="sm:max-w-md">
-    <DialogHeader>
-      <DialogDescription className="text-sm text-[#212529]">
-        Are you sure you want to move 
-        <span className="font-semibold ml-1">
-          {participant?.full_name}
-        </span> 
-        to the next step?
-      </DialogDescription>
-    </DialogHeader>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogDescription className="text-sm text-[#212529]">
+                            Are you sure you want to move
+                            <span className="font-semibold ml-1">
+                                {participant?.full_name}
+                            </span>
+                            to the next step?
+                        </DialogDescription>
+                    </DialogHeader>
 
-    <DialogFooter className="sm:justify-end">
-      <DialogClose asChild>
-        <Button
-          onClick={() => setIsNextStepConfirmOpen(false)}
-          type="button"
-          variant="secondary"
-        >
-          Cancel
-        </Button>
-      </DialogClose>
-      <Button
-        onClick={() => {
-          changeStep(participant?.current_step === 'interview' ? 'daz' : 'next');
-          setIsNextStepConfirmOpen(false);
-        }}
-        type="button"
-        className="bg-[#51b04f] text-white hover:bg-[#459942] transition-all duration-300 ease-in-out transform hover:scale-105"
-      >
-        {isProcessing ? (
-          <div className="flex gap-2 items-center">
-            <Loader2 className="animate-spin h-4 w-4" />
-            Processing...
-          </div>
-        ) : (
-          <>
-         
-            Confirm
-          </>
-        )}
-      </Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
+                    <DialogFooter className="sm:justify-end">
+                        <DialogClose asChild>
+                            <Button
+                                onClick={() => setIsNextStepConfirmOpen(false)}
+                                type="button"
+                                variant="secondary"
+                            >
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                        <Button
+                            onClick={() => {
+                                changeStep(participant?.current_step === 'interview' ? 'daz' : 'next');
+                                setIsNextStepConfirmOpen(false);
+                            }}
+                            type="button"
+                            className="bg-[#51b04f] text-white hover:bg-[#459942] transition-all duration-300 ease-in-out transform hover:scale-105"
+                        >
+                            {isProcessing ? (
+                                <div className="flex gap-2 items-center">
+                                    <Loader2 className="animate-spin h-4 w-4" />
+                                    Processing...
+                                </div>
+                            ) : (
+                                <>
+
+                                    Confirm
+                                </>
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
 
         </AppLayout>
