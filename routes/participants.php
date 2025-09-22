@@ -54,3 +54,5 @@ Route::get('/participant/associate-confirmation', function () {
 
     return response()->json(['message' => 'Participant Confirmation associations created Successfully!']);
 });
+
+Route::post("/send-reminder" , [ParticipantController::class , "sendReminder"]);

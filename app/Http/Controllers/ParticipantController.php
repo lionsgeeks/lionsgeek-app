@@ -1550,4 +1550,10 @@ class ParticipantController extends Controller
             ]);
         }
     }
+
+
+    public function sendReminder () {
+
+        dd(request()->all());
+    }
 }
