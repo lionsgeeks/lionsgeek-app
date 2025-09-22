@@ -5,21 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
+import { 
+  Dialog, 
+  DialogClose, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader 
+} from '@/components/ui/dialog';
+import { 
     ArrowLeft,
     User,
     Mail,
@@ -56,101 +50,9 @@ export default function ParticipantProfilePage() {
     const notesRef = useRef(null);
     const [notesHighlight, setNotesHighlight] = useState(false);
     const { post, processing } = useForm();
-
-    // Social Status form state (local, not persisted yet)
-    const [socialForm, setSocialForm] = useState({
-        foyerComposition: "",
-        foyerCompositionAutre: "",
-        foyerCount: "",
-        siblingCount: "",
-        fatherStatus: "",
-        motherStatus: "",
-        incomeRange: "",
-        logementType: "",
-        logementAutre: "",
-        basicServices: [],
-        eduFather: "",
-        eduMother: "",
-        socialAid: "",
-        specialSituations: [],
-        specialOther: "",
-        link2m: "",
-        socialCategory: "",
-    });
-    const toggleArrayValue = (arr, value) => (arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]);
-    const [socialLangTab, setSocialLangTab] = useState('Français');
-
-    // Compute social score: worst cases yield higher points; returns { score, max, percent }
-    const computeSocialScore = (form) => {
-        let score = 0;
-        let max = 0;
-
-        const add = (val, map, defaultVal = null) => {
-            if (val === '' || val == null) return; // unanswered
-            const pts = map[val] ?? (defaultVal != null ? defaultVal : 0);
-            score += pts;
-            max += Math.max(...Object.values(map));
-        };
-
-        // 1) Composition du foyer
-        add(form.foyerComposition, { pere_mere: 0, pere_seul: 5, mere_seule: 5, autre: 7 });
-
-        // Numeric: foyerCount, siblingCount (cap at ranges)
-        if (form.foyerCount !== '') {
-            const n = Math.max(0, Number(form.foyerCount) || 0);
-            const pts = n >= 7 ? 7 : n >= 5 ? 5 : n >= 3 ? 3 : 1;
-            score += pts; max += 7;
-        }
-        if (form.siblingCount !== '') {
-            const n = Math.max(0, Number(form.siblingCount) || 0);
-            const pts = n >= 5 ? 7 : n >= 3 ? 5 : n >= 1 ? 3 : 1;
-            score += pts; max += 7;
-        }
-
-        // 2) Parents statuses
-        add(form.fatherStatus, {
-            decede: 10,
-            sans_emploi: 9,
-            precaire: 8,
-            independant: 5,
-            salarie_prive: 4,
-            fonctionnaire: 3,
-            cadre: 2,
-            entrepreneur: 2,
-        });
-        add(form.motherStatus, {
-            decedee: 10,
-            sans_emploi: 9,
-            precaire: 8,
-            independante: 5,
-            salarie_prive: 4,
-            fonctionnaire: 3,
-            cadre: 2,
-            entrepreneur: 2,
-        });
-
-        // Income
-        add(form.incomeRange, { lt_3000: 10, '3000_6000': 7, '6000_10000': 4, gt_10000: 1 });
-
-        // 3) Logement
-        add(form.logementType, { social_irreg: 10, locataire: 6, autre: 5, proprietaire: 1 });
-        // Services: missing increases score
-        add(form.basicServices, { yes: 0, no: 6 });
-
-        // 4) Education levels
-        add(form.eduFather, { non_scolarise: 6, primaire: 4, college_lycee: 2, superieur: 0 });
-        add(form.eduMother, { non_scolarisee: 6, primaire: 4, college_lycee: 2, superieur: 0 });
-
-        // 5) Special situation
-        add(form.specialSituations, { handicap: 10, orphelin: 9, autre: 5, aucun: 0 });
-
-        // 6) Social category (by evaluator)
-        add(form.socialCategory, { vulnerable: 10, moyenne_inferieure: 6, moyenne: 3, favorisee: 0 });
-
-        const percent = max > 0 ? Math.round((score / max) * 100) : 0;
-        return { score, max, percent };
-    };
-
+    
+    
+    
 
     // Compute derived game metrics for display
     const totalLevelsConst = 20; // matches game plan length
@@ -278,14 +180,14 @@ export default function ParticipantProfilePage() {
         ? Number(participant.age)
         : (participant?.birthday ? Math.floor((Date.now() - new Date(participant.birthday).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null);
 
-    const handleDelete = (e) => {
-        e.stopPropagation();
-        router.delete(`/admin/participants/${participant.id}`, {
-            onSuccess: () => {
-                router.visit("/admin/participants");
-            },
-        });
-    };
+   const handleDelete = (e) => {
+  e.stopPropagation();
+ router.delete(`/admin/participants/${participant.id}`, {
+    onSuccess: () => {
+      router.visit("/admin/participants");
+    },
+  });
+};
     function getConfirmationStatus(participant) {
         const step = participant?.current_step;
         if (step === 'jungle') return participant?.confirmation?.jungle;
@@ -293,56 +195,56 @@ export default function ParticipantProfilePage() {
         return false;
     }
 
-    const changeStep = (action) => {
-        router.patch(`/admin/participant/current-step/${participant.id}`, { action });
+      const changeStep = (action) => {
+    router.patch(`/admin/participant/current-step/${participant.id}`, { action });
 
-        const jugleParticipants = stepParticipant.filter(p => p.current_step === participant.current_step);
+    const jugleParticipants = stepParticipant.filter(p => p.current_step === participant.current_step);
 
-        const currentIndex = jugleParticipants.findIndex(p => p.id === participant.id);
+    const currentIndex = jugleParticipants.findIndex(p => p.id === participant.id);
 
-        const nextParticipant = jugleParticipants[currentIndex + 1];
+    const nextParticipant = jugleParticipants[currentIndex + 1];
 
         // if (nextParticipant) {
         //     router.visit(`/admin/participants/${nextParticipant.id}`);
         // } else {
         //     router.visit("/admin/participants");
         // }
-    };
+};
+   
+   
+const handleNavigation = () => {
+  const currentIndex = participants.findIndex(p => p.id === participant.id);
+  const nextParticipant = participants[currentIndex + 1];
 
-
-    const handleNavigation = () => {
-        const currentIndex = participants.findIndex(p => p.id === participant.id);
-        const nextParticipant = participants[currentIndex + 1];
-
-        if (nextParticipant) {
-            router.visit(`/admin/participants/${nextParticipant.id}`);
-        } else {
-            router.visit("/admin/participants");
-        }
-    };
-    const handleApprove = () => {
-        setIsProcessing(true);
-        router.post(`/admin/participants/${participant.id}/approve`, {}, {
-            onFinish: () => {
-                setIsProcessing(false);
+  if (nextParticipant) {
+    router.visit(`/admin/participants/${nextParticipant.id}`);
+  } else {
+    router.visit("/admin/participants");
+  }
+};
+const handleApprove = () => {
+  setIsProcessing(true);
+  router.post(`/admin/participants/${participant.id}/approve`, {}, {
+    onFinish: () => {
+      setIsProcessing(false);
                 // Refresh the current page to show updated approval data
                 router.reload();
-            },
-            onError: () => setIsProcessing(false),
-        });
-    };
+    },
+    onError: () => setIsProcessing(false),
+  });
+};
 
-    const handleReject = () => {
-        setIsProcessing(true);
-        router.post(`/admin/participants/${participant.id}/reject`, {}, {
-            onFinish: () => {
-                setIsProcessing(false);
+const handleReject = () => {
+  setIsProcessing(true);
+  router.post(`/admin/participants/${participant.id}/reject`, {}, {
+    onFinish: () => {
+      setIsProcessing(false);
                 // Refresh the current page to show updated approval data
                 router.reload();
-            },
-            onError: () => setIsProcessing(false),
-        });
-    };
+    },
+    onError: () => setIsProcessing(false),
+  });
+};
 
     const [isNextStepConfirmOpen, setIsNextStepConfirmOpen] = useState(false);
     const { auth } = usePage().props;
@@ -352,8 +254,8 @@ export default function ParticipantProfilePage() {
             <Head title={`${participant.full_name} - Participant Details`} />
 
             <div className="min-h-screen bg-white">
-                {/* Header Banner */}
-                <div className="bg-[#212529] text-white">
+               {/* Header Banner */}
+               <div className="bg-[#212529] text-white">
                     <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
                             <Button
@@ -379,7 +281,7 @@ export default function ParticipantProfilePage() {
                                     Admin Notes {participant?.notes?.length ? `(${participant.notes.length})` : ''}
                                 </Button>
 
-                                {/* <Button
+                            {/* <Button
                                 onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)}
                                 variant="ghost"
                                 className="text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
@@ -388,299 +290,55 @@ export default function ParticipantProfilePage() {
                                 Edit Profile
                             </Button> */}
 
-                                {
-                                    participant?.current_step !== 'info_session' && !participant?.current_step?.includes('school') && !participant?.current_step?.includes('failed') && (
-                                        <div className="flex gap-2 ">
-                                            <Button
+                            {
+                                participant?.current_step !== 'info_session' && !participant?.current_step?.includes('school') && !participant?.current_step?.includes('failed') && (
+                                    <div className="flex gap-2 ">
+                                        <Button
                                                 onClick={() => setIsNextStepConfirmOpen(true)}
-                                                className="flex-1 bg-[#51b04f] text-white hover:bg-[#459942] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 w-[10%]"
-                                                size="sm"
-                                            >
-                                                <ArrowRight className="h-4 w-4 mr-1" />
-                                                Next Step
-                                            </Button>
-
-                                            <Button
-                                                onClick={() => changeStep('deny')}
-                                                variant="outline"
-                                                className="border-[#ff7376] bg-[#ff7376] text-white hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-                                                size="sm"
-                                            >
-                                                <XCircle className="h-4 w-4 mr-1" />
-                                                Deny
-                                            </Button>
-                                        </div>
-                                    )}
-
-                                {participant?.status === 'pending' && (
-                                    <div className="flex w-full gap-2">
-                                        <Button
-                                            onClick={handleApprove}
-                                            disabled={isProcessing}
-                                            className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
+                                            className="flex-1 bg-[#51b04f] text-white hover:bg-[#459942] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 w-[10%]"
                                             size="sm"
                                         >
-                                            <CheckCircle2 className="mr-1 h-4 w-4" />
-                                            {isProcessing ? 'Approving...' : 'Approve'}
+                                            <ArrowRight className="h-4 w-4 mr-1" />
+                                            Next Step
                                         </Button>
+
                                         <Button
-                                            onClick={handleReject}
-                                            disabled={isProcessing}
+                                            onClick={() => changeStep('deny')}
                                             variant="outline"
-                                            className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
+                                            className="border-[#ff7376] bg-[#ff7376] text-white hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
                                             size="sm"
                                         >
-                                            <XCircle className="mr-1 h-4 w-4" />
-                                            {isProcessing ? 'Rejecting...' : 'Reject'}
+                                            <XCircle className="h-4 w-4 mr-1" />
+                                            Deny
                                         </Button>
                                     </div>
                                 )}
-                                {(auth.user.role === 'social_manager' || auth.user.role === 'super_admin') && (
-                                    <Dialog>
-                                        <form>
-                                            <DialogTrigger asChild>
-                                                <Button variant="outline" className='flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]'>Social Status</Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="w-[40%] h-[90vh] overflow-auto">
-                                                <DialogHeader>
-                                                    <DialogTitle className="sr-only">Social Status</DialogTitle>
-                                                    <div className="-mx-6 -mt-6 mb-4 rounded-t-lg bg-[#212529] p-6 text-white">
-                                                        <div className="flex items-center justify-between">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="rounded-lg bg-[#fee819] p-2">
-                                                                    <Users className="h-5 w-5 text-[#212529]" />
-                                                                </div>
-                                                                <div>
-                                                                    <div className="text-xl font-bold">Statut social</div>
-                                                                    <div className="text-sm text-gray-300">Renseignez les informations sociales du participant</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </DialogHeader>
-                                                <div className="grid gap-4">
-                                                    {/* 1. Situation familiale */}
-                                                    <div className="space-y-4 rounded-lg border p-4">
-                                                        <div className="flex items-center justify-between">
-                                                            <h3 className="text-sm font-semibold text-[#212529]">1. Situation familiale</h3>
-                                                        </div>
-                                                        <div className="grid gap-3">
-                                                            <Label className="text-sm font-medium text-[#212529]">Composition du foyer</Label>
-                                                            <Select value={socialForm.foyerComposition} onValueChange={(v) => setSocialForm(s => ({ ...s, foyerComposition: v }))}>
-                                                                <SelectTrigger className="rounded-md">
-                                                                    <SelectValue placeholder="Choisir" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="pere_mere">Père et Mère</SelectItem>
-                                                                    <SelectItem value="pere_seul">Père seul</SelectItem>
-                                                                    <SelectItem value="mere_seule">Mère seule</SelectItem>
-                                                                    <SelectItem value="autre">Autre (tuteur, grands-parents, etc.)</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                            {socialForm.foyerComposition === 'autre' && (
-                                                                <Input value={socialForm.foyerCompositionAutre} onChange={(e) => setSocialForm(s => ({ ...s, foyerCompositionAutre: e.target.value }))} placeholder="Précisez" />
-                                                            )}
-                                                        </div>
-                                                        <div className="grid gap-4 sm:grid-cols-2">
-                                                            <div className="space-y-1">
-                                                                <Label className="text-sm font-medium text-[#212529]">Nombre de personnes dans le foyer</Label>
-                                                                <Input type="number" min="0" value={socialForm.foyerCount} onChange={(e) => setSocialForm(s => ({ ...s, foyerCount: e.target.value }))} />
-                                                            </div>
-                                                            <div className="space-y-1">
-                                                                <Label className="text-sm font-medium text-[#212529]">Fratrie (nombre de frères/sœurs)</Label>
-                                                                <Input type="number" min="0" value={socialForm.siblingCount} onChange={(e) => setSocialForm(s => ({ ...s, siblingCount: e.target.value }))} />
-                                                            </div>
-                                                        </div>
-                                                    </div>
 
-                                                    {/* 2. Situation professionnelle et revenus */}
-                                                    <div className="space-y-4 rounded-lg border p-4">
-                                                        <h3 className="text-sm font-semibold text-[#212529]">2. Situation professionnelle et revenus</h3>
-                                                        <div className="grid gap-3">
-                                                            <Label className="text-sm font-medium text-[#212529]">Père / Tuteur 1</Label>
-                                                            <Select value={socialForm.fatherStatus} onValueChange={(v) => setSocialForm(s => ({ ...s, fatherStatus: v }))}>
-                                                                <SelectTrigger className="rounded-md">
-                                                                    <SelectValue placeholder="Choisir" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="decede">Décédé</SelectItem>
-                                                                    <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
-                                                                    <SelectItem value="cadre">Cadre</SelectItem>
-                                                                    <SelectItem value="fonctionnaire">Fonctionnaire</SelectItem>
-                                                                    <SelectItem value="salarie_prive">Salarié secteur privé</SelectItem>
-                                                                    <SelectItem value="independant">Travailleur indépendant</SelectItem>
-                                                                    <SelectItem value="precaire">Journalier/précaire</SelectItem>
-                                                                    <SelectItem value="sans_emploi">Sans emploi</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
-                                                        <div className="grid gap-3">
-                                                            <Label className="text-sm font-medium text-[#212529]">Mère / Tuteur 2</Label>
-                                                            <Select value={socialForm.motherStatus} onValueChange={(v) => setSocialForm(s => ({ ...s, motherStatus: v }))}>
-                                                                <SelectTrigger className="rounded-md">
-                                                                    <SelectValue placeholder="Choisir" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="decedee">Décédée</SelectItem>
-                                                                    <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
-                                                                    <SelectItem value="cadre">Cadre</SelectItem>
-                                                                    <SelectItem value="fonctionnaire">Fonctionnaire</SelectItem>
-                                                                    <SelectItem value="salarie_prive">Salariée secteur privé</SelectItem>
-                                                                    <SelectItem value="independante">Travailleuse indépendante</SelectItem>
-                                                                    <SelectItem value="precaire">Journalière/précaire</SelectItem>
-                                                                    <SelectItem value="sans_emploi">Sans emploi</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
-                                                        <div className="grid gap-2">
-                                                            <Label className="text-sm font-medium text-[#212529]">Revenus mensuels estimés du foyer</Label>
-                                                            <Select value={socialForm.incomeRange} onValueChange={(v) => setSocialForm(s => ({ ...s, incomeRange: v }))}>
-                                                                <SelectTrigger className="rounded-md">
-                                                                    <SelectValue placeholder="Choisir" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="lt_3000">Moins de 3 000 MAD</SelectItem>
-                                                                    <SelectItem value="3000_6000">3 000 – 6 000 MAD</SelectItem>
-                                                                    <SelectItem value="6000_10000">6 000 – 10 000 MAD</SelectItem>
-                                                                    <SelectItem value="gt_10000">Plus de 10 000 MAD</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
-                                                    </div>
+                            {participant?.status === 'pending' && (
+                                <div className="flex w-full gap-2">
+                                    <Button
+                                        onClick={handleApprove}
+                                        disabled={isProcessing}
+                                        className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
+                                        size="sm"
+                                    >
+                                        <CheckCircle2 className="mr-1 h-4 w-4" />
+                                        {isProcessing ? 'Approving...' : 'Approve'}
+                                    </Button>
+                                    <Button
+                                        onClick={handleReject}
+                                        disabled={isProcessing}
+                                        variant="outline"
+                                        className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
+                                        size="sm"
+                                    >
+                                        <XCircle className="mr-1 h-4 w-4" />
+                                        {isProcessing ? 'Rejecting...' : 'Reject'}
+                                    </Button>
+                                </div>
+                            )}
 
-                                                    {/* 3. Logement */}
-                                                    <div className="space-y-4 rounded-lg border p-4">
-                                                        <h3 className="text-sm font-semibold text-[#212529]">3. Logement</h3>
-                                                        <div className="grid gap-3">
-                                                            <Label className="text-sm font-medium text-[#212529]">Type de logement</Label>
-                                                            <Select value={socialForm.logementType} onValueChange={(v) => setSocialForm(s => ({ ...s, logementType: v }))}>
-                                                                <SelectTrigger className="rounded-md">
-                                                                    <SelectValue placeholder="Choisir" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="proprietaire">Propriétaire</SelectItem>
-                                                                    <SelectItem value="locataire">Locataire</SelectItem>
-                                                                    <SelectItem value="social_irreg">Logement social / habitat non réglementaire</SelectItem>
-                                                                    <SelectItem value="autre">Autre</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                            {socialForm.logementType === 'autre' && (
-                                                                <Input value={socialForm.logementAutre} onChange={(e) => setSocialForm(s => ({ ...s, logementAutre: e.target.value }))} placeholder="Si autre, préciser" />
-                                                            )}
-                                                        </div>
-                                                        <div className="grid gap-2">
-                                                            <Label className="text-sm font-medium text-[#212529]">Accès aux services de base</Label>
-                                                            <div className="grid gap-2 sm:grid-cols-3">
-                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
-                                                                    <Checkbox checked={socialForm.basicServices.includes('eau')} onCheckedChange={() => setSocialForm(s => ({ ...s, basicServices: toggleArrayValue(s.basicServices, 'eau') }))} />
-                                                                    Eau
-                                                                </label>
-                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
-                                                                    <Checkbox checked={socialForm.basicServices.includes('electricite')} onCheckedChange={() => setSocialForm(s => ({ ...s, basicServices: toggleArrayValue(s.basicServices, 'electricite') }))} />
-                                                                    Électricité
-                                                                </label>
-                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
-                                                                    <Checkbox checked={socialForm.basicServices.includes('internet')} onCheckedChange={() => setSocialForm(s => ({ ...s, basicServices: toggleArrayValue(s.basicServices, 'internet') }))} />
-                                                                    Internet à domicile
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* 4. Niveau d’éducation des parents/tuteurs */}
-                                                    <div className="space-y-4 rounded-lg border p-4">
-                                                        <h3 className="text-sm font-semibold text-[#212529]">4. Niveau d’éducation des parents/tuteurs</h3>
-                                                        <div className="grid gap-4 sm:grid-cols-2">
-                                                            <div className="space-y-2">
-                                                                <Label className="text-sm font-medium text-[#212529]">Père / Tuteur 1</Label>
-                                                                <Select value={socialForm.eduFather} onValueChange={(v) => setSocialForm(s => ({ ...s, eduFather: v }))}>
-                                                                    <SelectTrigger className="rounded-md">
-                                                                        <SelectValue placeholder="Choisir" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        <SelectItem value="non_scolarise">Non scolarisé</SelectItem>
-                                                                        <SelectItem value="primaire">Primaire</SelectItem>
-                                                                        <SelectItem value="college_lycee">Collège/lycée</SelectItem>
-                                                                        <SelectItem value="superieur">Supérieur</SelectItem>
-                                                                    </SelectContent>
-                                                                </Select>
-                                                            </div>
-                                                            <div className="space-y-2">
-                                                                <Label className="text-sm font-medium text-[#212529]">Mère / Tuteur 2</Label>
-                                                                <Select value={socialForm.eduMother} onValueChange={(v) => setSocialForm(s => ({ ...s, eduMother: v }))}>
-                                                                    <SelectTrigger className="rounded-md">
-                                                                        <SelectValue placeholder="Choisir" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        <SelectItem value="non_scolarisee">Non scolarisée</SelectItem>
-                                                                        <SelectItem value="primaire">Primaire</SelectItem>
-                                                                        <SelectItem value="college_lycee">Collège/lycée</SelectItem>
-                                                                        <SelectItem value="superieur">Supérieur</SelectItem>
-                                                                    </SelectContent>
-                                                                </Select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* 5. Autres éléments sociaux */}
-                                                    <div className="space-y-4 rounded-lg border p-4">
-                                                        <h3 className="text-sm font-semibold text-[#212529]">5. Autres éléments sociaux</h3>
-                                                        <div className="grid gap-2">
-                                                            <Label className="text-sm font-medium text-[#212529]">Aides sociales reçues</Label>
-                                                            <Input value={socialForm.socialAid} onChange={(e) => setSocialForm(s => ({ ...s, socialAid: e.target.value }))} placeholder="RAMED, bourses, associations, etc." />
-                                                        </div>
-                                                        <div className="grid gap-2">
-                                                            <Label className="text-sm font-medium text-[#212529]">Situation particulière</Label>
-                                                            <div className="grid gap-2 sm:grid-cols-3">
-                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
-                                                                    <Checkbox checked={socialForm.specialSituations.includes('handicap')} onCheckedChange={() => setSocialForm(s => ({ ...s, specialSituations: toggleArrayValue(s.specialSituations, 'handicap') }))} />
-                                                                    Handicap
-                                                                </label>
-                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
-                                                                    <Checkbox checked={socialForm.specialSituations.includes('orphelin')} onCheckedChange={() => setSocialForm(s => ({ ...s, specialSituations: toggleArrayValue(s.specialSituations, 'orphelin') }))} />
-                                                                    Orphelin
-                                                                </label>
-                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
-                                                                    <Checkbox checked={socialForm.specialSituations.includes('autre')} onCheckedChange={() => setSocialForm(s => ({ ...s, specialSituations: toggleArrayValue(s.specialSituations, 'autre') }))} />
-                                                                    Autre
-                                                                </label>
-                                                            </div>
-                                                            {socialForm.specialSituations.includes('autre') && (
-                                                                <Input value={socialForm.specialOther} onChange={(e) => setSocialForm(s => ({ ...s, specialOther: e.target.value }))} placeholder="Préciser l'autre situation" />
-                                                            )}
-                                                        </div>
-                                                        <div className="grid gap-2">
-                                                            <Label className="text-sm font-medium text-[#212529]">Lien avec 2M</Label>
-                                                            <Input value={socialForm.link2m} onChange={(e) => setSocialForm(s => ({ ...s, link2m: e.target.value }))} />
-                                                        </div>
-                                                    </div>
-
-                                                    {/* 6. Catégorie sociale */}
-                                                    <div className="space-y-3 rounded-lg border p-4">
-                                                        <h3 className="text-sm font-semibold text-[#212529]">6. Catégorie sociale (évaluateur LionsGEEK)</h3>
-                                                        <Select value={socialForm.socialCategory} onValueChange={(v) => setSocialForm(s => ({ ...s, socialCategory: v }))}>
-                                                            <SelectTrigger className="rounded-md">
-                                                                <SelectValue placeholder="Choisir" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="vulnerable">Vulnérable</SelectItem>
-                                                                <SelectItem value="moyenne_inferieure">Moyenne inférieure</SelectItem>
-                                                                <SelectItem value="moyenne">Moyenne</SelectItem>
-                                                                <SelectItem value="favorisee">Favorisée</SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-                                                </div>
-                                                <DialogFooter>
-                                                    <DialogClose asChild>
-                                                        <Button variant="outline">Cancel</Button>
-                                                    </DialogClose>
-                                                    <Button type="button" onClick={handelSubmit}>Save</Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </form>
-                                    </Dialog>
-                                )}
+                            {/* Cross-promo badges moved to bottom of header */}
                             </div>
                         </div>
 
@@ -772,21 +430,7 @@ export default function ParticipantProfilePage() {
                                     </div>
                                     <p className="text-white/80">{participant.info_session?.name || 'No session assigned'}</p>
 
-                                    {/* Cross-promo navigation */}
-                                    {Array.isArray(otherProfiles) && otherProfiles.length > 0 && (
-                                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                                            <span className="text-xs text-white/70">Also in:</span>
-                                            {otherProfiles.map((p) => (
-                                                <Badge
-                                                    key={p.id}
-                                                    onClick={() => router.visit(`/admin/participants/${p.id}`)}
-                                                    className="cursor-pointer bg-white/10 hover:bg-white/20 text-white rounded-lg px-2 py-1"
-                                                >
-                                                    {(p?.info_session?.name || `Promo #${p.info_session_id}`)}
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                    )}
+                                    
                                 </div>
                             </div>
 
@@ -811,9 +455,27 @@ export default function ParticipantProfilePage() {
                                     <GraduationCap className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Program</div>
                                     <div className="text-sm font-medium">{humanize(participant.info_session?.formation || participant.formation_field) || 'Not assigned'}</div>
+                                   
                                 </div>
                             </div>
+                            
                         </div>
+                        {/* Cross-promo badges row under cards */}
+                        {Array.isArray(otherProfiles) && otherProfiles.length > 0 && (
+                            <div className="w-full mt-2 flex justify-end">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    {otherProfiles.map((p) => (
+                                        <Badge
+                                            key={p.id}
+                                            onClick={() => router.visit(`/admin/participants/${p.id}`)}
+                                            className="cursor-pointer bg-white text-[#212529] hover:bg-[#fee819] hover:text-[#212529] rounded-lg px-3 py-1"
+                                        >
+                                            {p?.info_session?.name || `Promo #${p.info_session_id}`}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -830,13 +492,13 @@ export default function ParticipantProfilePage() {
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Email</div>
-                                    <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
+                                        <div className="text-xs text-gray-500 mb-1">Email</div>
+                                        <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Phone</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
-                                </div>
+                                        <div className="text-xs text-gray-500 mb-1">Phone</div>
+                                        <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
+                                    </div>
                                 <div className="md:col-span-2">
                                     <div className="text-xs text-gray-500 mb-1">Address</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{
@@ -849,7 +511,7 @@ export default function ParticipantProfilePage() {
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Birthday</div>
                                     <div className="text-sm font-medium text-[#212529]">{formatDate(participant.birthday)}</div>
-                                </div>
+                                    </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Gender</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.gender) || '-'}</div>
@@ -928,18 +590,18 @@ export default function ParticipantProfilePage() {
                                 {/* {participant.approved_by && (
                                     <>
                                         <Separator />
-                                        <div>
+                                <div>
                                             <div className="text-xs text-gray-500 mb-1">Approved By</div>
                                             <div className="text-sm font-medium text-[#212529]">
                                                 {participant.approvedBy?.name || participant.approved_by?.name || 'Unknown'}
                                             </div>
-                                        </div>
+                                </div>
                                     </>
                                 )} */}
                                 {participant.last_step_changed_by && (
                                     <>
                                         <Separator />
-                                        <div>
+                                <div>
                                             <div className="text-xs text-gray-500 mb-1">Last Step Changed By</div>
                                             <div className="text-sm font-medium text-[#212529]">
                                                 {participant.lastStepChangedBy?.name || participant.last_step_changed_by?.name || 'Unknown'}
@@ -953,14 +615,14 @@ export default function ParticipantProfilePage() {
                                                         hour: '2-digit',
                                                         minute: '2-digit'
                                                     })}
-                                                </div>
+                                </div>
                                             )}
                                             {participant.previous_step && participant.current_step && (
                                                 <div className="text-xs text-blue-600 mt-1 font-medium">
                                                     {participant.previous_step.replaceAll('_', ' ')} → {participant.current_step.replaceAll('_', ' ')}
-                                                </div>
+                                </div>
                                             )}
-                                        </div>
+                                </div>
                                     </>
                                 )}
                                 {participant.status === 'pending' && (
@@ -1085,13 +747,13 @@ export default function ParticipantProfilePage() {
                                 {/* Row: Participated + LionsGEEK Activity | Other Activity */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-3">
-                                        <div>
+                                <div>
                                             <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
                                             <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.participated_lionsgeek) || '-'}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
-                                            <div className="text-sm font-medium text-[#212529]">{humanize(participant.lionsgeek_activity) || '-'}</div>
+                                </div>
+                                    <div>
+                                        <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
+                                        <div className="text-sm font-medium text-[#212529]">{humanize(participant.lionsgeek_activity) || '-'}</div>
                                         </div>
                                     </div>
                                     <div>
@@ -1115,29 +777,29 @@ export default function ParticipantProfilePage() {
                             </CardContent>
                         </Card>
                         <Dialog open={isDeleteOpened} onOpenChange={setIsDeleteOpened}>
-                            <DialogContent className="sm:max-w-md">
-                                <DialogHeader>
-                                    <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
-                                </DialogHeader>
-
-                                <DialogFooter className="sm:justify-end">
-                                    <DialogClose asChild>
+                                        <DialogContent className="sm:max-w-md">
+                                            <DialogHeader>
+                                                <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
+                                            </DialogHeader>
+                        
+                                            <DialogFooter className="sm:justify-end">
+                                                <DialogClose asChild>
                                         <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
-                                            Close
-                                        </Button>
-                                    </DialogClose>
-                                    <Button onClick={handleDelete} type="button" variant="destructive">
-                                        {processing ? (
-                                            <div className="flex gap-3">
-                                                <Loader2 className="animate-spin" /> Deleting ...{' '}
-                                            </div>
-                                        ) : (
-                                            'Delete'
-                                        )}
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                                                        Close
+                                                    </Button>
+                                                </DialogClose>
+                                                <Button onClick={handleDelete} type="button" variant="destructive">
+                                                    {processing ? (
+                                                        <div className="flex gap-3">
+                                                            <Loader2 className="animate-spin" /> Deleting ...{' '}
+                                                        </div>
+                                                    ) : (
+                                                        'Delete'
+                                                    )}
+                                                </Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
 
 
                         {/* Game Results */}
@@ -1188,7 +850,7 @@ export default function ParticipantProfilePage() {
                         <FrequentQuestionsSection participant={participant} />
                         <MotivationSection participant={participant} />
                         <div ref={notesRef} className={`${notesHighlight ? 'ring-2 ring-[#fee819] rounded-lg transition-shadow duration-300' : ''}`}>
-                            <AdminNotesSection participant={participant} />
+                        <AdminNotesSection participant={participant} />
                         </div>
                     </div>
                 </div>
@@ -1207,6 +869,7 @@ export default function ParticipantProfilePage() {
                     />
                 )}
             </div>
+            
             <Dialog open={isNextStepConfirmOpen} onOpenChange={setIsNextStepConfirmOpen}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
