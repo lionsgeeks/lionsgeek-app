@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film, UserCheck, Calendar, Filter } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import InterviewDialog from './interviewDialog';
@@ -16,7 +17,15 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 	const [selectedGender, setSelectedGender] = useState('');
 	const [dateSort, setDateSort] = useState('');
 	const [copy, setCopy] = useState(true);
-	const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+	// Modal state and draft filter values
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
+	const [draftStep, setDraftStep] = useState('');
+	const [draftSession, setDraftSession] = useState('');
+	const [draftPromo, setDraftPromo] = useState('');
+	const [draftTrack, setDraftTrack] = useState('');
+	const [draftGender, setDraftGender] = useState('');
+	const [draftDateSort, setDraftDateSort] = useState('');
 
 	const isStatusValue = (value) => ['approved', 'pending', 'rejected', 'all'].includes(value);
 
@@ -85,12 +94,39 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		return [{ name: 'No Infosession', id: 'no-infosession' }, ...list];
 	}, [infosessions, selectedTrack, selectedPromo]);
 
+	// Modal session options based on draft values
+	const sessionOptionsDraft = useMemo(() => {
+		let list = infosessions || [];
+		if (draftTrack && draftTrack !== 'All') {
+			const wanted = draftTrack.toLowerCase();
+			list = list.filter((s) => (s?.formation || '').toString().toLowerCase().includes(wanted));
+		}
+		if (draftPromo && draftPromo !== 'All') {
+			const wantedPromo = draftPromo.toLowerCase();
+			list = list.filter((s) => {
+				const name = s?.name || '';
+				if (!name.includes(':')) return false;
+				const prefix = name.slice(0, name.indexOf(':')).trim().toLowerCase();
+				return prefix === wantedPromo;
+			});
+		}
+		return [{ name: 'No Infosession', id: 'no-infosession' }, ...list];
+	}, [infosessions, draftTrack, draftPromo]);
+
 	// If current selectedSession is not in filtered sessionOptions, reset it
 	useEffect(() => {
 		if (!selectedSession) return;
 		const exists = sessionOptions.some((s) => s?.name === selectedSession);
 		if (!exists) setSelectedSession('');
 	}, [sessionOptions, selectedSession]);
+
+	// Keep draft session valid while filtering inside modal
+	useEffect(() => {
+		if (!isFilterOpen) return;
+		if (!draftSession) return;
+		const exists = sessionOptionsDraft.some((s) => s?.name === draftSession);
+		if (!exists) setDraftSession('');
+	}, [isFilterOpen, sessionOptionsDraft, draftSession]);
 
 	const filtredParticipans = useMemo(() => {
 		let filtered = participants?.filter((participant) => {
@@ -219,6 +255,27 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
 	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack || selectedGender || dateSort;
 
+	// Open modal and seed drafts
+	const openFilterModal = () => {
+		setDraftStep(selectedStep || '');
+		setDraftSession(selectedSession || '');
+		setDraftPromo(selectedPromo || '');
+		setDraftTrack(selectedTrack || '');
+		setDraftGender(selectedGender || '');
+		setDraftDateSort(dateSort || '');
+		setIsFilterOpen(true);
+	};
+
+	const applyFilters = () => {
+		setSelectedStep(draftStep);
+		setSelectedSession(draftSession);
+		setSelectedPromo(draftPromo);
+		setSelectedTrack(draftTrack);
+		setSelectedGender(draftGender);
+		setDateSort(draftDateSort);
+		setIsFilterOpen(false);
+	};
+
     const handleReset = () => {
         setSearch('');
         setSelectedStep('');
@@ -271,7 +328,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 			</div>
 			
 			{/* Filter Controls */}
-			<div className="flex flex-wrap items-center gap-3 sm:gap-3 gap-2">
+			<div className="flex flex-wrap items-center gap-3">
 				{/* Search Input */}
 				<div className="relative w-full sm:max-w-md sm:min-w-[280px] flex-1">
 					<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
@@ -283,188 +340,37 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 					/>
 				</div>
 
-				{/* Mobile Filter Toggle Button */}
+				{/* Filter button opens modal */}
 				<Button
-					onClick={() => setShowMobileFilters(!showMobileFilters)}
-					className="sm:hidden rounded-lg border border-gray-300 bg-white text-[#212529] hover:bg-gray-50"
+					onClick={openFilterModal}
 					variant="outline"
+					className="rounded-lg border border-gray-300 bg-white text-[#212529] hover:bg-gray-50"
 				>
 					<Filter className="mr-2 h-4 w-4" />
-					Filters
+					Filter
 				</Button>
 
-				{/* All Filters - Hidden on mobile until button is clicked */}
-				<div className={`${showMobileFilters ? 'flex' : 'hidden'} sm:contents flex-wrap items-center gap-3 sm:gap-3 gap-2`}>
-					{/* Promo Filter */}
-					{promoOptions?.length > 0 && (
-						<Select onValueChange={setSelectedPromo} value={selectedPromo}>
-							<SelectTrigger className="w-full sm:w-48 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
-								<SelectValue placeholder="Filter By Promo" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="All">All Promos</SelectItem>
-								{promoOptions.map((promo) => (
-									<SelectItem key={`promo-${promo}`} value={promo}>
-										{formatPromoLabel(promo)}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					)}
-
-				{/* Track Filter (Coding/Media) */}
-				<Select onValueChange={setSelectedTrack} value={selectedTrack}>
-					<SelectTrigger className="w-full sm:w-44 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20 capitalize">
-						<SelectValue placeholder="Filter By Track" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="All">All Tracks</SelectItem>
-						<SelectItem className="capitalize" value="coding">Coding</SelectItem>
-						<SelectItem className="capitalize" value="media">Media</SelectItem>
-					</SelectContent>
-				</Select>
-
-
-				{/* Session Filter (depends on Track) */}
-				{sessionOptions && (
-					<Select onValueChange={setSelectedSession} value={selectedSession}>
-						<SelectTrigger className="w-full sm:w-56 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
-							<SelectValue placeholder="Filter By Session" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="All">All Sessions</SelectItem>
-							{sessionOptions.map((session, index) => (
-								<SelectItem key={session.id || index} value={session.name}>
-									{session.name}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+				{/* Reset Button - next to Filter */}
+				{hasActiveFilters && (
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={handleReset}
+						className="rounded-lg text-[#212529] transition-all duration-200 ease-in-out hover:bg-gray-50 hover:text-[#212529]/80"
+					>
+						<RotateCcw className="mr-1 h-4 w-4" />
+						Reset
+					</Button>
 				)}
 
-				{/* Step Filter with status options on top and counts on the right */}
-				<Select onValueChange={setSelectedStep} value={selectedStep}>
-					<SelectTrigger className="w-full sm:w-56 rounded-lg border focus:border-[#212529]">
-						<SelectValue placeholder="Filter By Step" />
-					</SelectTrigger>
-					<SelectContent>
-						{/* Status options at top */}
-						<SelectItem value="approved">
-							<div className="flex items-center gap-2">
-								<CheckCircle2 className="h-4 w-4 text-green-600" />
-								<span>Approved<span className="ml-1 text-gray-500">({dynamicStatusCounts.approved || 0})</span></span>
-							</div>
-						</SelectItem>
-						<SelectItem value="pending">
-							<div className="flex items-center gap-2">
-								<Clock className="h-4 w-4 text-orange-600" />
-								<span>Pending<span className="ml-1 text-gray-500">({dynamicStatusCounts.pending || 0})</span></span>
-							</div>
-						</SelectItem>
-						<SelectItem value="rejected">
-							<div className="flex items-center gap-2">
-								<XCircle className="h-4 w-4 text-red-600" />
-								<span>Rejected<span className="ml-1 text-gray-500">({dynamicStatusCounts.rejected || 0})</span></span>
-							</div>
-						</SelectItem>
-						<SelectItem value="all">
-							<div className="flex items-center gap-2">
-								<Users className="h-4 w-4 text-gray-500" />
-								<span>All<span className="ml-1 text-gray-500">({dynamicStatusCounts.all || 0})</span></span>
-							</div>
-						</SelectItem>
-						{/* Divider equivalent: keep list order */}
-						<SelectItem value="All">
-							<div className="flex items-center gap-2 text-gray-700">
-								<ListChecks className="h-4 w-4 text-gray-500" />
-								<span>All Steps</span>
-							</div>
-						</SelectItem>
-						<SelectItem value="info_session">
-							<div className="flex items-center gap-2 text-gray-700">
-								<Presentation className="h-4 w-4 text-gray-500" />
-								<span>Info Session</span>
-							</div>
-						</SelectItem>
-						<SelectItem value="interview">
-							<div className="flex items-center gap-2 text-gray-700">
-								<User className="h-4 w-4 text-gray-500" />
-								<span>Interview</span>
-							</div>
-						</SelectItem>
-						<SelectItem value="interview_pending">
-							<div className="flex items-center gap-2 text-gray-700">
-								<Clock className="h-4 w-4 text-gray-500" />
-								<span>Interview Pending</span>
-							</div>
-						</SelectItem>
-						<SelectItem value="interview_failed">
-							<div className="flex items-center gap-2 text-gray-700">
-								<Ban className="h-4 w-4 text-gray-500" />
-								<span>Interview Failed</span>
-							</div>
-						</SelectItem>
-						<SelectItem value="jungle">
-							<div className="flex items-center gap-2 text-gray-700">
-								<Mountain className="h-4 w-4 text-gray-500" />
-								<span>Jungle</span>
-							</div>
-						</SelectItem>
-						<SelectItem value="jungle_failed">
-							<div className="flex items-center gap-2 text-gray-700">
-								<Ban className="h-4 w-4 text-gray-500" />
-								<span>Jungle Failed</span>
-							</div>
-						</SelectItem>
-					</SelectContent>
-				</Select>
-
-					{/* Gender Filter - Last Filter */}
-					<Select onValueChange={setSelectedGender} value={selectedGender}>
-						<SelectTrigger className="w-full sm:w-44 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
-							<SelectValue placeholder="Filter By Gender" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="All">All Genders</SelectItem>
-							<SelectItem value="male">Male</SelectItem>
-							<SelectItem value="female">Female</SelectItem>
-						</SelectContent>
-					</Select>
-
-					{/* Date Sort - Last Filter */}
-					<Select onValueChange={setDateSort} value={dateSort}>
-						<SelectTrigger className="w-full sm:w-44 rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
-							<SelectValue placeholder="Sort By Date" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="All">Default Order</SelectItem>
-							<SelectItem value="newest">Newest First</SelectItem>
-							<SelectItem value="oldest">Oldest First</SelectItem>
-						</SelectContent>
-					</Select>
-
-					{/* Reset Button - After all filters */}
-					{hasActiveFilters && (
-						<Button
-							variant="ghost"
-							size="sm"
-							onClick={handleReset}
-							className="rounded-lg text-[#212529] transition-all duration-200 ease-in-out hover:bg-gray-50 hover:text-[#212529]/80"
-						>
-							<RotateCcw className="mr-1 h-4 w-4" />
-							Reset
-						</Button>
-					)}
-
-					{/* Action Buttons for Infosession Detail Page */}
-					{!infosessions && (
-						<div className="ml-auto flex gap-3">
-							<InterviewDialog infosession={infosession} />
-							<InviteDialog infosession={infosession} step={'jungle'} />
-							<InviteDialog infosession={infosession} step={'school'} />
-						</div>
-					)}
-				</div>
+				{/* Action Buttons for Infosession Detail Page */}
+				{!infosessions && (
+					<div className="ml-auto flex gap-3">
+						<InterviewDialog infosession={infosession} />
+						<InviteDialog infosession={infosession} step={'jungle'} />
+						<InviteDialog infosession={infosession} step={'school'} />
+					</div>
+				)}
 			</div>
 
 			{/* Results Summary */}
@@ -484,6 +390,170 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 					</div>
 				</div>
 			)}
+
+			{/* Filter Modal */}
+			<Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+				<DialogContent className="sm:max-w-2xl max-h-[85vh]">
+					<DialogHeader>
+						<DialogTitle className="text-[#212529]">Filter Participants</DialogTitle>
+					</DialogHeader>
+					<div className="overflow-y-auto max-h-[60vh] pr-1">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						{/* Promo */}
+						{promoOptions?.length > 0 && (
+							<Select onValueChange={setDraftPromo} value={draftPromo}>
+								<SelectTrigger className="w-full rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+									<SelectValue placeholder="Filter By Promo" />
+								</SelectTrigger>
+							<SelectContent className="max-h-64 overflow-y-auto">
+									<SelectItem value="All">All Promos</SelectItem>
+									{promoOptions.map((promo) => (
+										<SelectItem key={`promo-${promo}`} value={promo}>
+											{formatPromoLabel(promo)}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						)}
+
+						{/* Track (hide on infosession detail) */}
+						{!infosession && (
+							<Select onValueChange={setDraftTrack} value={draftTrack}>
+								<SelectTrigger className="w-full rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20 capitalize">
+									<SelectValue placeholder="Filter By Track" />
+								</SelectTrigger>
+								<SelectContent className="max-h-64 overflow-y-auto">
+									<SelectItem value="All">All Tracks</SelectItem>
+									<SelectItem className="capitalize" value="coding">Coding</SelectItem>
+									<SelectItem className="capitalize" value="media">Media</SelectItem>
+								</SelectContent>
+							</Select>
+						)}
+
+						{/* Session (depends on draftTrack/draftPromo) — hide on infosession detail */}
+						{!infosession && sessionOptionsDraft && (
+							<Select onValueChange={setDraftSession} value={draftSession}>
+								<SelectTrigger className="w-full rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+									<SelectValue placeholder="Filter By Session" />
+								</SelectTrigger>
+								<SelectContent className="max-h-64 overflow-y-auto">
+									<SelectItem value="All">All Sessions</SelectItem>
+									{sessionOptionsDraft.map((session, index) => (
+										<SelectItem key={session.id || index} value={session.name}>
+											{session.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						)}
+
+						{/* Step */}
+						<Select onValueChange={setDraftStep} value={draftStep}>
+							<SelectTrigger className="w-full rounded-lg border focus:border-[#212529]">
+								<SelectValue placeholder="Filter By Step" />
+							</SelectTrigger>
+							<SelectContent className="max-h-64 overflow-y-auto">
+								<SelectItem value="approved">
+									<div className="flex items-center gap-2">
+										<CheckCircle2 className="h-4 w-4 text-green-600" />
+										<span>Approved<span className="ml-1 text-gray-500">({dynamicStatusCounts.approved || 0})</span></span>
+									</div>
+								</SelectItem>
+								<SelectItem value="pending">
+									<div className="flex items-center gap-2">
+										<Clock className="h-4 w-4 text-orange-600" />
+										<span>Pending<span className="ml-1 text-gray-500">({dynamicStatusCounts.pending || 0})</span></span>
+									</div>
+								</SelectItem>
+								<SelectItem value="rejected">
+									<div className="flex items-center gap-2">
+										<XCircle className="h-4 w-4 text-red-600" />
+										<span>Rejected<span className="ml-1 text-gray-500">({dynamicStatusCounts.rejected || 0})</span></span>
+									</div>
+								</SelectItem>
+								<SelectItem value="all">
+									<div className="flex items-center gap-2">
+										<Users className="h-4 w-4 text-gray-500" />
+										<span>All<span className="ml-1 text-gray-500">({dynamicStatusCounts.all || 0})</span></span>
+									</div>
+								</SelectItem>
+								<SelectItem value="All">
+									<div className="flex items-center gap-2 text-gray-700">
+										<ListChecks className="h-4 w-4 text-gray-500" />
+										<span>All Steps</span>
+									</div>
+								</SelectItem>
+								<SelectItem value="info_session">
+									<div className="flex items-center gap-2 text-gray-700">
+										<Presentation className="h-4 w-4 text-gray-500" />
+										<span>Info Session</span>
+									</div>
+								</SelectItem>
+								<SelectItem value="interview">
+									<div className="flex items-center gap-2 text-gray-700">
+										<User className="h-4 w-4 text-gray-500" />
+										<span>Interview</span>
+									</div>
+								</SelectItem>
+								<SelectItem value="interview_pending">
+									<div className="flex items-center gap-2 text-gray-700">
+										<Clock className="h-4 w-4 text-gray-500" />
+										<span>Interview Pending</span>
+									</div>
+								</SelectItem>
+								<SelectItem value="interview_failed">
+									<div className="flex items-center gap-2 text-gray-700">
+										<Ban className="h-4 w-4 text-gray-500" />
+										<span>Interview Failed</span>
+									</div>
+								</SelectItem>
+								<SelectItem value="jungle">
+									<div className="flex items-center gap-2 text-gray-700">
+										<Mountain className="h-4 w-4 text-gray-500" />
+										<span>Jungle</span>
+									</div>
+								</SelectItem>
+								<SelectItem value="jungle_failed">
+									<div className="flex items-center gap-2 text-gray-700">
+										<Ban className="h-4 w-4 text-gray-500" />
+										<span>Jungle Failed</span>
+									</div>
+								</SelectItem>
+							</SelectContent>
+						</Select>
+
+						{/* Gender */}
+						<Select onValueChange={setDraftGender} value={draftGender}>
+							<SelectTrigger className="w-full rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+								<SelectValue placeholder="Filter By Gender" />
+							</SelectTrigger>
+							<SelectContent className="max-h-64 overflow-y-auto">
+								<SelectItem value="All">All Genders</SelectItem>
+								<SelectItem value="male">Male</SelectItem>
+								<SelectItem value="female">Female</SelectItem>
+							</SelectContent>
+						</Select>
+
+						{/* Date Sort */}
+						<Select onValueChange={setDraftDateSort} value={draftDateSort}>
+							<SelectTrigger className="w-full rounded-lg border transition-all duration-200 ease-in-out focus:border-[#212529] focus:ring-2 focus:ring-[#212529]/20">
+								<SelectValue placeholder="Sort By Date" />
+							</SelectTrigger>
+							<SelectContent className="max-h-64 overflow-y-auto">
+								<SelectItem value="All">Default Order</SelectItem>
+								<SelectItem value="newest">Newest First</SelectItem>
+								<SelectItem value="oldest">Oldest First</SelectItem>
+							</SelectContent>
+						</Select>
+						</div>
+					</div>
+
+					<DialogFooter className="sm:justify-end">
+						<Button variant="secondary" onClick={() => setIsFilterOpen(false)}>Cancel</Button>
+						<Button className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]" onClick={applyFilters}>Apply</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 };
