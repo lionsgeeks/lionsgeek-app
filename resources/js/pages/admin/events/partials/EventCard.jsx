@@ -128,7 +128,7 @@ export default function EventCard({ event, onEdit, onDelete }) {
                 </div>
             </Card>
             <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Delete Event</DialogTitle>
                         <DialogDescription>
