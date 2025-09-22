@@ -9,6 +9,7 @@ import InterviewDialog from './interviewDialog';
 import InviteDialog from './inviteDialog';
 
 const FilterHeader = ({ participants = [], infosession, infosessions = [], setFiltredParticipants, statusCounts = {} }) => {
+	const STORAGE_KEY = 'admin_participants_filters_v1';
 	const [search, setSearch] = useState('');
 	const [selectedStep, setSelectedStep] = useState('');
 	const [selectedSession, setSelectedSession] = useState('');
@@ -234,6 +235,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
 	// Initialize selectedStep from URL status on mount (only for status values)
 	useEffect(() => {
+		if (typeof window === 'undefined') return;
 		const params = new URLSearchParams(window.location.search);
 		const urlStatus = params.get('status');
 		if (urlStatus && isStatusValue(urlStatus)) {
@@ -243,6 +245,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 
 	// Persist status selection to URL; remove when a non-status step is chosen
 	useEffect(() => {
+		if (typeof window === 'undefined') return;
 		const params = new URLSearchParams(window.location.search);
 		if (selectedStep && isStatusValue(selectedStep)) {
 			params.set('status', selectedStep);
@@ -252,6 +255,44 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 		const newUrl = `${location.pathname}?${params.toString()}`;
 		window.history.replaceState({}, '', newUrl);
 	}, [selectedStep]);
+
+	// Load saved filters on participants index only (browser-only)
+	const isParticipantsIndex = Array.isArray(infosessions) && !infosession;
+	useEffect(() => {
+		if (!isParticipantsIndex) return;
+		if (typeof window === 'undefined') return;
+			try {
+				const raw = localStorage.getItem(STORAGE_KEY);
+				if (raw) {
+					const saved = JSON.parse(raw);
+					if (typeof saved.search === 'string') setSearch(saved.search);
+					if (typeof saved.selectedStep === 'string') setSelectedStep(saved.selectedStep);
+					if (typeof saved.selectedSession === 'string') setSelectedSession(saved.selectedSession);
+					if (typeof saved.selectedPromo === 'string') setSelectedPromo(saved.selectedPromo);
+					if (typeof saved.selectedTrack === 'string') setSelectedTrack(saved.selectedTrack);
+					if (typeof saved.selectedGender === 'string') setSelectedGender(saved.selectedGender);
+					if (typeof saved.dateSort === 'string') setDateSort(saved.dateSort);
+				}
+			} catch (_) {}
+	}, [isParticipantsIndex]);
+
+	// Save filters on change for participants index only (browser-only)
+	useEffect(() => {
+		if (!isParticipantsIndex) return;
+		if (typeof window === 'undefined') return;
+			try {
+				const payload = {
+					search,
+					selectedStep,
+					selectedSession,
+					selectedPromo,
+					selectedTrack,
+					selectedGender,
+					dateSort,
+				};
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+			} catch (_) {}
+	}, [isParticipantsIndex, search, selectedStep, selectedSession, selectedPromo, selectedTrack, selectedGender, dateSort]);
 
 	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack || selectedGender || dateSort;
 
@@ -289,9 +330,16 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
             setFiltredParticipants(participants);
         }
         
-        const params = new URLSearchParams(window.location.search);
+		if (typeof window !== 'undefined') {
+			const params = new URLSearchParams(window.location.search);
         params.delete('status');
         window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+		}
+
+		// Clear persisted filters on participants index
+		if (isParticipantsIndex && typeof window !== 'undefined') {
+			try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+		}
     };
 
 	const handleCopyEmails = () => {
