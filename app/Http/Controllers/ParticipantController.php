@@ -657,7 +657,7 @@ class ParticipantController extends Controller
 
     // Fetch other registrations for the same person (same email), across other promos/sessions
     $otherProfiles = Participant::with('infoSession')
-        ->where('email', $participant->email)
+        ->whereRaw('LOWER(full_name) = ?', [strtolower((string) $participant->full_name)])
         ->where('id', '!=', $participant->id)
         ->orderBy('created_at', 'desc')
         ->get(['id', 'info_session_id', 'current_step', 'status', 'created_at']);

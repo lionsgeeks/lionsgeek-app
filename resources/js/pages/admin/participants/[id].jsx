@@ -5,15 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader
+import { 
+  Dialog, 
+  DialogClose, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader 
 } from '@/components/ui/dialog';
-import {
+import { 
     ArrowLeft,
     User,
     Mail,
@@ -49,9 +49,9 @@ export default function ParticipantProfilePage() {
     const notesRef = useRef(null);
     const [notesHighlight, setNotesHighlight] = useState(false);
     const { post, processing } = useForm();
-
-
-
+    
+    
+    
 
     // Compute derived game metrics for display
     const totalLevelsConst = 20; // matches game plan length
@@ -158,14 +158,14 @@ export default function ParticipantProfilePage() {
         ? Number(participant.age)
         : (participant?.birthday ? Math.floor((Date.now() - new Date(participant.birthday).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null);
 
-    const handleDelete = (e) => {
-        e.stopPropagation();
-        router.delete(`/admin/participants/${participant.id}`, {
-            onSuccess: () => {
-                router.visit("/admin/participants");
-            },
-        });
-    };
+   const handleDelete = (e) => {
+  e.stopPropagation();
+ router.delete(`/admin/participants/${participant.id}`, {
+    onSuccess: () => {
+      router.visit("/admin/participants");
+    },
+  });
+};
     function getConfirmationStatus(participant) {
         const step = participant?.current_step;
         if (step === 'jungle') return participant?.confirmation?.jungle;
@@ -173,56 +173,56 @@ export default function ParticipantProfilePage() {
         return false;
     }
 
-    const changeStep = (action) => {
-        router.patch(`/admin/participant/current-step/${participant.id}`, { action });
+      const changeStep = (action) => {
+    router.patch(`/admin/participant/current-step/${participant.id}`, { action });
 
-        const jugleParticipants = stepParticipant.filter(p => p.current_step === participant.current_step);
+    const jugleParticipants = stepParticipant.filter(p => p.current_step === participant.current_step);
 
-        const currentIndex = jugleParticipants.findIndex(p => p.id === participant.id);
+    const currentIndex = jugleParticipants.findIndex(p => p.id === participant.id);
 
-        const nextParticipant = jugleParticipants[currentIndex + 1];
+    const nextParticipant = jugleParticipants[currentIndex + 1];
 
         // if (nextParticipant) {
         //     router.visit(`/admin/participants/${nextParticipant.id}`);
         // } else {
         //     router.visit("/admin/participants");
         // }
-    };
+};
+   
+   
+const handleNavigation = () => {
+  const currentIndex = participants.findIndex(p => p.id === participant.id);
+  const nextParticipant = participants[currentIndex + 1];
 
-
-    const handleNavigation = () => {
-        const currentIndex = participants.findIndex(p => p.id === participant.id);
-        const nextParticipant = participants[currentIndex + 1];
-
-        if (nextParticipant) {
-            router.visit(`/admin/participants/${nextParticipant.id}`);
-        } else {
-            router.visit("/admin/participants");
-        }
-    };
-    const handleApprove = () => {
-        setIsProcessing(true);
-        router.post(`/admin/participants/${participant.id}/approve`, {}, {
-            onFinish: () => {
-                setIsProcessing(false);
+  if (nextParticipant) {
+    router.visit(`/admin/participants/${nextParticipant.id}`);
+  } else {
+    router.visit("/admin/participants");
+  }
+};
+const handleApprove = () => {
+  setIsProcessing(true);
+  router.post(`/admin/participants/${participant.id}/approve`, {}, {
+    onFinish: () => {
+      setIsProcessing(false);
                 // Refresh the current page to show updated approval data
                 router.reload();
-            },
-            onError: () => setIsProcessing(false),
-        });
-    };
+    },
+    onError: () => setIsProcessing(false),
+  });
+};
 
-    const handleReject = () => {
-        setIsProcessing(true);
-        router.post(`/admin/participants/${participant.id}/reject`, {}, {
-            onFinish: () => {
-                setIsProcessing(false);
+const handleReject = () => {
+  setIsProcessing(true);
+  router.post(`/admin/participants/${participant.id}/reject`, {}, {
+    onFinish: () => {
+      setIsProcessing(false);
                 // Refresh the current page to show updated approval data
                 router.reload();
-            },
-            onError: () => setIsProcessing(false),
-        });
-    };
+    },
+    onError: () => setIsProcessing(false),
+  });
+};
 
     const [isNextStepConfirmOpen, setIsNextStepConfirmOpen] = useState(false);
 
@@ -231,8 +231,8 @@ export default function ParticipantProfilePage() {
             <Head title={`${participant.full_name} - Participant Details`} />
 
             <div className="min-h-screen bg-white">
-                {/* Header Banner */}
-                <div className="bg-[#212529] text-white">
+               {/* Header Banner */}
+               <div className="bg-[#212529] text-white">
                     <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
                             <Button
@@ -258,7 +258,7 @@ export default function ParticipantProfilePage() {
                                     Admin Notes {participant?.notes?.length ? `(${participant.notes.length})` : ''}
                                 </Button>
 
-                                {/* <Button
+                            {/* <Button
                                 onClick={() => router.visit(`/admin/participants/${participant.id}/edit`)}
                                 variant="ghost"
                                 className="text-white hover:bg-[#fee819] hover:text-[#212529] rounded-lg transition-all duration-200 ease-in-out"
@@ -267,53 +267,55 @@ export default function ParticipantProfilePage() {
                                 Edit Profile
                             </Button> */}
 
-                                {
-                                    participant?.current_step !== 'info_session' && !participant?.current_step?.includes('school') && !participant?.current_step?.includes('failed') && (
-                                        <div className="flex gap-2 ">
-                                            <Button
+                            {
+                                participant?.current_step !== 'info_session' && !participant?.current_step?.includes('school') && !participant?.current_step?.includes('failed') && (
+                                    <div className="flex gap-2 ">
+                                        <Button
                                                 onClick={() => setIsNextStepConfirmOpen(true)}
-                                                className="flex-1 bg-[#51b04f] text-white hover:bg-[#459942] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 w-[10%]"
-                                                size="sm"
-                                            >
-                                                <ArrowRight className="h-4 w-4 mr-1" />
-                                                Next Step
-                                            </Button>
-
-                                            <Button
-                                                onClick={() => changeStep('deny')}
-                                                variant="outline"
-                                                className="border-[#ff7376] bg-[#ff7376] text-white hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-                                                size="sm"
-                                            >
-                                                <XCircle className="h-4 w-4 mr-1" />
-                                                Deny
-                                            </Button>
-                                        </div>
-                                    )}
-
-                                {participant?.status === 'pending' && (
-                                    <div className="flex w-full gap-2">
-                                        <Button
-                                            onClick={handleApprove}
-                                            disabled={isProcessing}
-                                            className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
+                                            className="flex-1 bg-[#51b04f] text-white hover:bg-[#459942] rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 w-[10%]"
                                             size="sm"
                                         >
-                                            <CheckCircle2 className="mr-1 h-4 w-4" />
-                                            {isProcessing ? 'Approving...' : 'Approve'}
+                                            <ArrowRight className="h-4 w-4 mr-1" />
+                                            Next Step
                                         </Button>
+
                                         <Button
-                                            onClick={handleReject}
-                                            disabled={isProcessing}
+                                            onClick={() => changeStep('deny')}
                                             variant="outline"
-                                            className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
+                                            className="border-[#ff7376] bg-[#ff7376] text-white hover:bg-[#ff7376] hover:text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
                                             size="sm"
                                         >
-                                            <XCircle className="mr-1 h-4 w-4" />
-                                            {isProcessing ? 'Rejecting...' : 'Reject'}
+                                            <XCircle className="h-4 w-4 mr-1" />
+                                            Deny
                                         </Button>
                                     </div>
                                 )}
+
+                            {participant?.status === 'pending' && (
+                                <div className="flex w-full gap-2">
+                                    <Button
+                                        onClick={handleApprove}
+                                        disabled={isProcessing}
+                                        className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
+                                        size="sm"
+                                    >
+                                        <CheckCircle2 className="mr-1 h-4 w-4" />
+                                        {isProcessing ? 'Approving...' : 'Approve'}
+                                    </Button>
+                                    <Button
+                                        onClick={handleReject}
+                                        disabled={isProcessing}
+                                        variant="outline"
+                                        className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
+                                        size="sm"
+                                    >
+                                        <XCircle className="mr-1 h-4 w-4" />
+                                        {isProcessing ? 'Rejecting...' : 'Reject'}
+                                    </Button>
+                                </div>
+                            )}
+
+                            {/* Cross-promo badges moved to bottom of header */}
                             </div>
                         </div>
 
@@ -357,7 +359,7 @@ export default function ParticipantProfilePage() {
                                     </div>
                                 </div>
 
-                            <div className="flex-1">
+                                <div className="flex-1">
                                     <h1 className="text-3xl font-bold mb-2">{participant.full_name}</h1>
                                     <div className="flex flex-wrap gap-2 mb-3">
                                         <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1 font-medium`}>
@@ -394,21 +396,7 @@ export default function ParticipantProfilePage() {
                                     </div>
                                     <p className="text-white/80">{participant.info_session?.name || 'No session assigned'}</p>
 
-                                    {/* Cross-promo navigation */}
-                                    {Array.isArray(otherProfiles) && otherProfiles.length > 0 && (
-                                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                                            <span className="text-xs text-white/70">Also in:</span>
-                                            {otherProfiles.map((p) => (
-                                                <Badge
-                                                    key={p.id}
-                                                    onClick={() => router.visit(`/admin/participants/${p.id}`)}
-                                                    className="cursor-pointer bg-white/10 hover:bg-white/20 text-white rounded-lg px-2 py-1"
-                                                >
-                                                    {(p?.info_session?.name || `Promo #${p.info_session_id}`)}
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                    )}
+                                    
                                 </div>
                             </div>
 
@@ -433,9 +421,27 @@ export default function ParticipantProfilePage() {
                                     <GraduationCap className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Program</div>
                                     <div className="text-sm font-medium">{humanize(participant.info_session?.formation || participant.formation_field) || 'Not assigned'}</div>
+                                   
                                 </div>
                             </div>
+                            
                         </div>
+                        {/* Cross-promo badges row under cards */}
+                        {Array.isArray(otherProfiles) && otherProfiles.length > 0 && (
+                            <div className="w-full mt-2 flex justify-end">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    {otherProfiles.map((p) => (
+                                        <Badge
+                                            key={p.id}
+                                            onClick={() => router.visit(`/admin/participants/${p.id}`)}
+                                            className="cursor-pointer bg-white text-[#212529] hover:bg-[#fee819] hover:text-[#212529] rounded-lg px-3 py-1"
+                                        >
+                                            {p?.info_session?.name || `Promo #${p.info_session_id}`}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -452,13 +458,13 @@ export default function ParticipantProfilePage() {
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Email</div>
-                                    <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
+                                        <div className="text-xs text-gray-500 mb-1">Email</div>
+                                        <div className="text-sm font-medium text-[#212529] truncate">{participant.email}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-gray-500 mb-1">Phone</div>
-                                    <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
-                                </div>
+                                        <div className="text-xs text-gray-500 mb-1">Phone</div>
+                                        <div className="text-sm font-medium text-[#212529]">{participant.phone}</div>
+                                    </div>
                                 <div className="md:col-span-2">
                                     <div className="text-xs text-gray-500 mb-1">Address</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{
@@ -471,7 +477,7 @@ export default function ParticipantProfilePage() {
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Birthday</div>
                                     <div className="text-sm font-medium text-[#212529]">{formatDate(participant.birthday)}</div>
-                                </div>
+                                    </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Gender</div>
                                     <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.gender) || '-'}</div>
@@ -550,18 +556,18 @@ export default function ParticipantProfilePage() {
                                 {/* {participant.approved_by && (
                                     <>
                                         <Separator />
-                                        <div>
+                                <div>
                                             <div className="text-xs text-gray-500 mb-1">Approved By</div>
                                             <div className="text-sm font-medium text-[#212529]">
                                                 {participant.approvedBy?.name || participant.approved_by?.name || 'Unknown'}
                                             </div>
-                                        </div>
+                                </div>
                                     </>
                                 )} */}
                                 {participant.last_step_changed_by && (
                                     <>
                                         <Separator />
-                                        <div>
+                                <div>
                                             <div className="text-xs text-gray-500 mb-1">Last Step Changed By</div>
                                             <div className="text-sm font-medium text-[#212529]">
                                                 {participant.lastStepChangedBy?.name || participant.last_step_changed_by?.name || 'Unknown'}
@@ -575,14 +581,14 @@ export default function ParticipantProfilePage() {
                                                         hour: '2-digit',
                                                         minute: '2-digit'
                                                     })}
-                                                </div>
+                                </div>
                                             )}
                                             {participant.previous_step && participant.current_step && (
                                                 <div className="text-xs text-blue-600 mt-1 font-medium">
                                                     {participant.previous_step.replaceAll('_', ' ')} → {participant.current_step.replaceAll('_', ' ')}
-                                                </div>
+                                </div>
                                             )}
-                                        </div>
+                                </div>
                                     </>
                                 )}
                                 {participant.status === 'pending' && (
@@ -707,13 +713,13 @@ export default function ParticipantProfilePage() {
                                 {/* Row: Participated + LionsGEEK Activity | Other Activity */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-3">
-                                        <div>
+                                <div>
                                             <div className="text-xs text-gray-500 mb-1">Participated in LionsGEEK</div>
                                             <div className="text-sm font-medium text-[#212529] capitalize">{humanize(participant.participated_lionsgeek) || '-'}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
-                                            <div className="text-sm font-medium text-[#212529]">{humanize(participant.lionsgeek_activity) || '-'}</div>
+                                </div>
+                                    <div>
+                                        <div className="text-xs text-gray-500 mb-1">LionsGEEK Activity</div>
+                                        <div className="text-sm font-medium text-[#212529]">{humanize(participant.lionsgeek_activity) || '-'}</div>
                                         </div>
                                     </div>
                                     <div>
@@ -737,29 +743,29 @@ export default function ParticipantProfilePage() {
                             </CardContent>
                         </Card>
                         <Dialog open={isDeleteOpened} onOpenChange={setIsDeleteOpened}>
-                            <DialogContent className="sm:max-w-md">
-                                <DialogHeader>
-                                    <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
-                                </DialogHeader>
-
-                                <DialogFooter className="sm:justify-end">
-                                    <DialogClose asChild>
+                                        <DialogContent className="sm:max-w-md">
+                                            <DialogHeader>
+                                                <DialogDescription>Are you sure you want to delete this Participant {selectedParticipant?.full_name}</DialogDescription>
+                                            </DialogHeader>
+                        
+                                            <DialogFooter className="sm:justify-end">
+                                                <DialogClose asChild>
                                         <Button onClick={() => setIsDeleteOpened(false)} type="button" variant="secondary">
-                                            Close
-                                        </Button>
-                                    </DialogClose>
-                                    <Button onClick={handleDelete} type="button" variant="destructive">
-                                        {processing ? (
-                                            <div className="flex gap-3">
-                                                <Loader2 className="animate-spin" /> Deleting ...{' '}
-                                            </div>
-                                        ) : (
-                                            'Delete'
-                                        )}
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                                                        Close
+                                                    </Button>
+                                                </DialogClose>
+                                                <Button onClick={handleDelete} type="button" variant="destructive">
+                                                    {processing ? (
+                                                        <div className="flex gap-3">
+                                                            <Loader2 className="animate-spin" /> Deleting ...{' '}
+                                                        </div>
+                                                    ) : (
+                                                        'Delete'
+                                                    )}
+                                                </Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
 
 
                         {/* Game Results */}
@@ -810,7 +816,7 @@ export default function ParticipantProfilePage() {
                         <FrequentQuestionsSection participant={participant} />
                         <MotivationSection participant={participant} />
                         <div ref={notesRef} className={`${notesHighlight ? 'ring-2 ring-[#fee819] rounded-lg transition-shadow duration-300' : ''}`}>
-                            <AdminNotesSection participant={participant} />
+                        <AdminNotesSection participant={participant} />
                         </div>
                     </div>
                 </div>
