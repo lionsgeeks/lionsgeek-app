@@ -25,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Inertia::share([
             'selectedLanguage' => session('language', 'en'),
+            // Flasher messages
+            'messages' => fn () => session()->get('flasher')
         ]);
 
         Inertia::share('notifications', function () {
