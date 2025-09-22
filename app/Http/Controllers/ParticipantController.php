@@ -692,10 +692,28 @@ class ParticipantController extends Controller
             ->orderBy('id')
             ->get(['id', 'full_name', 'current_step']);
 
-    // Fetch other registrations for the same person (same email), across other promos/sessions
+    // Fetch other registrations for the same person across other promos/sessions
+    // Match by exact email OR by name case-insensitively, including swapped first/last names
+    $normalizedName = strtolower(trim(preg_replace('/\s+/', ' ', (string) $participant->full_name)));
+    $nameParts = array_values(array_filter(explode(' ', $normalizedName)));
+    $candidateNames = [$normalizedName];
+    if (count($nameParts) >= 2) {
+        $first = $nameParts[0];
+        $last = $nameParts[count($nameParts) - 1];
+        $candidateNames[] = trim($last . ' ' . $first);
+        $candidateNames[] = trim($first . ' ' . $last);
+    }
+    $candidateNames = array_values(array_unique($candidateNames));
+
     $otherProfiles = Participant::with('infoSession')
-        ->whereRaw('LOWER(full_name) = ?', [strtolower((string) $participant->full_name)])
         ->where('id', '!=', $participant->id)
+        ->where(function ($q) use ($participant, $candidateNames) {
+            $q->where('email', $participant->email);
+            if (!empty($candidateNames)) {
+                $placeholders = implode(',', array_fill(0, count($candidateNames), '?'));
+                $q->orWhereRaw('LOWER(full_name) IN (' . $placeholders . ')', $candidateNames);
+            }
+        })
         ->orderBy('created_at', 'desc')
         ->get(['id', 'info_session_id', 'current_step', 'status', 'created_at']);
 
