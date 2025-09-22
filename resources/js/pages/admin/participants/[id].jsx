@@ -9,22 +9,16 @@ import {
     Dialog,
     DialogClose,
     DialogContent,
+    DialogTrigger,
+    DialogTitle,
     DialogDescription,
     DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+    DialogHeader
+} from '@/components/ui/dialog';
 import {
     ArrowLeft,
     User,
     Mail,
-    Phone,
-    MapPin,
     Calendar,
     GraduationCap,
     CheckCircle2,
@@ -38,7 +32,6 @@ import {
     BookOpen,
     Edit,
     ArrowRight,
-    X,
     XCircle,
     Users
 } from 'lucide-react';
@@ -47,15 +40,29 @@ import { AdminNotesSection } from './partials/admin-notes-section';
 import { FrequentQuestionsSection } from './partials/frequent-questions-section';
 import { MotivationSection } from './partials/motivation-section';
 import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-section';
+import { Label } from 'recharts';
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 export default function ParticipantProfilePage() {
     const { participant, participants, stepParticipant, otherProfiles } = usePage().props;
     const [isProcessing, setIsProcessing] = useState(false);
     const [isDeleteOpened, setIsDeleteOpened] = useState(false);
     const [selectedParticipant, setSelectedParticipant] = useState(null);
     const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
+    const [isSocialDialogOpen, setIsSocialDialogOpen] = useState(false);
     const notesRef = useRef(null);
     const [notesHighlight, setNotesHighlight] = useState(false);
-    const { post, processing } = useForm();
+    const { processing } = useForm();
+
+
+
 
     // Social Status form state (local, not persisted yet)
     const [socialForm, setSocialForm] = useState({
@@ -68,7 +75,7 @@ export default function ParticipantProfilePage() {
         incomeRange: "",
         logementType: "",
         logementAutre: "",
-        basicServices: [],
+        basicServices: "",
         eduFather: "",
         eduMother: "",
         socialAid: "",
@@ -78,81 +85,7 @@ export default function ParticipantProfilePage() {
         socialCategory: "",
     });
     const toggleArrayValue = (arr, value) => (arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]);
-    const [socialLangTab, setSocialLangTab] = useState('Français');
 
-    // Compute social score: worst cases yield higher points; returns { score, max, percent }
-    const computeSocialScore = (form) => {
-        let score = 0;
-        let max = 0;
-
-        const add = (val, map, defaultVal = null) => {
-            if (val === '' || val == null) return; // unanswered
-            const pts = map[val] ?? (defaultVal != null ? defaultVal : 0);
-            score += pts;
-            max += Math.max(...Object.values(map));
-        };
-
-        // 1) Composition du foyer
-        add(form.foyerComposition, { pere_mere: 0, pere_seul: 5, mere_seule: 5, autre: 7 });
-
-        // Numeric: foyerCount, siblingCount (cap at ranges)
-        if (form.foyerCount !== '') {
-            const n = Math.max(0, Number(form.foyerCount) || 0);
-            const pts = n >= 7 ? 7 : n >= 5 ? 5 : n >= 3 ? 3 : 1;
-            score += pts; max += 7;
-        }
-        if (form.siblingCount !== '') {
-            const n = Math.max(0, Number(form.siblingCount) || 0);
-            const pts = n >= 5 ? 7 : n >= 3 ? 5 : n >= 1 ? 3 : 1;
-            score += pts; max += 7;
-        }
-
-        // 2) Parents statuses
-        add(form.fatherStatus, {
-            decede: 10,
-            sans_emploi: 9,
-            precaire: 8,
-            independant: 5,
-            salarie_prive: 4,
-            fonctionnaire: 3,
-            cadre: 2,
-            entrepreneur: 2,
-        });
-        add(form.motherStatus, {
-            decedee: 10,
-            sans_emploi: 9,
-            precaire: 8,
-            independante: 5,
-            salarie_prive: 4,
-            fonctionnaire: 3,
-            cadre: 2,
-            entrepreneur: 2,
-        });
-
-        // Income
-        add(form.incomeRange, { lt_3000: 10, '3000_6000': 7, '6000_10000': 4, gt_10000: 1 });
-
-        // 3) Logement
-        add(form.logementType, { social_irreg: 10, locataire: 6, autre: 5, proprietaire: 1 });
-        // Services: missing increases score
-        add(form.basicServices, { yes: 0, no: 6 });
-
-        // 4) Education levels
-        add(form.eduFather, { non_scolarise: 6, primaire: 4, college_lycee: 2, superieur: 0 });
-        add(form.eduMother, { non_scolarisee: 6, primaire: 4, college_lycee: 2, superieur: 0 });
-
-        // 5) Special situation
-        add(form.specialSituations, { handicap: 10, orphelin: 9, autre: 5, aucun: 0 });
-
-        // 6) Social category (by evaluator)
-        add(form.socialCategory, { vulnerable: 10, moyenne_inferieure: 6, moyenne: 3, favorisee: 0 });
-
-        const percent = max > 0 ? Math.round((score / max) * 100) : 0;
-        return { score, max, percent };
-    };
-
-
-    // Compute derived game metrics for display
     const totalLevelsConst = 20; // matches game plan length
     const maxSpeedLevelsPerMin = 5; // as specified
     const levelsCompletedVal = Number(participant?.levels_completed || 0);
@@ -192,7 +125,6 @@ export default function ParticipantProfilePage() {
     }
 
     const handelSubmit = () => {
-        const s = computeSocialScore(socialForm);
         const payload = {
             composition_foyer: socialForm.foyerComposition,
             nombre_personnes: socialForm.foyerCount,
@@ -209,7 +141,10 @@ export default function ParticipantProfilePage() {
             lien_2m: socialForm.link2m,
             categorie_sociale: socialForm.socialCategory,
         };
-        router.patch(`/admin/participants/${participant.id}/social-status`, payload, { preserveScroll: true });
+        router.patch(`/admin/participants/${participant.id}/social-status`, payload, {
+            preserveScroll: true,
+            onSuccess: () => setIsSocialDialogOpen(false),
+        });
     };
 
     const breadcrumbs = [
@@ -412,31 +347,35 @@ export default function ParticipantProfilePage() {
                                         </div>
                                     )}
 
-                                {participant?.status === 'pending' && (
-                                    <div className="flex w-full gap-2">
-                                        <Button
-                                            onClick={handleApprove}
-                                            disabled={isProcessing}
-                                            className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
-                                            size="sm"
-                                        >
-                                            <CheckCircle2 className="mr-1 h-4 w-4" />
-                                            {isProcessing ? 'Approving...' : 'Approve'}
-                                        </Button>
-                                        <Button
-                                            onClick={handleReject}
-                                            disabled={isProcessing}
-                                            variant="outline"
-                                            className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
-                                            size="sm"
-                                        >
-                                            <XCircle className="mr-1 h-4 w-4" />
-                                            {isProcessing ? 'Rejecting...' : 'Reject'}
-                                        </Button>
-                                    </div>
-                                )}
+                                {
+                                    participant?.status === 'pending' && (
+                                        <div className="flex w-full gap-2">
+                                            <Button
+                                                onClick={handleApprove}
+                                                disabled={isProcessing}
+                                                className="flex-1 transform rounded-lg bg-[#51b04f] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#459942]"
+                                                size="sm"
+                                            >
+                                                <CheckCircle2 className="mr-1 h-4 w-4" />
+                                                {isProcessing ? 'Approving...' : 'Approve'}
+                                            </Button>
+                                            <Button
+                                                onClick={handleReject}
+                                                disabled={isProcessing}
+                                                variant="outline"
+                                                className="transform rounded-lg border-[#ff7376] bg-[#ff7376] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ff7376] hover:text-white"
+                                                size="sm"
+                                            >
+                                                <XCircle className="mr-1 h-4 w-4" />
+                                                {isProcessing ? 'Rejecting...' : 'Reject'}
+                                            </Button>
+                                        </div>
+                                    )
+                                }
+
+                                {/* Cross-promo badges moved to bottom of header */}
                                 {(auth.user.role === 'social_manager' || auth.user.role === 'super_admin') && (
-                                    <Dialog>
+                                    <Dialog open={isSocialDialogOpen} onOpenChange={setIsSocialDialogOpen}>
                                         <form>
                                             <DialogTrigger asChild>
                                                 <Button variant="outline" className='flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]'>Social Status</Button>
@@ -542,7 +481,8 @@ export default function ParticipantProfilePage() {
                                                                     <SelectItem value="lt_3000">Moins de 3 000 MAD</SelectItem>
                                                                     <SelectItem value="3000_6000">3 000 – 6 000 MAD</SelectItem>
                                                                     <SelectItem value="6000_10000">6 000 – 10 000 MAD</SelectItem>
-                                                                    <SelectItem value="gt_10000">Plus de 10 000 MAD</SelectItem>
+                                                                    <SelectItem value="10000_15000">10 000 – 15 000 MAD</SelectItem>
+                                                                    <SelectItem value="gt_15000">Plus de 15 000 MAD</SelectItem>
                                                                 </SelectContent>
                                                             </Select>
                                                         </div>
@@ -570,20 +510,15 @@ export default function ParticipantProfilePage() {
                                                         </div>
                                                         <div className="grid gap-2">
                                                             <Label className="text-sm font-medium text-[#212529]">Accès aux services de base</Label>
-                                                            <div className="grid gap-2 sm:grid-cols-3">
-                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
-                                                                    <Checkbox checked={socialForm.basicServices.includes('eau')} onCheckedChange={() => setSocialForm(s => ({ ...s, basicServices: toggleArrayValue(s.basicServices, 'eau') }))} />
-                                                                    Eau
-                                                                </label>
-                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
-                                                                    <Checkbox checked={socialForm.basicServices.includes('electricite')} onCheckedChange={() => setSocialForm(s => ({ ...s, basicServices: toggleArrayValue(s.basicServices, 'electricite') }))} />
-                                                                    Électricité
-                                                                </label>
-                                                                <label className="flex items-center gap-2 text-sm text-[#212529]">
-                                                                    <Checkbox checked={socialForm.basicServices.includes('internet')} onCheckedChange={() => setSocialForm(s => ({ ...s, basicServices: toggleArrayValue(s.basicServices, 'internet') }))} />
-                                                                    Internet à domicile
-                                                                </label>
-                                                            </div>
+                                                            <Select value={socialForm.basicServices} onValueChange={(v) => setSocialForm(s => ({ ...s, basicServices: v }))}>
+                                                                <SelectTrigger className="rounded-md">
+                                                                    <SelectValue placeholder="Choisir" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="yes">Oui</SelectItem>
+                                                                    <SelectItem value="no">Non</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
                                                         </div>
                                                     </div>
 
@@ -681,8 +616,8 @@ export default function ParticipantProfilePage() {
                                         </form>
                                     </Dialog>
                                 )}
-                            </div>
-                        </div>
+                            </div >
+                        </div >
 
                         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 w-full">
                             {/* Profile Image & Basic Info */}
@@ -727,16 +662,13 @@ export default function ParticipantProfilePage() {
                                 <div className="flex-1">
                                     <h1 className="text-3xl font-bold mb-2">{participant.full_name}</h1>
                                     {/* Social Vulnerability Score */}
-                                    {(auth.user.role === 'social_manager' || auth.user.role === 'super_admin') && (() => {
-                                        const s = computeSocialScore(socialForm);
-                                        return (
-                                            <div className="mb-3 inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1 text-white">
-                                                <TrendingUp className="h-4 w-4 text-[#fee819]" />
-                                                <span className="text-sm">Social Score:</span>
-                                                <span className="text-sm font-semibold">{s.percent}%</span>
-                                            </div>
-                                        );
-                                    })()}
+                                    {(auth.user.role === 'social_manager' || auth.user.role === 'super_admin') && (
+                                        <div className="mb-3 inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1 text-white">
+                                            <TrendingUp className="h-4 w-4 text-[#fee819]" />
+                                            <span className="text-sm">Social Score:</span>
+                                            <span className="text-sm font-semibold">{participant?.social_score ?? '-'}{participant?.social_score != null ? '%' : ''}</span>
+                                        </div>
+                                    )}
                                     <div className="flex flex-wrap gap-2 mb-3">
                                         <Badge className={`${getStepColor(participant.current_step)} rounded-lg px-3 py-1 font-medium`}>
                                             {participant.current_step.replaceAll('_', ' ')}
@@ -772,21 +704,7 @@ export default function ParticipantProfilePage() {
                                     </div>
                                     <p className="text-white/80">{participant.info_session?.name || 'No session assigned'}</p>
 
-                                    {/* Cross-promo navigation */}
-                                    {Array.isArray(otherProfiles) && otherProfiles.length > 0 && (
-                                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                                            <span className="text-xs text-white/70">Also in:</span>
-                                            {otherProfiles.map((p) => (
-                                                <Badge
-                                                    key={p.id}
-                                                    onClick={() => router.visit(`/admin/participants/${p.id}`)}
-                                                    className="cursor-pointer bg-white/10 hover:bg-white/20 text-white rounded-lg px-2 py-1"
-                                                >
-                                                    {(p?.info_session?.name || `Promo #${p.info_session_id}`)}
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                    )}
+
                                 </div>
                             </div>
 
@@ -811,14 +729,34 @@ export default function ParticipantProfilePage() {
                                     <GraduationCap className="w-5 h-5 mx-auto mb-1 text-[#fee819]" />
                                     <div className="text-sm text-white/80">Program</div>
                                     <div className="text-sm font-medium">{humanize(participant.info_session?.formation || participant.formation_field) || 'Not assigned'}</div>
+
                                 </div>
                             </div>
+
                         </div>
-                    </div>
-                </div>
+                        {/* Cross-promo badges row under cards */}
+                        {
+                            Array.isArray(otherProfiles) && otherProfiles.length > 0 && (
+                                <div className="w-full mt-2 flex justify-end">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        {otherProfiles.map((p) => (
+                                            <Badge
+                                                key={p.id}
+                                                onClick={() => router.visit(`/admin/participants/${p.id}`)}
+                                                className="cursor-pointer bg-white text-[#212529] hover:bg-[#fee819] hover:text-[#212529] rounded-lg px-3 py-1"
+                                            >
+                                                {p?.info_session?.name || `Promo #${p.info_session_id}`}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </div >
+                </div >
 
                 {/* Main Content */}
-                <div className="p-6 pb-3">
+                < div className="p-6 pb-3" >
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {/* Contact & Personal Info */}
                         <Card className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
@@ -928,12 +866,12 @@ export default function ParticipantProfilePage() {
                                 {/* {participant.approved_by && (
                                     <>
                                         <Separator />
-                                        <div>
+                                <div>
                                             <div className="text-xs text-gray-500 mb-1">Approved By</div>
                                             <div className="text-sm font-medium text-[#212529]">
                                                 {participant.approvedBy?.name || participant.approved_by?.name || 'Unknown'}
                                             </div>
-                                        </div>
+                                </div>
                                     </>
                                 )} */}
                                 {participant.last_step_changed_by && (
@@ -1191,22 +1129,25 @@ export default function ParticipantProfilePage() {
                             <AdminNotesSection participant={participant} />
                         </div>
                     </div>
-                </div>
+                </div >
 
                 {/* Satisfaction Metrics - Full Width Bottom */}
-                <div className="px-6 pb-6">
+                < div className="px-6 pb-6" >
                     <SatisfactionMetricsSection participant={participant} />
-                </div>
+                </div >
                 {/* Image Preview Modal */}
-                {participant?.image && (
-                    <ImagePreview
-                        isOpen={isImagePreviewOpen}
-                        onClose={() => setIsImagePreviewOpen(false)}
-                        imageUrl={`/storage/images/participants/${participant.image}`}
-                        participantName={participant.full_name}
-                    />
-                )}
-            </div>
+                {
+                    participant?.image && (
+                        <ImagePreview
+                            isOpen={isImagePreviewOpen}
+                            onClose={() => setIsImagePreviewOpen(false)}
+                            imageUrl={`/storage/images/participants/${participant.image}`}
+                            participantName={participant.full_name}
+                        />
+                    )
+                }
+            </div >
+
             <Dialog open={isNextStepConfirmOpen} onOpenChange={setIsNextStepConfirmOpen}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
@@ -1254,6 +1195,6 @@ export default function ParticipantProfilePage() {
             </Dialog>
 
 
-        </AppLayout>
+        </AppLayout >
     );
 }

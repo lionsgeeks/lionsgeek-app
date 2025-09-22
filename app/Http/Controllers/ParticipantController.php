@@ -73,12 +73,12 @@ class ParticipantController extends Controller
             // 2. Situation professionnelle et revenus
             'pere_tuteur' => 'nullable|string|in:decede,entrepreneur,cadre,fonctionnaire,salarie_prive,independant,precaire,sans_emploi',
             'mere_tuteur' => 'nullable|string|in:decedee,entrepreneur,cadre,fonctionnaire,salarie_prive,independante,precaire,sans_emploi',
-            'revenus_mensuels' => 'nullable|string|in:lt_3000,3000_6000,6000_10000,gt_10000',
+            'revenus_mensuels' => 'nullable|string|in:lt_3000,3000_6000,6000_10000,10000_15000,gt_15000',
 
             // 3. Logement
             'type_logement' => 'nullable|string|in:proprietaire,locataire,social_irreg,autre',
-            'services_base' => 'nullable|array',
-            'services_base.*' => 'in:eau,electricite,internet',
+            // Basic services now a simple yes/no choice
+            'services_base' => 'nullable|string|in:yes,no',
 
             // 4. Niveau d’éducation
             'education_pere' => 'nullable|string|in:non_scolarise,primaire,college_lycee,superieur',
@@ -94,9 +94,122 @@ class ParticipantController extends Controller
             'categorie_sociale' => 'nullable|string|in:vulnerable,moyenne_inferieure,moyenne,favorisee',
         ]);
 
+        // Compute social score on server using same mapping as UI
+        $score = 0; $max = 0;
+
+        $add = function ($value, $map, $default = null) use (&$score, &$max) {
+            if ($value === '' || $value === null) return;
+            $pts = array_key_exists($value, $map) ? $map[$value] : ($default !== null ? $default : 0);
+            $score += $pts;
+            $mapMax = max($map);
+            $max += is_numeric($mapMax) ? $mapMax : 0;
+        };
+
+        // Normalize nullable numeric fields to 0 when not provided
+        $validated['nombre_personnes'] = isset($validated['nombre_personnes']) && $validated['nombre_personnes'] !== null
+            ? (int) $validated['nombre_personnes']
+            : 0;
+        $validated['fratrie'] = isset($validated['fratrie']) && $validated['fratrie'] !== null
+            ? (int) $validated['fratrie']
+            : 0;
+
+        // 1) Composition du foyer
+        $add($validated['composition_foyer'] ?? null, [
+            'pere_mere' => 0,
+            'pere_seul' => 7,
+            'mere_seule' => 7,
+            'autre' => 3,
+        ]);
+        // Nombre personnes foyer
+        if (isset($validated['nombre_personnes'])) {
+            $n = max(0, (int) $validated['nombre_personnes']);
+            $pts = $n >= 7 ? 6 : ($n >= 5 ? 4 : ($n >= 3 ? 3 : 1));
+            $score += $pts; $max += 6;
+        }
+        // Fratrie
+        if (isset($validated['fratrie'])) {
+            $n = max(0, (int) $validated['fratrie']);
+            $pts = $n >= 5 ? 6 : ($n >= 3 ? 3 : ($n >= 1 ? 1 : 0));
+            $score += $pts; $max += 6;
+        }
+
+        // 2) Statuts parents
+        $add($validated['pere_tuteur'] ?? null, [
+            'decede' => 12,
+            'sans_emploi' => 8,
+            'precaire' => 6,
+            'independant' => 5,
+            'salarie_prive' => 3,
+            'fonctionnaire' => 3,
+            'cadre' => 0,
+            'entrepreneur' => 0,
+        ]);
+        $add($validated['mere_tuteur'] ?? null, [
+            'decedee' => 12,
+            'sans_emploi' => 8,
+            'precaire' => 6,
+            'independante' => 5,
+            'salarie_prive' => 3,
+            'fonctionnaire' => 3,
+            'cadre' => 0,
+            'entrepreneur' => 0,
+        ]);
+
+        // Revenus
+        $add($validated['revenus_mensuels'] ?? null, [
+            'lt_3000' => 10,
+            '3000_6000' => 8,
+            '6000_10000' => 4,
+            '10000_15000' => 1,
+            'gt_15000' => 0,
+        ]);
+
+        // 3) Logement (pas d'impact pour services_base désormais)
+        $add($validated['type_logement'] ?? null, [
+            'social_irreg' => 10,
+            'locataire' => 6,
+            'autre' => 5,
+            'proprietaire' => 1,
+        ]);
+
+        // 4) Education
+        $add($validated['education_pere'] ?? null, [
+            'non_scolarise' => 6,
+            'primaire' => 4,
+            'college_lycee' => 2,
+            'superieur' => 0,
+        ]);
+        $add($validated['education_mere'] ?? null, [
+            'non_scolarisee' => 6,
+            'primaire' => 4,
+            'college_lycee' => 2,
+            'superieur' => 0,
+        ]);
+
+        // 5) Situations particulières
+        if (isset($validated['situation_particuliere']) && is_array($validated['situation_particuliere'])) {
+            // Score the most severe selected option
+            $situMap = ['handicap' => 10, 'autre' => 5, 'aucun' => 0];
+            $selectedScores = array_map(fn($k) => $situMap[$k] ?? 0, $validated['situation_particuliere']);
+            $score += count($selectedScores) ? max($selectedScores) : 0;
+            $max += 10;
+        }
+
+        // 6) Catégorie sociale
+        $add($validated['categorie_sociale'] ?? null, [
+            'vulnerable' => 10,
+            'moyenne_inferieure' => 6,
+            'moyenne' => 3,
+            'favorisee' => 0,
+        ]);
+
+        $validated['social_score'] = $max > 0 ? (int) round(($score / $max) * 100) : 0;
+
         $participant->update($validated);
 
-        return back()->with('success', 'Social status updated');
+        // Use Flasher for Inertia flash messages
+        flash()->success('Social status updated');
+        return back();
     }
 
     /**
@@ -692,26 +805,44 @@ class ParticipantController extends Controller
             ->orderBy('id')
             ->get(['id', 'full_name', 'current_step']);
 
-        // Fetch other registrations for the same person (same email), across other promos/sessions
-        $otherProfiles = Participant::with('infoSession')
-            ->where('email', $participant->email)
-            ->where('id', '!=', $participant->id)
-            ->orderBy('created_at', 'desc')
-            ->get(['id', 'info_session_id', 'current_step', 'status', 'created_at']);
-        return Inertia::render('admin/participants/[id]', [
-            'participant' => $participant->load([
-                'infoSession',
-                'notes',
-                'questions',
-                'satisfaction',
-                'confirmation',
-                'approvedBy',
-                'lastStepChangedBy'
-            ]),
-            'participants' => $participants,
-            'stepParticipant' => $stepParticipant,
-        ]);
+    // Fetch other registrations for the same person across other promos/sessions
+    // Match by exact email OR by name case-insensitively, including swapped first/last names
+    $normalizedName = strtolower(trim(preg_replace('/\s+/', ' ', (string) $participant->full_name)));
+    $nameParts = array_values(array_filter(explode(' ', $normalizedName)));
+    $candidateNames = [$normalizedName];
+    if (count($nameParts) >= 2) {
+        $first = $nameParts[0];
+        $last = $nameParts[count($nameParts) - 1];
+        $candidateNames[] = trim($last . ' ' . $first);
+        $candidateNames[] = trim($first . ' ' . $last);
     }
+    $candidateNames = array_values(array_unique($candidateNames));
+
+    $otherProfiles = Participant::with('infoSession')
+        ->where('id', '!=', $participant->id)
+        ->where(function ($q) use ($participant, $candidateNames) {
+            $q->where('email', $participant->email);
+            if (!empty($candidateNames)) {
+                $placeholders = implode(',', array_fill(0, count($candidateNames), '?'));
+                $q->orWhereRaw('LOWER(full_name) IN (' . $placeholders . ')', $candidateNames);
+            }
+        })
+        ->orderBy('created_at', 'desc')
+        ->get(['id', 'info_session_id', 'current_step', 'status', 'created_at']);
+
+    return Inertia::render('admin/participants/[id]', [
+        'participant' => $participant->load([
+            'infoSession',
+            'notes',
+            'questions',
+            'satisfaction',
+            'confirmation'
+        ]),
+        'participants' => $participants,
+        'stepParticipant' => $stepParticipant,
+        'otherProfiles' => $otherProfiles,
+    ]);
+}
 
 
     /**
@@ -976,31 +1107,119 @@ class ParticipantController extends Controller
     }
     public function toJungle(Request $request)
     {
-        $traning = InfoSession::where('id', $request->query('infosession_id'))->first()->formation;
-        if ($traning == 'Media') {
-            $emailRecipient = 'Media';
-        } elseif ($traning == 'Coding') {
-            $emailRecipient = 'Coding';
+        try {
+            $traning = InfoSession::where('id', $request->query('infosession_id'))->first()->formation;
+            if ($traning == 'Media') {
+                $emailRecipient = 'media';
+            } elseif ($traning == 'Coding') {
+                $emailRecipient = 'coding';
+            } else {
+                $emailRecipient = 'info';
+            }
+            $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->query('infosession_id'))->get();
+            $day = $request->query('date');
+
+            $successCount = 0;
+            $errorCount = 0;
+
+            foreach ($candidats as $candidat) {
+                try {
+                    // Validate email address
+                    if (!filter_var($candidat->email, FILTER_VALIDATE_EMAIL)) {
+                        Log::warning("Invalid email address for participant {$candidat->id}: {$candidat->email}");
+                        $errorCount++;
+                        continue;
+                    }
+
+                    $id = Crypt::encryptString($candidat->id);
+                    Mail::mailer($emailRecipient)->to($candidat->email)->queue(new JungleMail($candidat->full_name, $id, $day, $traning));
+                    $successCount++;
+
+                    Log::info("Jungle email queued for participant {$candidat->id} ({$candidat->email})");
+                } catch (\Exception $e) {
+                    Log::error("Failed to queue jungle email for participant {$candidat->id}: " . $e->getMessage());
+                    $errorCount++;
+                }
+            }
+
+            if ($successCount > 0) {
+                flash()
+                    ->option('position', 'bottom-right')
+                    ->success("Successfully queued {$successCount} jungle emails.");
+            }
+
+            if ($errorCount > 0) {
+                flash()
+                    ->option('position', 'bottom-right')
+                    ->warning("{$errorCount} emails failed to queue. Check logs for details.");
+            }
+
+        } catch (\Exception $e) {
+            Log::error("Error in toJungle function: " . $e->getMessage());
+            flash()
+                ->option('position', 'bottom-right')
+                ->error("Failed to send jungle emails. Please try again.");
         }
-        $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->query('infosession_id'))->get();
-        $day = $request->query('date');
-        foreach ($candidats as $candidat) {
-            $id = Crypt::encryptString($candidat->id);
-            Mail::mailer($emailRecipient)->to($candidat->email)->send(new JungleMail($candidat->full_name, $id, $day, $traning));
-        }
+
         return back();
     }
     public function toSchool(Request $request)
     {
-        $candidats = Participant::where('info_session_id', $request->query('infosession_id'))->where('current_step', 'coding_school')->orWhere('current_step', 'media_school')->get();
-        // If "Send" button is clicked, validate that a date is provided
-        // If "Send Without Date" button is clicked, set date to null
-        $day = $request->query('submit_without_date') ? null : $request->query('date');
-        foreach ($candidats as $key => $candidat) {
-            $school = $candidat->current_step == "coding_school" ? "Coding" : "Media";
-            $id = Crypt::encryptString($candidat->id);
-            Mail::to($candidat->email)->send(new SchoolMail($candidat->full_name, $id, $day, $school));
+        try {
+            $candidats = Participant::where('info_session_id', $request->query('infosession_id'))
+                ->where(function($query) {
+                    $query->where('current_step', 'coding_school')
+                          ->orWhere('current_step', 'media_school');
+                })
+                ->get();
+            // If "Send" button is clicked, validate that a date is provided
+            // If "Send Without Date" button is clicked, set date to null
+            $day = $request->query('submit_without_date') ? null : $request->query('date');
+
+            $successCount = 0;
+            $errorCount = 0;
+
+            foreach ($candidats as $candidat) {
+                try {
+                    // Validate email address
+                    if (!filter_var($candidat->email, FILTER_VALIDATE_EMAIL)) {
+                        Log::warning("Invalid email address for participant {$candidat->id}: {$candidat->email}");
+                        $errorCount++;
+                        continue;
+                    }
+
+                    $school = $candidat->current_step == "coding_school" ? "coding" : "media";
+                    $id = Crypt::encryptString($candidat->id);
+                    $mailer = $school == 'coding' ? 'coding' : ($school == 'media' ? 'media' : 'info');
+                    Mail::mailer($mailer)->to($candidat->email)->queue(new SchoolMail($candidat->full_name, $id, $day, $school));
+                    $successCount++;
+
+                    Log::info("School email queued for participant {$candidat->id} ({$candidat->email})");
+                } catch (\Exception $e) {
+                    Log::error("Failed to queue school email for participant {$candidat->id}: " . $e->getMessage());
+                    $errorCount++;
+                }
+            }
+
+            if ($successCount > 0) {
+                flash()
+                    ->option('position', 'bottom-right')
+                    ->success("Successfully queued {$successCount} school emails.");
+            }
+
+            if ($errorCount > 0) {
+                flash()
+                    ->option('position', 'bottom-right')
+                    ->warning("{$errorCount} emails failed to queue. Check logs for details.");
+            }
+
+        } catch (\Exception $e) {
+            Log::error("Error in toSchool function: " . $e->getMessage());
+            flash()
+                ->option('position', 'bottom-right')
+                ->error("Failed to send school emails. Please try again.");
         }
+
         return back();
     }
     public function confirmationJungle($full_name, $id)

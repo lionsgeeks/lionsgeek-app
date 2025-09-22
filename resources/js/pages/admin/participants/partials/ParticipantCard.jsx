@@ -145,7 +145,7 @@ const ParticipantCard = ({ participant }) => {
         <>
             <ContextMenu>
                 <ContextMenuTrigger className="relative w-full">
-                    <a href={`/admin/participants/${participant.id}`} className="block">
+                    <a href={`/admin/participants/${participant.id}`} className="block" target="_blank" rel="noopener noreferrer">
                     <Card
                         className="flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border bg-white p-0 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl"
                     >

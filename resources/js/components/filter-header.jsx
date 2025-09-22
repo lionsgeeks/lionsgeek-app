@@ -5,130 +5,169 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film, UserCheck, Calendar, Filter, School } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
-import InterviewDialog from './interviewDialog';
-import InviteDialog from './inviteDialog';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import InterviewDialog from './interviewDialog';
+import InviteDialog from './inviteDialog';
+import InviteToJungle from '../pages/admin/infoSessions/partials/InviteToJungle';
+import InviteToSchool from '../pages/admin/infoSessions/partials/InviteToSchool';
 
 const FilterHeader = ({ participants = [], infosession, infosessions = [], setFiltredParticipants, statusCounts = {} }) => {
-	const [search, setSearch] = useState('');
-	const [selectedStep, setSelectedStep] = useState('');
-	const [selectedSession, setSelectedSession] = useState('');
-	const [selectedPromo, setSelectedPromo] = useState('');
-	const [selectedTrack, setSelectedTrack] = useState('');
-	const [selectedGender, setSelectedGender] = useState('');
-	const [dateSort, setDateSort] = useState('');
-	const [copy, setCopy] = useState(true);
-	const [showMobileFilters, setShowMobileFilters] = useState(false);
+    const STORAGE_KEY = 'admin_participants_filters_v1';
+    const [search, setSearch] = useState('');
+    const [selectedStep, setSelectedStep] = useState('');
+    const [selectedSession, setSelectedSession] = useState('');
+    const [selectedPromo, setSelectedPromo] = useState('');
+    const [selectedTrack, setSelectedTrack] = useState('');
+    const [selectedGender, setSelectedGender] = useState('');
+    const [dateSort, setDateSort] = useState('');
+    const [copy, setCopy] = useState(true);
 
 	const [selectedDelay, setSelectedDelay] = useState(30);
     const [selectedReminderType, setSelectedReminderType] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-	const isStatusValue = (value) => ['approved', 'pending', 'rejected', 'all'].includes(value);
+    // Modal state and draft filter values
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [draftStep, setDraftStep] = useState('');
+    const [draftSession, setDraftSession] = useState('');
+    const [draftPromo, setDraftPromo] = useState('');
+    const [draftTrack, setDraftTrack] = useState('');
+    const [draftGender, setDraftGender] = useState('');
+    const [draftDateSort, setDraftDateSort] = useState('');
+    const [isInviteOpen, setIsInviteOpen] = useState(false);
 
-	// Helper: Title-case a promo label (e.g., "promo 5" -> "Promo 5")
-	const formatPromoLabel = (label) =>
-		(label || '')
-			.toString()
-			.toLowerCase()
-			.split(' ')
-			.map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
-			.join(' ');
+    const isStatusValue = (value) => ['approved', 'pending', 'rejected', 'all'].includes(value);
 
-	// Derive distinct promo names from infosessions (prefix before ':') - case-insensitive uniqueness
-	const promoOptions = useMemo(() => {
-		const lowerSet = new Set();
-		(infosessions || []).forEach((s) => {
-			if (s?.name && s.name.includes(':')) {
-				const raw = s.name.slice(0, s.name.indexOf(':')).trim().toLowerCase();
-				if (raw) lowerSet.add(raw);
-			}
-		});
-		return Array.from(lowerSet).sort(); // values are lowercased
-	}, [infosessions]);
+    // Helper: Title-case a promo label (e.g., "promo 5" -> "Promo 5")
+    const formatPromoLabel = (label) =>
+        (label || '')
+            .toString()
+            .toLowerCase()
+            .split(' ')
+            .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
+            .join(' ');
 
-	// Helper to extract promo for a participant based on its related info_session name (lowercased)
-	const getParticipantPromo = (participant) => {
-		const name = participant?.info_session?.name;
-		if (!name || !name.includes(':')) return null;
-		return name.slice(0, name.indexOf(':')).trim().toLowerCase();
-	};
+    // Derive distinct promo names from infosessions (prefix before ':') - case-insensitive uniqueness
+    const promoOptions = useMemo(() => {
+        const lowerSet = new Set();
+        (infosessions || []).forEach((s) => {
+            if (s?.name && s.name.includes(':')) {
+                const raw = s.name.slice(0, s.name.indexOf(':')).trim().toLowerCase();
+                if (raw) lowerSet.add(raw);
+            }
+        });
+        return Array.from(lowerSet).sort(); // values are lowercased
+    }, [infosessions]);
 
-	// Helper to extract track (coding/media)
-	const getParticipantTrack = (participant) => {
-		const sessionFormation = participant?.info_session?.formation?.toString().toLowerCase() || '';
-		if (sessionFormation.includes('coding')) return 'coding';
-		if (sessionFormation.includes('media')) return 'media';
-		
-		const formationField = participant?.formation_field?.toString().toLowerCase() || '';
-		if (formationField.includes('coding')) return 'coding';
-		if (formationField.includes('media')) return 'media';
-		
-		const sessionName = participant?.info_session?.name?.toString().toLowerCase() || '';
-		if (sessionName.includes('coding')) return 'coding';
-		if (sessionName.includes('media')) return 'media';
-		return '';
-	};
+    // Helper to extract promo for a participant based on its related info_session name (lowercased)
+    const getParticipantPromo = (participant) => {
+        const name = participant?.info_session?.name;
+        if (!name || !name.includes(':')) return null;
+        return name.slice(0, name.indexOf(':')).trim().toLowerCase();
+    };
 
-	// Session options filtered by selectedTrack (coding/media)
-	const sessionOptions = useMemo(() => {
-		let list = infosessions || [];
-		if (selectedTrack && selectedTrack !== 'All') {
-			const wanted = selectedTrack.toLowerCase();
-			list = list.filter((s) => (s?.formation || '').toString().toLowerCase().includes(wanted));
-		}
-		// Also filter by selectedPromo (prefix before ':') when provided
-		if (selectedPromo && selectedPromo !== 'All') {
-			const wantedPromo = selectedPromo.toLowerCase();
-			list = list.filter((s) => {
-				const name = s?.name || '';
-				if (!name.includes(':')) return false;
-				const prefix = name.slice(0, name.indexOf(':')).trim().toLowerCase();
-				return prefix === wantedPromo;
-			});
-		}
-		// Always include "No Infosession" option
-		return [{ name: 'No Infosession', id: 'no-infosession' }, ...list];
-	}, [infosessions, selectedTrack, selectedPromo]);
+    // Helper to extract track (coding/media)
+    const getParticipantTrack = (participant) => {
+        const sessionFormation = participant?.info_session?.formation?.toString().toLowerCase() || '';
+        if (sessionFormation.includes('coding')) return 'coding';
+        if (sessionFormation.includes('media')) return 'media';
 
-	// If current selectedSession is not in filtered sessionOptions, reset it
-	useEffect(() => {
-		if (!selectedSession) return;
-		const exists = sessionOptions.some((s) => s?.name === selectedSession);
-		if (!exists) setSelectedSession('');
-	}, [sessionOptions, selectedSession]);
+        const formationField = participant?.formation_field?.toString().toLowerCase() || '';
+        if (formationField.includes('coding')) return 'coding';
+        if (formationField.includes('media')) return 'media';
 
-	const filtredParticipans = useMemo(() => {
-		let filtered = participants?.filter((participant) => {
-			if (!participant) return false;
+        const sessionName = participant?.info_session?.name?.toString().toLowerCase() || '';
+        if (sessionName.includes('coding')) return 'coding';
+        if (sessionName.includes('media')) return 'media';
+        return '';
+    };
 
-			// Search
-			const matchesSearch = !search || 
-				participant?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-				participant?.email?.toLowerCase().includes(search.toLowerCase());
+    // Session options filtered by selectedTrack (coding/media)
+    const sessionOptions = useMemo(() => {
+        let list = infosessions || [];
+        if (selectedTrack && selectedTrack !== 'All') {
+            const wanted = selectedTrack.toLowerCase();
+            list = list.filter((s) => (s?.formation || '').toString().toLowerCase().includes(wanted));
+        }
+        // Also filter by selectedPromo (prefix before ':') when provided
+        if (selectedPromo && selectedPromo !== 'All') {
+            const wantedPromo = selectedPromo.toLowerCase();
+            list = list.filter((s) => {
+                const name = s?.name || '';
+                if (!name.includes(':')) return false;
+                const prefix = name.slice(0, name.indexOf(':')).trim().toLowerCase();
+                return prefix === wantedPromo;
+            });
+        }
+        // Always include "No Infosession" option
+        return [{ name: 'No Infosession', id: 'no-infosession' }, ...list];
+    }, [infosessions, selectedTrack, selectedPromo]);
 
-			// Session filter 
-			const matchesSession = !selectedSession || selectedSession === 'All' || 
-				(selectedSession === 'No Infosession' ? 
-					!participant?.info_session : 
-					participant?.info_session?.name === selectedSession);
+    // Modal session options based on draft values
+    const sessionOptionsDraft = useMemo(() => {
+        let list = infosessions || [];
+        if (draftTrack && draftTrack !== 'All') {
+            const wanted = draftTrack.toLowerCase();
+            list = list.filter((s) => (s?.formation || '').toString().toLowerCase().includes(wanted));
+        }
+        if (draftPromo && draftPromo !== 'All') {
+            const wantedPromo = draftPromo.toLowerCase();
+            list = list.filter((s) => {
+                const name = s?.name || '';
+                if (!name.includes(':')) return false;
+                const prefix = name.slice(0, name.indexOf(':')).trim().toLowerCase();
+                return prefix === wantedPromo;
+            });
+        }
+        return [{ name: 'No Infosession', id: 'no-infosession' }, ...list];
+    }, [infosessions, draftTrack, draftPromo]);
 
-			// Promo filter 
-			const participantPromo = getParticipantPromo(participant);
-			const matchesPromo = !selectedPromo || selectedPromo === 'All' || 
-				participantPromo === selectedPromo.toLowerCase();
+    // If current selectedSession is not in filtered sessionOptions, reset it
+    useEffect(() => {
+        if (!selectedSession) return;
+        const exists = sessionOptions.some((s) => s?.name === selectedSession);
+        if (!exists) setSelectedSession('');
+    }, [sessionOptions, selectedSession]);
 
-			// Track filter
-			const participantTrack = getParticipantTrack(participant);
-			const matchesTrack = !selectedTrack || selectedTrack === 'All' || 
-				participantTrack === selectedTrack.toLowerCase();
+    // Keep draft session valid while filtering inside modal
+    useEffect(() => {
+        if (!isFilterOpen) return;
+        if (!draftSession) return;
+        const exists = sessionOptionsDraft.some((s) => s?.name === draftSession);
+        if (!exists) setDraftSession('');
+    }, [isFilterOpen, sessionOptionsDraft, draftSession]);
 
-			// Gender filter
-			const matchesGender = !selectedGender || selectedGender === 'All' || 
-				participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
+    const filtredParticipans = useMemo(() => {
+        let filtered = participants?.filter((participant) => {
+            if (!participant) return false;
 
-			// Step filter 
+            // Search
+            const matchesSearch = !search ||
+                participant?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+                participant?.email?.toLowerCase().includes(search.toLowerCase());
+
+            // Session filter
+            const matchesSession = !selectedSession || selectedSession === 'All' ||
+                (selectedSession === 'No Infosession' ?
+                    !participant?.info_session :
+                    participant?.info_session?.name === selectedSession);
+
+            // Promo filter
+            const participantPromo = getParticipantPromo(participant);
+            const matchesPromo = !selectedPromo || selectedPromo === 'All' ||
+                participantPromo === selectedPromo.toLowerCase();
+
+            // Track filter
+            const participantTrack = getParticipantTrack(participant);
+            const matchesTrack = !selectedTrack || selectedTrack === 'All' ||
+                participantTrack === selectedTrack.toLowerCase();
+
+            // Gender filter
+            const matchesGender = !selectedGender || selectedGender === 'All' ||
+                participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
+
+			// Step filter
 			let matchesStep = true;
 			if (selectedStep && selectedStep !== 'All') {
 				if (isStatusValue(selectedStep)) {
@@ -140,13 +179,10 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 				} else {
 					switch (selectedStep) {
 						case 'info_session':
-							matchesStep = participant?.info_session != null;
+							matchesStep = participant?.current_step === 'info_session';
 							break;
 						case 'interview':
-							matchesStep = participant?.current_step && [
-								'interview', 'interview_pending', 'interview_failed',
-								'jungle', 'jungle_failed', 'coding_school', 'media_school'
-							].includes(participant.current_step);
+							matchesStep = participant?.current_step === 'interview';
 							break;
 						case 'interview_pending':
 							matchesStep = participant?.current_step === 'interview_pending';
@@ -155,7 +191,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 							matchesStep = participant?.current_step === 'interview_failed';
 							break;
 						case 'jungle':
-							matchesStep = ['jungle', 'jungle_failed'].includes(participant?.current_step);
+							matchesStep = participant?.current_step === 'jungle';
 							break;
 						case 'jungle_failed':
 							matchesStep = participant?.current_step === 'jungle_failed';
@@ -166,30 +202,30 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
 				}
 			}
 
-			return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
-		}) || [];
+            return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
+        }) || [];
 
-		return filtered;
-	}, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender]);
+        return filtered;
+    }, [participants, search, selectedSession, selectedStep, selectedPromo, selectedTrack, selectedGender]);
 
-	const dynamicStatusCounts = useMemo(() => {
-		return {
-			approved: filtredParticipans.filter(p => p?.status === 'approved').length,
-			pending: filtredParticipans.filter(p => p?.status === 'pending').length,
-			rejected: filtredParticipans.filter(p => p?.status === 'rejected').length,
-			all: filtredParticipans.length,
-		};
-	}, [filtredParticipans]);
+    const dynamicStatusCounts = useMemo(() => {
+        return {
+            approved: filtredParticipans.filter(p => p?.status === 'approved').length,
+            pending: filtredParticipans.filter(p => p?.status === 'pending').length,
+            rejected: filtredParticipans.filter(p => p?.status === 'rejected').length,
+            all: filtredParticipans.length,
+        };
+    }, [filtredParticipans]);
 
-	useEffect(() => {
+    useEffect(() => {
         if (setFiltredParticipants) {
             let result = [...filtredParticipans];
-            
+
             if (dateSort && dateSort !== 'All') {
                 result.sort((a, b) => {
                     const dateA = new Date(a.created_at);
                     const dateB = new Date(b.created_at);
-                    
+
                     if (dateSort === 'newest') {
                         return dateB - dateA;
                     } else if (dateSort === 'oldest') {
@@ -198,33 +234,94 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                     return 0;
                 });
             }
-            
+
             setFiltredParticipants(result);
         }
     }, [filtredParticipans, dateSort, setFiltredParticipants]);
 
-	// Initialize selectedStep from URL status on mount (only for status values)
-	useEffect(() => {
-		const params = new URLSearchParams(window.location.search);
-		const urlStatus = params.get('status');
-		if (urlStatus && isStatusValue(urlStatus)) {
-			setSelectedStep(urlStatus);
-		}
-	}, []);
+    // Initialize selectedStep from URL status on mount (only for status values)
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const params = new URLSearchParams(window.location.search);
+        const urlStatus = params.get('status');
+        if (urlStatus && isStatusValue(urlStatus)) {
+            setSelectedStep(urlStatus);
+        }
+    }, []);
 
-	// Persist status selection to URL; remove when a non-status step is chosen
-	useEffect(() => {
-		const params = new URLSearchParams(window.location.search);
-		if (selectedStep && isStatusValue(selectedStep)) {
-			params.set('status', selectedStep);
-		} else {
-			params.delete('status');
-		}
-		const newUrl = `${location.pathname}?${params.toString()}`;
-		window.history.replaceState({}, '', newUrl);
-	}, [selectedStep]);
+    // Persist status selection to URL; remove when a non-status step is chosen
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const params = new URLSearchParams(window.location.search);
+        if (selectedStep && isStatusValue(selectedStep)) {
+            params.set('status', selectedStep);
+        } else {
+            params.delete('status');
+        }
+        const newUrl = `${location.pathname}?${params.toString()}`;
+        window.history.replaceState({}, '', newUrl);
+    }, [selectedStep]);
 
-	const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack || selectedGender || dateSort;
+    // Load saved filters on participants index only (browser-only)
+    const isParticipantsIndex = Array.isArray(infosessions) && !infosession;
+    useEffect(() => {
+        if (!isParticipantsIndex) return;
+        if (typeof window === 'undefined') return;
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                const saved = JSON.parse(raw);
+                if (typeof saved.search === 'string') setSearch(saved.search);
+                if (typeof saved.selectedStep === 'string') setSelectedStep(saved.selectedStep);
+                if (typeof saved.selectedSession === 'string') setSelectedSession(saved.selectedSession);
+                if (typeof saved.selectedPromo === 'string') setSelectedPromo(saved.selectedPromo);
+                if (typeof saved.selectedTrack === 'string') setSelectedTrack(saved.selectedTrack);
+                if (typeof saved.selectedGender === 'string') setSelectedGender(saved.selectedGender);
+                if (typeof saved.dateSort === 'string') setDateSort(saved.dateSort);
+            }
+        } catch (_) { }
+    }, [isParticipantsIndex]);
+
+    // Save filters on change for participants index only (browser-only)
+    useEffect(() => {
+        if (!isParticipantsIndex) return;
+        if (typeof window === 'undefined') return;
+        try {
+            const payload = {
+                search,
+                selectedStep,
+                selectedSession,
+                selectedPromo,
+                selectedTrack,
+                selectedGender,
+                dateSort,
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (_) { }
+    }, [isParticipantsIndex, search, selectedStep, selectedSession, selectedPromo, selectedTrack, selectedGender, dateSort]);
+
+    const hasActiveFilters = search || selectedStep || selectedSession || selectedPromo || selectedTrack || selectedGender || dateSort;
+
+    // Open modal and seed drafts
+    const openFilterModal = () => {
+        setDraftStep(selectedStep || '');
+        setDraftSession(selectedSession || '');
+        setDraftPromo(selectedPromo || '');
+        setDraftTrack(selectedTrack || '');
+        setDraftGender(selectedGender || '');
+        setDraftDateSort(dateSort || '');
+        setIsFilterOpen(true);
+    };
+
+    const applyFilters = () => {
+        setSelectedStep(draftStep);
+        setSelectedSession(draftSession);
+        setSelectedPromo(draftPromo);
+        setSelectedTrack(draftTrack);
+        setSelectedGender(draftGender);
+        setDateSort(draftDateSort);
+        setIsFilterOpen(false);
+    };
 
     const handleReset = () => {
         setSearch('');
@@ -234,25 +331,32 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
         setSelectedTrack('');
         setSelectedGender('');
         setDateSort('');
-        
+
         if (setFiltredParticipants) {
             setFiltredParticipants(participants);
         }
-        
-        const params = new URLSearchParams(window.location.search);
-        params.delete('status');
-        window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            params.delete('status');
+            window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+        }
+
+        // Clear persisted filters on participants index
+        if (isParticipantsIndex && typeof window !== 'undefined') {
+            try { localStorage.removeItem(STORAGE_KEY); } catch (_) { }
+        }
     };
 
-	const handleCopyEmails = () => {
-		const emails = filtredParticipans.map((p) => p.email).join(', ');
-		if (emails) {
-			navigator.clipboard.writeText(emails);
-			setCopy(false);
-			setTimeout(() => setCopy(true), 1500);
-		} else {
-		}
-	};
+    const handleCopyEmails = () => {
+        const emails = filtredParticipans.map((p) => p.email).join(', ');
+        if (emails) {
+            navigator.clipboard.writeText(emails);
+            setCopy(false);
+            setTimeout(() => setCopy(true), 1500);
+        } else {
+        }
+    };
 
 	const handleCardSelect = (cardId) => {
 		setSelectedReminderType(cardId);
@@ -298,7 +402,7 @@ const handleReminderSubmit = async (e) => {
 };
 
 
-	return (
+return (
 		<div className="relative space-y-4">
 			{/* Copy Emails aligned with title (top-right) */}
 			<div className="absolute right-0 -top-12 hidden sm:block">
@@ -625,6 +729,7 @@ const handleReminderSubmit = async (e) => {
 			)}
 		</div>
 	);
+
 };
 
 export default FilterHeader;

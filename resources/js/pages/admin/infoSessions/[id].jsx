@@ -7,11 +7,19 @@ import { ArrowLeft, Calendar, Code2, Copy, GraduationCap, Lock, Palette, Present
 import { useState } from 'react';
 import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from '../participants/partials/ParticipantCard';
+import InviteToJungle from './partials/InviteToJungle';
+import InviteToSchool from './partials/InviteToSchool';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 const InfosessionDetails = () => {
     const { infosession } = usePage().props;
     const [filtredParticipants, setFiltredParticipants] = useState(infosession?.participants);
-
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const participantsPerPage = 24;
@@ -245,6 +253,7 @@ const InfosessionDetails = () => {
                     </div>
                 </div>
 
+
                 {/* Statistics Cards */}
                 <div className="mx-auto -mt-4 max-w-7xl px-6">
                     <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
@@ -305,6 +314,38 @@ const InfosessionDetails = () => {
                                 </div>
                             </CardContent>
                         </Card>
+                        {/* <Dialog open={open} onOpenChange={setOpen}>
+                            <Card
+                                onClick={() => setOpen(true)}
+                                className="cursor-pointer border-0 bg-white shadow-lg hover:shadow-xl transition-all"
+                            >
+                                <CardContent className="p-6 flex items-center justify-center">
+                                    <div className="text-center">
+                                        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-[#fee819]">
+                                            <Users className="h-6 w-6 text-[#212529]" />
+                                        </div>
+                                        <p className="text-lg font-semibold text-[#212529]">Invite People</p>
+                                        <p className="text-sm text-gray-500">
+                                            Click to invite via Jungle or School
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <DialogContent className="max-w-3xl">
+                                <DialogHeader>
+                                    <DialogTitle className="text-2xl font-bold text-[#212529]">
+                                        Invite People
+                                    </DialogTitle>
+                                </DialogHeader>
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mt-4">
+                                    <InviteToJungle infosession={infosession} />
+                                    <InviteToSchool infosession={infosession} />
+                                </div>
+                            </DialogContent>
+                        </Dialog> */}
+
+
                     </div>
                 </div>
 
@@ -319,6 +360,9 @@ const InfosessionDetails = () => {
                             />
                         </div>
                     </div>
+
+
+
 
                     <div className="mb-6">
                         <h2 className="mb-2 text-2xl font-bold text-[#212529]">Session Participants</h2>
