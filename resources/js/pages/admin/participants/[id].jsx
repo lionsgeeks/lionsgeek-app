@@ -383,7 +383,6 @@ const handleReject = () => {
                                 </div>
 
                                 <div className="flex-1">
-                                <div className="flex-1">
                                     <h1 className="text-3xl font-bold mb-2">{participant.full_name}</h1>
                                     {/* Social Vulnerability Score */}
                                     {(auth.user.role === 'social_manager' || auth.user.role === 'super_admin') && (() => {
@@ -870,6 +869,7 @@ const handleReject = () => {
                     />
                 )}
             </div>
+            
             <Dialog open={isNextStepConfirmOpen} onOpenChange={setIsNextStepConfirmOpen}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
