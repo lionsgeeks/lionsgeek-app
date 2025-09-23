@@ -1129,7 +1129,6 @@ class ParticipantController extends Controller
 
             foreach ($candidats as $candidat) {
                 try {
-                    // Validate email address
                     if (!filter_var($candidat->email, FILTER_VALIDATE_EMAIL)) {
                         Log::warning("Invalid email address for participant {$candidat->id}: {$candidat->email}");
                         $errorCount++;
@@ -1137,7 +1136,8 @@ class ParticipantController extends Controller
                     }
 
                     $id = Crypt::encryptString($candidat->id);
-                    Mail::mailer($emailRecipient)->to($candidat->email)->queue(new JungleMail($candidat->full_name, $id, $day, $traning));
+                    Mail::to($candidat->email)
+                        ->queue(new JungleMail($candidat->full_name, $id, $day, $traning));
                     $successCount++;
 
                     Log::info("Jungle email queued for participant {$candidat->id} ({$candidat->email})");
@@ -1146,6 +1146,7 @@ class ParticipantController extends Controller
                     $errorCount++;
                 }
             }
+
 
             if ($successCount > 0) {
                 flash()
@@ -1561,12 +1562,12 @@ class ParticipantController extends Controller
         $step = request()->step;
         // dd($step);
 
-        if($step == "info_session") {
+        if ($step == "info_session") {
 
             $participants = Participant::where('current_step', $step)
                 ->whereBetween('created_at', [now()->subMonth(), now()])
                 ->where('is_visited', false)
-                ->where("full_name", "ayman")
+                // ->where("full_name", "ayman")
                 ->get();
 
             // dd($participants);
@@ -1585,13 +1586,11 @@ class ParticipantController extends Controller
                     ->get();
                 // dd($sessions);
                 // dd($formation);
-                if($formation == "coding"){
+                if ($formation == "coding") {
                     Mail::to($participant->email)->queue(new ReminderInfosessionCoding($participant, $sessions));
-                }elseif($formation == "media"){
+                } elseif ($formation == "media") {
                     Mail::to($participant->email)->queue(new ReminderInfosessionMedia($participant, $sessions));
-
                 }
-
             }
         }
     }
