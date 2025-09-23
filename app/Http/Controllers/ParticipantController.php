@@ -1567,7 +1567,6 @@ class ParticipantController extends Controller
                 $formation = strtolower((string) $participant->formation_field);
                 $todayTz = \Carbon\Carbon::now(config('app.timezone'))->toDateString();
                 $sessions = \App\Models\InfoSession::query()
-                    ->whereRaw('LOWER(formation) = ?', [$formation === 'coding' ? 'coding' : 'media'])
                     ->where('isAvailable', true)
                     ->where('isFinish', false)
                     ->where('isFull', false)
@@ -1579,9 +1578,7 @@ class ParticipantController extends Controller
                 // dd($formation);
                 if ($formation == "coding") {
                     Mail::to($participant->email)->queue(new ReminderInfosessionCoding($participant, $sessions));
-                } elseif ($formation == "media") {
-                    Mail::to($participant->email)->queue(new ReminderInfosessionMedia($participant, $sessions));
-                }
+                } 
             }
         }
     }
