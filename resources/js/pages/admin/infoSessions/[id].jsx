@@ -349,6 +349,11 @@ const InfosessionDetails = () => {
                     </div>
                 </div>
 
+                <div className="mx-auto max-w-7xl px-6 pb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <InviteToJungle infosession={infosession} />
+                    <InviteToSchool infosession={infosession} />
+                </div>
+
                 {/* Filter and Participants Section */}
                 <div className="mx-auto max-w-7xl px-6 pb-8">
                     <div className="mb-8 rounded-lg border-0 bg-white shadow-lg">

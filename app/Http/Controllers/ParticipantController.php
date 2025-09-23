@@ -1559,36 +1559,40 @@ class ParticipantController extends Controller
     public function sendReminder()
     {
         $step = request()->step;
+        // dd($step);
 
-        $participants = Participant::where('current_step', $step)
-            ->whereBetween('created_at', [now()->subMonth(), now()])
-            ->where('is_visited', false)
-            // ->where("formation_field", "media")
-            ->get();
+        if($step == "info_session") {
 
-        // dd($participants);
-
-        foreach ($participants as $participant) {
-            $formation = strtolower((string) $participant->formation_field);
-            $todayTz = \Carbon\Carbon::now(config('app.timezone'))->toDateString();
-            $sessions = \App\Models\InfoSession::query()
-                ->whereRaw('LOWER(formation) = ?', [$formation === 'coding' ? 'coding' : 'media'])
-                ->where('isAvailable', true)
-                ->where('isFinish', false)
-                ->where('isFull', false)
-                ->where('is_private', false)
-                ->whereDate('start_date', '>=', $todayTz)
-                ->orderBy('start_date', 'asc')
+            $participants = Participant::where('current_step', $step)
+                ->whereBetween('created_at', [now()->subMonth(), now()])
+                ->where('is_visited', false)
+                ->where("full_name", "ayman")
                 ->get();
-            // dd($sessions);
-            // dd($formation);
-            if($formation == "coding"){
-                Mail::to($participant->email)->queue(new ReminderInfosessionCoding($participant, $sessions));
-            }elseif($formation == "media"){
-                Mail::to($participant->email)->queue(new ReminderInfosessionMedia($participant, $sessions));
+
+            // dd($participants);
+
+            foreach ($participants as $participant) {
+                $formation = strtolower((string) $participant->formation_field);
+                $todayTz = \Carbon\Carbon::now(config('app.timezone'))->toDateString();
+                $sessions = \App\Models\InfoSession::query()
+                    ->whereRaw('LOWER(formation) = ?', [$formation === 'coding' ? 'coding' : 'media'])
+                    ->where('isAvailable', true)
+                    ->where('isFinish', false)
+                    ->where('isFull', false)
+                    ->where('is_private', false)
+                    ->whereDate('start_date', '>=', $todayTz)
+                    ->orderBy('start_date', 'asc')
+                    ->get();
+                // dd($sessions);
+                // dd($formation);
+                if($formation == "coding"){
+                    Mail::to($participant->email)->queue(new ReminderInfosessionCoding($participant, $sessions));
+                }elseif($formation == "media"){
+                    Mail::to($participant->email)->queue(new ReminderInfosessionMedia($participant, $sessions));
+
+                }
 
             }
-
         }
     }
 }
