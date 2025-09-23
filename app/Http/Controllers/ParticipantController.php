@@ -1576,7 +1576,7 @@ class ParticipantController extends Controller
                 ->where('isAvailable', true)
                 ->where('isFinish', false)
                 ->where('isFull', false)
-                ->where('is_private', true)
+                ->where('is_private', false)
                 ->whereDate('start_date', '>=', $todayTz)
                 ->orderBy('start_date', 'asc')
                 ->get();
