@@ -32,7 +32,7 @@ class JungleMail extends Mailable implements ShouldQueue
         $fromEmail = match (strtolower($this->traning)) {
             'coding' => 'coding@mylionsgeek.ma',
             'media'  => 'media@mylionsgeek.ma',
-            default  => config('mail.from.address'), 
+            default  => config('mail.from.address'),
         };
 
         return $this->from($fromEmail, 'LionsGeek Jungle')
