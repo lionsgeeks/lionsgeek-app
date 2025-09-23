@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage, router, useForm } from '@inertiajs/react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -40,7 +40,8 @@ import { AdminNotesSection } from './partials/admin-notes-section';
 import { FrequentQuestionsSection } from './partials/frequent-questions-section';
 import { MotivationSection } from './partials/motivation-section';
 import { SatisfactionMetricsSection } from './partials/satisfaction-metrics-section';
-import { Label } from 'recharts';
+// import { Label } from 'recharts';
+import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -84,6 +85,31 @@ export default function ParticipantProfilePage() {
         link2m: "",
         socialCategory: "",
     });
+
+    // Populate form defaults from participant data when dialog opens
+    useEffect(() => {
+        if (isSocialDialogOpen && participant) {
+            setSocialForm({
+                foyerComposition: participant.composition_foyer ?? "",
+                foyerCompositionAutre: "",
+                foyerCount: participant.nombre_personnes != null ? String(participant.nombre_personnes) : "",
+                siblingCount: participant.fratrie != null ? String(participant.fratrie) : "",
+                fatherStatus: participant.pere_tuteur ?? "",
+                motherStatus: participant.mere_tuteur ?? "",
+                incomeRange: participant.revenus_mensuels ?? "",
+                logementType: participant.type_logement ?? "",
+                logementAutre: "",
+                basicServices: participant.services_base ?? "",
+                eduFather: participant.education_pere ?? "",
+                eduMother: participant.education_mere ?? "",
+                socialAid: participant.aides_sociales ?? "",
+                specialSituations: Array.isArray(participant.situation_particuliere) ? participant.situation_particuliere : [],
+                specialOther: "",
+                link2m: participant.lien_2m ?? "",
+                socialCategory: participant.categorie_sociale ?? "",
+            });
+        }
+    }, [isSocialDialogOpen, participant]);
     const toggleArrayValue = (arr, value) => (arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]);
 
     const totalLevelsConst = 20; // matches game plan length
