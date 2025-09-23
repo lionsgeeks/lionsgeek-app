@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MessagesExport;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\InfosessionController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BookingController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Participant;
 use Illuminate\Support\Facades\Storage;
@@ -37,6 +39,11 @@ Route::get('/media', function () {
 // Private session access route
 Route::get('/private-session/{token}', [InfosessionController::class, 'showByToken'])
     ->name('private-session.show');
+
+// Private event access route
+Route::get('/private-event/{token}', [EventController::class, 'showByToken'])
+    ->name('private-event.show');
+
 Route::get('/pro', function () {
     $projects = Project::all();
     return Inertia::render('client/Pro/Pro', [
@@ -97,6 +104,8 @@ Route::get("/teeeetete", function () {
         ->get();
     dd($sessions);
 });
+
+
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

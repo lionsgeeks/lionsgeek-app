@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import AppLayout from '@/layouts/app-layout';
 import { router, usePage } from '@inertiajs/react';
-import { ArrowLeft, Calendar, Clock, Edit, MapPin, Trash2, Users } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Edit, MapPin, Trash2, Users, Link, RefreshCcw, Lock } from 'lucide-react'; // Added Link, RefreshCcw, Lock
 import { useState } from 'react';
 import EditEventDialog from './partials/EditEventDialog';
 
 import logo from '../../../../assets/images/logolionsgeek.png';
 import Participants from '../../../components/participants';
+
 export default function AdminEventShow() {
     const { event } = usePage().props;
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -76,6 +77,25 @@ export default function AdminEventShow() {
     const nameTexts = getDisplayText(event.name);
     const descriptionTexts = getDisplayText(event.description);
 
+    const copyPrivateUrl = () => {
+        const privateUrl = `${appUrl}/private-event/${event.private_url_token}`;
+        navigator.clipboard.writeText(privateUrl);
+        alert('Private URL copied to clipboard!');
+    };
+
+    const regenerateToken = () => {
+        router.post(route('admin.event.regenerate-token', event.id), {}, {
+            onSuccess: () => {
+                alert('Private URL regenerated successfully!');
+                window.location.reload();
+            },
+            onError: (errors) => {
+                console.error('Token regeneration errors:', errors);
+                alert('Failed to regenerate URL.');
+            },
+        });
+    };
+
     return (
         <AppLayout>
             <div className="flex flex-1 flex-col overflow-hidden">
@@ -120,7 +140,10 @@ export default function AdminEventShow() {
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                         <div className="space-y-6 lg:col-span-2">
                             <div>
-                                <h2 className="mb-2 text-3xl font-bold">{nameTexts.en}</h2>
+                                <h2 className="mb-2 text-3xl font-bold">
+                                    {nameTexts.en}
+                                    {event.is_private && <Lock className="ml-2 inline-block h-6 w-6 text-gray-500" />}
+                                </h2>
                                 <p className="mb-4 text-muted-foreground">{descriptionTexts.en}</p>
                                 <div className="flex gap-2">
                                     <Badge variant="secondary">Event</Badge>
@@ -176,6 +199,27 @@ export default function AdminEventShow() {
                                             <p className="text-sm text-muted-foreground">90 minutes</p>
                                         </div>
                                     </div>
+
+                                    {event.is_private && event.private_url_token && (
+                                        <div className="space-y-2 border-t pt-4">
+                                            <h3 className="font-medium">Private Event URL</h3>
+                                            <div className="flex items-center gap-2">
+                                                <Link className="h-5 w-5 text-muted-foreground" />
+                                                <p className="text-sm text-muted-foreground truncate">
+                                                    {`${appUrl}/private-event/${event.private_url_token}`}
+                                                </p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <Button onClick={copyPrivateUrl} size="sm" className="flex-1">
+                                                    Copy URL
+                                                </Button>
+                                                <Button onClick={regenerateToken} size="sm" variant="outline" className="flex-1">
+                                                    <RefreshCcw className="h-4 w-4 mr-2" />
+                                                    Regenerate
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </CardContent>
                             </Card>
 

@@ -79,12 +79,12 @@
 
     <div class="content">
         <h2>Hello {{ $booking->name }}!</h2>
-        
+
         <p>We're excited to confirm your booking for the following event:</p>
 
         <div class="event-details">
             <h3>📅 Event Details</h3>
-            <p><strong>Event:</strong> 
+            <p><strong>Event:</strong>
                 @if(is_array($event->name))
                     {{ $event->name['en'] ?? $event->name['fr'] ?? $event->name['ar'] ?? 'Event' }}
                 @else
@@ -124,12 +124,12 @@
 
         <div class="rtl">
             <h2>مرحبًا {{ $booking->name }}!</h2>
-            
+
             <p>يسعدنا تأكيد حجزك للفعالية التالية:</p>
 
             <div class="event-details">
                 <h3>📅 تفاصيل الفعالية</h3>
-                <p><strong>الفعالية:</strong> 
+                <p><strong>الفعالية:</strong>
                     @if(is_array($event->name))
                         {{ $event->name['ar'] ?? $event->name['en'] ?? $event->name['fr'] ?? 'فعالية' }}
                     @else

@@ -26,6 +26,7 @@ export default function EventForm({ event = null, onClose, onSuccess }) {
         capacity: event?.capacity || '',
         location: event?.location || '',
         cover: null,
+        is_private: event?.is_private || false,
     });
 
     const [activeTab, setActiveTab] = useState('en');
@@ -41,6 +42,7 @@ export default function EventForm({ event = null, onClose, onSuccess }) {
         formData.append('date', data.date);
         formData.append('capacity', data.capacity);
         formData.append('location', data.location);
+        formData.append('is_private', data.is_private ? 1 : 0);
 
         if (data.cover) {
             formData.append('cover', data.cover);
@@ -248,6 +250,15 @@ export default function EventForm({ event = null, onClose, onSuccess }) {
                                 required
                             />
                             {errors.capacity && <p className="text-sm text-red-600">{errors.capacity}</p>}
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="is_private"
+                                checked={data.is_private}
+                                onChange={(e) => setData('is_private', e.target.checked)}
+                            />
+                            <Label htmlFor="is_private">Private Event</Label>
                         </div>
                     </div>
 

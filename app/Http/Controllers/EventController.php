@@ -17,7 +17,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::orderBy('date', 'desc')->get();
+        $events = Event::where('is_private', false)->orderBy('date', 'desc')->get();
         return Inertia::render('client/events/events', [
             'events' => $events
         ]);
@@ -47,13 +47,12 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-
-
         $request->validate([
             'date' => 'required|date',
             'capacity' => 'required|integer|min:1',
             'cover' => 'required|image|mimes:jpeg,png,jpg,gif',
             'location' => 'required|string',
+            'is_private' => 'boolean',
         ]);
 
         if (!$request->name || !is_array($request->name) || empty(array_filter($request->name))) {
@@ -82,6 +81,7 @@ class EventController extends Controller
             'capacity' => $request->capacity,
             'location' => $request->location,
             'cover' => $coverPath,
+            'is_private' => $request->boolean('is_private', false),
         ]);
 
         return redirect()->route('admin.events.index');
@@ -91,12 +91,13 @@ class EventController extends Controller
      * Display the specified resource for clients.
      */
     public function show(Event $event)
-
     {
+        if ($event->is_private) {
+            abort(404);
+        }
         $event->load('bookings');
         return Inertia::render('client/EventDetails/eventdetail', [
             'event' => $event
-
         ]);
     }
 
@@ -105,7 +106,6 @@ class EventController extends Controller
      */
     public function adminShow(Event $event)
     {
-
         $event->load('bookings');
 
         return Inertia::render('admin/events/[id]', [
@@ -118,12 +118,12 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
-
         $request->validate([
             'date' => 'required|date',
             'capacity' => 'required|integer|min:1',
             'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif',
             'location' => 'required|string',
+            'is_private' => 'boolean',
         ]);
 
         if (!$request->name || !is_array($request->name) || empty(array_filter($request->name))) {
@@ -140,6 +140,7 @@ class EventController extends Controller
             'date' => $request->date,
             'capacity' => $request->capacity,
             'location' => $request->location,
+            'is_private' => $request->boolean('is_private'),
         ];
 
         if ($request->hasFile('cover')) {
@@ -151,7 +152,6 @@ class EventController extends Controller
 
             $updateData['cover'] = $filename;
         }
-
 
         $event->update($updateData);
 
@@ -170,5 +170,55 @@ class EventController extends Controller
         $event->delete();
 
         return redirect()->route('admin.events.index');
+    }
+
+    public function privacyStatus($id)
+    {
+        try {
+            $event = Event::where('id', $id)->first();
+            $event->update([
+                'is_private' => !$event->is_private
+            ]);
+            return back();
+        } catch (\Throwable $th) {
+            return back();
+        }
+    }
+
+    /**
+     * Show event by private URL token
+     */
+    public function showByToken($token)
+    {
+        $event = Event::findByToken($token);
+
+        if (!$event) {
+            abort(404, 'Private event not found or inactive');
+        }
+        
+        $event->load('bookings');
+
+        return Inertia::render('client/EventDetails/eventdetail', [
+            'event' => $event,
+            'private_event' => true,
+        ]);
+    }
+
+    /**
+     * Regenerate private URL token for an event
+     */
+    public function regenerateToken(Event $event)
+    {
+        try {
+            if (!$event->is_private) {
+                return back()->withErrors(['error' => 'This is not a private event']);
+            }
+
+            $event->regenerateUrlToken();
+
+            return back()->with('success', 'Private URL regenerated successfully');
+        } catch (\Throwable $th) {
+            return back()->withErrors(['error' => 'Failed to regenerate URL']);
+        }
     }
 }
