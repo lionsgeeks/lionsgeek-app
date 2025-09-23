@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ChevronLeft, ChevronRight, Filter, Search, Users } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Filter, Search, Users, CheckCircle2, XCircle } from 'lucide-react'; // Added CheckCircle2, XCircle
 import { useMemo, useState } from 'react';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -10,6 +10,7 @@ function Participants({ bookings, tab }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [genderFilter, setGenderFilter] = useState('all');
+    const [visitedFilter, setVisitedFilter] = useState('all'); // New state for visited filter
     const itemsPerPage = 10;
 
     const filteredParticipants = useMemo(() => {
@@ -18,9 +19,10 @@ function Participants({ bookings, tab }) {
                 participant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 participant.email.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesGender = genderFilter === 'all' || participant.gender === genderFilter;
-            return matchesSearch && matchesGender;
+            const matchesVisited = visitedFilter === 'all' || (visitedFilter === 'true' && participant.is_visited) || (visitedFilter === 'false' && !participant.is_visited);
+            return matchesSearch && matchesGender && matchesVisited; // Include visited filter
         });
-    }, [bookings, searchTerm, genderFilter]);
+    }, [bookings, searchTerm, genderFilter, visitedFilter]); // Add visitedFilter to dependencies
 
     const totalPages = Math.ceil(filteredParticipants.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -33,6 +35,11 @@ function Participants({ bookings, tab }) {
 
     const handleGenderFilterChange = (value) => {
         setGenderFilter(value);
+        setCurrentPage(1);
+    };
+
+    const handleVisitedFilterChange = (value) => { // New handler for visited filter
+        setVisitedFilter(value);
         setCurrentPage(1);
     };
 
@@ -69,6 +76,18 @@ function Participants({ bookings, tab }) {
                             <SelectItem value="female">Female</SelectItem>
                         </SelectContent>
                     </Select>
+                    {/* New Select for visited filter */}
+                    <Select value={visitedFilter} onValueChange={handleVisitedFilterChange}>
+                        <SelectTrigger className="w-full sm:w-48">
+                            <Filter className="mr-2 h-4 w-4" />
+                            <SelectValue placeholder="Filter by visited status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Statuses</SelectItem>
+                            <SelectItem value="true">Visited</SelectItem>
+                            <SelectItem value="false">Not Visited</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </CardHeader>
             <CardContent>
@@ -82,17 +101,25 @@ function Participants({ bookings, tab }) {
                                 <th className="px-2 py-3 text-left font-medium text-muted-foreground">Gender</th>
                                 <th className="px-2 py-3 text-left font-medium text-muted-foreground">Phone</th>
                                 <th className="px-2 py-3 text-left font-medium text-muted-foreground">Booked at</th>
+                                <th className="px-2 py-3 text-left font-medium text-muted-foreground">Visited</th> {/* New column header */}
                             </tr>
                         </thead>
                         <tbody>
                             {paginatedParticipants.map((participant, index) => (
-                                <tr key={participant.id} className="border-b hover:bg-muted/50">
+                                <tr key={participant.id} className={`border-b ${participant.is_visited ? 'bg-green-50/50' : 'hover:bg-muted/50'}`}> {/* Highlight visited rows */}
                                     <td className="px-2 py-3 text-sm">{startIndex + index + 1}</td>
                                     <td className="px-2 py-3 font-medium">{participant.name}</td>
                                     <td className="px-2 py-3 text-sm text-muted-foreground">{participant.email}</td>
                                     <td className="px-2 py-3 text-sm">{participant.gender}</td>
                                     <td className="px-2 py-3 text-sm">{participant.phone}</td>
                                     <td className="px-2 py-3 text-sm text-muted-foreground">{new Date(participant.created_at).toLocaleString()}</td>
+                                    <td className="px-2 py-3 text-sm">
+                                        {participant.is_visited ? (
+                                            <CheckCircle2 className="h-5 w-5 text-green-500" />
+                                        ) : (
+                                            <XCircle className="h-5 w-5 text-red-500" />
+                                        )}
+                                    </td> {/* Display visited status */}
                                 </tr>
                             ))}
                         </tbody>
