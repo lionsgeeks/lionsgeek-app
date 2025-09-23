@@ -25,6 +25,8 @@ use App\Mail\CodeMail;
 use App\Mail\RegistrationReceived;
 use App\Mail\RegistrationApproved;
 use App\Mail\RegistrationApprovedCoding;
+use App\Mail\ReminderInfosessionCoding;
+use App\Mail\ReminderInfosessionMedia;
 use App\Mail\RegistrationApprovedMedia;
 use App\Mail\RegistrationRejected;
 use App\Models\FrequentQuestion;
@@ -95,7 +97,8 @@ class ParticipantController extends Controller
         ]);
 
         // Compute social score on server using same mapping as UI
-        $score = 0; $max = 0;
+        $score = 0;
+        $max = 0;
 
         $add = function ($value, $map, $default = null) use (&$score, &$max) {
             if ($value === '' || $value === null) return;
@@ -124,13 +127,15 @@ class ParticipantController extends Controller
         if (isset($validated['nombre_personnes'])) {
             $n = max(0, (int) $validated['nombre_personnes']);
             $pts = $n >= 7 ? 6 : ($n >= 5 ? 4 : ($n >= 3 ? 3 : 1));
-            $score += $pts; $max += 6;
+            $score += $pts;
+            $max += 6;
         }
         // Fratrie
         if (isset($validated['fratrie'])) {
             $n = max(0, (int) $validated['fratrie']);
             $pts = $n >= 5 ? 6 : ($n >= 3 ? 3 : ($n >= 1 ? 1 : 0));
-            $score += $pts; $max += 6;
+            $score += $pts;
+            $max += 6;
         }
 
         // 2) Statuts parents
@@ -805,44 +810,44 @@ class ParticipantController extends Controller
             ->orderBy('id')
             ->get(['id', 'full_name', 'current_step']);
 
-    // Fetch other registrations for the same person across other promos/sessions
-    // Match by exact email OR by name case-insensitively, including swapped first/last names
-    $normalizedName = strtolower(trim(preg_replace('/\s+/', ' ', (string) $participant->full_name)));
-    $nameParts = array_values(array_filter(explode(' ', $normalizedName)));
-    $candidateNames = [$normalizedName];
-    if (count($nameParts) >= 2) {
-        $first = $nameParts[0];
-        $last = $nameParts[count($nameParts) - 1];
-        $candidateNames[] = trim($last . ' ' . $first);
-        $candidateNames[] = trim($first . ' ' . $last);
+        // Fetch other registrations for the same person across other promos/sessions
+        // Match by exact email OR by name case-insensitively, including swapped first/last names
+        $normalizedName = strtolower(trim(preg_replace('/\s+/', ' ', (string) $participant->full_name)));
+        $nameParts = array_values(array_filter(explode(' ', $normalizedName)));
+        $candidateNames = [$normalizedName];
+        if (count($nameParts) >= 2) {
+            $first = $nameParts[0];
+            $last = $nameParts[count($nameParts) - 1];
+            $candidateNames[] = trim($last . ' ' . $first);
+            $candidateNames[] = trim($first . ' ' . $last);
+        }
+        $candidateNames = array_values(array_unique($candidateNames));
+
+        $otherProfiles = Participant::with('infoSession')
+            ->where('id', '!=', $participant->id)
+            ->where(function ($q) use ($participant, $candidateNames) {
+                $q->where('email', $participant->email);
+                if (!empty($candidateNames)) {
+                    $placeholders = implode(',', array_fill(0, count($candidateNames), '?'));
+                    $q->orWhereRaw('LOWER(full_name) IN (' . $placeholders . ')', $candidateNames);
+                }
+            })
+            ->orderBy('created_at', 'desc')
+            ->get(['id', 'info_session_id', 'current_step', 'status', 'created_at']);
+
+        return Inertia::render('admin/participants/[id]', [
+            'participant' => $participant->load([
+                'infoSession',
+                'notes',
+                'questions',
+                'satisfaction',
+                'confirmation'
+            ]),
+            'participants' => $participants,
+            'stepParticipant' => $stepParticipant,
+            'otherProfiles' => $otherProfiles,
+        ]);
     }
-    $candidateNames = array_values(array_unique($candidateNames));
-
-    $otherProfiles = Participant::with('infoSession')
-        ->where('id', '!=', $participant->id)
-        ->where(function ($q) use ($participant, $candidateNames) {
-            $q->where('email', $participant->email);
-            if (!empty($candidateNames)) {
-                $placeholders = implode(',', array_fill(0, count($candidateNames), '?'));
-                $q->orWhereRaw('LOWER(full_name) IN (' . $placeholders . ')', $candidateNames);
-            }
-        })
-        ->orderBy('created_at', 'desc')
-        ->get(['id', 'info_session_id', 'current_step', 'status', 'created_at']);
-
-    return Inertia::render('admin/participants/[id]', [
-        'participant' => $participant->load([
-            'infoSession',
-            'notes',
-            'questions',
-            'satisfaction',
-            'confirmation'
-        ]),
-        'participants' => $participants,
-        'stepParticipant' => $stepParticipant,
-        'otherProfiles' => $otherProfiles,
-    ]);
-}
 
 
     /**
@@ -1153,7 +1158,6 @@ class ParticipantController extends Controller
                     ->option('position', 'bottom-right')
                     ->warning("{$errorCount} emails failed to queue. Check logs for details.");
             }
-
         } catch (\Exception $e) {
             Log::error("Error in toJungle function: " . $e->getMessage());
             flash()
@@ -1167,9 +1171,9 @@ class ParticipantController extends Controller
     {
         try {
             $candidats = Participant::where('info_session_id', $request->query('infosession_id'))
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->where('current_step', 'coding_school')
-                          ->orWhere('current_step', 'media_school');
+                        ->orWhere('current_step', 'media_school');
                 })
                 ->get();
             // If "Send" button is clicked, validate that a date is provided
@@ -1190,7 +1194,7 @@ class ParticipantController extends Controller
 
                     $school = $candidat->current_step == "coding_school" ? "coding" : "media";
                     $id = Crypt::encryptString($candidat->id);
-                    $mailer = $school == 'Coding' ? 'coding@mylionsgeek.ma' : ($school == 'Media' && 'media@mylionsgeek.ma' );
+                    $mailer = $school == 'Coding' ? 'coding@mylionsgeek.ma' : ($school == 'Media' && 'media@mylionsgeek.ma');
                     Mail::mailer($mailer)->to($candidat->email)->queue(new SchoolMail($candidat->full_name, $id, $day, $school));
                     $successCount++;
 
@@ -1212,7 +1216,6 @@ class ParticipantController extends Controller
                     ->option('position', 'bottom-right')
                     ->warning("{$errorCount} emails failed to queue. Check logs for details.");
             }
-
         } catch (\Exception $e) {
             Log::error("Error in toSchool function: " . $e->getMessage());
             flash()
@@ -1274,10 +1277,11 @@ class ParticipantController extends Controller
                     ->where('isAvailable', true)
                     ->where('isFinish', false)
                     ->where('isFull', false)
+                    ->where('is_private', false)
                     ->whereDate('start_date', '>=', $todayTz)
                     ->orderBy('start_date', 'asc')
                     ->get();
-
+                // dd($sessions);
                 if ($formation === 'coding') {
                     Mail::to($participant->email)->send(new RegistrationApprovedCoding($participant, $sessions));
                 } elseif ($formation === 'media') {
@@ -1552,16 +1556,39 @@ class ParticipantController extends Controller
     }
 
 
-  public function sendReminder()
-{
-    $step = request()->step;
+    public function sendReminder()
+    {
+        $step = request()->step;
 
-    $participants = Participant::where('current_step', $step)
-        ->whereBetween('created_at', [now()->subMonth(), now()])
-        ->where("formation_field" , "coding")
-        ->get();
+        $participants = Participant::where('current_step', $step)
+            ->whereBetween('created_at', [now()->subMonth(), now()])
+            ->where('is_visited', false)
+            // ->where("formation_field", "media")
+            ->get();
 
-    dd($participants);
-}
+        // dd($participants);
 
+        foreach ($participants as $participant) {
+            $formation = strtolower((string) $participant->formation_field);
+            $todayTz = \Carbon\Carbon::now(config('app.timezone'))->toDateString();
+            $sessions = \App\Models\InfoSession::query()
+                ->whereRaw('LOWER(formation) = ?', [$formation === 'coding' ? 'coding' : 'media'])
+                ->where('isAvailable', true)
+                ->where('isFinish', false)
+                ->where('isFull', false)
+                ->where('is_private', true)
+                ->whereDate('start_date', '>=', $todayTz)
+                ->orderBy('start_date', 'asc')
+                ->get();
+            // dd($sessions);
+            // dd($formation);
+            if($formation == "coding"){
+                Mail::to($participant->email)->queue(new ReminderInfosessionCoding($participant, $sessions));
+            }elseif($formation == "media"){
+                Mail::to($participant->email)->queue(new ReminderInfosessionMedia($participant, $sessions));
+
+            }
+
+        }
+    }
 }

@@ -81,6 +81,20 @@ Route::get('/apiactive', function () {
 });
 
 
+// ghir bach ntesti wash private session kadoz ola la hhhhhhhhhh
+Route::get("/teeeetete" , function () {
+
+                // Robust, timezone-aware, case-insensitive session fetch for emails
+       $sessions = \App\Models\InfoSession::query()
+                    ->where('isAvailable', true)
+                    ->where('isFinish', false)
+                    ->where('isFull', false)
+                    // ->where('is_private' , false)
+                    ->orderBy('start_date', 'asc')
+                    ->get();
+                dd($sessions);
+});
+
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/infosession.php';
