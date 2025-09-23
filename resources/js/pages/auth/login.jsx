@@ -115,7 +115,7 @@ export default function Login({ status, canResetPassword }) {
 
                                 {/* Right card (Login form) */}
                                 <div className="flex flex-col items-center justify-center gap-6 overflow-hidden rounded-lg bg-[#18181b] p-6 ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#fee819] md:row-span-3 lg:p-10 lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#fee819]">
-                                    <form onSubmit={submit} className="w-[70%]">
+                                    <form onSubmit={submit} className="w-[90%]">
                                         {/* Email */}
                                         <div>
                                             <label className="text-sm text-gray-200" htmlFor="email">
@@ -168,7 +168,7 @@ export default function Login({ status, canResetPassword }) {
                                         </div>
 
                                         {/* Actions */}
-                                        <div className="mt-4 flex items-center justify-end">
+                                        <div className="mt-4 flex items-center justify-between">
                                             <a
                                                 href={route('password.request')}
                                                 className="rounded-md text-sm text-gray-300 underline hover:text-gray-400 focus:ring-2 focus:ring-alpha focus:ring-offset-2 focus:outline-none transition-all"

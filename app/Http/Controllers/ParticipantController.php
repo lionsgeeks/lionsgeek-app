@@ -1084,9 +1084,9 @@ class ParticipantController extends Controller
             $info = InfoSession::where('id', $request->infosession_id)->first();
             $formationType = $info->formation;
             if ($formationType == 'Media') {
-                $emailRecipient = 'Media';
+                $emailRecipient = 'media@mylionsgeek.ma';
             } elseif ($formationType == 'Coding') {
-                $emailRecipient = 'Coding';
+                $emailRecipient = 'coding@mylionsgeek.ma';
             }
             $divided = ceil($candidats->count() / count($request->dates));
             foreach ($request->dates as $time) {
@@ -1108,14 +1108,14 @@ class ParticipantController extends Controller
     public function toJungle(Request $request)
     {
         try {
-            $traning = InfoSession::where('id', $request->query('infosession_id'))->first()->formation;
+            $infoSession = InfoSession::where('id', $request->query('infosession_id'))->first();
+            $traning = $infoSession->formation;
             if ($traning == 'Media') {
-                $emailRecipient = 'media';
+                $emailRecipient = 'media@mylionsgeek.ma';
             } elseif ($traning == 'Coding') {
-                $emailRecipient = 'coding';
-            } else {
-                $emailRecipient = 'info';
+                $emailRecipient = 'coding@mylionsgeek.ma';
             }
+
             $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->query('infosession_id'))->get();
             $day = $request->query('date');
 
@@ -1190,7 +1190,7 @@ class ParticipantController extends Controller
 
                     $school = $candidat->current_step == "coding_school" ? "coding" : "media";
                     $id = Crypt::encryptString($candidat->id);
-                    $mailer = $school == 'coding' ? 'coding' : ($school == 'media' ? 'media' : 'info');
+                    $mailer = $school == 'Coding' ? 'coding@mylionsgeek.ma' : ($school == 'Media' && 'media@mylionsgeek.ma' );
                     Mail::mailer($mailer)->to($candidat->email)->queue(new SchoolMail($candidat->full_name, $id, $day, $school));
                     $successCount++;
 
@@ -1550,4 +1550,18 @@ class ParticipantController extends Controller
             ]);
         }
     }
+
+
+  public function sendReminder()
+{
+    $step = request()->step;
+
+    $participants = Participant::where('current_step', $step)
+        ->whereBetween('created_at', [now()->subMonth(), now()])
+        ->where("formation_field" , "coding")
+        ->get();
+
+    dd($participants);
+}
+
 }

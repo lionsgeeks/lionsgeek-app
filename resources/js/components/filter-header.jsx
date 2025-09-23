@@ -2,15 +2,20 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film, UserCheck, Calendar, Filter } from 'lucide-react';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Clipboard, Copy, Mail, RotateCcw, Search, CheckCircle2, Clock, XCircle, Users, ListChecks, Presentation, User, Mountain, Ban, GraduationCap, Film, UserCheck, Calendar, Filter, School } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import InterviewDialog from './interviewDialog';
 import InviteDialog from './inviteDialog';
 import InviteToJungle from '../pages/admin/infoSessions/partials/InviteToJungle';
 import InviteToSchool from '../pages/admin/infoSessions/partials/InviteToSchool';
+import { DialogDescription } from '@headlessui/react';
+import { useForm } from '@inertiajs/react';
 const FilterHeader = ({ participants = [], infosession, infosessions = [], setFiltredParticipants, statusCounts = {} }) => {
     const STORAGE_KEY = 'admin_participants_filters_v1';
+    const { post, errors, processing, data, setData, reset } = useForm({
+        step: null,
+    })
     const [search, setSearch] = useState('');
     const [selectedStep, setSelectedStep] = useState('');
     const [selectedSession, setSelectedSession] = useState('');
@@ -19,6 +24,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
     const [selectedGender, setSelectedGender] = useState('');
     const [dateSort, setDateSort] = useState('');
     const [copy, setCopy] = useState(true);
+    const [selectedReminderType, setSelectedReminderType] = useState(null);
 
     // Modal state and draft filter values
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -160,40 +166,40 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
             const matchesGender = !selectedGender || selectedGender === 'All' ||
                 participant?.gender?.toLowerCase() === selectedGender.toLowerCase();
 
-			// Step filter
-			let matchesStep = true;
-			if (selectedStep && selectedStep !== 'All') {
-				if (isStatusValue(selectedStep)) {
-					if (selectedStep === 'all') {
-						matchesStep = true;
-					} else {
-						matchesStep = participant?.status === selectedStep;
-					}
-				} else {
-					switch (selectedStep) {
-						case 'info_session':
-							matchesStep = participant?.current_step === 'info_session';
-							break;
-						case 'interview':
-							matchesStep = participant?.current_step === 'interview';
-							break;
-						case 'interview_pending':
-							matchesStep = participant?.current_step === 'interview_pending';
-							break;
-						case 'interview_failed':
-							matchesStep = participant?.current_step === 'interview_failed';
-							break;
-						case 'jungle':
-							matchesStep = participant?.current_step === 'jungle';
-							break;
-						case 'jungle_failed':
-							matchesStep = participant?.current_step === 'jungle_failed';
-							break;
-						default:
-							matchesStep = participant?.current_step === selectedStep;
-					}
-				}
-			}
+            // Step filter
+            let matchesStep = true;
+            if (selectedStep && selectedStep !== 'All') {
+                if (isStatusValue(selectedStep)) {
+                    if (selectedStep === 'all') {
+                        matchesStep = true;
+                    } else {
+                        matchesStep = participant?.status === selectedStep;
+                    }
+                } else {
+                    switch (selectedStep) {
+                        case 'info_session':
+                            matchesStep = participant?.current_step === 'info_session';
+                            break;
+                        case 'interview':
+                            matchesStep = participant?.current_step === 'interview';
+                            break;
+                        case 'interview_pending':
+                            matchesStep = participant?.current_step === 'interview_pending';
+                            break;
+                        case 'interview_failed':
+                            matchesStep = participant?.current_step === 'interview_failed';
+                            break;
+                        case 'jungle':
+                            matchesStep = participant?.current_step === 'jungle';
+                            break;
+                        case 'jungle_failed':
+                            matchesStep = participant?.current_step === 'jungle_failed';
+                            break;
+                        default:
+                            matchesStep = participant?.current_step === selectedStep;
+                    }
+                }
+            }
 
             return matchesSearch && matchesSession && matchesPromo && matchesTrack && matchesGender && matchesStep;
         }) || [];
@@ -351,28 +357,15 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
         }
     };
 
+
+    const handleReminderSubmit = () => {
+        post("/send-reminder")
+        reset("step")
+    }
+
     return (
         <div className="relative space-y-4">
-            {/* Copy Emails aligned with title (top-right) */}
-            <div className="absolute right-0 -top-12 hidden sm:block">
-                <Button
-                    onClick={handleCopyEmails}
-                    className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
-                >
-                    {copy ? <Copy className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
-                    {copy ? 'Copy Emails' : 'Copied!'}
-                </Button>
-            </div>
-            {/* Mobile: Copy Emails under the title */}
-            <div className="sm:hidden mt-2">
-                <Button
-                    onClick={handleCopyEmails}
-                    className="rounded-lg bg-[#212529] text-white transition-colors hover:bg-[#fee819] hover:text-[#212529]"
-                >
-                    {copy ? <Copy className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
-                    {copy ? 'Copy Emails' : 'Copied!'}
-                </Button>
-            </div>
+
 
             {/* Filter Controls */}
             <div className="flex flex-wrap items-center gap-3 sm:gap-3">
@@ -387,15 +380,15 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                     />
                 </div>
 
-				{/* Filter button opens modal */}
-				<Button
-					onClick={openFilterModal}
-					variant={hasActiveFilters ? "default" : "outline"}
-					className={`rounded-lg ${hasActiveFilters ? 'bg-[#fee819] text-[#212529] border-0 hover:bg-[#fee819]' : 'border border-gray-300 bg-white text-[#212529] hover:bg-gray-50'}`}
-				>
-					<Filter className="mr-2 h-4 w-4" />
-					Filter
-				</Button>
+                {/* Filter button opens modal */}
+                <Button
+                    onClick={openFilterModal}
+                    variant={hasActiveFilters ? "default" : "outline"}
+                    className={`rounded-lg ${hasActiveFilters ? 'bg-[#fee819] text-[#212529] border-0 hover:bg-[#fee819]' : 'border border-gray-300 bg-white text-[#212529] hover:bg-gray-50'}`}
+                >
+                    <Filter className="mr-2 h-4 w-4" />
+                    Filter
+                </Button>
 
                 {/* Reset Button - next to Filter */}
                 {hasActiveFilters && (
@@ -409,42 +402,117 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                         Reset
                     </Button>
                 )}
-                    <div className="">
-                                        <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
-                                            <DialogTrigger asChild>
-                                                <Button className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]">
-                                                    Invite People
-                                                </Button>
-                                            </DialogTrigger>
+                <div className="flex gap-x-2">
+                    {
+                        window.location.pathname.includes("/admin/infosessions/") &&
+                        <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]">
+                                    Invite People
+                                </Button>
+                            </DialogTrigger>
 
-                                            <DialogContent className="max-w-xl flex flex-col justify-center items-center ">
-                                                <DialogHeader>
-                                                    <DialogTitle className="text-2xl font-bold text-[#212529]">
-                                                        Invite People to
-                                                    </DialogTitle>
-                                                </DialogHeader>
+                            <DialogContent className="max-w-xl flex flex-col justify-center items-center ">
+                                <DialogHeader>
+                                    <DialogTitle className="text-2xl font-bold text-[#212529]">
+                                        Invite People to
+                                    </DialogTitle>
+                                </DialogHeader>
 
-                                                <div className="grid grid-cols-2 gap-6 items-center justify-center">
-                                                    <InviteToJungle infosession={infosession} closeParent={() => setIsInviteOpen(false)} />
-                                                    <InviteToSchool infosession={infosession} closeParent={() => setIsInviteOpen(false)} />
-                                                </div>
+                                <div className="grid grid-cols-2 gap-6 items-center justify-center">
+                                    <InviteToJungle infosession={infosession} closeParent={() => setIsInviteOpen(false)} />
+                                    <InviteToSchool infosession={infosession} closeParent={() => setIsInviteOpen(false)} />
+                                </div>
 
-                                                {/* Container to push the button to bottom-right */}
-                                                <div className="w-full flex justify-end ">
-                                                    <Button
-                                                        onClick={() => setIsInviteOpen(false)}
-                                                        className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]"
+                                {/* Container to push the button to bottom-right */}
+                                <div className="w-full flex justify-end ">
+                                    <Button
+                                        onClick={() => setIsInviteOpen(false)}
+                                        className="bg-[#212529] text-white hover:bg-[#fee819] hover:text-[#212529]"
+                                    >
+                                        Close
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    }
+
+                    {
+                        window.location.pathname.includes("/admin/participants") &&
+                        <div className="">
+                            <Dialog>
+                                <form onSubmit={handleReminderSubmit}>
+                                    <DialogTrigger asChild>
+                                        <Button className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]">
+                                            Reminder
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="sm:max-w-max py-5 px-5">
+                                        <DialogHeader>
+                                            <DialogTitle>Send Reminder</DialogTitle>
+                                            {/* <DialogDescription>Select session type for immediate reminder</DialogDescription> */}
+                                        </DialogHeader>
+                                        <div className="flex  space-x-6">
+
+                                            {
+                                                [
+                                                    { id: "info_session", title: "Info Session", icon: Presentation },
+                                                    { id: "jungle", title: "Jungle", icon: Mountain },
+                                                    { id: "school", title: "School", icon: School },
+                                                ].map(({ id, title, icon: Icon }) => (
+                                                    <div
+                                                        key={id}
+                                                        onClick={() => setData("step", id)}
+                                                        className={`shadow-lg group rounded-lg w-45 h-45  flex flex-col gap-6 justify-center items-center border border-dashed transition-all duration-400 ease-in-out hover:scale-105 cursor-pointer ${data.step === id
+                                                            ? "bg-[#212529] text-white border-[#212529]"
+                                                            : "bg-transparent border-black/20 text-[#212529] hover:bg-[#212529] hover:text-white"
+                                                            }`}
                                                     >
-                                                        Close
-                                                    </Button>
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
+                                                        <Icon
+                                                            className={`w-10 h-10 transition-colors duration-400 ${data.step === id
+                                                                ? "text-white"
+                                                                : "text-[#212529] group-hover:text-white"
+                                                                }`}
+                                                        />
+                                                        <DialogTitle>{title}</DialogTitle>
+                                                    </div>
+                                                ))}
+                                        </div>
+
+                                        <DialogFooter>
+                                            <DialogClose asChild>
+                                                <Button variant="outline" className="transform rounded-lg transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#f0f0f0]">
+                                                    Cancel
+                                                </Button>
+                                            </DialogClose>
+                                            <Button
+                                                onClick={handleReminderSubmit}
+                                                disabled={processing}
+                                                className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529] disabled:opacity-50"
+                                            >
+                                                {processing ? 'Sending...' : 'Send Now'}
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </form>
+                            </Dialog>
+                        </div>
+                    }
+
+                    <div className=" hidden sm:block">
+                        <Button
+                            onClick={handleCopyEmails}
+                            className="transform rounded-lg bg-[#212529] text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+                        >
+                            {copy ? <Copy className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
+                            {copy ? 'Copy Emails' : 'Copied!'}
+                        </Button>
+                    </div>
 
 
-                                    </div>
+                </div>
 
-                    
+
                 {/* Action Buttons for Infosession Detail Page */}
                 {!infosessions && (
                     <div className="ml-auto flex gap-3">
@@ -456,22 +524,24 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
             </div>
 
             {/* Results Summary */}
-            {participants && (
-                <div className="flex items-center justify-between border-t pt-3">
-                    <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-600">
-                            Showing <span className="font-medium text-[#212529]">{filtredParticipans.length}</span> of{' '}
-                            <span className="font-medium text-[#212529]">{participants.length}</span> participants
-                        </span>
-                        {filtredParticipans.length > 0 && (
-                            <Badge className="rounded-lg bg-gray-100 px-2 py-1 text-[#212529]">
-                                <Mail className="mr-1 h-3 w-3" />
-                                {filtredParticipans.length} emails
-                            </Badge>
-                        )}
+            {
+                participants && (
+                    <div className="flex items-center justify-between border-t pt-3">
+                        <div className="flex items-center gap-4">
+                            <span className="text-sm text-gray-600">
+                                Showing <span className="font-medium text-[#212529]">{filtredParticipans.length}</span> of{' '}
+                                <span className="font-medium text-[#212529]">{participants.length}</span> participants
+                            </span>
+                            {filtredParticipans.length > 0 && (
+                                <Badge className="rounded-lg bg-gray-100 px-2 py-1 text-[#212529]">
+                                    <Mail className="mr-1 h-3 w-3" />
+                                    {filtredParticipans.length} emails
+                                </Badge>
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Filter Modal */}
             <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
@@ -636,7 +706,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     );
 };
 
