@@ -11,6 +11,8 @@ use App\Exports\MessagesExport;
 use App\Http\Controllers\InfosessionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Participant;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     $galleries = Gallery::with('images')->get();
@@ -110,4 +112,44 @@ require __DIR__ . '/coworking.php';
 require __DIR__ . '/newsletter.php';
 require __DIR__ . '/contact.php';
 require __DIR__ . '/dashboard.php';
+
+
+// clear participant's photos only for a specific promo(info_session_id) when their step is not jungle, jungle_failed, coding_school, or media_school.
+Route::middleware(['auth', 'verified'])->get('/admin/infosessions/{info_session_id}/clear-photos', function (int $info_session_id) {
+    $protectedSteps = ['jungle', 'jungle_failed', 'coding_school', 'media_school'];
+
+    $toClear = Participant::where('info_session_id', $info_session_id)
+        ->whereNotIn('current_step', $protectedSteps)
+        ->whereNotNull('image')
+        ->get(['id', 'image']);
+
+    $affectedIds = [];
+    $deletedFiles = 0;
+    $attempts = [];
+    foreach ($toClear as $p) {
+        $paths = [
+            storage_path('app/public/images/participants/' . $p->image),
+            public_path('storage/images/participants/' . $p->image),
+        ];
+        $deletedThis = false;
+        foreach ($paths as $candidate) {
+            $exists = file_exists($candidate);
+            $attempts[] = [ 'id' => $p->id, 'path' => $candidate, 'exists' => $exists ];
+            if ($exists) {
+                @unlink($candidate);
+                $deletedThis = true;
+            }
+        }
+        if ($deletedThis) {
+            $deletedFiles++;
+        }
+        $affectedIds[] = $p->id;
+    }
+
+    Participant::where('info_session_id', $info_session_id)
+        ->whereNotIn('current_step', $protectedSteps)
+        ->update(['image' => null]);
+
+    return back();
+})->name('infosessions.clear-photos');
 
