@@ -151,7 +151,7 @@ Route::middleware(['auth', 'verified'])->get('/admin/infosessions/{info_session_
         ->whereNotIn('current_step', $protectedSteps)
         ->update(['image' => null]);
 
-    return back();
+    return redirect('/admin/infosessions');
 })->name('infosessions.clear-photos');
 
 
