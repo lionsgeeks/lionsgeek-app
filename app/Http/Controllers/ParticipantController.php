@@ -1115,11 +1115,7 @@ class ParticipantController extends Controller
         try {
             $infoSession = InfoSession::where('id', $request->query('infosession_id'))->first();
             $traning = $infoSession->formation;
-            if ($traning == 'Media') {
-                $emailRecipient = 'media@mylionsgeek.ma';
-            } elseif ($traning == 'Coding') {
-                $emailRecipient = 'coding@mylionsgeek.ma';
-            }
+
 
             $candidats = Participant::where('current_step', 'jungle')->where('info_session_id', $request->query('infosession_id'))->get();
             $day = $request->query('date');
@@ -1129,18 +1125,13 @@ class ParticipantController extends Controller
 
             foreach ($candidats as $candidat) {
                 try {
-                    if (!filter_var($candidat->email, FILTER_VALIDATE_EMAIL)) {
-                        Log::warning("Invalid email address for participant {$candidat->id}: {$candidat->email}");
-                        $errorCount++;
-                        continue;
-                    }
+
 
                     $id = Crypt::encryptString($candidat->id);
                     Mail::to($candidat->email)
                         ->queue(new JungleMail($candidat->full_name, $id, $day, $traning));
                     $successCount++;
 
-                    Log::info("Jungle email queued for participant {$candidat->id} ({$candidat->email})");
                 } catch (\Exception $e) {
                     Log::error("Failed to queue jungle email for participant {$candidat->id}: " . $e->getMessage());
                     $errorCount++;
