@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MessagesExport;
 use App\Http\Controllers\InfosessionController;
+use App\Http\Controllers\JobController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Participant;
@@ -84,17 +85,17 @@ Route::get('/apiactive', function () {
 
 
 // ghir bach ntesti wash private session kadoz ola la hhhhhhhhhh
-Route::get("/teeeetete" , function () {
+Route::get("/teeeetete", function () {
 
-                // Robust, timezone-aware, case-insensitive session fetch for emails
-       $sessions = \App\Models\InfoSession::query()
-                    ->where('isAvailable', true)
-                    ->where('isFinish', false)
-                    ->where('isFull', false)
-                    // ->where('is_private' , false)
-                    ->orderBy('start_date', 'asc')
-                    ->get();
-                dd($sessions);
+    // Robust, timezone-aware, case-insensitive session fetch for emails
+    $sessions = \App\Models\InfoSession::query()
+        ->where('isAvailable', true)
+        ->where('isFinish', false)
+        ->where('isFull', false)
+        // ->where('is_private' , false)
+        ->orderBy('start_date', 'asc')
+        ->get();
+    dd($sessions);
 });
 
 require __DIR__ . '/settings.php';
@@ -134,7 +135,7 @@ Route::middleware(['auth', 'verified'])->get('/admin/infosessions/{info_session_
         $deletedThis = false;
         foreach ($paths as $candidate) {
             $exists = file_exists($candidate);
-            $attempts[] = [ 'id' => $p->id, 'path' => $candidate, 'exists' => $exists ];
+            $attempts[] = ['id' => $p->id, 'path' => $candidate, 'exists' => $exists];
             if ($exists) {
                 @unlink($candidate);
                 $deletedThis = true;
@@ -153,3 +154,13 @@ Route::middleware(['auth', 'verified'])->get('/admin/infosessions/{info_session_
     return back();
 })->name('infosessions.clear-photos');
 
+
+
+Route::prefix('admin/jobs')->group(function () {
+    Route::get('/', [JobController::class, 'index'])->name('jobs.index');
+    Route::post('/start', [JobController::class, 'startWorker'])->name('jobs.start');
+    Route::post('/stop', [JobController::class, 'stopWorker'])->name('jobs.stop');
+    Route::post('/retry/{id}', [JobController::class, 'retryFailed'])->name('jobs.retry');
+    Route::delete('/delete/{id}', [JobController::class, 'deleteFailed'])->name('jobs.delete');
+    Route::post('/reset-all', [JobController::class, 'resetAll'])->name('jobs.resetAll');
+});

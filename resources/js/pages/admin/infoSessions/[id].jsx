@@ -9,13 +9,7 @@ import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from '../participants/partials/ParticipantCard';
 import InviteToJungle from './partials/InviteToJungle';
 import InviteToSchool from './partials/InviteToSchool';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+
 
 const InfosessionDetails = () => {
     const { infosession } = usePage().props;
@@ -349,10 +343,7 @@ const InfosessionDetails = () => {
                     </div>
                 </div>
 
-                <div className="mx-auto max-w-7xl px-6 pb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InviteToJungle infosession={infosession} />
-                    <InviteToSchool infosession={infosession} />
-                </div>
+             
 
                 {/* Filter and Participants Section */}
                 <div className="mx-auto max-w-7xl px-6 pb-8">
