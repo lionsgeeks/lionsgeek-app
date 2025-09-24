@@ -40,6 +40,27 @@
             margin: 20px 0;
             border-left: 4px solid #007bff;
         }
+        .attachments-section {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .attachment-item {
+            background-color: #ffffff;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+            border: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        .attachment-icon {
+            margin-right: 10px;
+            font-size: 16px;
+        }
         .footer {
             text-align: center;
             margin-top: 30px;
@@ -104,6 +125,26 @@
                 {!! nl2br(e($contentBody)) !!}
             </div>
         </div>
+
+        <!-- Attachments Section - Only show if attachments exist -->        
+        @if(isset($attachments) && count($attachments) > 0)
+        <div class="attachments-section">
+            <h3>📎 Attachments</h3>
+            @foreach($attachments as $attachment)
+            <div class="attachment-item">
+                <span class="attachment-icon">📄</span>
+                <div>
+                    <strong>{{ $attachment['name'] }}</strong>
+                    @if(isset($attachment['size']))
+                    <span style="color: #6c757d; font-size: 12px; margin-left: 10px;">
+                        ({{ number_format($attachment['size'] / 1024, 1) }} KB)
+                    </span>
+                    @endif
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @endif
 
         <div class="divider"></div>
 
