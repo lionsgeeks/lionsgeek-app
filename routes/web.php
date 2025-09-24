@@ -48,3 +48,14 @@ require __DIR__ . '/dashboard.php';
 
 
 
+use App\Models\Participant;
+
+Route::get('/assign', function () {
+    // IDs <= 441 => promo = 4
+    Participant::where('id', '<=', 441)->update(['promo' => 4]);
+
+    // IDs > 441 => promo = 5
+    Participant::where('id', '>', 441)->update(['promo' => 5]);
+
+    return "Promo assigned successfully!";
+});
