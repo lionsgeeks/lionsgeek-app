@@ -1,7 +1,7 @@
 import NotificationModal from '@/components/NotificationModal';
 import { useAppContext } from '@/context/appContext';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useForm } from '@inertiajs/react';
 
 export default function BookingModal({ isOpen, onClose, event }) {
     const { selectedLanguage, darkMode } = useAppContext();
@@ -11,9 +11,8 @@ export default function BookingModal({ isOpen, onClose, event }) {
     const [showNotification, setShowNotification] = useState(false);
     const [notificationType, setNotificationType] = useState('success');
     const [notificationMessage, setNotificationMessage] = useState('');
-    const [loading, setLoading] = useState(false);
 
-    const [formData, setFormData] = useState({
+    const { data, setData, post, processing, reset, errors } = useForm({
         name: '',
         email: '',
         phone: '',
@@ -23,7 +22,7 @@ export default function BookingModal({ isOpen, onClose, event }) {
 
     useEffect(() => {
         if (event?.id) {
-            setFormData((prev) => ({ ...prev, event_id: event.id }));
+            setData('event_id', event.id);
         }
     }, [event?.id]);
 
@@ -38,49 +37,25 @@ export default function BookingModal({ isOpen, onClose, event }) {
         return placeholders[field];
     };
 
-    const submit = async (e) => {
+    const submit = (e) => {
         e.preventDefault();
-        if (!formData.name || !formData.email || !formData.gender || !formData.phone) {
-            setNotificationMessage(
-                t({
-                    en: 'Please fill out all fields.',
-                    fr: 'Veuillez remplir tous les champs.',
-                    ar: 'يرجى ملء جميع الحقول.',
-                }),
-            );
-            setNotificationType('error');
-            setShowNotification(true);
-            return;
-        }
 
-        setLoading(true);
-        try {
-            const response = await axios.post(route('booking.store'), formData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            });
-
-            setNotificationMessage(response.data.message);
-            setNotificationType('success');
-            setShowNotification(true);
-
-            setFormData({ name: '', email: '', phone: '', gender: '', event_id: event?.id || '' });
-        } catch (error) {
-            const message =
-                error.response?.data?.message ||
-                t({
-                    en: 'Error submitting the booking.',
-                    fr: 'Erreur lors de la soumission de la réservation.',
-                    ar: 'حدث خطأ أثناء إرسال الحجز.',
-                });
-            setNotificationMessage(message);
-            setNotificationType('error');
-            setShowNotification(true);
-        } finally {
-            setLoading(false);
-        }
+        post(route('booking.store'), {
+            onSuccess: (page) => {
+                setNotificationMessage(page.props.flash?.success || t({ en: 'Booking successful!', fr: 'Réservation réussie !', ar: 'تم الحجز بنجاح!' }));
+                setNotificationType('success');
+                setShowNotification(true);
+                reset();
+            },
+            onError: (formErrors) => {
+                const message =
+                    Object.values(formErrors)[0] ||
+                    t({ en: 'Error submitting the booking.', fr: 'Erreur lors de la soumission.', ar: 'حدث خطأ أثناء الإرسال.' });
+                setNotificationMessage(message);
+                setNotificationType('error');
+                setShowNotification(true);
+            },
+        });
     };
 
     const handleNotificationClose = () => {
@@ -100,22 +75,18 @@ export default function BookingModal({ isOpen, onClose, event }) {
             <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
                 <div className="fixed inset-0 bg-black opacity-10 transition-opacity"></div>
                 <div className="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
-                    <div
+                    <form
+                        onSubmit={submit}
                         className={`relative transform overflow-hidden rounded-lg ${bgModal} text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg`}
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="absolute top-0 right-0 p-2">
                             <button
+                                type="button"
                                 onClick={onClose}
                                 className="inline-flex items-center rounded-lg p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900"
                             >
-                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
+                                ✕
                             </button>
                         </div>
                         <div className="p-6">
@@ -142,10 +113,11 @@ export default function BookingModal({ isOpen, onClose, event }) {
                                         className={inputClassName}
                                         type={field === 'email' ? 'email' : field === 'phone' ? 'tel' : 'text'}
                                         placeholder={getPlaceholder(field)}
-                                        value={formData[field]}
-                                        onChange={(e) => setFormData((prev) => ({ ...prev, [field]: e.target.value }))}
+                                        value={data[field]}
+                                        onChange={(e) => setData(field, e.target.value)}
                                         dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}
                                     />
+                                    {errors[field] && <p className="text-red-500 text-xs">{errors[field]}</p>}
                                 </div>
                             ))}
 
@@ -156,29 +128,30 @@ export default function BookingModal({ isOpen, onClose, event }) {
                                 <select
                                     id="gender"
                                     className={inputClassName}
-                                    value={formData.gender}
-                                    onChange={(e) => setFormData((prev) => ({ ...prev, gender: e.target.value }))}
+                                    value={data.gender}
+                                    onChange={(e) => setData('gender', e.target.value)}
                                     dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}
                                 >
                                     <option value="">{t({ en: 'Select gender', fr: 'Sélectionner le genre', ar: 'اختر الجنس' })}</option>
                                     <option value="male">{t({ en: 'Male', fr: 'Homme', ar: 'ذكر' })}</option>
                                     <option value="female">{t({ en: 'Female', fr: 'Femme', ar: 'أنثى' })}</option>
                                 </select>
+                                {errors.gender && <p className="text-red-500 text-xs">{errors.gender}</p>}
                             </div>
 
                             <div className="mt-5 flex justify-center gap-3">
                                 <button
-                                    onClick={submit}
-                                    disabled={loading}
-                                    className={`inline-flex w-full items-center justify-center rounded-lg bg-alpha px-5 py-2.5 text-center text-sm font-medium text-black transition-colors duration-200 ${loading ? 'cursor-not-allowed opacity-50' : ''}`}
+                                    type="submit"
+                                    disabled={processing}
+                                    className={`inline-flex w-full items-center justify-center rounded-lg bg-alpha px-5 py-2.5 text-center text-sm font-medium text-black transition-colors duration-200 ${processing ? 'cursor-not-allowed opacity-50' : ''}`}
                                 >
-                                    {loading
+                                    {processing
                                         ? t({ en: 'Booking...', fr: 'Réservation...', ar: 'جاري الحجز...' })
                                         : t({ en: 'Book Event', fr: 'Réserver', ar: 'احجز' })}
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
 

@@ -79,12 +79,6 @@ class BookingController extends Controller
             Log::error('Failed to send booking confirmation email: ' . $e->getMessage());
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => [
-                'en' => 'Booking confirmed! Check your email for confirmation details.',
-            ]
-        ]);
     }
 
     /**
