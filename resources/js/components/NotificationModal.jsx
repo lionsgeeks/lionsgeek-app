@@ -57,7 +57,11 @@ export default function NotificationModal({ isOpen, onClose, type = 'success', t
                                 {title || (type === 'success' ? 'Success!' : 'Error')}
                             </h3>
                             <div className="mt-2">
-                                <p className={`text-sm ${colors.message}`}>{message[selectedLanguage]}</p>
+                                <p className={`text-sm ${colors.message}`}>
+                                    {typeof message === 'object' && message !== null
+                                        ? message[selectedLanguage] || message.en || message.fr || message.ar
+                                        : message}
+                                </p>
                             </div>
                         </div>
                     </div>
