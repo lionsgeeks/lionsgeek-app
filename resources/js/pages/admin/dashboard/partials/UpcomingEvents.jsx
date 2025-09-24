@@ -27,21 +27,21 @@ const UpcomingEvents = () => {
                     <table className="w-full table-auto border-collapse text-sm">
                         <thead className="bg-gray-200">
                             <tr>
-                                <th className="px-4 py-3 text-left font-medium text-black">Title</th>
-                                <th className="px-4 py-3 text-left font-medium text-black">Capacity</th>
-                                <th className="px-4 py-3 text-left font-medium text-black">Date</th>
-                                <th className="px-4 py-3 text-left font-medium text-black">Description</th>
-                                <th className="px-4 py-3 text-left font-medium text-black">View Details</th>
+                                <th className="max-md:px-2 px-4 py-3 text-left font-medium text-black">Title</th>
+                                <th className="max-md:px-2 px-4 py-3 text-left font-medium text-black max-md:hidden">Capacity</th>
+                                <th className="max-md:px-2 px-4 py-3 text-left font-medium text-black">Date</th>
+                                <th className="max-md:px-2 px-4 py-3 text-left font-medium text-black max-md:hidden">Description</th>
+                                <th className="max-md:px-2 px-4 py-3 text-left font-medium text-black">View Details</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {upcomingEvents.map((event) => (
                                 <tr key={event.id}>
-                                    <td className="px-4 py-3 font-medium text-gray-800">{event.name.en}</td>
-                                    <td className="px-4 py-3 text-gray-600">{event.capacity}</td>
-                                    <td className="px-4 py-3 text-gray-600">{dayjs(event.start_date).format('YYYY-MM-DD')}</td>
-                                    <td className="px-4 py-3 text-gray-600">{event.description.en}</td>
-                                    <td className="px-4 py-3 text-gray-600">
+                                    <td className="max-md:px-2 px-4 py-3 font-medium text-gray-800">{event.name.en}</td>
+                                    <td className="max-md:px-2 px-4 py-3 text-gray-600 max-md:hidden">{event.capacity}</td>
+                                    <td className="max-md:px-2 px-4 py-3 text-gray-600">{dayjs(event.start_date).format('YYYY-MM-DD')}</td>
+                                    <td className="max-md:px-2 px-4 py-3 text-gray-600 max-md:hidden">{event.description.en}</td>
+                                    <td className="max-md:px-2 px-4 py-3 text-gray-600">
                                         <Link
                                             href={`/admin/events/${event.id}`}
                                             className="rounded-lg bg-beta px-5 py-2 text-white hover:bg-alpha hover:text-black"

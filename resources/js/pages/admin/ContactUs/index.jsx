@@ -186,7 +186,7 @@ export default function Index() {
                             </Button>
                             <Button
                                 onClick={() => (window.location.href = route('messages.export'))}
-                                className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819] max-md:hidden">
                                 <Download className="mr-2 h-4 w-4 lg:flex hidden" />
                                 Export Excel
                             </Button>
@@ -198,7 +198,7 @@ export default function Index() {
                 <div className="mx-auto -mt-4 max-w-7xl px-6">
                     <div className="mb-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
                         <Card className="border-0 bg-white shadow-lg">
-                            <CardContent className="p-4 sm:p-6">
+                            <CardContent className="p-6 sm:p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-xs sm:text-sm font-medium text-gray-600">Total Messages</p>
@@ -212,7 +212,7 @@ export default function Index() {
                         </Card>
 
                         <Card className="border-0 bg-white shadow-lg">
-                            <CardContent className="p-4 sm:p-6">
+                            <CardContent className="p-6 sm:p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-xs sm:text-sm font-medium text-gray-600">Unread</p>
@@ -226,7 +226,7 @@ export default function Index() {
                         </Card>
 
                         <Card className="border-0 bg-white shadow-lg">
-                            <CardContent className="p-4 sm:p-6">
+                            <CardContent className="p-6 sm:p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-xs sm:text-sm font-medium text-gray-600">Received</p>
@@ -240,7 +240,7 @@ export default function Index() {
                         </Card>
 
                         <Card className="border-0 bg-white shadow-lg">
-                            <CardContent className="p-4 sm:p-6">
+                            <CardContent className="p-6 sm:p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-xs sm:text-sm font-medium text-gray-600">Sent</p>

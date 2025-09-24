@@ -64,7 +64,7 @@ export default function CoworkingAdmin() {
                     title="Coworking Management"
                     description="Manage coworking space requests and applications"
                     actions={
-                        <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                        <Button className="transform bg-[#fee819] text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819] max-md:hidden">
                             <Download className="mr-2 h-4 w-4" />
                             Export Excel
                         </Button>
@@ -73,7 +73,7 @@ export default function CoworkingAdmin() {
 
                 {/* Statistics Cards */}
                 <div className="mx-auto -mt-4 max-w-7xl px-6">
-                    <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+                    <div className="mb-8 grid grid-cols-2 gap-6 md:grid-cols-4">
                         <Card className="border-0 bg-white shadow-lg">
                             <CardContent className="p-6">
                                 <div className="flex items-center justify-between">
@@ -184,18 +184,18 @@ export default function CoworkingAdmin() {
                                     <table className="w-full">
                                         <thead>
                                             <tr className="border-b border-gray-200 bg-gray-50">
-                                                <th className="px-6 py-4 text-left text-sm font-semibold text-[#212529]">Name</th>
-                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">
+                                                <th className="max-md:px-2 px-6 py-4 text-left text-sm font-semibold text-[#212529]">Name</th>
+                                                <th className="hidden max-md:px-1 px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">
                                                     Phone
                                                 </th>
-                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">
+                                                <th className="hidden max-md:px-1 px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">
                                                     Email
                                                 </th>
-                                                <th className="hidden px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">
+                                                <th className="hidden max-md:px-1 px-6 py-4 text-left text-sm font-semibold text-[#212529] sm:table-cell">
                                                     Date
                                                 </th>
-                                                <th className="px-6 py-4 text-center text-sm font-semibold text-[#212529]">Status</th>
-                                                <th className="px-6 py-4 text-center text-sm font-semibold text-[#212529]">Actions</th>
+                                                <th className="max-md:px-1 px-6 py-4 text-center text-sm font-semibold text-[#212529]">Status</th>
+                                                <th className="max-md:px-1 px-6 py-4 text-center text-sm font-semibold text-[#212529]">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -205,15 +205,15 @@ export default function CoworkingAdmin() {
                                                     onClick={() => router.visit (`/admin/coworking/${cow.id}`)}
                                                     className="group cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50"
                                                 >
-                                                    <td className="px-6 py-4">
+                                                    <td className="max-md:px-2 px-6 py-4">
                                                         <div className="font-medium text-[#212529]">{cow.full_name}</div>
                                                     </td>
-                                                    <td className="hidden px-6 py-4 text-sm text-gray-600 sm:table-cell">{cow.phone}</td>
-                                                    <td className="hidden px-6 py-4 text-sm text-gray-600 sm:table-cell">{cow.email}</td>
-                                                    <td className="hidden px-6 py-4 text-sm text-gray-600 sm:table-cell">
+                                                    <td className="hidden max-md:px-1 px-6 py-4 text-sm text-gray-600 sm:table-cell">{cow.phone}</td>
+                                                    <td className="hidden max-md:px-1 px-6 py-4 text-sm text-gray-600 sm:table-cell">{cow.email}</td>
+                                                    <td className="hidden max-md:px-1 px-6 py-4 text-sm text-gray-600 sm:table-cell">
                                                         {new Date(cow.created_at).toLocaleDateString()}
                                                     </td>
-                                                    <td className="px-6 py-4 text-center">
+                                                    <td className="max-md:px-1 px-6 py-4 text-center">
                                                         {cow.status === 1 && (
                                                             <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
                                                                 <CheckCircle2 className="mr-1 h-3 w-3" />
@@ -233,7 +233,7 @@ export default function CoworkingAdmin() {
                                                             </Badge>
                                                         )}
                                                     </td>
-                                                    <td onClick={(e) => e.stopPropagation()} className="px-6 py-4 text-center">
+                                                    <td onClick={(e) => e.stopPropagation()} className="max-md:px-1 px-6 py-4 text-center">
                                                         {(!cow.status || cow.status === 0) && (
                                                             <div className="flex justify-center gap-2">
                                                                 <Button

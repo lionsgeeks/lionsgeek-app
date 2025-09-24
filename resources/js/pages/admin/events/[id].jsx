@@ -123,8 +123,8 @@ export default function AdminEventShow() {
                                     <p className="mt-1 text-gray-300">Manage event details</p>
                                 </div>
                             </div>
-                            <div className="mb-6 flex items-center justify-end md:justify-between">
-                                <div className="flex gap-2">
+                            <div className="mb-6 flex items-center justify-end md:justify-between max-md:mb-0">
+                                <div className="flex gap-2 max-md:flex-col">
                                     <Button onClick={handleEdit}>
                                         <Edit className="mr-2 h-4 w-4" />
                                         Edit

@@ -107,7 +107,7 @@ const ShowPress = () => {
                 {/* Header Section */}
                 <div className="bg-[#212529] py-8 text-white">
                     <div className="mx-auto max-w-7xl px-6">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between max-md:flex-col max-md:items-start max-md:gap-4">
                             <div className="flex items-center gap-3">
                                 <div className="rounded-lg bg-[#fee819] p-3">
                                     <Newspaper className="h-8 w-8 text-[#212529]" />
@@ -117,13 +117,15 @@ const ShowPress = () => {
                                     <p className="mt-1 text-gray-300">Update press release information and media files</p>
                                 </div>
                             </div>
-                            <button
-                                onClick={() => router.visit('/admin/press')}
-                                className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-white transition-colors hover:bg-white/20"
-                            >
-                                <ArrowLeft className="h-4 w-4" />
-                                Back to Press
-                            </button>
+                            <div className="max-md:w-full flex max-md:justify-end">
+                                <button
+                                    onClick={() => router.visit('/admin/press')}
+                                    className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-white transition-colors hover:bg-white/20 w-fit "
+                                >
+                                    <ArrowLeft className="h-4 w-4" />
+                                    Back to Press
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -149,7 +151,7 @@ const ShowPress = () => {
                     <div className="rounded-lg border-0 bg-white shadow-lg">
                         <div className="p-8">
                             {/* Tab and Save Button Header */}
-                            <div className="mb-8 flex items-center justify-between">
+                            <div className="mb-8 flex items-center justify-between max-md:flex-col max-md:items-start max-md:gap-2">
                                 <div className="flex items-center gap-4">
                                     <h2 className="text-xl font-semibold text-[#212529]">Press Information</h2>
                                     <select
@@ -163,15 +165,17 @@ const ShowPress = () => {
                                     </select>
                                 </div>
 
-                                <button
-                                    type="submit"
-                                    form="press-form"
-                                    disabled={processing}
-                                    className="flex items-center gap-2 rounded-lg bg-[#212529] px-6 py-3 text-white transition-all duration-200 hover:bg-[#212529]/90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    <Save className="h-4 w-4" />
-                                    {processing ? 'Saving...' : 'Save Changes'}
-                                </button>
+                                <div className="max-md:w-full flex max-md:justify-end">
+                                    <button
+                                        type="submit"
+                                        form="press-form"
+                                        disabled={processing}
+                                        className="flex items-center gap-2 rounded-lg bg-[#212529] px-6 py-3 text-white transition-all duration-200 hover:bg-[#212529]/90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        <Save className="h-4 w-4" />
+                                        {processing ? 'Saving...' : 'Save Changes'}
+                                    </button>
+                                </div>
                             </div>
 
                             <form id="press-form" onSubmit={handleSubmit} className="space-y-8">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contact;
 use App\Models\CustomEmail;
 use App\Mail\ContactAdminNotification;
+use App\Mail\CustomEmailMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
@@ -30,11 +31,19 @@ class ContactController extends Controller
 
         $filePath = null;
         $fileName = null;
+        $attachments = []; 
 
         if ($request->hasFile('contact_file')) {
             $file = $request->file('contact_file');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = $file->storeAs('contact_files', $fileName, 'public');
+
+            $attachments[] = [
+                'name' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+                'path' => storage_path('app/public/' . $filePath),
+                'mime' => $file->getMimeType()
+            ];
         }
 
         // Save to database
@@ -48,20 +57,23 @@ class ContactController extends Controller
         ]);
 
         // Send actual email
-        try {
-            $mailer = \Mail::mailer($request->sender);
-            $mailer->to($request->receiver)->send(new \App\Mail\CustomEmailMail($request->subject, $request->content, $request->sender, $filePath));
-        } catch (\Exception $e) {
-            // \Log::error('Email sending failed: ' . $e->getMessage());
-        }
+    try {
+        \Log::info('Starting email send process');
+        \Log::info('Attachments data:', ['attachments' => $attachments]);
+        
+        $mailer = \Mail::mailer($request->sender);
+        $mailer->to($request->receiver)->send(new CustomEmailMail($request->subject, $request->content, $request->sender, $attachments));
+        
+        \Log::info('Email sent successfully');
+    } catch (\Exception $e) {
+        \Log::error('Email sending failed: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
+    }
 
-        // Flash message
-        flash()->success('Email sent successfully!');
+    flash()->success('Email sent successfully!');
+    \Log::info('Flash message set: Email sent successfully!');
 
-        // Debug: Log the flash message
-        // \Log::info('Flash message set: Email sent successfully!');
-
-        return back()->with('success', 'Email sent successfully!');
+    return back()->with('success', 'Email sent successfully!');
     }
 
 

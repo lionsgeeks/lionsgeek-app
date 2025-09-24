@@ -139,7 +139,7 @@ const Chart = () => {
         load();
     }, [filteredSessions, selectedSession, selectedPromo, selectedField]);
 
-    console.log(barChart);
+    // console.log(barChart);
     return (
         <Card className="w-full">
             <CardHeader className="flex lg:flex-row flex-col lg:gap-5 gap-10 lg:items-center justify-between">
