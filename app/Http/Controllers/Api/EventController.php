@@ -40,7 +40,7 @@ public function validateParticipant(Request $request)
     // dd($request->all());
     $request->validate([
         "email" => "required",
-        "eventId" => "integer"
+        "code" => "integer"
     ]);
 
     $participant = booking::where("email", $request->email)
@@ -48,7 +48,7 @@ public function validateParticipant(Request $request)
         ->first();
 
     if ($participant) {
-        if ($participant->event_id == $request->eventId) {
+        if ($participant->event_id == $request->code) {
             if (!$participant->is_visited) {
                 $participant->is_visited = true;
                 $participant->save();
