@@ -28,3 +28,7 @@ Route::get('/event', function () {
 Route::get('/event/{event}', function () {
     return Inertia::render('client/EventDetails/eventdetail');
 })->name('event');
+
+// Private event access route
+Route::get('/private-event/{token}', [EventController::class, 'showByToken'])
+    ->name('private-event.show');

@@ -6,6 +6,8 @@ use App\Models\InfoSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\Participant;
+
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::resource('infosessions', InfosessionController::class);
@@ -25,13 +27,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
 Route::get('/postuler', function (Request $request) {
     $formationField = $request->type;
-    // dd($formationField);
-    
-    // Check if type parameter is present and valid
-    // if (!$formationField || !in_array($formationField, ['coding', 'media'])) {
-    //     return redirect('/');
-    // }
-    
+
     return Inertia::render('client/infoSession/index', [
         'sessions' => InfoSession::where('isAvailable', true)
             ->where('is_private', false)
@@ -51,17 +47,13 @@ Route::get('/private-session', function () {
 
 // Intro page before the game
 Route::get('/game/intro', function () {
-    // if (!session('can_play_game')) {
-    //     return redirect('/');
-    // }
+ 
     return Inertia::render('client/game/intro');
 })->name('game.intro');
 
 // Game route for post-submission flow
 Route::get('/game', function () {
-    // if (!session('can_play_game')) {
-    //     return redirect('/');
-    // }
+  
     return Inertia::render('client/game/game');
 })->name('game');
 
@@ -70,3 +62,52 @@ Route::post('/game/finish', function () {
     session()->forget('can_play_game');
     return redirect('/');
 })->name('game.finish');
+
+
+
+// Private session access route
+Route::get('/private-session/{token}', [InfosessionController::class, 'showByToken'])
+    ->name('private-session.show');
+
+Route::get('/attendance/confirmation', function () {
+    return Inertia::render('client/attendanceConfirmation/attendanceConfirmation');
+});
+
+// clear participant's photos only for a specific promo(info_session_id) when their step is not jungle, jungle_failed, coding_school, or media_school.
+Route::middleware(['auth', 'verified'])->get('/admin/infosessions/{info_session_id}/clear-photos', function (int $info_session_id) {
+    $protectedSteps = ['jungle', 'jungle_failed', 'coding_school', 'media_school'];
+
+    $toClear = Participant::where('info_session_id', $info_session_id)
+        ->whereNotIn('current_step', $protectedSteps)
+        ->whereNotNull('image')
+        ->get(['id', 'image']);
+
+    $affectedIds = [];
+    $deletedFiles = 0;
+    $attempts = [];
+    foreach ($toClear as $p) {
+        $paths = [
+            storage_path('app/public/images/participants/' . $p->image),
+            public_path('storage/images/participants/' . $p->image),
+        ];
+        $deletedThis = false;
+        foreach ($paths as $candidate) {
+            $exists = file_exists($candidate);
+            $attempts[] = ['id' => $p->id, 'path' => $candidate, 'exists' => $exists];
+            if ($exists) {
+                @unlink($candidate);
+                $deletedThis = true;
+            }
+        }
+        if ($deletedThis) {
+            $deletedFiles++;
+        }
+        $affectedIds[] = $p->id;
+    }
+
+    Participant::where('info_session_id', $info_session_id)
+        ->whereNotIn('current_step', $protectedSteps)
+        ->update(['image' => null]);
+
+    return redirect('/admin/infosessions');
+})->name('infosessions.clear-photos');

@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
+use App\Exports\MessagesExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 use Inertia\Inertia;
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
@@ -22,3 +25,7 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::get('/contact', function () {
     return Inertia::render('client/ContactUs/contactUs');
 })->name('contact');
+
+Route::get('/export-messages', function () {
+    return Excel::download(new MessagesExport, 'messages.xlsx');
+})->name('messages.export');
