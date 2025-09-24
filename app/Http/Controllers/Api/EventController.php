@@ -44,8 +44,7 @@ public function validateParticipant(Request $request)
     ]);
 
     $participant = booking::where("email", $request->email)
-        // ->where("code", $request->code)
-        // ->where("info_session_id" , $request->id)
+        ->where("event_id", $request->eventId)
         ->first();
 
     if ($participant) {
@@ -65,7 +64,6 @@ public function validateParticipant(Request $request)
                 "status" => 200,
                 "profile" => $participant
             ]);
-            # code...
         } else {
             return response()->json([
                 "message" => "Participant belong to another event",

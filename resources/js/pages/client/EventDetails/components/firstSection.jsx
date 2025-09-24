@@ -188,7 +188,7 @@ export default function FirstSectionEventDetail({ event: eventProp }) {
                 </div>
             </div>
 
-            <div className="first h-[100%] flex-col gap-10 lg:flex lg:flex-row">
+            <div className="first h-[100%] flex flex-col-reverse mt-2  lg:gap-10   lg:flex lg:flex-row">
                 <div className="flex flex-col gap-5 py-5 lg:w-[70%]">
                     <img
                         loading="lazy"
