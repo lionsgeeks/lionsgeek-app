@@ -31,6 +31,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "
 
 export default function InfoSessions() {
     const { infosessions = [] } = usePage().props;
+    const [copyStates, setCopyStates] = useState({});
+    const [regenerateStates, setRegenerateStates] = useState({});
 
     // function to extract promo from session name
     const extractPromo = (sessionName) => {
@@ -98,17 +100,24 @@ export default function InfoSessions() {
         router.patch(`infosessions/change-status/${id}`);
     };
 
-    const copyPrivateUrl = (token) => {
+    const copyPrivateUrl = (token, sessionId) => {
         const url = `${window.location.origin}/private-session/${token}`;
         navigator.clipboard.writeText(url).then(() => {
-            // You could add a toast notification here
-            alert('Private URL copied to clipboard!');
+            setCopyStates(prev => ({ ...prev, [sessionId]: false }));
+            setTimeout(() => setCopyStates(prev => ({ ...prev, [sessionId]: true })), 2000);
         });
     };
 
     const regenerateToken = (id) => {
-        router.post(`infosessions/${id}/regenerate-token`);
+        router.post(`infosessions/${id}/regenerate-token`, {}, {
+            onSuccess: () => {
+                setRegenerateStates(prev => ({ ...prev, [id]: false }));
+                setTimeout(() => setRegenerateStates(prev => ({ ...prev, [id]: true })), 2000);
+            },
+            onError: (errors) => console.error(errors),
+        });
     };
+
 
     const onDeleteSession = (id) => {
         setSessionToDelete(id);
@@ -501,13 +510,14 @@ export default function InfoSessions() {
                                                             variant="outline"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                copyPrivateUrl(session.private_url_token);
+                                                                copyPrivateUrl(session.private_url_token, session.id);
                                                             }}
                                                             className="flex-1 text-xs border-yellow-300 text-yellow-800 hover:bg-yellow-100"
                                                         >
                                                             <Copy className="h-3 w-3 mr-1" />
-                                                            Copy URL
+                                                            {copyStates[session.id] === false ? 'Copied!' : 'Copy URL'}
                                                         </Button>
+
                                                         <Button
                                                             size="sm"
                                                             variant="outline"
@@ -517,8 +527,10 @@ export default function InfoSessions() {
                                                             }}
                                                             className="text-xs border-yellow-300 text-yellow-800 hover:bg-yellow-100"
                                                         >
-                                                            <RefreshCw className="h-3 w-3" />
+                                                            <RefreshCw className="h-3 w-3 mr-1" />
+                                                            {regenerateStates[session.id] === false ? 'Regenerated!' : 'Regenerate'}
                                                         </Button>
+
                                                     </div>
                                                 </div>
                                             )}
