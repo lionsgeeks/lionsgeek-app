@@ -17,6 +17,8 @@ const InfosessionDetails = () => {
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const participantsPerPage = 24;
+    const [copy, setCopy] = useState(true);
+    const [regenerate, setRegenerate] = useState(true);
 
     const dispatchParticipant = (step) => {
         return infosession?.participants.filter((p) => p.current_step === step).length;
@@ -74,13 +76,26 @@ const InfosessionDetails = () => {
     const copyPrivateUrl = (token) => {
         const url = `${window.location.origin}/private-session/${token}`;
         navigator.clipboard.writeText(url).then(() => {
-            alert('Private URL copied to clipboard!');
+            setCopy(false); // Show "Copied!"
+            setTimeout(() => setCopy(true), 2000); // Reset after 2 seconds
+        }).catch(() => {
+            console.error('Failed to copy URL');
         });
     };
 
     const regenerateToken = (id) => {
-        router.post(`/admin/infosessions/${id}/regenerate-token`);
+        router.post(`/admin/infosessions/${id}/regenerate-token`, {}, {
+            onSuccess: () => {
+                setRegenerate(false); // Show "Regenerated!"
+                setTimeout(() => setRegenerate(true), 2000); // Reset after 2 seconds
+            },
+            onError: (errors) => {
+                console.error(errors);
+            },
+        });
     };
+
+
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -187,16 +202,19 @@ const InfosessionDetails = () => {
                                                     className="bg-white/10 border-white/20 text-white hover:bg-white hover:text-[#212529] text-xs"
                                                 >
                                                     <Copy className="h-3 w-3 mr-1" />
-                                                    Copy
+                                                    {copy ? 'Copy' : 'Copied!'}
                                                 </Button>
+
                                                 <Button
                                                     onClick={() => regenerateToken(infosession.id)}
                                                     size="sm"
                                                     variant="outline"
                                                     className="bg-white/10 border-white/20 text-white hover:bg-white hover:text-[#212529] text-xs"
                                                 >
-                                                    <RefreshCw className="h-3 w-3" />
+                                                    <RefreshCw className="h-3 w-3 mr-1" />
+                                                    {regenerate ? 'Regenerate' : 'Regenerated!'}
                                                 </Button>
+
                                             </div>
                                         </div>
                                     </div>
@@ -343,7 +361,7 @@ const InfosessionDetails = () => {
                     </div>
                 </div>
 
-             
+
 
                 {/* Filter and Participants Section */}
                 <div className="mx-auto max-w-7xl px-6 pb-8">

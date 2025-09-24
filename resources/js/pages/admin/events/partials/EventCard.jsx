@@ -11,7 +11,8 @@ export default function EventCard({ event, onEdit, onDelete }) {
     const { props } = usePage();
     const appUrl = props.ziggy?.url || window.location.origin;
     const [isDeleting, setIsDeleting] = useState(false);
-
+    const [copy, setCopy] = useState(true);
+    const [regenerate, setRegenerate] = useState(true);
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
@@ -70,24 +71,25 @@ export default function EventCard({ event, onEdit, onDelete }) {
         });
     };
 
+    const copyPrivateUrl = (e) => {
+        e.stopPropagation();
+        const privateUrl = `${appUrl}/private-event/${event.private_url_token}`;
+        navigator.clipboard.writeText(privateUrl);
+        setCopy(false);
+        setTimeout(() => setCopy(true), 2000);
+    };
+
     const regenerateToken = (e) => {
         e.stopPropagation();
         router.post(route('admin.event.regenerate-token', event.id), {}, {
             onSuccess: () => {
-                // Optionally, show a success message or refresh the page
+                setRegenerate(false);
+                setTimeout(() => setRegenerate(true), 2000);
             },
             onError: (errors) => {
                 console.error('Token regeneration errors:', errors);
             },
         });
-    };
-
-    const copyPrivateUrl = (e) => {
-        e.stopPropagation();
-        const privateUrl = `${appUrl}/private-event/${event.private_url_token}`;
-        navigator.clipboard.writeText(privateUrl);
-        // Optionally, show a toast notification
-        alert('Private URL copied to clipboard!');
     };
 
     return (
@@ -141,14 +143,15 @@ export default function EventCard({ event, onEdit, onDelete }) {
                                     <>
                                         <DropdownMenuItem onClick={copyPrivateUrl}>
                                             <Link className="mr-2 h-4 w-4" />
-                                            Copy Private URL
+                                            {copy ? 'Copy Private URL' : 'Copied!'}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={regenerateToken}>
                                             <RefreshCcw className="mr-2 h-4 w-4" />
-                                            Regenerate Private URL
+                                            {regenerate ? 'Regenerate Private URL' : 'Regenerated!'}
                                         </DropdownMenuItem>
                                     </>
                                 )}
+
                                 <DropdownMenuItem
                                     onClick={(e) => {
                                         e.stopPropagation();

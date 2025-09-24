@@ -19,6 +19,8 @@ export default function AdminEventShow() {
     const { props } = usePage();
     const appUrl = props.ziggy?.url || window.location.origin;
     const tab = 'English'; // This should be dynamic based on your language logic
+    const [copy, setCopy] = useState(true);
+    const [regenerate, setRegenerate] = useState(true);
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -80,21 +82,23 @@ export default function AdminEventShow() {
     const copyPrivateUrl = () => {
         const privateUrl = `${appUrl}/private-event/${event.private_url_token}`;
         navigator.clipboard.writeText(privateUrl);
-        alert('Private URL copied to clipboard!');
+        setCopy(false);
+        setTimeout(() => setCopy(true), 2000);
     };
 
     const regenerateToken = () => {
         router.post(route('admin.event.regenerate-token', event.id), {}, {
             onSuccess: () => {
-                alert('Private URL regenerated successfully!');
+                setRegenerate(false);
+                setTimeout(() => setRegenerate(true), 2000);
                 window.location.reload();
             },
             onError: (errors) => {
                 console.error('Token regeneration errors:', errors);
-                alert('Failed to regenerate URL.');
             },
         });
     };
+
 
     return (
         <AppLayout>
@@ -211,12 +215,13 @@ export default function AdminEventShow() {
                                             </div>
                                             <div className="flex gap-2">
                                                 <Button onClick={copyPrivateUrl} size="sm" className="flex-1">
-                                                    Copy URL
+                                                    {copy ? 'Copy URL' : 'Copied!'}
                                                 </Button>
                                                 <Button onClick={regenerateToken} size="sm" variant="outline" className="flex-1">
                                                     <RefreshCcw className="h-4 w-4 mr-2" />
-                                                    Regenerate
+                                                    {regenerate ? 'Regenerate' : 'Regenerated!'}
                                                 </Button>
+
                                             </div>
                                         </div>
                                     )}
@@ -269,7 +274,7 @@ export default function AdminEventShow() {
             </div>
 
             <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-             <DialogContent className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 ">
+                <DialogContent className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 ">
                     <DialogHeader>
                         <DialogTitle>Delete Event</DialogTitle>
                         <DialogDescription>
