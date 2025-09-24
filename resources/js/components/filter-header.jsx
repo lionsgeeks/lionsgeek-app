@@ -452,7 +452,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                                             <DialogTitle>Send Reminder</DialogTitle>
                                             {/* <DialogDescription>Select session type for immediate reminder</DialogDescription> */}
                                         </DialogHeader>
-                                        <div className="flex  space-x-6">
+                                        <div className="flex gap-4 max-sm:flex-col max-md:items-center">
 
                                             {
                                                 [
@@ -463,7 +463,7 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                                                     <div
                                                         key={id}
                                                         onClick={() => setData("step", id)}
-                                                        className={`shadow-lg group rounded-lg w-45 h-45  flex flex-col gap-6 justify-center items-center border border-dashed transition-all duration-400 ease-in-out hover:scale-105 cursor-pointer ${data.step === id
+                                                        className={`max-sm:w-full shadow-lg group rounded-lg w-45 h-45 flex flex-col gap-6 justify-center items-center border border-dashed transition-all duration-400 ease-in-out hover:scale-105 cursor-pointer ${data.step === id
                                                             ? "bg-[#212529] text-white border-[#212529]"
                                                             : "bg-transparent border-black/20 text-[#212529] hover:bg-[#212529] hover:text-white"
                                                             }`}

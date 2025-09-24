@@ -69,7 +69,7 @@ export default function GalleryAdmin() {
 
                 {/* Statistics Cards */}
                 <div className="mx-auto -mt-4 max-w-7xl px-6">
-                    <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div className="mb-8 grid grid-cols-2 gap-6 md:grid-cols-3">
                         <Card className="border-0 bg-white shadow-lg">
                             <CardContent className="p-6">
                                 <div className="flex items-center justify-between">

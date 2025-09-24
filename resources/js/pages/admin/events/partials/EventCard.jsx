@@ -104,7 +104,7 @@ export default function EventCard({ event, onEdit, onDelete }) {
                     <div className="absolute top-2 right-2">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="secondary" size="sm" className="h-8 w-8 bg-white/90 p-0 hover:bg-white">
+                                <Button variant="secondary" size="sm" className="h-8 w-8 bg-white/90 p-0 hover:bg-white" onClick={(e) => e.stopPropagation()} >
                                     <MoreVertical className="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>

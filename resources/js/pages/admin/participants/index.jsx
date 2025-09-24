@@ -103,7 +103,7 @@ export default function Participants() {
 					title="Participants Management"
 					description="Manage and track participant progress"
 					actions={
-						<>
+						<div className='flex gap-3 max-md:hidden'>
 							<a href="/admin/questions/export">
 								<Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
 									<Download className="mr-2 h-4 w-4" />
@@ -116,13 +116,13 @@ export default function Participants() {
 									Export Students
 								</Button>
 							</a>
-						</>
+						</div>
 					}
 				/>
 
 				{/* Statistics Cards */}
 				<div className="mx-auto -mt-4 max-w-7xl px-6">
-					<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+					<div className="mb-8 grid grid-cols-2 gap-6 md:grid-cols-4">
 						<Card className="border-0 bg-white shadow-lg">
 							<CardContent className="p-6">
 								<div className="flex items-center justify-between">
