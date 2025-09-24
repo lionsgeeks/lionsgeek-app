@@ -40,8 +40,6 @@ public function validateParticipant(Request $request)
     // dd($request->all());
     $request->validate([
         "email" => "required",
-        "code" => "required",
-        "id" => "integer",
         "eventId" => "integer"
     ]);
 

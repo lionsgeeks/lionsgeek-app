@@ -10,6 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BookingConfirmation extends Mailable
 {
@@ -19,9 +20,6 @@ class BookingConfirmation extends Mailable
     public $event;
     public $qrCodeBase64;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct(Booking $booking, Event $event, $qrCodeBase64)
     {
         $this->booking = $booking;
@@ -29,13 +27,11 @@ class BookingConfirmation extends Mailable
         $this->qrCodeBase64 = $qrCodeBase64;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
-        // Ensure event name is handled correctly for multilingual
-        $eventName = is_array($this->event->name) ? ($this->event->name['en'] ?? $this->event->name['fr'] ?? $this->event->name['ar'] ?? 'Event') : $this->event->name;
+        $eventName = is_array($this->event->name)
+            ? ($this->event->name['en'] ?? $this->event->name['fr'] ?? $this->event->name['ar'] ?? 'Event')
+            : $this->event->name;
 
         return new Envelope(
             subject: 'Event Booking Confirmation - ' . $eventName,
@@ -43,9 +39,6 @@ class BookingConfirmation extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
@@ -53,8 +46,6 @@ class BookingConfirmation extends Mailable
             with: [
                 'booking' => $this->booking,
                 'event' => $this->event,
-                'qrCode' => $this->qrCodeBase64,
-                // Also pass event details for convenience in the view
                 'eventName' => is_array($this->event->name) ? ($this->event->name['en'] ?? $this->event->name['fr'] ?? $this->event->name['ar'] ?? 'Event') : $this->event->name,
                 'eventDescription' => is_array($this->event->description) ? ($this->event->description['en'] ?? $this->event->description['fr'] ?? $this->event->description['ar'] ?? 'No description') : $this->event->description,
                 'eventDate' => $this->event->date,
@@ -62,17 +53,20 @@ class BookingConfirmation extends Mailable
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
-        // Attach the QR code image directly
+        $pdf = Pdf::loadView('emails.booking', [
+            'booking' => $this->booking,
+            'event' => $this->event,
+            'qrCode' => $this->qrCodeBase64,
+            'eventName' => is_array($this->event->name) ? ($this->event->name['en'] ?? $this->event->name['fr'] ?? $this->event->name['ar'] ?? 'Event') : $this->event->name,
+            'eventDescription' => is_array($this->event->description) ? ($this->event->description['en'] ?? $this->event->description['fr'] ?? $this->event->description['ar'] ?? 'No description') : $this->event->description,
+            'eventDate' => $this->event->date,
+        ])->output();
+
         return [
-            Attachment::fromData(fn () => base64_decode($this->qrCodeBase64), 'qr_code.png')
-                ->withMime('image/png'),
+            Attachment::fromData(fn() => $pdf, 'booking_confirmation.pdf')
+                ->withMime('application/pdf'),
         ];
     }
 }

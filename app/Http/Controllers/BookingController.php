@@ -58,9 +58,8 @@ class BookingController extends Controller
 
         // Generate QR code
         $qrPayload = json_encode([
-            'booking_id' => $booking->id, // Use booking ID for uniqueness
-            'event_id'   => $booking->event_id,
-            'email'      => $booking->email,
+            "email" => $booking->email,
+            "code" => $booking->event_id
         ]);
 
         // Generate QR code image as base64
