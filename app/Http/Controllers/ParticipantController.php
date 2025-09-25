@@ -35,6 +35,7 @@ use App\Models\Satisfaction;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -1240,6 +1241,32 @@ class ParticipantController extends Controller
             $confirmation->update([
                 'school' => 1
             ]);
+
+                try {
+                $payload = [
+                    'name' => $participant->full_name,
+                    'email' => $participant->email,
+                    'phone' => $participant->phone,
+                    'image' => $participant->image,
+                 
+                ];
+
+                //! Http:tbadale
+                $response = Http::post('http://192.168.100.22:8000/api/invite-student', $payload);
+                if (!$response->successful()) {
+                    Log::warning('External invite failed', [
+                        'participant_id' => $participant->id,
+                        'status' => $response->status(),
+                        'body' => $response->body()
+                    ]);
+                    dd($response);
+                }
+            } catch (\Throwable $extErr) {
+                Log::error('External invite exception', [
+                    'participant_id' => $participant->id,
+                    'error' => $extErr->getMessage()
+                ]);
+            }
 
             return redirect()->away('/attendance/confirmation');
         }
