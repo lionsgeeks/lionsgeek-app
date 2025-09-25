@@ -48,49 +48,51 @@ class InfoSessionController extends Controller
     public function validateParticipant(Request $request)
     {
         $request->validate([
-            "email" => "required",
-            "code" => "required",
-            "sessionId" => "integer"
+            "email"     => "required|email",
+            "code"      => "required",
+            "sessionId" => "required|integer", // session id from current page
         ]);
 
+        // First check if the scanned participant belongs to this session
         $participant = Participant::where("email", $request->email)
             ->where("code", $request->code)
-            // ->where("info_session_id" , $request->id)
             ->first();
 
-        if ($participant) {
-            if ($participant->info_session_id == $request->sessionId) {
-                if (!$participant->is_visited) {
-                    $participant->current_step = "interview";
-                    $participant->is_visited = true;
-                    $participant->save();
-
-                    return response()->json([
-                        "message" => "Credentials match.",
-                        "status" => 200,
-                        "profile" => $participant
-                    ]);
-                }
-                return response()->json([
-                    "message" => "Already participated.",
-                    "status" => 200,
-                    "profile" => $participant
-                ]);
-                # code...
-            } else {
-                return response()->json([
-                    "message" => "Participant belong to another session",
-                    "status" => 200,
-                    "profile" => $participant
-                ]);
-            }
-        } else {
+        if (!$participant) {
             return response()->json([
                 "message" => "No such participant.",
-                "status" => 200,
+                "status"  => 200,
             ]);
         }
+
+        if ((int)$participant->info_session_id !== (int)$request->sessionId) {
+            return response()->json([
+                "message" => "Participant belongs to another session",
+                "status"  => 200,
+                "profile" => $participant,
+            ]);
+        }
+
+        if ($participant->is_visited) {
+            return response()->json([
+                "message" => "Already participated.",
+                "status"  => 200,
+                "profile" => $participant,
+            ]);
+        }
+
+        // mark visited and set current step
+        $participant->is_visited = true;
+        $participant->current_step = "interview";
+        $participant->save();
+
+        return response()->json([
+            "message" => "Credentials match.",
+            "status"  => 200,
+            "profile" => $participant,
+        ]);
     }
+
 
     public function infoData(Request $request)
     {
