@@ -1259,7 +1259,7 @@ class ParticipantController extends Controller
                         'status' => $response->status(),
                         'body' => $response->body()
                     ]);
-                    dd($response);
+                  
                 }
             } catch (\Throwable $extErr) {
                 Log::error('External invite exception', [
