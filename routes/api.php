@@ -23,6 +23,7 @@ Route::post('/track-visit', $active['track_visit']
 // Events
 Route::get("events/{event}", $active['events'] ? [EventController::class,'show'] : $nullRoute);
 Route::get('/events', $active['events'] ? [EventController::class,'index'] : $nullRoute);
+Route::get('/lionsgate/infosessions', $active['lionsgate'] ? [InfoSessionController::class, 'indexLionsgate'] : $nullRoute);
 
 // InfoSessions
 Route::get('/infosessions', $active['infosessions'] ? [InfoSessionController::class, 'index'] : $nullRoute);
@@ -34,7 +35,6 @@ Route::get('/profile-data', $active['profile_data'] ? [InfoSessionController::cl
 Route::post('/session-photo', $active['session_photo'] ? [ParticipantController::class, 'setPhoto'] : $nullRoute);
 
 // Lionsgate
-Route::get('/lionsgate/infosessions', $active['lionsgate'] ? [InfoSessionController::class, 'indexLionsgate'] : $nullRoute);
 
 // Participants
 Route::post('/participants/{participant}/progress', $active['participants'] ? [ParticipantController::class, 'storeProgress'] : $nullRoute);
