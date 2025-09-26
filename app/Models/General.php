@@ -10,7 +10,8 @@ class General extends Model
     protected $fillable = [
         'views',
         'darkmode',
-        'tablemode'
+        'tablemode',
+        'token'
     ];
 
     /**
