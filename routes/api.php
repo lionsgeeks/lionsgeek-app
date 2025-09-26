@@ -6,6 +6,28 @@ use App\Http\Controllers\Api\ParticipantController;
 use App\Models\General;
 use Illuminate\Support\Facades\Route;
 
+
+use Illuminate\Support\Str;
+
+Route::post('/regenerate-token', function () {
+    $general = General::first();
+
+    if (!$general) {
+        return response()->json(['error' => 'General model not found.'], 404);
+    }
+
+    $newToken = Str::random(60); // Generate a secure random token
+
+    $general->token = $newToken;
+    $general->save();
+
+    return response()->json([
+        'message' => 'Token regenerated successfully.',
+        'token' => $newToken
+    ]);
+});
+
+
 $active = config('active-routes');
 
 // Toggle helper (returns closure when inactive)
