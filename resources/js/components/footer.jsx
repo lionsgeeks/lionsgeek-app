@@ -39,19 +39,16 @@ const Footer = () => {
         <>
             <footer className={`px-5 py-10 lg:px-16 ${darkMode && 'bg-[#0f0f0f]'}`}>
                 <div
-                    className={`pt-10 ${darkMode && 'bg-[#0f0f0f]'} flex flex-col gap-10 rounded-lg px-5 pb-4 lg:px-10 ${
-                        darkMode ? 'bg-[#212529]' : 'bg-light_gray'
-                    } `}
+                    className={`pt-10 ${darkMode && 'bg-[#0f0f0f]'} flex flex-col gap-10 rounded-lg px-5 pb-4 lg:px-10 ${darkMode ? 'bg-[#212529]' : 'bg-light_gray'
+                        } `}
                 >
                     <div
-                        className={`flex flex-col justify-between gap-10 lg:flex-row lg:px-4 ${
-                            selectedLanguage == 'ar' ? 'lg:flex-row-reverse' : ''
-                        }`}
+                        className={`flex flex-col justify-between gap-10 lg:flex-row lg:px-4 ${selectedLanguage == 'ar' ? 'lg:flex-row-reverse' : ''
+                            }`}
                     >
                         <div
-                            className={`flex flex-col justify-center gap-2 lg:flex-row lg:gap-10 ${
-                                selectedLanguage == 'ar' ? 'lg:flex-row-reverse' : ''
-                            }`}
+                            className={`flex flex-col justify-center gap-2 lg:flex-row lg:gap-10 ${selectedLanguage == 'ar' ? 'lg:flex-row-reverse' : ''
+                                }`}
                         >
                             <div className={`${selectedLanguage == 'ar' ? 'flex justify-end' : ''}`}>
                                 <img
@@ -85,9 +82,8 @@ const Footer = () => {
                             <div>
                                 <div className="flex flex-col gap-3">
                                     <h1
-                                        className={`text-[1.2rem] font-bold text-gray-600 ${
-                                            selectedLanguage == 'ar' ? 'text-end' : ''
-                                        } ${darkMode && 'text-white'}`}
+                                        className={`text-[1.2rem] font-bold text-gray-600 ${selectedLanguage == 'ar' ? 'text-end' : ''
+                                            } ${darkMode && 'text-white'}`}
                                     >
                                         <TransText en="Contact" fr="Contact" ar="اتصل بنا" />
                                     </h1>
@@ -121,9 +117,8 @@ const Footer = () => {
                         </div>
                         <div className="flex flex-col items-start gap-2 lg:w-[40%] xl:w-[25%]">
                             <h1
-                                className={`w-full text-[1.2rem] font-bold text-gray-600 ${
-                                    darkMode && 'text-white'
-                                } ${selectedLanguage == 'ar' ? 'text-end' : ''}`}
+                                className={`w-full text-[1.2rem] font-bold text-gray-600 ${darkMode && 'text-white'
+                                    } ${selectedLanguage == 'ar' ? 'text-end' : ''}`}
                             >
                                 <TransText en="STAY IN TOUCH" fr="RESTEZ CONNECTÉ" ar="ابق على اتصال" />
                             </h1>
@@ -136,16 +131,14 @@ const Footer = () => {
                                         }}
                                         value={data.email}
                                         required
-                                        className={` ${darkMode && 'text-white/90'} ${
-                                            selectedLanguage == 'ar' ? 'text-end' : ''
-                                        } peer placeholder-shown:border-blue-gray-200 disabled:bg-blue-gray-50 h-full w-full border-b bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal outline-0 transition-all focus:border-alpha focus:outline-0 disabled:border-0`}
+                                        className={` ${darkMode && 'text-white/90'} ${selectedLanguage == 'ar' ? 'text-end' : ''
+                                            } peer placeholder-shown:border-blue-gray-200 disabled:bg-blue-gray-50 h-full w-full border-b bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal outline-0 transition-all focus:border-alpha focus:outline-0 disabled:border-0`}
                                         placeholder=" "
                                     />
 
                                     <label
-                                        className={`pointer-events-none absolute pt-1 ${
-                                            selectedLanguage == 'ar' ? 'right-0' : 'left-0'
-                                        } after:content[' '] -top-1.5 text-gray-500 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha`}
+                                        className={`pointer-events-none absolute pt-1 ${selectedLanguage == 'ar' ? 'right-0' : 'left-0'
+                                            } after:content[' '] -top-1.5 text-gray-500 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-alpha`}
                                     >
                                         <TransText en="Type your email" fr="Tapez votre email" ar="اكتب بريدك الالكتروني" />
                                     </label>
@@ -181,11 +174,11 @@ const Footer = () => {
                                     ></path>
                                 </svg>
                             </a>
-                            {/*
-                            <a target="blank" href="https://discord.com/channels/1219261183803129929/1219261184314839133">
-                <FaDiscord className="text-[1.4rem] fill-gray-400 hover:fill-black transition duration-200" />
-              </a>
-                        */}
+
+                            <a target="blank" href="https://discord.gg/EjZtfSnQa">
+                                <FaDiscord className="text-[1.4rem] fill-gray-400 hover:fill-black transition duration-200" />
+                            </a>
+
                         </div>
                         <p className="text-center text-[0.9rem] text-gray-400">&copy; Copyright {currentYear} LionsGeek. All Rights Reserved.</p>
                         {/* policy*/}
