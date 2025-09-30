@@ -70,8 +70,8 @@ class ParticipantController extends Controller
         $validated = $request->validate([
             // 1. Situation familiale
             'composition_foyer' => 'nullable|string|in:pere_mere,pere_seul,mere_seule,autre',
-            'nombre_personnes' => 'nullable|integer',
-            'fratrie' => 'nullable|integer',
+            'nombre_personnes' => 'nullable|numeric',
+            'fratrie' => 'nullable|numeric',
 
             // 2. Situation professionnelle et revenus
             'pere_tuteur' => 'nullable|string',
