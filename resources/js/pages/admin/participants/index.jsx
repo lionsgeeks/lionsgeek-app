@@ -65,7 +65,7 @@ export default function Participants() {
 		const initialState = {};
 		const optionalFields = getAvailableOptionalFields();
 		Object.keys(optionalFields).forEach(key => {
-			initialState[key] = true;
+			initialState[key] = false;
 		});
 		return initialState;
 	});

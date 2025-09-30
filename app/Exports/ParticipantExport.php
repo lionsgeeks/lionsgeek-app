@@ -22,7 +22,7 @@ class ParticipantExport implements FromQuery, WithHeadings, WithMapping
 
     public function __construct($selectedFields = [])
     {
-        $defaultFields = ['id', 'info_session_id', 'full_name', 'email'];
+        $defaultFields = ['info_session_id', 'full_name', 'email'];
         
         $cleanSelectedFields = array_diff($selectedFields, $defaultFields);
         
@@ -34,7 +34,6 @@ class ParticipantExport implements FromQuery, WithHeadings, WithMapping
     private function buildFieldMapping()
     {
         $mapping = [
-            'id' => 'ID',
             'info_session_id' => 'Session', 
             'full_name' => 'Full Name',
             'email' => 'Email',

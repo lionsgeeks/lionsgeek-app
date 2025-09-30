@@ -70,28 +70,62 @@ class ParticipantController extends Controller
 
     private function getAvailableColumns()
     {
+        $defaultFields = ['info_session_id', 'full_name', 'email'];
+        
+        $allColumns = Schema::getColumnListing('participants');
+        
+        $excludedFields = array_merge($defaultFields, [
+            'id',
+            'password',
+            'remember_token',
+            'email_verified_at',
+            'deleted_at',
+        ]);
+        
+        $optionalFields = array_diff($allColumns, $excludedFields);
+        
+        $fieldLabels = [];
+        foreach ($optionalFields as $field) {
+            $fieldLabels[$field] = $this->generateFieldLabel($field);
+        }
+        
         return [
             'default' => [
-                'id' => 'ID',
                 'info_session_id' => 'Session', 
                 'full_name' => 'Full Name',
                 'email' => 'Email'
             ],
-            'optional' => [
-                'birthday' => 'Birthday',
-                'age' => 'Age',
-                'phone' => 'Phone',
-                'city' => 'City',
-                'prefecture' => 'Prefecture',
-                'gender' => 'Gender',
-                'motivation' => 'Motivation',
-                'source' => 'How They Found LionsGeek',
-                'current_step' => 'Current Step',
-                'is_visited' => 'Have Visited',
-                'created_at' => 'Created At',
-                'updated_at' => 'Updated At'
-            ]
+            'optional' => $fieldLabels
         ];
+    }
+
+    private function generateFieldLabel($fieldName)
+    {
+        $customLabels = [
+            'source' => 'How They Found LionsGeek',
+            'is_visited' => 'Have Visited',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'current_step' => 'Current Step',
+            'info_session_id' => 'Session',
+            'how_they_found_lionsgeek' => 'How They Found LionsGeek',
+            'birthday' => 'Birthday',
+            'prefecture' => 'Prefecture',
+            'composition_foyer' => 'Family Composition',
+            'nombre_personnes' => 'Family Size',
+            'revenus_mensuels' => 'Monthly Income',
+            'type_logement' => 'Housing Type',
+            'education_pere' => 'Father Education',
+            'education_mere' => 'Mother Education',
+            'categorie_sociale' => 'Social Category',
+            'social_score' => 'Social Score',
+        ];
+        
+        if (isset($customLabels[$fieldName])) {
+            return $customLabels[$fieldName];
+        }
+        
+        return ucwords(str_replace('_', ' ', $fieldName));
     }
 
     public function updateSocialStatus(Request $request, Participant $participant)
@@ -1099,13 +1133,12 @@ class ParticipantController extends Controller
     // export participants
     public function export(Request $request)
     {
-        $defaultFields = ['id', 'info_session_id', 'full_name', 'email'];
         $selectedFields = $request->input('fields', []);
-        $fieldsToExport = array_merge($defaultFields, $selectedFields);
         
-        $date = (new DateTime())->format('F_d_Y');
+        $date = now()->format('F_d_Y');
+        
         return Excel::download(
-            new ParticipantExport($selectedFields),
+            new ParticipantExport($selectedFields), 
             $date . '_participants.xlsx'
         );
     }
