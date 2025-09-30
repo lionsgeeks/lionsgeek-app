@@ -70,31 +70,25 @@ class ParticipantController extends Controller
 
     private function getAvailableColumns()
     {
-        $defaultFields = ['info_session_id', 'full_name', 'email'];
-        
         $allColumns = Schema::getColumnListing('participants');
         
-        $excludedFields = array_merge($defaultFields, [
+        $excludedFields = [
             'id',
             'password',
             'remember_token',
             'email_verified_at',
             'deleted_at',
-        ]);
+        ];
         
-        $optionalFields = array_diff($allColumns, $excludedFields);
+        $availableFields = array_diff($allColumns, $excludedFields);
         
         $fieldLabels = [];
-        foreach ($optionalFields as $field) {
+        foreach ($availableFields as $field) {
             $fieldLabels[$field] = $this->generateFieldLabel($field);
         }
-        
+
         return [
-            'default' => [
-                'info_session_id' => 'Session', 
-                'full_name' => 'Full Name',
-                'email' => 'Email'
-            ],
+            'default' => [],
             'optional' => $fieldLabels
         ];
     }

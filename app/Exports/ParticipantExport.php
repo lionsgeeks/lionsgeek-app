@@ -18,11 +18,7 @@ class ParticipantExport implements FromQuery, WithHeadings, WithMapping
 
     public function __construct($selectedFields = [], $participantIds = [])
     {
-        $defaultFields = ['info_session_id', 'full_name', 'email'];
-        
-        $cleanSelectedFields = array_diff($selectedFields, $defaultFields);
-        
-        $this->fieldsToExport = array_merge($defaultFields, $cleanSelectedFields);
+        $this->fieldsToExport = $selectedFields;
         $this->participantIds = $participantIds;
         
         $this->fieldMapping = $this->buildFieldMapping();
