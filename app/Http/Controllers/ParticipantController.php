@@ -36,6 +36,7 @@ use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -47,8 +48,9 @@ class ParticipantController extends Controller
     public function index(Request $request)
     {
         // Always load all participants for frontend filtering
-        $participants = Participant::with(['infoSession', 'confirmation', 'approvedBy', 'lastStepChangedBy'])->get();
+        $participants = Participant::with('infoSession', 'confirmation', 'approvedBy', 'lastStepChangedBy')->get();
         $infosessions = InfoSession::all();
+        $availableColumns = $this->getAvailableColumns();
 
         // Get counts for each status
         $statusCounts = [
@@ -62,7 +64,62 @@ class ParticipantController extends Controller
             'participants' => $participants,
             'infosessions' => $infosessions,
             'statusCounts' => $statusCounts,
+            'availableColumns' => $availableColumns
         ]);
+    }
+
+    private function getAvailableColumns()
+    {
+        $allColumns = Schema::getColumnListing('participants');
+        
+        $excludedFields = [
+            'id',
+            'password',
+            'remember_token',
+            'email_verified_at',
+            'deleted_at',
+        ];
+        
+        $availableFields = array_diff($allColumns, $excludedFields);
+        
+        $fieldLabels = [];
+        foreach ($availableFields as $field) {
+            $fieldLabels[$field] = $this->generateFieldLabel($field);
+        }
+
+        return [
+            'default' => [],
+            'optional' => $fieldLabels
+        ];
+    }
+
+    private function generateFieldLabel($fieldName)
+    {
+        $customLabels = [
+            'source' => 'How They Found LionsGeek',
+            'is_visited' => 'Have Visited',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'current_step' => 'Current Step',
+            'info_session_id' => 'Session',
+            'how_they_found_lionsgeek' => 'How They Found LionsGeek',
+            'birthday' => 'Birthday',
+            'prefecture' => 'Prefecture',
+            'composition_foyer' => 'Family Composition',
+            'nombre_personnes' => 'Family Size',
+            'revenus_mensuels' => 'Monthly Income',
+            'type_logement' => 'Housing Type',
+            'education_pere' => 'Father Education',
+            'education_mere' => 'Mother Education',
+            'categorie_sociale' => 'Social Category',
+            'social_score' => 'Social Score',
+        ];
+        
+        if (isset($customLabels[$fieldName])) {
+            return $customLabels[$fieldName];
+        }
+        
+        return ucwords(str_replace('_', ' ', $fieldName));
     }
 
     public function updateSocialStatus(Request $request, Participant $participant)
@@ -1068,12 +1125,20 @@ class ParticipantController extends Controller
     }
 
     // export participants
-    public function export()
+    public function export(Request $request)
     {
-        // dd();
-        $date = (new DateTime())->format('F_d_Y');
-        return Excel::download(new ParticipantExport, $date . '_participants.xlsx');
+        $selectedFields = $request->input('fields', []);
+        
+        $participantIds = $request->input('participant_ids', []);
+        
+        $date = now()->format('F_d_Y');
+        
+        return Excel::download(
+            new ParticipantExport($selectedFields, $participantIds), 
+            $date . '_participants.xlsx'
+        );
     }
+
     public function questionsExport()
     {
         $date = (new DateTime())->format('F_d_Y');

@@ -9,9 +9,21 @@ import FilterHeader from '../../../components/filter-header';
 import ParticipantCard from './partials/ParticipantCard';
 import ParticipantsTable from './partials/ParticipantsTable';
 import AdminPageHeader from '../components/AdminPageHeader';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 export default function Participants() {
-	const { participants = [], infosessions = [], statusCounts = {} } = usePage().props;
+	const { participants = [], infosessions = [], statusCounts = {} ,availableColumns = { default: {}, optional: {} }} = usePage().props;
 	const [filtredParticipants, setFiltredParticipants] = useState(participants);
 	const params = new URLSearchParams(window.location.search);
 	const initialView = params.get('view') === 'table' ? 'table' : 'cards';
@@ -28,6 +40,26 @@ export default function Participants() {
 			href: '/admin/participants',
 		},
 	];
+
+    const getAllAvailableFields = () => {
+        const defaultFields = availableColumns.default || {};
+        const optionalFields = availableColumns.optional || {};
+
+        const allFields = { ...defaultFields, ...optionalFields };
+        delete allFields.id;
+        
+        return allFields;
+    };
+
+    const [exportFilters, setExportFilters] = useState(() => {
+        const initialState = {};
+        const allFields = getAllAvailableFields();
+        Object.keys(allFields).forEach(key => {
+            initialState[key] = false;
+        });
+        return initialState;
+    });
+
 	// dynamic filter participant
 	const dynamicStepsCount = useMemo(() => {
 		return {
@@ -110,12 +142,108 @@ export default function Participants() {
 									Export Questions
 								</Button>
 							</a>
-							<a href={'/admin/participant/export'}>
-								<Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
-									<Download className="mr-2 h-4 w-4" />
-									Export Students
-								</Button>
-							</a>
+
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]">
+                                        <Download className="mr-2 h-4 w-4" />
+                                        Export Students
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px]">
+                                    <DialogHeader>
+                                        <DialogTitle>Filter Export</DialogTitle> 
+                                    </DialogHeader>
+                                    <div className="grid gap-4">
+                                        <div className="space-y-3">
+                                            <h4 className="font-medium text-sm text-gray-900">Select fields to export:</h4>
+                                            <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                                                {Object.entries(getAllAvailableFields()).map(([key, label]) => (
+                                                    <div key={key} className="flex items-center space-x-2">
+                                                        <input
+                                                            type="checkbox"
+                                                            id={key}
+                                                            checked={exportFilters[key] || false}
+                                                            onChange={(e) => setExportFilters(prev => ({
+                                                                ...prev,
+                                                                [key]: e.target.checked
+                                                            }))}
+                                                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                        />
+                                                        <label htmlFor={key} className="text-sm text-gray-700 cursor-pointer">
+                                                            {label}
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <DialogFooter>
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex gap-2 w-fit">                                                
+                                            </div>
+                                            <div className="flex items-center gap-3 w-fit">
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => setExportFilters(prev => {
+                                                        const newState = {};
+                                                        Object.keys(getAllAvailableFields()).forEach(key => {
+                                                            newState[key] = true;
+                                                        });
+                                                        return newState;
+                                                    })}
+                                                    className="transform cursor-pointer items-center rounded-lg bg-gray-50 px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-white"
+                                                >
+                                                    Select All
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline" 
+                                                    size="sm"
+                                                    onClick={() => setExportFilters(prev => {
+                                                        const newState = {};
+                                                        Object.keys(getAllAvailableFields()).forEach(key => {
+                                                            newState[key] = false;
+                                                        });
+                                                        return newState;
+                                                    })}
+                                                    className="transform cursor-pointer items-center rounded-lg bg-gray-50 px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-white"
+                                                >
+                                                    Deselect All
+                                                </Button>
+                                                <DialogClose asChild>
+                                                    <Button variant="outline" className="transform cursor-pointer items-center rounded-lg bg-gray-50 px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-white">
+                                                        Cancel
+                                                    </Button>
+                                                </DialogClose>
+                                                <Button
+                                                    onClick={() => {
+                                                        const params = new URLSearchParams();
+                                                        Object.entries(exportFilters).forEach(([key, value]) => {
+                                                            if (value) {
+                                                                params.append('fields[]', key);
+                                                            }
+                                                        });
+                                                        const filteredIds = filtredParticipants.map(p => p.id);
+                                                        filteredIds.forEach(id => {
+                                                            params.append('participant_ids[]', id);
+                                                        });
+                                                        
+                                                        window.location.href = `/admin/participant/export?${params.toString()}`;
+                                                    }}
+                                                    className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#212529] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+                                                >
+                                                    <Download className="mr-1 h-4 w-4" />
+                                                    Export
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+
 						</div>
 					}
 				/>
