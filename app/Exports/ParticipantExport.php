@@ -10,23 +10,20 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class ParticipantExport implements FromQuery, WithHeadings, WithMapping
 {
-
     use Exportable;
 
-    // public $term;
-    // public $step;
-    // public $sessionID;
     protected $fieldsToExport;
     protected $fieldMapping;
+    protected $participantIds;
 
-
-    public function __construct($selectedFields = [])
+    public function __construct($selectedFields = [], $participantIds = [])
     {
         $defaultFields = ['info_session_id', 'full_name', 'email'];
         
         $cleanSelectedFields = array_diff($selectedFields, $defaultFields);
         
         $this->fieldsToExport = array_merge($defaultFields, $cleanSelectedFields);
+        $this->participantIds = $participantIds;
         
         $this->fieldMapping = $this->buildFieldMapping();
     }
@@ -67,29 +64,16 @@ class ParticipantExport implements FromQuery, WithHeadings, WithMapping
         return ucwords(str_replace('_', ' ', $fieldName));
     }
 
-
     public function query()
     {
-        return Participant::query()->with('infoSession');
-
-        // if (!empty($this->term)) {
-        //     $query->where('full_name', 'like', '%' . $this->term . '%');
-        //     $query->orWhere('email', 'like', '%' . $this->term . '%');
-        //     $query->orWhere('phone', 'like', '%' . $this->term . '%');
-        // }
-
-        // if (!empty($this->step)) {
-        //     $query->orWhere('current_step', 'like', '%' . $this->step . '%');
-        // }
-
-        // if (!empty($this->sessionID)) {
-        //     $query->orWhere('info_session_id', 'like', '%' . $this->sessionID . '%');
-        // }
-
+        $query = Participant::query()->with('infoSession');
+        
+        if (!empty($this->participantIds)) {
+            $query->whereIn('id', $this->participantIds);
+        }
+        
         return $query;
     }
-
-
 
     public function headings(): array
     {
@@ -100,8 +84,6 @@ class ParticipantExport implements FromQuery, WithHeadings, WithMapping
         return $headings;
     }
 
-
-    // Map method to transform data before export
     public function map($participant): array
     {
         $row = [];
@@ -112,6 +94,7 @@ class ParticipantExport implements FromQuery, WithHeadings, WithMapping
         
         return $row;
     }
+
     private function getFieldValue($participant, $field)
     {
         switch ($field) {
@@ -137,5 +120,4 @@ class ParticipantExport implements FromQuery, WithHeadings, WithMapping
                 return $participant->{$field} ?? '';
         }
     }
-
 }

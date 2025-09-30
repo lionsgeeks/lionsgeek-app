@@ -242,22 +242,28 @@ export default function Participants() {
 														Cancel
 													</Button>
 												</DialogClose>
-												<Button
-													onClick={() => {
-														const params = new URLSearchParams();
-														Object.entries(exportFilters).forEach(([key, value]) => {
-															if (value) {
-																params.append('fields[]', key);
-															}
-														});
-														
-														window.location.href = `/admin/participant/export?${params.toString()}`;
-													}}
-													className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#212529] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
-												>
-													<Download className="mr-1 h-4 w-4" />
-													Export
-												</Button>
+													<Button
+														onClick={() => {
+															const params = new URLSearchParams();
+															
+															Object.entries(exportFilters).forEach(([key, value]) => {
+																if (value) {
+																	params.append('fields[]', key);
+																}
+															});
+															
+															const filteredIds = filtredParticipants.map(p => p.id);
+															filteredIds.forEach(id => {
+																params.append('participant_ids[]', id);
+															});
+															
+															window.location.href = `/admin/participant/export?${params.toString()}`;
+														}}
+														className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#212529] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#fee819] hover:text-[#212529]"
+													>
+														<Download className="mr-1 h-4 w-4" />
+														Export
+													</Button>
 											</div>
 										</div>
 									</DialogFooter>

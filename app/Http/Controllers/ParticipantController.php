@@ -1135,13 +1135,16 @@ class ParticipantController extends Controller
     {
         $selectedFields = $request->input('fields', []);
         
+        $participantIds = $request->input('participant_ids', []);
+        
         $date = now()->format('F_d_Y');
         
         return Excel::download(
-            new ParticipantExport($selectedFields), 
+            new ParticipantExport($selectedFields, $participantIds), 
             $date . '_participants.xlsx'
         );
     }
+
     public function questionsExport()
     {
         $date = (new DateTime())->format('F_d_Y');
