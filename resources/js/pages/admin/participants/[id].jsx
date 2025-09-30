@@ -475,6 +475,7 @@ export default function ParticipantProfilePage() {
                                                                     <SelectItem value="salarie_prive">Salarié secteur privé</SelectItem>
                                                                     <SelectItem value="independant">Travailleur indépendant</SelectItem>
                                                                     <SelectItem value="precaire">Journalier/précaire</SelectItem>
+                                                                    <SelectItem value="retraite">Retraité</SelectItem>
                                                                     <SelectItem value="sans_emploi">Sans emploi</SelectItem>
                                                                 </SelectContent>
                                                             </Select>
@@ -493,6 +494,7 @@ export default function ParticipantProfilePage() {
                                                                     <SelectItem value="salarie_prive">Salariée secteur privé</SelectItem>
                                                                     <SelectItem value="independante">Travailleuse indépendante</SelectItem>
                                                                     <SelectItem value="precaire">Journalière/précaire</SelectItem>
+                                                                    <SelectItem value="retraite">Retraité</SelectItem>
                                                                     <SelectItem value="sans_emploi">Sans emploi</SelectItem>
                                                                 </SelectContent>
                                                             </Select>

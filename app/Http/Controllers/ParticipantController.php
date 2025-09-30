@@ -74,18 +74,18 @@ class ParticipantController extends Controller
             'fratrie' => 'nullable|integer',
 
             // 2. Situation professionnelle et revenus
-            'pere_tuteur' => 'nullable|string|in:decede,entrepreneur,cadre,fonctionnaire,salarie_prive,independant,precaire,sans_emploi',
-            'mere_tuteur' => 'nullable|string|in:decedee,entrepreneur,cadre,fonctionnaire,salarie_prive,independante,precaire,sans_emploi',
-            'revenus_mensuels' => 'nullable|string|in:lt_3000,3000_6000,6000_10000,10000_15000,gt_15000',
+            'pere_tuteur' => 'nullable|string',
+            'mere_tuteur' => 'nullable|string',
+            'revenus_mensuels' => 'nullable|string',
 
             // 3. Logement
-            'type_logement' => 'nullable|string|in:proprietaire,locataire,social_irreg,autre',
+            'type_logement' => 'nullable|string',
             // Basic services now a simple yes/no choice
             'services_base' => 'nullable|string|in:yes,no',
 
             // 4. Niveau d’éducation
-            'education_pere' => 'nullable|string|in:non_scolarise,primaire,college_lycee,superieur',
-            'education_mere' => 'nullable|string|in:non_scolarisee,primaire,college_lycee,superieur',
+            'education_pere' => 'nullable|string',
+            'education_mere' => 'nullable|string',
 
             // 5. Autres éléments sociaux
             'aides_sociales' => 'nullable|string',
