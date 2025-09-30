@@ -36,6 +36,7 @@ use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -47,8 +48,9 @@ class ParticipantController extends Controller
     public function index(Request $request)
     {
         // Always load all participants for frontend filtering
-        $participants = Participant::with(['infoSession', 'confirmation', 'approvedBy', 'lastStepChangedBy'])->get();
+        $participants = Participant::with('infoSession', 'confirmation', 'approvedBy', 'lastStepChangedBy')->get();
         $infosessions = InfoSession::all();
+        $availableColumns = $this->getAvailableColumns();
 
         // Get counts for each status
         $statusCounts = [
@@ -62,7 +64,34 @@ class ParticipantController extends Controller
             'participants' => $participants,
             'infosessions' => $infosessions,
             'statusCounts' => $statusCounts,
+            'availableColumns' => $availableColumns
         ]);
+    }
+
+    private function getAvailableColumns()
+    {
+        return [
+            'default' => [
+                'id' => 'ID',
+                'info_session_id' => 'Session', 
+                'full_name' => 'Full Name',
+                'email' => 'Email'
+            ],
+            'optional' => [
+                'birthday' => 'Birthday',
+                'age' => 'Age',
+                'phone' => 'Phone',
+                'city' => 'City',
+                'prefecture' => 'Prefecture',
+                'gender' => 'Gender',
+                'motivation' => 'Motivation',
+                'source' => 'How They Found LionsGeek',
+                'current_step' => 'Current Step',
+                'is_visited' => 'Have Visited',
+                'created_at' => 'Created At',
+                'updated_at' => 'Updated At'
+            ]
+        ];
     }
 
     public function updateSocialStatus(Request $request, Participant $participant)
@@ -1068,11 +1097,17 @@ class ParticipantController extends Controller
     }
 
     // export participants
-    public function export()
+    public function export(Request $request)
     {
-        // dd();
+        $defaultFields = ['id', 'info_session_id', 'full_name', 'email'];
+        $selectedFields = $request->input('fields', []);
+        $fieldsToExport = array_merge($defaultFields, $selectedFields);
+        
         $date = (new DateTime())->format('F_d_Y');
-        return Excel::download(new ParticipantExport, $date . '_participants.xlsx');
+        return Excel::download(
+            new ParticipantExport($selectedFields),
+            $date . '_participants.xlsx'
+        );
     }
     public function questionsExport()
     {

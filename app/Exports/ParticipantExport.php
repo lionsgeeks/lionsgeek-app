@@ -16,19 +16,62 @@ class ParticipantExport implements FromQuery, WithHeadings, WithMapping
     // public $term;
     // public $step;
     // public $sessionID;
+    protected $fieldsToExport;
+    protected $fieldMapping;
 
 
-    public function __construct()
+    public function __construct($selectedFields = [])
     {
-        // $this->term = $term;
-        // $this->step = $step;
-        // $this->sessionID = $sessionID;
+        $defaultFields = ['id', 'info_session_id', 'full_name', 'email'];
+        
+        $cleanSelectedFields = array_diff($selectedFields, $defaultFields);
+        
+        $this->fieldsToExport = array_merge($defaultFields, $cleanSelectedFields);
+        
+        $this->fieldMapping = $this->buildFieldMapping();
+    }
+
+    private function buildFieldMapping()
+    {
+        $mapping = [
+            'id' => 'ID',
+            'info_session_id' => 'Session', 
+            'full_name' => 'Full Name',
+            'email' => 'Email',
+        ];
+        
+        foreach ($this->fieldsToExport as $field) {
+            if (!isset($mapping[$field])) {
+                $mapping[$field] = $this->generateFieldLabel($field);
+            }
+        }
+        
+        return $mapping;
+    }
+
+    private function generateFieldLabel($fieldName)
+    {
+        $customLabels = [
+            'source' => 'How They Found LionsGeek',
+            'is_visited' => 'Have Visited', 
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'current_step' => 'Current Step',
+            'info_session_id' => 'Session',
+            'how_they_found_lionsgeek' => 'How They Found LionsGeek',
+        ];
+        
+        if (isset($customLabels[$fieldName])) {
+            return $customLabels[$fieldName];
+        }
+        
+        return ucwords(str_replace('_', ' ', $fieldName));
     }
 
 
     public function query()
     {
-        $query = Participant::query();
+        return Participant::query()->with('infoSession');
 
         // if (!empty($this->term)) {
         //     $query->where('full_name', 'like', '%' . $this->term . '%');
@@ -51,46 +94,49 @@ class ParticipantExport implements FromQuery, WithHeadings, WithMapping
 
     public function headings(): array
     {
-        return [
-            'ID',
-            'Session',
-            'Full Name',
-            'Email',
-            'Birthday',
-            'Age',
-            'Phone',
-            'City',
-            'Prefecture',
-            'Gender',
-            'Motivation',
-            'How They Found LionsGeek',
-            'Current Step',
-            'Have Visited',
-            "Created At",
-            "Updated At"
-        ];
+        $headings = [];
+        foreach ($this->fieldsToExport as $field) {
+            $headings[] = $this->fieldMapping[$field] ?? ucwords(str_replace('_', ' ', $field));
+        }
+        return $headings;
     }
+
 
     // Map method to transform data before export
     public function map($participant): array
     {
-        return [
-            $participant->id,
-            optional($participant->infoSession)->formation,
-            $participant->full_name,
-            $participant->email,
-            $participant->birthday,
-            $participant->age,
-            $participant->phone,
-            ucwords($participant->city),
-            ucwords(str_replace('_', ' ', $participant->prefecture)),
-            ucwords($participant->gender),
-            $participant->motivation,
-            $participant->source,
-            ucwords(str_replace('_', ' ', $participant->current_step)),
-            $participant->is_visited ? "Came to Info Session" : "Did not Come to Info Session",
-            $participant->created_at,
-            $participant->updated_at,
-        ];
+        $row = [];
+        
+        foreach ($this->fieldsToExport as $field) {
+            $row[] = $this->getFieldValue($participant, $field);
+        }
+        
+        return $row;
     }
+    private function getFieldValue($participant, $field)
+    {
+        switch ($field) {
+            case 'info_session_id':
+                return optional($participant->infoSession)->formation;
+            case 'have_visited':
+            case 'is_visited':
+                return $participant->is_visited ? "Came to Info Session" : "Did not Come to Info Session";
+            case 'how_they_found_lionsgeek':
+                return $participant->source;
+            case 'current_step':
+                return ucwords(str_replace('_', ' ', $participant->current_step));
+            case 'city':
+                return ucwords($participant->city);
+            case 'prefecture':
+                return ucwords(str_replace('_', ' ', $participant->prefecture));
+            case 'gender':
+                return ucwords($participant->gender);
+            case 'created_at':
+            case 'updated_at':
+                return $participant->{$field}?->format('Y-m-d H:i:s');
+            default:
+                return $participant->{$field} ?? '';
+        }
+    }
+
 }
