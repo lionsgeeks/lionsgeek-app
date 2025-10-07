@@ -174,7 +174,7 @@ export default function Index() {
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    setSuccessMessage('All messages marked as read!');
+                    setSuccessMessage('All messages have been marked as read successfully!');
                     setShowSuccessModal(true);
                     setTimeout(() => {
                         setShowSuccessModal(false);
@@ -325,7 +325,7 @@ export default function Index() {
                                             <Button
                                                 onClick={markAllAsRead}
                                                 disabled={unreadMessages === 0}
-                                                className="flex items-center gap-2 rounded-md bg-[#51b04f] text-sm text-white transition-all duration-300 hover:bg-[#378034] disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                                                className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
                                             >
                                                 <CheckCircle className="h-4 w-4" />
                                                 <span className="hidden xl:inline max-lg:inline">Mark All Read</span>
