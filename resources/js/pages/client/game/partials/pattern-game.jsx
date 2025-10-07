@@ -4,8 +4,6 @@ import { router, useForm } from '@inertiajs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { TransText } from '../../../../components/TransText';
 
-// Inside your component, add this after your other useState hooks:
-
 const COLORS = [
     '#ef4444',
     '#f97316',
@@ -38,10 +36,10 @@ export function PatternGame({ data: formDataProp }) {
     const { darkMode, selectedLanguage } = useAppContext();
     const [currentLevel, setCurrentLevel] = useState(0);
     const [attempts, setAttempts] = useState(0);
-    // const [timeRemaining, setTimeRemaining] = useState(240);
+    const [score, setScore] = useState(0);
 
-    // testing 15 sec
-    const [timeRemaining, setTimeRemaining] = useState(60);
+    // game time 240s
+    const [timeRemaining, setTimeRemaining] = useState(240);
     
     const [selectedChoice, setSelectedChoice] = useState(null);
     const [gameCompleted, setGameCompleted] = useState(false);
@@ -364,22 +362,7 @@ export function PatternGame({ data: formDataProp }) {
         }
         return choices.sort(() => Math.random() - 0.5);
     }
-    // function calculateIntelligenceLevel() {
-    //     const totalScore = levelAttempts.reduce((sum, lvl) => sum + (lvl.totalScore || 0), 0);
-    //     if (totalScore > 90) setIntelligenceLevel('Very High');
-    //     else if (totalScore > 60) setIntelligenceLevel('High'); 
-    //     else if (totalScore > 30) setIntelligenceLevel('Medium'); 
-    //     else return setIntelligenceLevel('Low');
-    // }
 
-
-
-    function getScoreForAnswer(isCorrect, timeTakenMs) { 
-        if (!isCorrect) return -2;
-        if (timeTakenMs <= 5000) return 7;
-        if (timeTakenMs <= 10000 && timeTakenMs >= 5000) return 5;
-        return 4;
-    }
 
     function calculateIntelligenceLevel() {
         const totalScore = levelAttempts.reduce((sum, lvl) => sum + (lvl.totalScore || 0), 0);
@@ -426,10 +409,6 @@ export function PatternGame({ data: formDataProp }) {
                 next[currentLevel].timeSpent = timeTaken;
             }
 
-
-            const totalCorrectAnswers = next.filter(level => level.correct).length;
-            const totalPoints = next.reduce((acc, level) => acc + (level.totalScore || 0), 0);
-
             return next;
         });
 
@@ -445,6 +424,7 @@ export function PatternGame({ data: formDataProp }) {
             // Check if this is the last level
             if (currentLevel >= gamePlan.length - 1) {
                 // This is the last question - show loading page immediately and set processing
+                clearInterval(timerRef.current);
                 setIsSubmitting(true);
                 showLoadingPage();
                 setFeedback('Correct! Submitting your application...');
@@ -534,6 +514,8 @@ export function PatternGame({ data: formDataProp }) {
                     // Clear session storage after successful submission
                     sessionStorage.removeItem('formData');
 
+                    setIsSubmitting(false);
+
                     // Show success modal
                     setModalType('success');
                     setShowModal(true);
@@ -541,6 +523,8 @@ export function PatternGame({ data: formDataProp }) {
                 onError: (errors) => {
                     // Hide loading page
                     hideLoadingPage();
+
+                    setIsSubmitting(false);
                     
                     // Show error modal with details
                     setErrorDetails(errors);
@@ -551,6 +535,8 @@ export function PatternGame({ data: formDataProp }) {
         } else {
             // Hide loading page
             hideLoadingPage();
+
+            setIsSubmitting(false);
             
             setErrorDetails('No form data found. Please try again.');
             setModalType('error');
@@ -812,14 +798,5 @@ function ChoiceItem({ item, selected, onClick }) {
         >
             <span className="text-lg font-bold">{item.symbol}</span>
         </button>
-    );
-}
-
-function Stat({ label, value }) {
-    return (
-        <div className="flex items-center justify-between border-b border-white/10 pb-1 last:border-b-0">
-            <span className="text-xs opacity-70">{label}</span>
-            <span className="text-sm font-semibold">{value}</span>
-        </div>
     );
 }
