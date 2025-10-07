@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
                     'created_at' => $c->created_at,
                 ]);
 
-            return $contacts->merge($coworking)->sortByDesc('created_at')->values();
+            return collect($contacts)->merge(collect($coworking))->sortByDesc('created_at')->values();
         });
     }
 }
