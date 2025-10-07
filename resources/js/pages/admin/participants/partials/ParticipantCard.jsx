@@ -92,17 +92,37 @@ const ParticipantCard = ({ participant }) => {
 
     const handleApprove = (e) => {
         e.stopPropagation();
+        e.preventDefault();
         setIsProcessing(true);
+        
         post(route('participants.approve', participant.id), {
-            onSuccess: () => window.location.reload(),
+            preserveScroll: true,
+            onSuccess: () => {
+                setLocalParticipant((prev) => ({
+                    ...prev,
+                    status: 'approved',
+                    current_step: 'info_session'
+                }));
+                setIsProcessing(false);
+            },
             onError: () => setIsProcessing(false),
         });
     };
 
     const handleReject = (e) => {
         e.stopPropagation();
+        e.preventDefault();
         setIsProcessing(true);
+        
         post(route('participants.reject', participant.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setLocalParticipant((prev) => ({
+                    ...prev,
+                    status: 'rejected'
+                }));
+                setIsProcessing(false);
+            },
             onError: () => setIsProcessing(false),
         });
     };
@@ -145,9 +165,13 @@ const ParticipantCard = ({ participant }) => {
         <>
             <ContextMenu>
                 <ContextMenuTrigger className="relative w-full">
-                    <a href={`/admin/participants/${participant.id}`} className="block" target="_blank" rel="noopener noreferrer">
                     <Card
                         className="flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border bg-white p-0 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl"
+                        onClick={(e) => {
+                            if (!e.target.closest('button')) {
+                                window.open(`/admin/participants/${participant.id}`, '_blank');
+                            }
+                        }}
                     >
                         <div className="relative">
                             {participant.image ? (
@@ -276,7 +300,11 @@ const ParticipantCard = ({ participant }) => {
                                     !localParticipant?.current_step?.includes('failed') ? (
                                     <div className="flex w-full gap-2">
                                         <Button
-                                            onClick={() => setIsNextStepConfirmOpen(true)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                                setIsNextStepConfirmOpen(true);
+                                            }}
                                             className="flex-1 rounded-lg bg-[#51b04f] text-white hover:bg-[#459942]"
                                             size="sm"
                                             disabled={isProcessing}
@@ -286,7 +314,11 @@ const ParticipantCard = ({ participant }) => {
                                         </Button>
 
                                         <Button
-                                            onClick={() => changeStep('deny')}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                                changeStep('deny')
+                                            }}
                                             variant="outline"
                                             className="rounded-lg border-[#ff7376] text-[#ff7376] hover:bg-[#ff7376] hover:text-white"
                                             size="sm"
@@ -312,7 +344,6 @@ const ParticipantCard = ({ participant }) => {
                             </div>
                         </CardContent>
                     </Card>
-                    </a>
                 </ContextMenuTrigger>
 
                 <ContextMenuContent className="w-48">

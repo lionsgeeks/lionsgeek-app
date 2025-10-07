@@ -166,6 +166,31 @@ export default function Index() {
     const sentMessages = messages?.filter((msg) => msg.sender)?.length || 0;
     const receivedMessages = messages?.filter((msg) => !msg.sender)?.length || 0;
 
+    // mark all as read
+    const markAllAsRead = () => {
+        router.post(
+            route('messages.markAllRead'),
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setSuccessMessage('All messages have been marked as read successfully!');
+                    setShowSuccessModal(true);
+                    setTimeout(() => {
+                        setShowSuccessModal(false);
+                    }, 3000);
+                },
+                onError: () => {
+                    setSuccessMessage('Failed to mark messages. Please try again.');
+                    setShowSuccessModal(true);
+                    setTimeout(() => {
+                        setShowSuccessModal(false);
+                    }, 3000);
+                },
+            }
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Contact Messages" />
@@ -270,7 +295,7 @@ export default function Index() {
                                         </div>
 
                                         {/* Filter Buttons */}
-                                        <div className="flex gap-1 sm:gap-2">
+                                        <div className="flex gap-1 sm:gap-2 items-center">
                                             <Button
                                                 size="sm"
                                                 variant={filter === 'all' ? 'default' : 'outline'}
@@ -294,6 +319,16 @@ export default function Index() {
                                                 className={`text-xs sm:text-sm ${filter === 'sended' ? 'bg-[#212529] text-white' : 'border-gray-300 text-gray-600'}`}
                                             >
                                                 Sent
+                                            </Button>
+
+                                            {/* mark all as read */}
+                                            <Button
+                                                onClick={markAllAsRead}
+                                                disabled={unreadMessages === 0}
+                                                className="flex justify-center transform cursor-pointer items-center rounded-lg bg-[#fee819] px-2 py-2 h-fit lg:w-fit text-sm font-medium text-[#212529] transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#212529] hover:text-[#fee819]"
+                                            >
+                                                <CheckCircle className="h-4 w-4" />
+                                                <span className="hidden xl:inline max-lg:inline">Mark All Read</span>
                                             </Button>
                                         </div>
                                     </div>
