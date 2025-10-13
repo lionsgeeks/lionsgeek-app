@@ -671,6 +671,18 @@ const FilterHeader = ({ participants = [], infosession, infosessions = [], setFi
                                             <span>Jungle Failed</span>
                                         </div>
                                     </SelectItem>
+                                    <SelectItem value="coding_school">
+                                        <div className="flex items-center gap-2 text-gray-700">
+                                            <School className="h-4 w-4 text-gray-500" />
+                                            <span>Coding School</span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="media_school">
+                                        <div className="flex items-center gap-2 text-gray-700">
+                                            <School className="h-4 w-4 text-gray-500" />
+                                            <span>Media School</span>
+                                        </div>
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
 
