@@ -1,5 +1,5 @@
-import Footer from '@/Components/footer.jsx';
-import Navbar from '@/Components/navbar.jsx';
+import Footer from '@/components/footer.jsx';
+import Navbar from '@/components/navbar.jsx';
 import { useAppContext } from '@/context/appContext'; // khass tdir import dyal context
 import { Link } from '@inertiajs/react';
 
