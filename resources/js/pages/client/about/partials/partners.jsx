@@ -7,6 +7,7 @@ import part4 from '../../../../../assets/images/partners/partner-4.png';
 import part5 from '../../../../../assets/images/partners/partner-5.png';
 import part6 from '../../../../../assets/images/partners/partner-6.png';
 import part7 from '../../../../../assets/images/partners/partner-7.png';
+import part8 from '../../../../../assets/images/partners/partner-8.png';
 import { TransText } from '../../../../components/TransText';
 
 export const Partners = () => {
@@ -28,7 +29,7 @@ export const Partners = () => {
                 </div>
 
                 <div className="flex w-full flex-wrap justify-center gap-14 gap-x-7 md:gap-x-20 md:gap-y-14 md:px-28">
-                    {[part0, part1, part2, part3, part4, part5, part6, part7].map((src, index) => (
+                    {[part0, part1, part2, part3, part4, part5, part6, part7,part8].map((src, index) => (
                         <img
                             loading="lazy"
                             className={`h-24 ${darkMode & (index != 0) && 'invert'} w-[calc(calc(100%-calc(3*0.60rem))/4)] object-contain md:w-[calc(calc(100%-calc(11*3rem))/5)]`}
