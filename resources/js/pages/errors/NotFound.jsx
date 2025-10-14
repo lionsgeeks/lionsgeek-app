@@ -1,4 +1,4 @@
-import Footer from '@/Components/Footer';
+import Footer from '@/Components/footer';
 import Navbar from '@/Components/Navbar';
 import { useAppContext } from '@/context/appContext'; // khass tdir import dyal context
 import { Link } from '@inertiajs/react';
