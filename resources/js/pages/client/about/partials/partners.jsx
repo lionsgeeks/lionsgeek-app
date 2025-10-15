@@ -2,12 +2,12 @@ import { useAppContext } from '@/context/appContext';
 import part0 from '../../../../../assets/images/partners/partner-0.png';
 import part1 from '../../../../../assets/images/partners/partner-1.png';
 import part2 from '../../../../../assets/images/partners/partner-2.png';
-import part3 from '../../../../../assets/images/partners/partner-3.png';
+import part8 from '../../../../../assets/images/partners/partner-3.png';
 import part4 from '../../../../../assets/images/partners/partner-4.png';
 import part5 from '../../../../../assets/images/partners/partner-5.png';
 import part6 from '../../../../../assets/images/partners/partner-6.png';
 import part7 from '../../../../../assets/images/partners/partner-7.png';
-import part8 from '../../../../../assets/images/partners/partner-8.png';
+import part3 from '../../../../../assets/images/partners/partner-8.png';
 import { TransText } from '../../../../components/TransText';
 
 export const Partners = () => {
