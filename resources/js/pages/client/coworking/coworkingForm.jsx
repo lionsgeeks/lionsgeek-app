@@ -99,6 +99,17 @@ export default function CoworkingForm() {
         {
             label: (
                 <TransText
+                    fr="Lauréat Lionsgeek"
+                    ar="فائز Lionsgeek"
+                    en="Lionsgeek Winner"
+                />
+            ),
+            value: 'lionsgeek-winner',
+
+        },
+        {
+            label: (
+                <TransText
                     fr="J'ai vu une annonce sur les réseaux sociaux"
                     ar="رأيت إعلانا على الشبكات الاجتماعية"
                     en="I saw an ad on social media"
@@ -118,17 +129,7 @@ export default function CoworkingForm() {
             ),
             value: 'personal-recommendation',
         },
-        {
-            label: (
-                <TransText
-                    fr="Lauréat Lionsgeek"
-                    ar="فائز Lionsgeek"
-                    en="Lionsgeek Winner"
-                />
-            ),
-            value: 'lionsgeek-winner',
 
-        },
         {
             label: (
                 <TransText
