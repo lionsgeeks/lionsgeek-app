@@ -121,6 +121,17 @@ export default function CoworkingForm() {
         {
             label: (
                 <TransText
+                    fr="Lauréat Lionsgeek"
+                    ar="فائز Lionsgeek"
+                    en="Lionsgeek Winner"
+                />
+            ),
+            value: 'lionsgeek-winner',
+
+        },
+        {
+            label: (
+                <TransText
                     fr="J'ai lu un article dans un magazine ou un journal"
                     ar="قرأت مقالة في مجلة أو جريدة"
                     en="I read an article in a magazine or newspaper"
@@ -219,8 +230,8 @@ export default function CoworkingForm() {
                                         selectedLanguage === 'en'
                                             ? 'Enter Your Full Name'
                                             : selectedLanguage === 'fr'
-                                              ? 'Entrez votre nom complet'
-                                              : 'أدخل اسمك الكامل'
+                                                ? 'Entrez votre nom complet'
+                                                : 'أدخل اسمك الكامل'
                                     }
                                     value={data.full_name}
                                     onChange={handleChange}
@@ -241,8 +252,8 @@ export default function CoworkingForm() {
                                         selectedLanguage === 'en'
                                             ? 'Enter Your Email'
                                             : selectedLanguage === 'fr'
-                                              ? 'Entrez votre email'
-                                              : 'أدخل بريدك الإلكتروني  '
+                                                ? 'Entrez votre email'
+                                                : 'أدخل بريدك الإلكتروني  '
                                     }
                                     value={data.email}
                                     onChange={handleChange}
@@ -265,8 +276,8 @@ export default function CoworkingForm() {
                                         selectedLanguage === 'en'
                                             ? 'Enter Your Phone'
                                             : selectedLanguage === 'fr'
-                                              ? 'Entrez votre téléphone'
-                                              : 'أدخل رقم هاتفك'
+                                                ? 'Entrez votre téléphone'
+                                                : 'أدخل رقم هاتفك'
                                     }
                                     value={data.phone}
                                     onChange={handleChange}
@@ -308,8 +319,8 @@ export default function CoworkingForm() {
                                         selectedLanguage === 'en'
                                             ? 'Education/Professional'
                                             : selectedLanguage === 'fr'
-                                              ? 'Formation/Expérience'
-                                              : 'التعليم/الخبرة المهنية'
+                                                ? 'Formation/Expérience'
+                                                : 'التعليم/الخبرة المهنية'
                                     }
                                     value={data.formation}
                                     onChange={handleChange}
@@ -409,8 +420,8 @@ export default function CoworkingForm() {
                                     selectedLanguage === 'en'
                                         ? 'Enter Project Name'
                                         : selectedLanguage === 'fr'
-                                          ? 'Entrez le nom du projet'
-                                          : 'أدخل اسم المشروع'
+                                            ? 'Entrez le nom du projet'
+                                            : 'أدخل اسم المشروع'
                                 }
                                 value={data.proj_name}
                                 onChange={handleChange}
@@ -429,8 +440,8 @@ export default function CoworkingForm() {
                                     selectedLanguage === 'en'
                                         ? 'Enter Project Description'
                                         : selectedLanguage === 'fr'
-                                          ? 'Entrez le description du projet'
-                                          : 'أدخل وصف المشروع'
+                                            ? 'Entrez le description du projet'
+                                            : 'أدخل وصف المشروع'
                                 }
                                 value={data.proj_desc}
                                 onChange={handleChange}
@@ -485,8 +496,8 @@ export default function CoworkingForm() {
                                     selectedLanguage === 'en'
                                         ? 'Enter Action Plan'
                                         : selectedLanguage === 'fr'
-                                          ? "Entrez plan d'actions"
-                                          : 'أدخل خطة العمل'
+                                            ? "Entrez plan d'actions"
+                                            : 'أدخل خطة العمل'
                                 }
                                 value={data.proj_plan}
                                 onChange={handleChange}
@@ -544,8 +555,8 @@ export default function CoworkingForm() {
                                     selectedLanguage === 'en'
                                         ? 'Enter Previous Similar Project'
                                         : selectedLanguage === 'fr'
-                                          ? 'Entrez Projet Précédent Similaire'
-                                          : 'أدخل مشروع مشابه سابق'
+                                            ? 'Entrez Projet Précédent Similaire'
+                                            : 'أدخل مشروع مشابه سابق'
                                 }
                                 value={data.prev_proj}
                                 onChange={handleChange}
